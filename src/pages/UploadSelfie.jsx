@@ -19,6 +19,16 @@ export default function UploadSelfie() {
     function handleSubmit(event) {
         event.preventDefault();
 
+        const formData = new FormData();
+
+        formData.append('email', emailFromChild);
+        formData.append('image', selfie);
+
+        fetch('http://localhost:8080/contents/fetch', {
+            method: 'POST',
+            body: formData
+        });
+
         console.log(emailFromChild);
         console.log(selfie);
     }
