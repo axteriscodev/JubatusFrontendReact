@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 
 import styles from "./SelfieUpload.module.css";
 
-export default function SelfieUpload() {
+export default function SelfieUpload({ onDataChange }) {
   const fileInputRef = useRef(null);
 
   const handleImageClick = () => {
@@ -11,7 +11,12 @@ export default function SelfieUpload() {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log(file);
+
+    if(file) {
+        onDataChange(file);
+    }
+
+    // console.log(file);
   };
 
   return (
@@ -19,7 +24,12 @@ export default function SelfieUpload() {
       <h3>Carica il tuo selfie</h3>
 
       <img className={styles.avatar} onClick={handleImageClick} />
-      <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none'}} />
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        style={{ display: "none" }}
+      />
     </>
   );
 }

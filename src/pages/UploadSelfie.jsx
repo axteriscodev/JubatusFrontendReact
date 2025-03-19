@@ -5,9 +5,14 @@ import MailForm from "../components/MailForm";
 
 export default function UploadSelfie() {
     const [emailFromChild, setEmailFromChild] = useState('');
+    const [selfie, setSelfie] = useState();
 
     const handleEmailFromChild = (data) => {
         setEmailFromChild(data);
+    }
+
+    const handleSelfieFromChild = (data) => {
+        setSelfie(data);
     }
 
 
@@ -15,11 +20,12 @@ export default function UploadSelfie() {
         event.preventDefault();
 
         console.log(emailFromChild);
+        console.log(selfie);
     }
 
   return (
     <>
-      <SelfieUpload />
+      <SelfieUpload onDataChange={handleSelfieFromChild} />
       <MailForm onDataChange={handleEmailFromChild} submitHandle={handleSubmit}/>
     </>
   );
