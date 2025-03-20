@@ -27,6 +27,7 @@ export default function SelfieUpload({ onDataChange }) {
       <input
         type="file"
         ref={fileInputRef}
+        accept="image/*"
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
