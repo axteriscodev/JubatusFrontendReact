@@ -6,9 +6,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 // import './App.css'
 
 import UploadSelfie from './pages/UploadSelfie';
+import ImageShop from './pages/ImageShop';
 
 const router = createBrowserRouter([
-  { path: '/', element: <UploadSelfie />}
+  { path: '/', element: <UploadSelfie />},
+  { path: '/image-shop', element: <ImageShop />}
 ]);
 
 function App() {
