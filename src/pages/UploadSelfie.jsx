@@ -4,6 +4,8 @@ import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
 
 export default function UploadSelfie() {
+  // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
+
     const [emailFromChild, setEmailFromChild] = useState('');
     const [selfie, setSelfie] = useState();
 

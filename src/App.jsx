@@ -9,8 +9,14 @@ import UploadSelfie from './pages/UploadSelfie';
 import ImageShop from './pages/ImageShop';
 
 const router = createBrowserRouter([
-  { path: '/', element: <UploadSelfie />},
-  { path: '/image-shop', element: <ImageShop />}
+  // { path: '/', element: <Login />}, - route default con login
+  // { path: '/personal' element: <Personal /> }, - route alla dashboard personale
+  { path: '/event/:eventName', element: <UploadSelfie />},
+  { path: '/processing-selfie', element: <ProcessingSelfie />},
+  { path: '/image-shop', element: <ImageShop />},
+  // { path: '/purchased', element: <Purchased /> } - route foto appena acquistate
+  // { path: '/admin': element: <AdminPanel /> } - route alla dashboard admin
+
 ]);
 
 function App() {
