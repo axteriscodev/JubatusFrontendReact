@@ -1,47 +1,25 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'; 
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
-
-import UploadSelfie from './pages/UploadSelfie';
-import ImageShop from './pages/ImageShop';
+import Login from "./pages/Login";
+import Personal from "./pages/Personal";
+import UploadSelfie from "./pages/UploadSelfie";
+import ProcessingSelfie from "./pages/ProcessingSelfie";
+import ImageShop from "./pages/ImageShop";
+import Purchased from "./pages/Purchased";
+import AdminPanel from "./pages/AdminPanel";
 
 const router = createBrowserRouter([
-  { path: '/', element: <UploadSelfie />},
-  { path: '/image-shop', element: <ImageShop />}
+  { path: "/", element: <Login /> },
+  { path: "/personal", element: <Personal /> },
+  { path: "/event/:eventName", element: <UploadSelfie /> },
+  { path: "/processing-selfie", element: <ProcessingSelfie /> },
+  { path: "/image-shop", element: <ImageShop /> },
+  { path: "/purchased", element: <Purchased /> },
+  { path: "/admin", element: <AdminPanel /> },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />
-
-  // const [count, setCount] = useState(0)
-
-  // return (
-  //   <>
-  //     <div>
-  //       <a href="https://vite.dev" target="_blank">
-  //         <img src={viteLogo} className="logo" alt="Vite logo" />
-  //       </a>
-  //       <a href="https://react.dev" target="_blank">
-  //         <img src={reactLogo} className="logo react" alt="React logo" />
-  //       </a>
-  //     </div>
-  //     <h1>Vite + React</h1>
-  //     <div className="card">
-  //       <button onClick={() => setCount((count) => count + 1)}>
-  //         count is {count}
-  //       </button>
-  //       <p>
-  //         Edit <code>src/App.jsx</code> and save to test HMR
-  //       </p>
-  //     </div>
-  //     <p className="read-the-docs">
-  //       Click on the Vite and React logos to learn more
-  //     </p>
-  //   </>
-  // )
+  return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
