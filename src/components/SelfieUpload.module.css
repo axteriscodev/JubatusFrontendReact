@@ -1,7 +1,8 @@
 .avatar {
     width: 180px;
     height: 180px;
+    border: 1px dashed;
     border-radius: 50%;
-    margin-top: 40px;
+    margin-top: 30px;
     margin-bottom: 30px;
 }

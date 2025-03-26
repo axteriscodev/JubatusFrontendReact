@@ -3,6 +3,8 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
+import Stack from 'react-bootstrap/Stack';
+
 
 /**
  * Pagina di caricamento del selfie e inserimento della email
@@ -37,18 +39,24 @@ export default function UploadSelfie() {
   }
 
   return (
-    <>
+    <Stack gap={2} className="mx-auto">
       <SelfieUpload onDataChange={handleSelfieFromChild} />
       <MailForm
         onDataChange={handleEmailFromChild}
         submitHandle={handleSubmit}
       />
-    </>
+    </Stack>
   );
 }
 
+/**
+ * Loader per caricare i dati dell'evento da visualizzare nella pagina
+ * 
+ * @param {*} request 
+ * @param {String} params - i parametri passati all'url 
+ * @returns 
+ */
 export async function loader({ request, params }) {
-  //TODO - fetch nome evento, logo e altri dati
 
   const eventName = params.eventSlug;
 
