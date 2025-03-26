@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import Stack from 'react-bootstrap/Stack';
+import Stack from "react-bootstrap/Stack";
 
 import styles from "./SelfieUpload.module.css";
 

@@ -12,6 +12,7 @@ const cartSlice = createSlice({
         items: [
         ],
         totalQuantity: 0,
+        totalPrice: 0,
     },
     reducers: {
         replaceCart(state, action) {},
@@ -32,10 +33,13 @@ const cartSlice = createSlice({
          */
         addItemToCart(state, action) {
             const newItem = action.payload;
-            const existingItem = state.items.find((item) => item.id === newItem.id);
-            state.totalQuantity++;
+            //const existingItem = state.items.find((item) => item.id === newItem.id);
 
-            state.items.push({ id: newItem.id, price: newItem.price, quantity: 1, totalPrice: newItem.price, name: newItem.title });
+            state.totalQuantity++;
+            state.totalPrice = state.totalPrice + 5;
+
+            state.items.push({ id: newItem.id, });
+
 
             // al momento non sono previsti acquisti multipli dello stesso prodotto
 
@@ -54,11 +58,13 @@ const cartSlice = createSlice({
          * @param {*} action 
          */
         removeItemFromCart(state, action) {
-            const id = action.payload;
-            const existingItem = state.items.find((item) => item.id === id);
+            const itemToRemove = action.payload;
+            //const existingItem = state.items.find((item) => item.id === id);
+            
             state.totalQuantity--;
+            state.totalPrice = state.totalPrice - 5;
 
-            state.items = state.items.filter(item => item.id !== id);
+            state.items = state.items.filter(item => item.id !== itemToRemove.id);
 
             // al momento non sono previsti acquisti multipli dello stesso prodotto
             //
