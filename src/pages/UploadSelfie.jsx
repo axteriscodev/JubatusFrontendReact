@@ -12,7 +12,7 @@ import MailForm from "../components/MailForm";
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
   const navigate = useNavigate();
-  const date = useLoaderData();
+  const eventData = useLoaderData();
 
   const [emailFromChild, setEmailFromChild] = useState("");
   const [selfie, setSelfie] = useState();
@@ -50,9 +50,9 @@ export default function UploadSelfie() {
 export async function loader({ request, params }) {
   //TODO - fetch nome evento, logo e altri dati
 
-  const eventName = params.eventName;
+  const eventName = params.eventSlug;
 
-  const response = await fetch("");
+  const response = await fetch(`http://localhost:8080/contents/event-data/${eventName}`);
 
   if (!response.ok) {
     return Response(JSON.stringify(
