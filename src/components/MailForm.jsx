@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Form from 'react-bootstrap/Form';
+
 
 export default function MailForm({ submitHandle, onDataChange }) {
   const [emailValue, setEmailValue] = useState("");
@@ -11,7 +13,7 @@ export default function MailForm({ submitHandle, onDataChange }) {
 
   return (
     <>
-      <input
+      <Form.Control
         type="email"
         value={emailValue}
         onChange={handleEmailChange}
