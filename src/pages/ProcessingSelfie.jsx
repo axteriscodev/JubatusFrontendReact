@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 /**

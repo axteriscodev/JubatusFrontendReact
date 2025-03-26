@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLoaderData, useNavigate, json } from "react-router-dom";
+import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
@@ -31,7 +31,9 @@ export default function UploadSelfie() {
     console.log(emailFromChild);
     console.log(selfie);
 
-    navigate("/processing-selfie", { state: { email: emailFromChild, selfie: selfie } });
+    navigate("/processing-selfie", {
+      state: { email: emailFromChild, selfie: selfie },
+    });
   }
 
   return (
@@ -53,7 +55,10 @@ export async function loader({ request, params }) {
   const response = await fetch("");
 
   if (!response.ok) {
-    return json({message: "Errore nel caricamento dell'evento selezionato"}, {status: 404});
+    return Response(JSON.stringify(
+      { message: "Errore nel caricamento dell'evento selezionato" },
+      { status: 404 }
+    ));
   } else {
     return response;
   }
