@@ -18,16 +18,14 @@ export default function ImageGallery({ images }) {
   return (
     <div className="row row-cols-3 row-cols-md-4 row-cols-lg-5 gx-0">
       {images.map((image) => (
-        <div id="gallery">
-          <div key={image.id} onClick={() => handleImageClick(image.id)} className="ratio ratio-2-3 bg-grey">
+        <div className="gallery">
+          <div key={image.id} onClick={() => handleImageClick(image.id)} className="ratio ratio-2-3 bg-white">
             <img
               src={image.src}
               alt={`Image ${image.id}`}
-              className={
-                photoItems.some((element) => element.id === image.id)
+              className={`${styles.foto} ${photoItems.some((element) => element.id === image.id)
                   ? styles.selected
-                  : ""
-              }
+                  : ""}`}
             />
           </div>
         </div>
