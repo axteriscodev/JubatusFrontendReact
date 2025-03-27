@@ -39,13 +39,14 @@ export default function UploadSelfie() {
   }
 
   return (
-    <Stack gap={2} className="mx-auto">
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+      <img src="/images/oceanman_logo.jpeg" className="rounded-circle mb-sm"/>
       <SelfieUpload onDataChange={handleSelfieFromChild} />
       <MailForm
         onDataChange={handleEmailFromChild}
         submitHandle={handleSubmit}
       />
-    </Stack>
+    </div>
   );
 }
 

@@ -12,14 +12,21 @@ export default function MailForm({ submitHandle, onDataChange }) {
   };
 
   return (
-    <>
+    <div>
       <Form.Control
         type="email"
         value={emailValue}
         onChange={handleEmailChange}
         name="email"
+        placeholder="Inserisci la tua e-mail"
       />
-      <button onClick={submitHandle}>Avanti</button>
-    </>
+      <div className="my-xs">
+        <div className="form-check form-switch text-start">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
+          <label class="form-check-label" for="flexSwitchCheckDefault">Accettare</label> <a href="#">Termini e Policy</a>
+        </div>
+      </div>
+      <button className="my-button w-100" onClick={submitHandle}>Avanti &gt;</button>
+    </div>
   );
 }
