@@ -1,7 +1,10 @@
-export async function sendRequest(api, method, body) {
+export async function sendRequest(api, method, body, token) {
   const response = await fetch(api, {
     method: method,
     body: body,
+    headers: {
+      Authorization : 'Bearer ' + token
+    }
   });
 
   if (!response.ok) {
