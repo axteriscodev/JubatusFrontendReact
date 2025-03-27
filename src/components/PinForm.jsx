@@ -12,7 +12,7 @@ export default function PinForm({ submitHandle, onDataChange }) {
   
     return (
       <>
-        <h1>Inserisci il PIN ricevuto via mail</h1>
+        <h3>Inserisci il PIN ricevuto via mail</h3>
         <Form.Control
           type="text"
           value={pinValue}
