@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import Logo from "../components/Logo";
 
 /**
  * Pagina di elaborazione selfie
@@ -58,7 +59,7 @@ export default function ProcessingSelfie() {
 
   return (
     <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <img src="/images/oceanman_logo.jpeg" className="rounded-circle mb-md logo-sm"/>
+      <Logo size="logo-sm" css="mb-sm" />
       <h2>Ciao <span>atleta!</span></h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>stiamo trovando le <span>tue</span> foto</h2>

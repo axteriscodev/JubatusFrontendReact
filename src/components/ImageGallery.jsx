@@ -2,8 +2,6 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 import styles from "./ImageGallery.module.css";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 
 export default function ImageGallery({ images }) {
   const dispatch = useDispatch();
@@ -18,10 +16,10 @@ export default function ImageGallery({ images }) {
   };
 
   return (
-    <Row xs={1} md={3}>
+    <div className="row row-cols-3 row-cols-md-4 row-cols-lg-5 gx-0">
       {images.map((image) => (
-        <Col>
-          <div key={image.id} onClick={() => handleImageClick(image.id)}>
+        <div id="gallery">
+          <div key={image.id} onClick={() => handleImageClick(image.id)} className="ratio ratio-2-3 bg-grey">
             <img
               src={image.src}
               alt={`Image ${image.id}`}
@@ -32,8 +30,8 @@ export default function ImageGallery({ images }) {
               }
             />
           </div>
-        </Col>
+        </div>
       ))}
-    </Row>
+    </div>
   );
 }

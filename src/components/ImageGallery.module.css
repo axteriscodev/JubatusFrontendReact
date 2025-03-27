@@ -1,3 +1,6 @@
+img{
+    border: 2px solid transparent;
+}
 .selected {
     border: 2px solid green;
 }
