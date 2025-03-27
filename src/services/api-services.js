@@ -1,4 +1,8 @@
-export async function sendRequest(api, method, body, token) {
+import { getAuthToken } from '../utils/auth';
+
+export async function sendRequest(api, method, body) {
+  const token = getAuthToken();
+
   const response = await fetch(api, {
     method: method,
     body: body,
