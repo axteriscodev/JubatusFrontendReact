@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Login from "./pages/Login";
+import PinVerification from './pages/PinVerification';
 import Personal from "./pages/Personal";
 import UploadSelfie, {
   loader as updateSelfieLoader,
@@ -12,6 +13,7 @@ import AdminPanel from "./pages/AdminPanel";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
+  { path: '/pin-verification', element: <PinVerification />},
   { path: "/personal", element: <Personal /> },
   {
     path: "/event/:eventSlug",
