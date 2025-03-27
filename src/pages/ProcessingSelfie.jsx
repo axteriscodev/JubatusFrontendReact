@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { listenSSE, sendRequest } from "../services/api-services";
 
 /**
  * Pagina di elaborazione selfie
@@ -23,34 +24,23 @@ export default function ProcessingSelfie() {
       formData.append("email", receivedData.email);
       formData.append("image", receivedData.selfie);
 
-      const response = await fetch("http://localhost:8080/contents/fetch", {
-        method: "POST",
-        body: formData,
-      });
+      //caricamento selfie
+      const response = await sendRequest(
+        "http://localhost:8080/contents/fetch",
+        "POST",
+        formData
+      );
 
-      if (!response.ok) {
-        console.error("Errore nel caricamento del selfie");
-        return;
-      } else {
-        console.log("Selfie caricato correttamente");
-      }
-
-      //sezione elaborazione selfie e attesa risposte dal selfie
-      const sse = new EventSource("http://localhost:8080/contents/test-sse");
-
-      sse.onmessage = (e) => {
-        console.log(e.data);
-        navigate("/image-shop");
-        sse.close();
-      };
-      sse.onerror = () => {
-        console.log("Errore!");
-        sse.close();
-      };
-      return () => {
-        console.log("Chiuso!");
-        sse.close();
-      };
+      //sezione elaborazione selfie e attesa risposte dal server S3
+      listenSSE(
+        "http://localhost:8080/contents/test-sse",
+        () => {
+          navigate("/image-shop");
+        },
+        () => {
+          console.log("Errore!");
+        }
+      );
     }
 
     ProcessSelfie();
