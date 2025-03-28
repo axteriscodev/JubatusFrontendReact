@@ -2,8 +2,8 @@ import { useState } from "react";
 import PinForm from "../components/PinForm";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { userActions } from "../repositories/user/user-slice";
 import { sendRequest } from "../services/api-services";
+import { setAuthToken } from "../utils/auth";
 
 export default function PinVerification() {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export default function PinVerification() {
 
     if (response.ok) {
       const json = await response.json();
-      dispatch(userActions.updateJwt(json.data.jwt));
+      setAuthToken(json.data.jwt);
       navigate('/image-shop');
     }
   }
