@@ -28,7 +28,10 @@ export default function ImageGallery({ images }) {
     setOpen(true);
   };
 
-  const slides = images.map((img) => ({ src: img.src }));
+  const slides = images.map((image) => ({
+    src: image.src,
+    id: image.id,
+  }));
 
   return (
     <>
@@ -61,15 +64,23 @@ export default function ImageGallery({ images }) {
 
       {open && (
         <Lightbox
+        styles={{ container: { backgroundColor: "rgba(0, 0, 0, .8)" } }}
         open={open}
         close={() => setOpen(false)}
         index={index}
-        slides={slides}
+        on={{
+          view: ({ index: newIndex }) => setIndex(newIndex),
+        }}
+        slides={images.map((image) => ({
+          src: image.src,
+          id: image.id,
+        }))}
         plugins={[Thumbnails]}
         render={{
           slideHeader: () => {
             const image = images[index];
-            const isSelected = photoItems.some((el) => el.id === image.id);      
+            const isSelected = photoItems.some((el) => el.id === image.id);
+      
             return (
               <div
                 style={{
@@ -81,14 +92,9 @@ export default function ImageGallery({ images }) {
               >
                 <button
                   onClick={() => handleImageClick(image.id)}
+                  className="my-button"
                   style={{
-                    padding: "10px 16px",
                     background: isSelected ? "#dc3545" : "#28a745",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontSize: "14px",
-                    cursor: "pointer",
                   }}
                 >
                   {isSelected ? "Rimuovi" : "Seleziona"}
@@ -97,7 +103,7 @@ export default function ImageGallery({ images }) {
             );
           },
         }}
-      />
+      />         
       )}
     </>
   );

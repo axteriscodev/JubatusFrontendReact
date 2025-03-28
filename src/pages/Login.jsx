@@ -16,6 +16,8 @@ export default function Login() {
 
         <Link to="/personal">Area personale</Link>
 
+        <Link to="/processing-selfie">Foto selfie</Link>
+
         <Link to="/processing-photos">Foto processing</Link>
 
         <Link to="/purchased">Foto appena acquistate</Link>

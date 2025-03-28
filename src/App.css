@@ -84,7 +84,7 @@ a.no-hover:hover{color:unset;text-decoration:none;}
 h1, h2, h3, h4, .h1, .h2, .h3, .h4 {
   font-family: var(--font) !important;
   font-weight:700;
-  line-height: 100%;
+  line-height: 130%;
   font-size: unset;
   color: var(--default) !important;
 }
@@ -218,4 +218,9 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 }
 .logo-xs{
   width: 60px !important;
+}
+.selected-thumbnail {
+  border: 3px solid #28a745;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
 }
