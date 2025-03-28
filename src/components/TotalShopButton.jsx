@@ -1,4 +1,3 @@
-import Button from "react-bootstrap/Button";
 import { useSelector } from "react-redux";
 
 /**
@@ -9,7 +8,7 @@ import { useSelector } from "react-redux";
 export default function TotalShopButton() {
   const totalPrice = useSelector((state) => state.cart.totalPrice);
 
-  return <Button variant="primary" size="lg">
+  return <button className="my-button w-75 fixed-bottom mx-auto mb-sm">
     { totalPrice === 0 ? "Seleziona" : `Totale: €${totalPrice.toFixed(2)}` }
-  </Button>;
+  </button>;
 }

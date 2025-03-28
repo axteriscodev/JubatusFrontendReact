@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
+import Logo from "../components/Logo";
 import Stack from 'react-bootstrap/Stack';
 
 
@@ -39,13 +40,14 @@ export default function UploadSelfie() {
   }
 
   return (
-    <Stack gap={2} className="mx-auto">
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+      <Logo css="mb-sm" />
       <SelfieUpload onDataChange={handleSelfieFromChild} />
       <MailForm
         onDataChange={handleEmailFromChild}
         submitHandle={handleSubmit}
       />
-    </Stack>
+    </div>
   );
 }
 

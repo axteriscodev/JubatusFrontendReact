@@ -16,15 +16,13 @@ export default function SelfieUpload({ onDataChange }) {
     if (file) {
       onDataChange(file);
     }
-
-    // console.log(file);
   };
 
   return (
-    <Stack gap={2} className="mx-auto align-items-center">
-      <h3>Carica il tuo selfie</h3>
+    <div>
+      <h3>Carica il tuo selfie<br />per vedere le tue foto</h3>
 
-      <img className={styles.avatar} onClick={handleImageClick} />
+      <div className={styles.avatar} onClick={handleImageClick}></div>
       <input
         type="file"
         ref={fileInputRef}
@@ -32,6 +30,6 @@ export default function SelfieUpload({ onDataChange }) {
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
-    </Stack>
+    </div>
   );
 }

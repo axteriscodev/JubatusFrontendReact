@@ -13,6 +13,8 @@ import Purchased from "./pages/Purchased";
 import AdminPanel from "./pages/AdminPanel";
 import Checkout from "./pages/Checkout";
 import CheckoutOutcome from "./pages/CheckoutOutcome";
+import CreateEvent from "./pages/CreateEvent";
+import ProcessingPhotos from "./pages/ProcessingPhotos";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -28,7 +30,9 @@ const router = createBrowserRouter([
   { path: "/checkout", element: <Checkout /> },
   { path: "/checkout-outcome", element: <CheckoutOutcome /> },
   { path: "/purchased", element: <Purchased /> },
-  { path: "/admin", loader: checkAuthLoader, element: <AdminPanel /> },
+  { path: "/processing-photos", element: <ProcessingPhotos />},
+  { path: "/admin", element: <AdminPanel /> },
+  { path: "/admin/create-event", element: <CreateEvent />}
 ]);
 
 function App() {
