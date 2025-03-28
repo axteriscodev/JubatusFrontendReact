@@ -11,6 +11,8 @@ import ProcessingSelfie from "./pages/ProcessingSelfie";
 import ImageShop from "./pages/ImageShop";
 import Purchased from "./pages/Purchased";
 import AdminPanel from "./pages/AdminPanel";
+import Checkout from "./pages/Checkout";
+import CheckoutOutcome from "./pages/CheckoutOutcome";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -23,6 +25,8 @@ const router = createBrowserRouter([
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
   { path: "/image-shop", element: <ImageShop /> },
+  { path: "/checkout", element: <Checkout /> },
+  { path: "/checkout-outcome", element: <CheckoutOutcome /> },
   { path: "/purchased", element: <Purchased /> },
   { path: "/admin", loader: checkAuthLoader, element: <AdminPanel /> },
 ]);
