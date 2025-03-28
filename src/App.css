@@ -209,3 +209,13 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
   body{font-size:calc(14px + 0.285714vw) !important;}
 }
 .progress-bar{background-color: var(--grey);}
+
+.logo-md{
+  width: 150px !important;
+}
+.logo-sm{
+  width: 100px !important;
+}
+.logo-xs{
+  width: 60px !important;
+}

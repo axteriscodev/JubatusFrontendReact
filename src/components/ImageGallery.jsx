@@ -39,17 +39,17 @@ export default function ImageGallery({ images }) {
               onClick={() =>
                 photoItems.length === 0 ? zoom(i) : handleImageClick(image.id)
               }
-              className="ratio ratio-1-1 bg-white"
+              className="ratio ratio-1-1"
             >
+              <div className={`${styles.foto} ${
+                photoItems.some((el) => el.id === image.id) ? styles.selected : ""
+              }`}></div>
               <div
-                className={`${styles.foto} ${
-                  photoItems.some((el) => el.id === image.id) ? styles.selected : ""
-                }`}
                 style={{
                   backgroundImage: `url(${image.src})`,
                   backgroundRepeat: "no-repeat",
                   backgroundAttachment: "scroll",
-                  backgroundPosition: "0px 100%",
+                  backgroundPosition: "50% 50%",
                   backgroundSize: "cover",
                   backgroundColor: "transparent",
                 }}

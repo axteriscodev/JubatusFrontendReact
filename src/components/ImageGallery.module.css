@@ -1,5 +1,6 @@
 .foto{
     border: 4px solid transparent;
+    z-index: 1;
 }
 .selected {
     border-color: var(--acid-green);

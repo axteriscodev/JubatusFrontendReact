@@ -22,8 +22,8 @@ export default function ImageShop() {
   return (
     <div>
       <div className="d-flex justify-content-between">
-        <div><Logo size="logo-sm" /></div>
-        <div><img src="/images/icon-info.png" width={100}/></div>
+        <div><Logo size="logo-xs" /></div>
+        <div><img src="/images/icon-info.png" className="logo-xs"/></div>
       </div>
       <div className="my-md text-start">
         <h2>Ci siamo ATLETA!</h2>
