@@ -9,6 +9,8 @@ import ProcessingSelfie from "./pages/ProcessingSelfie";
 import ImageShop from "./pages/ImageShop";
 import Purchased from "./pages/Purchased";
 import AdminPanel from "./pages/AdminPanel";
+import CreateEvent from "./pages/CreateEvent";
+import ProcessingPhotos from "./pages/ProcessingPhotos";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -20,8 +22,11 @@ const router = createBrowserRouter([
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
   { path: "/image-shop", element: <ImageShop /> },
+  { path: "/processing-photos", element: <ProcessingPhotos />},
   { path: "/purchased", element: <Purchased /> },
+
   { path: "/admin", element: <AdminPanel /> },
+  { path: "/admin/create-event", element: <CreateEvent />}
 ]);
 
 function App() {
