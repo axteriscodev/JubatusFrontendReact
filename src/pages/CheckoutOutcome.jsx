@@ -8,20 +8,20 @@ export default function CheckoutOutcome() {
     const urlParams = new URLSearchParams(queryString);
     const sessionId = urlParams.get("session_id");
 
-    fetch(`/session-status?session_id=${sessionId}`)
+    fetch(`http://localhost:8080/shop/session-status?session_id=${sessionId}`)
       .then((res) => res.json())
       .then((data) => {
         setStatus(data.status);
-        setCustomerEmail(data.customer_email);
+        //setCustomerEmail(data.customer_email);
       });
   }, []);
 
   if (status === "complete") {
-    return <></>;
+    return <><h3>Pagamento completato</h3></>;
   }
 
   if (status === "open") {
-    return <></>;
+    return <><h3>Qualcosa è andato storto</h3></>;
   }
 
   if (!status) {
