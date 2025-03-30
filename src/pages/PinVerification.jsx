@@ -38,8 +38,8 @@ export default function PinVerification() {
   }
 
   return (
-    <>
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
       <PinForm onDataChange={handlePin} submitHandle={handleSubmit} />
-    </>
+    </div>
   );
 }
