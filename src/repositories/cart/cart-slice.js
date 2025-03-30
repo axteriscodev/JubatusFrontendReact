@@ -12,6 +12,7 @@ const cartSlice = createSlice({
     products: [],
     items: [],
     prices: [],
+    purchased: [],
     totalQuantity: 0,
     totalPrice: 0,
   },
@@ -24,7 +25,9 @@ const cartSlice = createSlice({
      * @param {*} state
      * @param {*} action
      */
-    updateOrderId(state, action) {},
+    updateOrderId(state, action) {
+      state.id = action.payload;
+    },
 
     updateUserId(state, action) {
       const newId = action.payload;
@@ -110,6 +113,11 @@ const cartSlice = createSlice({
       //     existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
       // }
     },
+
+    setPurchasedItems(state, action) {
+      state.purchased = [...action.payload];
+    },
+
   },
 });
 

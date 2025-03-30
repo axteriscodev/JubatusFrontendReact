@@ -8,21 +8,25 @@ function calcolaPrezzoMiglioreCombinato(prezzi, fotoRichieste, videoRichiesti) {
       return memo[chiave];
     }
 
+    // Se non ci sono più foto e video da soddisfare
     if (fotoRimaste <= 0 && videoRimasti <= 0) {
       return 0;
     }
 
+    // Se non ci sono più pacchetti da considerare
     if (indicePacchetto < 0) {
       return Infinity;
     }
 
-    let migliorPrezzo = trovaMigliorPrezzo(fotoRimaste, videoRimasti, indicePacchetto - 1); // Prezzo senza questo pacchetto
+    // Caso in cui non includiamo il pacchetto attuale
+    let migliorPrezzo = trovaMigliorPrezzo(fotoRimaste, videoRimasti, indicePacchetto - 1);
 
+    // Se il pacchetto corrente è applicabile, possiamo considerarlo
     if (prezzi[indicePacchetto].photo <= fotoRimaste && prezzi[indicePacchetto].video <= videoRimasti) {
       const prezzoConPacchetto = prezzi[indicePacchetto].price + trovaMigliorPrezzo(
         fotoRimaste - prezzi[indicePacchetto].photo,
         videoRimasti - prezzi[indicePacchetto].video,
-        indicePacchetto
+        indicePacchetto // Manteniamo lo stesso pacchetto (per poterlo riutilizzare)
       );
       migliorPrezzo = Math.min(migliorPrezzo, prezzoConPacchetto);
     }
@@ -48,4 +52,4 @@ const fotoRichieste = 22;
 const videoRichiesti = 2;
 
 const prezzoMigliore = calcolaPrezzoMiglioreCombinato(prezzi, fotoRichieste, videoRichiesti);
-console.log("Il prezzo migliore (combinato) è:", prezzoMigliore); // Output: 46
+console.log("Il prezzo migliore (combinato) è:", prezzoMigliore); // Output corretto: 60

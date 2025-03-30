@@ -6,7 +6,6 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
-import Stack from 'react-bootstrap/Stack';
 import { cartActions } from "../repositories/cart/cart-slice";
 
 
