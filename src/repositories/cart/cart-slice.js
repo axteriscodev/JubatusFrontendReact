@@ -26,6 +26,12 @@ const cartSlice = createSlice({
      */
     updateOrderId(state, action) {},
 
+    updateUserId(state, action) {
+      const newId = action.payload;
+
+      state.userId = newId;
+    },
+
     /**
      * Update dell'id evento
      * 
@@ -63,13 +69,12 @@ const cartSlice = createSlice({
      * @param {*} action
      */
     addItemToCart(state, action) {
-      const newItem = action.payload;
-      //const existingItem = state.items.find((item) => item.id === newItem.id);
+      const product = state.products.find((item) => item.key === action.payload);
 
       state.totalQuantity++;
       state.totalPrice = state.totalPrice + 5;
 
-      state.items.push({ key: newItem });
+      state.items.push({ key: product.key,  fileType: product.fileTypeId});
 
       // al momento non sono previsti acquisti multipli dello stesso prodotto
 

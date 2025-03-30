@@ -37,7 +37,8 @@ export default function ProcessingSelfie() {
 
       if(response.ok) {
         const json = await response.json();
-        dispatch(cartActions.updateProducts(json.data));
+        dispatch(cartActions.updateProducts(json.data.contents));
+        dispatch(cartActions.updateUserId(json.data.userId));
       }
 
       await fetchPriceList(eventId);
