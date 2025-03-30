@@ -20,7 +20,7 @@ export default function ImageShop() {
   //   { id: 8, src: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
   // ];
 
-  const imagesList = useSelector((state) => state.cart.items);
+  const imagesList = useSelector((state) => state.cart.products);
 
   return (
     <div>

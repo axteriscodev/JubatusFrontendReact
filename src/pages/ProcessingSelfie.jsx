@@ -26,7 +26,7 @@ export default function ProcessingSelfie() {
 
       formData.append("eventId", receivedData.eventId);
       formData.append("email", receivedData.email);
-      formData.append("image", receivedData.selfie);
+      formData.append("image", receivedData.image);
 
       //caricamento selfie
       const response = await sendRequest(
@@ -37,7 +37,7 @@ export default function ProcessingSelfie() {
 
       if(response.ok) {
         const json = await response.json();
-        dispatch(cartActions.updateContents(json.data.items));
+        dispatch(cartActions.updateProducts(json.data));
       }
 
       await fetchPriceList(eventId);
