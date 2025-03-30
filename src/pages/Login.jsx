@@ -41,7 +41,7 @@ export default function Login() {
     <>
       <h1>Login</h1>
       <MailForm onDataChange={handleEmail} submitHandle={handleSubmit}/>
-      <Link to="/event/evento-test6">Selfie upload</Link>
+      <Link to="/event/evento-test-mod">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
     </>
   );

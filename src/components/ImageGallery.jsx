@@ -15,11 +15,11 @@ export default function ImageGallery({ images }) {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
-  const handleImageClick = (imageId) => {
-    if (photoItems.some((element) => element.id === imageId)) {
-      dispatch(cartActions.removeItemFromCart({ id: imageId }));
+  const handleImageClick = (imageKey) => {
+    if (photoItems.some((element) => element.key === imageKey)) {
+      dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
-      dispatch(cartActions.addItemToCart({ id: imageId }));
+      dispatch(cartActions.addItemToCart(imageKey));
     }
   };
 
@@ -29,27 +29,27 @@ export default function ImageGallery({ images }) {
   };
 
   const slides = images.map((image) => ({
-    src: image.src,
-    id: image.id,
+    src: image.url,
+    id: image.key,
   }));
 
   return (
     <>
       <div className="row row-cols-3 row-cols-md-4 row-cols-lg-5 gx-0">
         {images.map((image, i) => (
-          <div className="gallery" key={image.id}>
+          <div className="gallery" key={image.key}>
             <div
               onClick={() =>
-                photoItems.length === 0 ? zoom(i) : handleImageClick(image.id)
+                photoItems.length === 0 ? zoom(i) : handleImageClick(image.key)
               }
               className="ratio ratio-1-1"
             >
               <div className={`${styles.foto} ${
-                photoItems.some((el) => el.id === image.id) ? styles.selected : ""
+                photoItems.some((el) => el.key === image.key) ? styles.selected : ""
               }`}></div>
               <div
                 style={{
-                  backgroundImage: `url(${image.src})`,
+                  backgroundImage: `url(${image.url})`,
                   backgroundRepeat: "no-repeat",
                   backgroundAttachment: "scroll",
                   backgroundPosition: "50% 50%",
@@ -72,14 +72,14 @@ export default function ImageGallery({ images }) {
           view: ({ index: newIndex }) => setIndex(newIndex),
         }}
         slides={images.map((image) => ({
-          src: image.src,
-          id: image.id,
+          src: image.url,
+          id: image.key,
         }))}
         plugins={[Thumbnails]}
         render={{
           slideHeader: () => {
             const image = images[index];
-            const isSelected = photoItems.some((el) => el.id === image.id);
+            const isSelected = photoItems.some((el) => el.key === image.key);
       
             return (
               <div
@@ -91,7 +91,7 @@ export default function ImageGallery({ images }) {
                 }}
               >
                 <button
-                  onClick={() => handleImageClick(image.id)}
+                  onClick={() => handleImageClick(image.key)}
                   className="my-button"
                   style={{
                     background: isSelected ? "#dc3545" : "#28a745",

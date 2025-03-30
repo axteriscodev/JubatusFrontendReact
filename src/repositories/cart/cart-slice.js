@@ -4,79 +4,108 @@ import { createSlice } from "@reduxjs/toolkit";
  * Slice per la gestione del carrello
  */
 const cartSlice = createSlice({
-    name: "cart",
-    initialState: {
-        id: 0,
-        userId: 0,
-        eventId: 0,
-        items: [
-        ],
-        totalQuantity: 0,
-        totalPrice: 0,
+  name: "cart",
+  initialState: {
+    id: 0,
+    userId: 0,
+    eventId: 0,
+    products: [],
+    items: [],
+    prices: [],
+    totalQuantity: 0,
+    totalPrice: 0,
+  },
+  reducers: {
+    replaceCart(state, action) {},
+
+    /**
+     * Aggiorna l'id del carrello
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    updateOrderId(state, action) {},
+
+    /**
+     * Update dell'id evento
+     * 
+     * @param {*} state 
+     * @param {*} action 
+     */
+    updateEventId(state, action) {
+        const newId = action.payload;
+
+        state.eventId = newId;
     },
-    reducers: {
-        replaceCart(state, action) {},
 
-        /**
-         * Aggiorna l'id del carrello
-         * 
-         * @param {*} state 
-         * @param {*} action 
-         */
-        updateOrderId (state, action) {},
+    updateProducts(state, action) {
+      const newItems = action.payload;
 
-        /**
-         * Aggiunta di un prodotto al carrello
-         * 
-         * @param {*} state 
-         * @param {*} action 
-         */
-        addItemToCart(state, action) {
-            const newItem = action.payload;
-            //const existingItem = state.items.find((item) => item.id === newItem.id);
+      state.products = [...newItems];
+    },
 
-            state.totalQuantity++;
-            state.totalPrice = state.totalPrice + 5;
+    /**
+     * Metodo per l'aggiornamento del listino prezzi
+     * 
+     * @param {*} state 
+     * @param {*} action 
+     */
+    updatePriceList(state, action) {
+      const newPriceList = action.payload;
 
-            state.items.push({ id: newItem.id, });
+      state.prices = [...newPriceList];
+    },
 
+    /**
+     * Aggiunta di un prodotto al carrello
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    addItemToCart(state, action) {
+      const newItem = action.payload;
+      //const existingItem = state.items.find((item) => item.id === newItem.id);
 
-            // al momento non sono previsti acquisti multipli dello stesso prodotto
+      state.totalQuantity++;
+      state.totalPrice = state.totalPrice + 5;
 
-            // if (!existingItem) {
-            //     state.items.push({ id: newItem.id, price: newItem.price, quantity: 1, totalPrice: newItem.price, name: newItem.title });
-            // } else {
-            //     existingItem.quantity++;
-            //     existingItem.totalPrice = existingItem.totalPrice + newItem.price;
-            // }
-        },
+      state.items.push({ key: newItem });
 
-        /**
-         * Rimozione di un prodotto al carrello 
-         * 
-         * @param {*} state 
-         * @param {*} action 
-         */
-        removeItemFromCart(state, action) {
-            const itemToRemove = action.payload;
-            //const existingItem = state.items.find((item) => item.id === id);
-            
-            state.totalQuantity--;
-            state.totalPrice = state.totalPrice - 5;
+      // al momento non sono previsti acquisti multipli dello stesso prodotto
 
-            state.items = state.items.filter(item => item.id !== itemToRemove.id);
+      // if (!existingItem) {
+      //     state.items.push({ id: newItem.id, price: newItem.price, quantity: 1, totalPrice: newItem.price, name: newItem.title });
+      // } else {
+      //     existingItem.quantity++;
+      //     existingItem.totalPrice = existingItem.totalPrice + newItem.price;
+      // }
+    },
 
-            // al momento non sono previsti acquisti multipli dello stesso prodotto
-            //
-            // if (existingItem.quantity === 1) {
-            //     state.items = state.items.filter(item => item.id !== id);
-            // } else {
-            //     existingItem.quantity--;
-            //     existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
-            // }
-        },
-    }
+    /**
+     * Rimozione di un prodotto al carrello
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    removeItemFromCart(state, action) {
+      const itemToRemove = action.payload;
+      //const existingItem = state.items.find((item) => item.id === id);
 
+      state.totalQuantity--;
+      state.totalPrice = state.totalPrice - 5;
+
+      state.items = state.items.filter((item) => item.key !== itemToRemove);
+
+      // al momento non sono previsti acquisti multipli dello stesso prodotto
+      //
+      // if (existingItem.quantity === 1) {
+      //     state.items = state.items.filter(item => item.id !== id);
+      // } else {
+      //     existingItem.quantity--;
+      //     existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
+      // }
+    },
+  },
 });
 
 export const cartActions = cartSlice.actions;
