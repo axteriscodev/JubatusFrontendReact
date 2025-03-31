@@ -38,11 +38,11 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
       <h1>Login</h1>
-      <MailForm onDataChange={handleEmail} submitHandle={handleSubmit}/>
-      <Link to="/event/evento-test6">Selfie upload</Link>
+      <MailForm onDataChange={handleEmail} submitHandle={handleSubmit} showPrivacy={false}/>
+      <Link to="/event/evento-test-mod">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
-    </>
+    </div>
   );
 }

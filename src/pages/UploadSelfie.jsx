@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useDispatch } from 'react-redux';
+
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
-import Stack from 'react-bootstrap/Stack';
+import { cartActions } from "../repositories/cart/cart-slice";
 
 
 /**
@@ -16,9 +18,13 @@ export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
   const navigate = useNavigate();
   const eventData = useLoaderData();
+  const dispatch = useDispatch();
 
   const [emailFromChild, setEmailFromChild] = useState("");
   const [selfie, setSelfie] = useState();
+
+  // inserisco l'eventId nello store redux
+  dispatch(cartActions.updateEventId(eventData.data.id));
 
   const handleEmailFromChild = (data) => {
     setEmailFromChild(data);
@@ -35,7 +41,7 @@ export default function UploadSelfie() {
     console.log(selfie);
 
     navigate("/processing-selfie", {
-      state: { email: emailFromChild, selfie: selfie },
+      state: { eventId: eventData.data.id, email: emailFromChild, image: selfie },
     });
   }
 

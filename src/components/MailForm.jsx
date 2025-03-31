@@ -1,8 +1,11 @@
 import { useState } from "react";
-import Form from 'react-bootstrap/Form';
+import Form from "react-bootstrap/Form";
 
-
-export default function MailForm({ submitHandle, onDataChange }) {
+export default function MailForm({
+  submitHandle,
+  onDataChange,
+  showPrivacy = true,
+}) {
   const [emailValue, setEmailValue] = useState("");
 
   const handleEmailChange = (event) => {
@@ -21,12 +24,24 @@ export default function MailForm({ submitHandle, onDataChange }) {
         placeholder="Inserisci la tua e-mail"
       />
       <div className="my-xs">
-        <div className="form-check form-switch text-start">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" />
-          <label class="form-check-label" for="flexSwitchCheckDefault">Accettare</label> <a href="#">Termini e Policy</a>
-        </div>
+        {showPrivacy && (
+          <div className="form-check form-switch text-start">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="flexSwitchCheckDefault"
+            />
+            <label class="form-check-label" for="flexSwitchCheckDefault">
+              Accettare
+            </label>{" "}
+            <a href="#">Termini e Policy</a>
+          </div>
+        )}
       </div>
-      <button className="my-button w-100" onClick={submitHandle}>Avanti &gt;</button>
+      <button className="my-button w-100" onClick={submitHandle}>
+        Avanti &gt;
+      </button>
     </div>
   );
 }

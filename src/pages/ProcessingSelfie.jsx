@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { listenSSE, sendRequest } from "../services/api-services";
 import Logo from "../components/Logo";
+import { cartActions } from "../repositories/cart/cart-slice";
 
 /**
  * Pagina di elaborazione selfie
@@ -11,6 +12,7 @@ import Logo from "../components/Logo";
  */
 export default function ProcessingSelfie() {
   const receivedData = useLocation().state;
+  const eventId = useSelector((state) => state.cart.eventId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -22,8 +24,9 @@ export default function ProcessingSelfie() {
       //sezione upload email e selfie
       const formData = new FormData();
 
+      formData.append("eventId", receivedData.eventId);
       formData.append("email", receivedData.email);
-      formData.append("image", receivedData.selfie);
+      formData.append("image", receivedData.image);
 
       //caricamento selfie
       const response = await sendRequest(
@@ -31,6 +34,16 @@ export default function ProcessingSelfie() {
         "POST",
         formData
       );
+
+      if(response.ok) {
+        const json = await response.json();
+        dispatch(cartActions.updateProducts(json.data.contents));
+        dispatch(cartActions.updateUserId(json.data.userId));
+      }
+
+      await fetchPriceList(eventId);
+
+      navigate("/image-shop"); //TODO - da rimuovere
 
       //sezione elaborazione selfie e attesa risposte dal server S3
       listenSSE(
@@ -46,6 +59,16 @@ export default function ProcessingSelfie() {
 
     ProcessSelfie();
   }, []);
+
+
+  async function fetchPriceList(eventId) {
+    const response = await fetch('http://localhost:8080/contents/event-list/' + eventId);
+
+    if(response.ok) {
+      const json = await response.json();
+      dispatch(cartActions.updatePriceList(json.data.items));
+    }
+  }
 
   return (
     <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
