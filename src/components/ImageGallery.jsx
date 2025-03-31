@@ -28,6 +28,11 @@ export default function ImageGallery({ images, select = true }) {
     setOpen(true);
   };
 
+  // const slides = images.map((image) => ({
+  //   src: image.url,
+  //   id: image.key,
+  // }));
+
   return (
     <>
       <div className="row row-cols-3 row-cols-md-4 row-cols-lg-5 gx-0">
