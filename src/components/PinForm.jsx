@@ -1,25 +1,18 @@
-import { useState } from "react";
-import Form from 'react-bootstrap/Form';
+import { useState, useRef } from "react";
+import Form from "react-bootstrap/Form";
 
-export default function PinForm({ submitHandle, onDataChange }) {
-    const [pinValue, setPinValue] = useState("");
+export default function PinForm({ submitHandle }) {
+  const pin = useRef();
 
-    const handlePinChange = (event) => {
-      const newValue = event.target.value;
-      setPinValue(newValue);
-      onDataChange(newValue);
-    };
-  
-    return (
-      <>
-        <h3>Inserisci il PIN ricevuto via mail</h3>
-        <Form.Control
-          type="text"
-          value={pinValue}
-          onChange={handlePinChange}
-          name="pin"
-        />
-        <button onClick={submitHandle}>Avanti</button>
-      </>
-    );
+  return (
+    <>
+      <h3>Inserisci il PIN ricevuto via mail</h3>
+      <Form.Control ref={pin} type="text" name="pin" />
+      <button
+        onClick={(event) => submitHandle(event, { pin: pin.current.value })}
+      >
+        Avanti
+      </button>
+    </>
+  );
 }
