@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Form from "react-bootstrap/Form";
 
 export default function MailForm({
@@ -6,27 +6,19 @@ export default function MailForm({
   showPrivacy = true,
   onErrors,
 }) {
-  const [emailValue, setEmailValue] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-
-  const handleEmailChange = (event) => {
-    const newValue = event.target.value;
-    setEmailValue(newValue);
-    //onEmailDataChange(newValue);
-  };
+  const email = useRef();
 
   const handlePrivacyChange = (event) => {
     const newValue = event.target.checked;
     setIsChecked(newValue);
-    //onPrivacyDataChange(newValue);
   };
 
   return (
     <div>
       <Form.Control
+        ref={email}
         type="email"
-        value={emailValue}
-        onChange={handleEmailChange}
         name="email"
         placeholder="Inserisci la tua e-mail"
       />
@@ -56,7 +48,7 @@ export default function MailForm({
       </div>
       <button
         className="my-button w-100"
-        onClick={(event) => submitHandle(event, { email: emailValue, privacy: isChecked })}
+        onClick={(event) => submitHandle(event, { email: email.current.value, privacy: isChecked })}
       >
         Avanti &gt;
       </button>
