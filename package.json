@@ -19,6 +19,7 @@
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.0",
+    "validator": "^13.15.0",
     "yet-another-react-lightbox": "^3.21.8"
   },
   "devDependencies": {

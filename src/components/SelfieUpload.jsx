@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 
 import styles from "./SelfieUpload.module.css";
 
-export default function SelfieUpload({ onDataChange }) {
+export default function SelfieUpload({ onDataChange, onError = false }) {
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
 
@@ -33,6 +33,7 @@ export default function SelfieUpload({ onDataChange }) {
         onClick={handleImageClick}
         style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: "cover" } : {}}
       ></div>
+      {onError && <p className="on-error">Inserisci un tuo selfie</p>}
       <input
         type="file"
         ref={fileInputRef}

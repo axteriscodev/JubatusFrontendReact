@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { sendRequest } from "../services/api-services";
 import { userActions } from "../repositories/user/user-slice";
 import MailForm from "../components/MailForm";
+import FormErrors from "../models/form-errors";
 
 /**
  * Pagina di login
@@ -14,6 +15,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [emailValue, setEmailValue] = useState("");
+  const [formErrors, setFormErrors] = useState(new FormErrors());
 
 
   const handleEmail = (data) => {
@@ -40,7 +42,7 @@ export default function Login() {
   return (
     <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
       <h1>Login</h1>
-      <MailForm onDataChange={handleEmail} submitHandle={handleSubmit} showPrivacy={false}/>
+      <MailForm onDataChange={handleEmail} submitHandle={handleSubmit} showPrivacy={false} onErrors={formErrors}/>
       <Link to="/event/evento-test-mod">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
     </div>
