@@ -29,7 +29,7 @@ export default function SelfieUpload({ onDataChange }) {
       </h3>
 
       <div
-        className={styles.avatar}
+        className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
         style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: "cover" }}
       ></div>

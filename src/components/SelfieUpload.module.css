@@ -5,19 +5,21 @@
     border-radius: 50%;
     border-color: var(--grey);
     margin: var(--val-sm-calc) auto;
-    cursor: pointer;
     position: relative;
     background: rgba(255, 255, 255, .2);
 }
-.avatar::before,
-.avatar::after {
+.avatar.add{
+  cursor: pointer;
+}
+.avatar.add::before,
+.avatar.add::after {
   content: "";
   position: absolute;
   background-color: var(--grey);
 }
 
 /* Linea orizzontale */
-.avatar::before {
+.avatar.add::before {
   top: 50%;
   left: 50%;
   width: 50px;
@@ -26,7 +28,7 @@
 }
 
 /* Linea verticale */
-.avatar::after {
+.avatar.add::after {
   left: 50%;
   top: 50%;
   width: 8px;

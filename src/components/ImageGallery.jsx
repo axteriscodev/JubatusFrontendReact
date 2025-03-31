@@ -9,7 +9,7 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 
 import styles from "./ImageGallery.module.css";
 
-export default function ImageGallery({ images }) {
+export default function ImageGallery({ images, select = true }) {
   const dispatch = useDispatch();
   const photoItems = useSelector((state) => state.cart.items);
   const [open, setOpen] = useState(false);
@@ -27,11 +27,6 @@ export default function ImageGallery({ images }) {
     setIndex(i);
     setOpen(true);
   };
-
-  const slides = images.map((image) => ({
-    src: image.url,
-    id: image.key,
-  }));
 
   return (
     <>
@@ -78,6 +73,8 @@ export default function ImageGallery({ images }) {
         plugins={[Thumbnails]}
         render={{
           slideHeader: () => {
+            if (!select) return null;
+
             const image = images[index];
             const isSelected = photoItems.some((el) => el.key === image.key);
       
