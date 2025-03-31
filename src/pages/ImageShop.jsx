@@ -2,6 +2,8 @@ import ImageGallery from "../components/ImageGallery";
 import Logo from "../components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useSelector } from "react-redux";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
 
 /**
  * Pagina di acquisto immagini
@@ -22,14 +24,34 @@ export default function ImageShop() {
 
   const imagesList = useSelector((state) => state.cart.products);
 
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        <div className="text-center text-blue fw-bold">
+          1 Foto - 9€
+          <hr />
+          3 Foto - 25€
+          <hr />
+          <strong>Tutte</strong> le Foto - 25€
+          <hr />
+          Il <strong>tuo</strong> video personalizzato - 25€
+          <hr />
+          Il <strong>tuo</strong> video e 10 foto - 35€
+        </div>
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
     <div>
       <div className="d-flex justify-content-between">
         <div><Logo size="logo-xs" /></div>
-        <div><img src="/images/icon-info.png" className="logo-xs"/></div>
+        <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+          <img src="/images/icon-info.png" className="logo-xs pointer"/>
+        </OverlayTrigger>
       </div>
       <div className="my-md text-start">
-        <h2>Ci siamo ATLETA!</h2>
+        <h2>Ci siamo <strong>atleta!</strong></h2>
         <p>Ecco le tue foto</p>
       </div>
       <ImageGallery images={imagesList} />
