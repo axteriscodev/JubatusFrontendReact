@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
-
 
 /**
  * Pagina di caricamento del selfie e inserimento della email
@@ -41,7 +40,11 @@ export default function UploadSelfie() {
     console.log(selfie);
 
     navigate("/processing-selfie", {
-      state: { eventId: eventData.data.id, email: emailFromChild, image: selfie },
+      state: {
+        eventId: eventData.data.id,
+        email: emailFromChild,
+        image: selfie,
+      },
     });
   }
 
@@ -59,22 +62,28 @@ export default function UploadSelfie() {
 
 /**
  * Loader per caricare i dati dell'evento da visualizzare nella pagina
- * 
- * @param {*} request 
- * @param {String} params - i parametri passati all'url 
- * @returns 
+ *
+ * @param {*} request
+ * @param {String} params - i parametri passati all'url
+ * @returns
  */
 export async function loader({ request, params }) {
-
   const eventName = params.eventSlug;
 
-  const response = await fetch(`http://localhost:8080/contents/event-data/${eventName}`);
+  const response = await fetch(
+    `http://localhost:8080/contents/event-data/${eventName}`
+  );
 
   if (!response.ok) {
-    return Response(JSON.stringify(
-      { message: "Errore nel caricamento dell'evento selezionato" },
-      { status: 404 }
-    ));
+    let message;
+
+    if (response.status === 204) {
+      message = "Nessun contenuto presente";
+    }
+
+    throw Response(
+      JSON.stringify({ message: message }, { status: response.status })
+    );
   } else {
     return response;
   }

@@ -15,6 +15,7 @@ import Checkout from "./pages/Checkout";
 import CheckoutOutcome from "./pages/CheckoutOutcome";
 import CreateEvent from "./pages/CreateEvent";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
+import ErrorPage from "./pages/ErrorPage";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -24,12 +25,13 @@ const router = createBrowserRouter([
     path: "/event/:eventSlug",
     element: <UploadSelfie />,
     loader: updateSelfieLoader,
+    errorElement: <ErrorPage />
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
-  { path: "/image-shop", element: <ImageShop /> },
+  { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
   { path: "/checkout", element: <Checkout /> },
-  { path: "/checkout-outcome", element: <CheckoutOutcome /> },
-  { path: "/purchased", element: <Purchased /> },
+  { path: "/checkout-outcome", element: <CheckoutOutcome />, errorElement: <ErrorPage /> },
+  { path: "/purchased", element: <Purchased />, errorElement: <ErrorPage /> },
   { path: "/processing-photos", element: <ProcessingPhotos />},
   { path: "/admin", element: <AdminPanel /> },
   { path: "/admin/create-event", element: <CreateEvent />}
