@@ -30,7 +30,7 @@ export default function ProcessingSelfie() {
 
       //caricamento selfie
       const response = await sendRequest(
-        "http://localhost:8080/contents/fetch",
+        import.meta.env.VITE_API_URL + "/contents/fetch",
         "POST",
         formData
       );
@@ -47,7 +47,7 @@ export default function ProcessingSelfie() {
 
       //sezione elaborazione selfie e attesa risposte dal server S3
       listenSSE(
-        "http://localhost:8080/contents/test-sse",
+        import.meta.env.VITE_API_URL + "/contents/test-sse",
         () => {
           navigate("/image-shop");
         },
@@ -62,7 +62,7 @@ export default function ProcessingSelfie() {
 
 
   async function fetchPriceList(eventId) {
-    const response = await fetch('http://localhost:8080/contents/event-list/' + eventId);
+    const response = await fetch(import.meta.env.VITE_API_URL + '/contents/event-list/' + eventId);
 
     if(response.ok) {
       const json = await response.json();

@@ -30,7 +30,7 @@ export default function Login() {
     const formData = new FormData();
     formData.append('email', emailValue);
     
-    const response = await sendRequest('http://localhost:8080/auth/signin', 'POST', formData);
+    const response = await sendRequest(import.meta.env.VITE_API_URL + '/auth/signin', 'POST', formData);
 
     if(response.ok) {
       dispatch(userActions.updateEmail(emailValue));

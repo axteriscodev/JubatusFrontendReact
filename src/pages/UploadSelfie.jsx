@@ -90,7 +90,7 @@ export async function loader({ request, params }) {
   const eventName = params.eventSlug;
 
   const response = await fetch(
-    `http://localhost:8080/contents/event-data/${eventName}`
+    import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}`
   );
 
   if (!response.ok) {

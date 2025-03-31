@@ -17,7 +17,7 @@ export default function CheckoutOutcome() {
     const sessionId = urlParams.get("session_id");
 
     fetch(
-      `http://localhost:8080/shop/session-status?session_id=${sessionId}&order_id=${orderId}`
+      import.meta.env.VITE_API_URL + `/shop/session-status?session_id=${sessionId}&order_id=${orderId}`
     )
       .then((res) => res.json())
       .then((data) => {

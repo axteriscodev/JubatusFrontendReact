@@ -1,12 +1,11 @@
 import { useState } from "react";
 import PinForm from "../components/PinForm";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { sendRequest } from "../services/api-services";
 import { setAuthToken } from "../utils/auth";
 
 export default function PinVerification() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [pinValue, setPinValue] = useState("");
   const emailValue = useSelector((state) => state.user.email);
@@ -25,8 +24,8 @@ export default function PinVerification() {
     formData.append('token', pinValue);
 
     const response = await sendRequest(
-      "http://localhost:8080/auth/validate",
-      "POST",
+      import.meta.env.VITE_API_URL + '/auth/validate',
+      'POST',
       formData
     );
 
