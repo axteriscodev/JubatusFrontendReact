@@ -3,10 +3,8 @@ import Form from "react-bootstrap/Form";
 
 export default function MailForm({
   submitHandle,
-  onEmailDataChange,
-  onPrivacyDataChange,
   showPrivacy = true,
-  onErrors
+  onErrors,
 }) {
   const [emailValue, setEmailValue] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -14,13 +12,13 @@ export default function MailForm({
   const handleEmailChange = (event) => {
     const newValue = event.target.value;
     setEmailValue(newValue);
-    onEmailDataChange(newValue);
+    //onEmailDataChange(newValue);
   };
 
   const handlePrivacyChange = (event) => {
     const newValue = event.target.checked;
     setIsChecked(newValue);
-    onPrivacyDataChange(newValue);
+    //onPrivacyDataChange(newValue);
   };
 
   return (
@@ -32,7 +30,9 @@ export default function MailForm({
         name="email"
         placeholder="Inserisci la tua e-mail"
       />
-      {onErrors.emailError && <p className="on-error">Inserisci una mail valida</p>}
+      {onErrors.emailError && (
+        <p className="on-error">Inserisci una mail valida</p>
+      )}
       <div className="my-xs">
         {showPrivacy && (
           <div className="form-check form-switch text-start">
@@ -50,9 +50,14 @@ export default function MailForm({
             <a href="#">Termini e Policy</a>
           </div>
         )}
-        {onErrors.privacyError && <p className="on-error">Devi accettare la privacy policy</p>}
+        {onErrors.privacyError && (
+          <p className="on-error">Devi accettare la privacy policy</p>
+        )}
       </div>
-      <button className="my-button w-100" onClick={submitHandle}>
+      <button
+        className="my-button w-100"
+        onClick={(event) => submitHandle(event, { email: emailValue, privacy: isChecked })}
+      >
         Avanti &gt;
       </button>
     </div>
