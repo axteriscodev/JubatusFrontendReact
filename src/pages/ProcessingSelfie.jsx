@@ -35,36 +35,39 @@ export default function ProcessingSelfie() {
         formData
       );
 
-      if(response.ok) {
+      //impostare l'id ricerca
+
+      if (response.ok) {
         const json = await response.json();
-        dispatch(cartActions.updateProducts(json.data.contents));
-        dispatch(cartActions.updateUserId(json.data.userId));
+
+        await fetchPriceList(eventId);
+
+        //sezione elaborazione selfie e attesa risposte dal server S3
+        listenSSE(
+          import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+          async (data) => {
+            //const json = await response.json();
+            dispatch(cartActions.updateProducts(data.contents));
+            dispatch(cartActions.updateUserId(data.userId));
+
+            navigate("/image-shop");
+          },
+          () => {
+            console.log("Errore!");
+          }
+        );
       }
-
-      await fetchPriceList(eventId);
-
-      navigate("/image-shop"); //TODO - da rimuovere
-
-      //sezione elaborazione selfie e attesa risposte dal server S3
-      listenSSE(
-        import.meta.env.VITE_API_URL + "/contents/test-sse",
-        () => {
-          navigate("/image-shop");
-        },
-        () => {
-          console.log("Errore!");
-        }
-      );
     }
 
     ProcessSelfie();
   }, []);
 
-
   async function fetchPriceList(eventId) {
-    const response = await fetch(import.meta.env.VITE_API_URL + '/contents/event-list/' + eventId);
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
+    );
 
-    if(response.ok) {
+    if (response.ok) {
       const json = await response.json();
       dispatch(cartActions.updatePriceList(json.data.items));
     }
@@ -73,12 +76,23 @@ export default function ProcessingSelfie() {
   return (
     <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
       <Logo size="logo-sm" css="mb-sm" />
-      <h2>Ciao <span>atleta!</span></h2>
+      <h2>
+        Ciao <span>atleta!</span>
+      </h2>
       <h2>aspetta qualche secondo...</h2>
-      <h2>stiamo trovando le <span>tue</span> foto</h2>
+      <h2>
+        stiamo trovando le <span>tue</span> foto
+      </h2>
       <h2>🌊 📸 🏄🏻</h2>
-      <div className="progress mt-md" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-          <div className="progress-bar" style={{width: '25%'}}></div>
+      <div
+        className="progress mt-md"
+        role="progressbar"
+        aria-label="Basic example"
+        aria-valuenow="25"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div className="progress-bar" style={{ width: "25%" }}></div>
       </div>
       Caricamento
     </div>

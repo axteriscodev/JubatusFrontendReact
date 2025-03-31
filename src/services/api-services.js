@@ -25,7 +25,7 @@ export function listenSSE(api, onmessage, onerror) {
   sse.onmessage = (e) => {
     console.log(e.data);
     sse.close();
-    onmessage(e);
+    onmessage(e.data);
   };
   sse.onerror = (e) => {
     console.log("Errore!");
