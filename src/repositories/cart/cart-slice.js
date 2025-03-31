@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { calculatePrice } from "../../utils/best-price-calculator";
 
 /**
  * Slice per la gestione del carrello
@@ -37,14 +38,14 @@ const cartSlice = createSlice({
 
     /**
      * Update dell'id evento
-     * 
-     * @param {*} state 
-     * @param {*} action 
+     *
+     * @param {*} state
+     * @param {*} action
      */
     updateEventId(state, action) {
-        const newId = action.payload;
+      const newId = action.payload;
 
-        state.eventId = newId;
+      state.eventId = newId;
     },
 
     updateProducts(state, action) {
@@ -55,9 +56,9 @@ const cartSlice = createSlice({
 
     /**
      * Metodo per l'aggiornamento del listino prezzi
-     * 
-     * @param {*} state 
-     * @param {*} action 
+     *
+     * @param {*} state
+     * @param {*} action
      */
     updatePriceList(state, action) {
       const newPriceList = action.payload;
@@ -72,12 +73,22 @@ const cartSlice = createSlice({
      * @param {*} action
      */
     addItemToCart(state, action) {
-      const product = state.products.find((item) => item.key === action.payload);
+      const product = state.products.find(
+        (item) => item.key === action.payload
+      );
 
       state.totalQuantity++;
-      state.totalPrice = state.totalPrice + 5;
 
-      state.items.push({ key: product.key,  fileType: product.fileTypeId});
+      //state.totalPrice = state.totalPrice + 5;
+
+      state.items.push({ key: product.key, fileType: product.fileTypeId });
+
+      state.totalPrice = state.calculatePrice(
+        state.products.filter((item) => item.fileTypeId === 1).length,
+        prices,
+        state.items.filter((item) => item.fileTypeId === 1).length,
+        state.items.filter((item) => item.fileTypeId === 2).length
+      );
 
       // al momento non sono previsti acquisti multipli dello stesso prodotto
 
@@ -100,9 +111,17 @@ const cartSlice = createSlice({
       //const existingItem = state.items.find((item) => item.id === id);
 
       state.totalQuantity--;
-      state.totalPrice = state.totalPrice - 5;
+      //state.totalPrice = state.totalPrice - 5;
 
       state.items = state.items.filter((item) => item.key !== itemToRemove);
+
+      state.totalPrice = state.calculatePrice(
+        state.products.filter((item) => item.fileTypeId === 1).length,
+        prices,
+        state.items.filter((item) => item.fileTypeId === 1).length,
+        state.items.filter((item) => item.fileTypeId === 2).length
+      );
+
 
       // al momento non sono previsti acquisti multipli dello stesso prodotto
       //
@@ -117,7 +136,6 @@ const cartSlice = createSlice({
     setPurchasedItems(state, action) {
       state.purchased = [...action.payload];
     },
-
   },
 });
 
