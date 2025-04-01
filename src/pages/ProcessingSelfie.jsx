@@ -45,12 +45,13 @@ export default function ProcessingSelfie() {
         await fetchPriceList(eventId);
 
         //sezione elaborazione selfie e attesa risposte dal server S3
+        // import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
         listenSSE(
           import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
-          async (data) => {
-            //const json = await response.json();
-            dispatch(cartActions.updateProducts(data.contents));
-            dispatch(cartActions.updateUserId(data.userId));
+          (data) => {
+            const jsonData = JSON.parse(data);
+            dispatch(cartActions.updateProducts(jsonData.contents));
+            dispatch(cartActions.updateUserId(jsonData.userId));
 
             navigate("/image-shop");
           },
