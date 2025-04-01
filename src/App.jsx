@@ -20,7 +20,8 @@ import ErrorPage from "./pages/ErrorPage";
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   { path: "/pin-verification", element: <PinVerification /> },
-  { path: "/personal", loader: checkAuthLoader, element: <Personal /> },
+  /*{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },*/
+  { path: "/personal", element: <Personal /> },
   {
     path: "/event/:eventSlug",
     element: <UploadSelfie />,

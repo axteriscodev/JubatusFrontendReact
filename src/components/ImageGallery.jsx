@@ -28,11 +28,6 @@ export default function ImageGallery({ images, select = true }) {
     setOpen(true);
   };
 
-  // const slides = images.map((image) => ({
-  //   src: image.url,
-  //   id: image.key,
-  // }));
-
   return (
     <>
       <div className="row row-cols-3 row-cols-md-4 row-cols-lg-5 gx-0">
@@ -64,7 +59,7 @@ export default function ImageGallery({ images, select = true }) {
 
       {open && (
         <Lightbox
-        styles={{ container: { backgroundColor: "rgba(0, 0, 0, .8)" } }}
+        styles={{ container: { backgroundColor: "rgba(0, 0, 0, .95)" } }}
         open={open}
         close={() => setOpen(false)}
         index={index}
@@ -94,12 +89,9 @@ export default function ImageGallery({ images, select = true }) {
               >
                 <button
                   onClick={() => handleImageClick(image.key)}
-                  className="my-button"
-                  style={{
-                    background: isSelected ? "#dc3545" : "#28a745",
-                  }}
+                  className={`my-button ${isSelected ? "remove" : "add"}`}
                 >
-                  {isSelected ? "Rimuovi" : "Seleziona"}
+                  {isSelected ? "Rimuovi" : "Aggiungi al carrello"}
                 </button>
               </div>
             );

@@ -65,7 +65,7 @@ export default function UploadSelfie() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+    <div className="form form-sm">
       <Logo css="mb-sm" />
       <SelfieUpload
         onDataChange={handleSelfieFromChild}

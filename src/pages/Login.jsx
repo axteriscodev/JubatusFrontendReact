@@ -47,8 +47,8 @@ export default function Login() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <h1>Login</h1>
+    <div className="form form-sm">
+      <h1 className="mb-md">Accedi ai tuoi contenuti!</h1>
       <MailForm
         submitHandle={handleSubmit}
         showPrivacy={false}

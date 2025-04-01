@@ -6,7 +6,7 @@ export default function ErrorPage() {
 
   return (
     <>
-      <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+      <div className="form form-sm">
         <h3>Qualcosa non ha funzionato</h3>
         <p>
           <strong>Errore {error.status} - </strong>

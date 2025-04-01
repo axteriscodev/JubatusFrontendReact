@@ -2,7 +2,7 @@ import Logo from "../components/Logo";
 
 export default function ProcessingPhotos() {
     return(
-        <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+        <div className="form form-sm">
             <Logo size="logo-sm" css="mb-sm" />
             <h2>Ci siamo <span>campione</span> !</h2>
             <h4 className="mt-sm mb-md">Stiamo elaborando<br />
