@@ -86,7 +86,7 @@ export default function UploadSelfie() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg-color">
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
         css="mb-sm"

@@ -93,11 +93,11 @@ export default function ProcessingSelfie() {
         css="mb-sm"
       />
       <h2>
-        Ciao <span className="my-font-color">atleta!</span>
+        Ciao <span>atleta!</span>
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
-        stiamo trovando le <span className="my-font-color">tue</span> foto
+        stiamo trovando le <span>tue</span> foto
       </h2>
       <h2>🌊 📸 🏄🏻</h2>
       <div

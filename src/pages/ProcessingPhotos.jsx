@@ -24,11 +24,11 @@ export default function ProcessingPhotos() {
         css="mb-sm"
       />
       <h2>
-        Ci siamo <span className="my-font-color">campione</span> !
+        Ci siamo <span>campione</span> !
       </h2>
       <h4 className="mt-sm mb-md">
         Stiamo elaborando
-        <br />i tuoi contenuti in <span className="my-font-color">
+        <br />i tuoi contenuti in <span>
           MASSIMA
         </span>{" "}
         risoluzione

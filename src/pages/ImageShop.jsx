@@ -24,6 +24,7 @@ export default function ImageShop() {
   // ];
 
   const imagesList = useSelector((state) => state.cart.products);
+  const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
 
   useEffect(() => {
@@ -41,7 +42,29 @@ export default function ImageShop() {
     <Popover id="popover-basic">
       <Popover.Body>
         <div className="text-center text-blue fw-bold">
-          1 Foto - 9€
+          {pricesList.map((pricePack, i) => (
+            <>
+            {pricePack.quantityFoto === -1 && pricePack.quantityVideo === 0 && (
+                <span>Tutte le foto - {pricePack.price}€</span>
+              )}
+
+              {pricePack.quantityFoto > 0 && pricePack.quantityVideo === 0 && (
+                <span>{pricePack.quantityFoto} Foto - {pricePack.price}€</span>
+              )}
+
+              {pricePack.quantityFoto === 0 && pricePack.quantityVideo > 0 && (
+                <span>Il tuo video - {pricePack.price}€</span>
+              )}
+
+              {pricePack.quantityFoto > 0 && pricePack.quantityVideo > 0 && (
+                <span>Il tuo video e {pricePack.quantityFoto} foto - {pricePack.price}€</span>
+              )}
+            
+            {i < pricesList.length - 1 && <hr />}
+            </>
+          ))}
+
+          {/* 1 Foto - 9€
           <hr />
           3 Foto - 25€
           <hr />
@@ -49,14 +72,16 @@ export default function ImageShop() {
           <hr />
           Il <strong>tuo</strong> video personalizzato - 25€
           <hr />
-          Il <strong>tuo</strong> video e 10 foto - 35€
+          Il <strong>tuo</strong> video e 10 foto - 35€ */}
         </div>
       </Popover.Body>
     </Popover>
   );
 
+  
+
   return (
-    <div className="my-bg-color">
+    <div>
       <div className="d-flex justify-content-between">
         <div>
           <Logo
