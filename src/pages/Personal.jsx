@@ -1,3 +1,6 @@
+import Logo from "../components/Logo";
+import Carousel from 'react-bootstrap/Carousel';
+import ImageGallery from "../components/ImageGallery";
 
 /**
  * Pagina personale utente
@@ -7,15 +10,31 @@
 export default function Personal() {
 
     const imageList = [
-        { id: 1, src: "/tmp/istockphoto-500645381-1024x1024.jpg" },
-        { id: 2, src: "/tmp/istockphoto-535967907-1024x1024.jpg" },
-        { id: 3, src: "/tmp/istockphoto-636828120-1024x1024.jpg" },
-        { id: 4, src: "/tmp/istockphoto-852157310-1024x1024.jpg" },
-        { id: 5, src: "/tmp/istockphoto-936552298-1024x1024.jpg" },
-        { id: 6, src: "/tmp/istockphoto-961494108-1024x1024.jpg" },
-        { id: 7, src: "/tmp/istockphoto-139877917-1024x1024.jpg" },
-        { id: 8, src: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
+        { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg" },
+        { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg" },
+        { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg" },
+        { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg" },
+        { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg" },
+        { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg" },
+        { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg" },
+        { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
       ];
 
-    return (<></>);
+    return (
+    <>
+      <div className="text-start"><Logo size="logo-xs" /></div>
+      <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
+
+      <Carousel>
+      {imageList.map((image, i) => (
+        <Carousel.Item>
+          <img src={image.url} className="d-block w-100" alt="..."/>
+        </Carousel.Item>
+        ))}
+      </Carousel>
+      <div className="mt-md">
+        <ImageGallery images={imageList} select={false} />
+      </div>
+    </>
+    );
 }

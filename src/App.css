@@ -14,6 +14,8 @@
   --blue: #03084A;
   --grey: #A7A7A7;
   --acid-green: #00FE37;
+  --add: #198754;
+  --remove: #dc3545;
   --font: "Roboto", sans-serif;
 }
 #root {
@@ -68,6 +70,14 @@ a.no-hover:hover{color:unset;text-decoration:none;}
   background-color:var(--bg-color, #000000);
   color:var(--defaul);
   cursor:pointer;
+}
+.my-button.add{
+  color: var(--add);
+  border-color: var(--add);
+}
+.my-button.remove{
+  color: var(--remove);
+  border-color: var(--remove);
 }
 
 /*BACKGROUND COLOR*/
@@ -154,6 +164,12 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 .read-the-docs {
   color: #888;
 }
+.form{
+  min-height: calc(100vh - (var(--val-sm) * 2));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 /*MARGINI-PADDING*/
 .m-xl{margin:var(--val-xl);}.mr-xl{margin-right:var(--val-xl);}.ml-xl{margin-left:var(--val-xl);}.mt-xl{margin-top:var(--val-xl);}.mb-xl{margin-bottom:var(--val-xl);}.mx-xl{margin-right:var(--val-xl);margin-left:var(--val-xl);}.my-xl{margin-top:var(--val-xl);margin-bottom:var(--val-xl);}
@@ -179,7 +195,10 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
   .p-sm{padding:var(--val-sm-calc);}.pr-sm{padding-right:var(--val-sm-calc);}.pl-sm{padding-left:var(--val-sm-calc);}.pt-sm{padding-top:var(--val-sm-calc);}.pb-sm{padding-bottom:var(--val-sm-calc);}.px-sm{padding-right:var(--val-sm-calc);padding-left:var(--val-sm-calc);}.py-sm{padding-top:var(--val-sm-calc);padding-bottom:var(--val-sm-calc);}
   .m-xs{margin:var(--val-xs-calc);}.mr-xs{margin-right:var(--val-xs-calc);}.ml-xs{margin-left:var(--val-xs-calc);}.mt-xs{margin-top:var(--val-xs-calc);}.mb-xs{margin-bottom:var(--val-xs-calc);}.mx-xs{margin-right:var(--val-xs-calc);margin-left:var(--val-xs-calc);}.my-xs{margin-top:var(--val-xs-calc);margin-bottom:var(--val-xs-calc);}
   .p-xs{padding:var(--val-xs-calc);}.pr-xs{padding-right:var(--val-xs-calc);}.pl-xs{padding-left:var(--val-xs-calc);}.pt-xs{padding-top:var(--val-xs-calc);}.pb-xs{padding-bottom:var(--val-xs-calc);}.px-xs{padding-right:var(--val-xs-calc);padding-left:var(--val-xs-calc);}.py-xs{padding-top:var(--val-xs-calc);padding-bottom:var(--val-xs-calc);}
-
+  .form{
+    min-height: calc(100vh - (var(--val-sm-calc) * 2));
+  }
+  
 
   .text-100{font-size:calc(30px + 5vw) !important;}
   .text-90{font-size:calc(30px + 4.285714vw) !important;}
@@ -233,4 +252,7 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 .on-error{
   color: red;
 }
-
+.form-sm{
+  max-width: 450px;
+  margin:0 auto;
+}

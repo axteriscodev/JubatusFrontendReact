@@ -51,10 +51,6 @@ export default function Purchased() {
     {imageList.map((image, i) => (
       <Carousel.Item>
         <img src={image.url} className="d-block w-100" alt="..."/>
-        <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-        </Carousel.Caption>
       </Carousel.Item>
       ))}
     </Carousel>

@@ -15,7 +15,8 @@ export default function MailForm({
   };
 
   return (
-    <div>
+    <div className="text-start">
+      <Form.Label>E-mail</Form.Label>
       <Form.Control
         ref={email}
         type="email"
@@ -47,7 +48,7 @@ export default function MailForm({
         )}
       </div>
       <button
-        className="my-button w-100"
+        className="my-button w-100 mt-sm"
         onClick={(event) => submitHandle(event, { email: email.current.value, privacy: isChecked })}
       >
         Avanti &gt;
