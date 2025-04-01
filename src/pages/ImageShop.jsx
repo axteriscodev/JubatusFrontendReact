@@ -44,23 +44,8 @@ export default function ImageShop() {
         <div className="text-center text-blue fw-bold">
           {pricesList.map((pricePack, i) => (
             <>
-            {pricePack.quantityFoto === -1 && pricePack.quantityVideo === 0 && (
-                <span>Tutte le foto - {pricePack.price}€</span>
-              )}
-
-              {pricePack.quantityFoto > 0 && pricePack.quantityVideo === 0 && (
-                <span>{pricePack.quantityFoto} Foto - {pricePack.price}€</span>
-              )}
-
-              {pricePack.quantityFoto === 0 && pricePack.quantityVideo > 0 && (
-                <span>Il tuo video - {pricePack.price}€</span>
-              )}
-
-              {pricePack.quantityFoto > 0 && pricePack.quantityVideo > 0 && (
-                <span>Il tuo video e {pricePack.quantityFoto} foto - {pricePack.price}€</span>
-              )}
-            
-            {i < pricesList.length - 1 && <hr />}
+              {getPriceListEntry(pricePack)}
+              {i < pricesList.length - 1 && <hr />}
             </>
           ))}
 
@@ -77,8 +62,6 @@ export default function ImageShop() {
       </Popover.Body>
     </Popover>
   );
-
-  
 
   return (
     <div>
@@ -103,4 +86,20 @@ export default function ImageShop() {
       <TotalShopButton />
     </div>
   );
+}
+
+function getPriceListEntry(pricePack) {
+  let description = '';
+
+  if (pricePack.quantityFoto === -1) {
+    description = `Tutte le foto - ${pricePack.price}€`;
+  } else if (pricePack.quantityFoto > 0 && pricePack.quantityVideo === 0) {
+    description = `${pricePack.quantityFoto} Foto - ${pricePack.price}€`;
+  } else if (pricePack.quantityFoto === 0 && pricePack.quantityVideo > 0) {
+    description = `Il tuo video - ${pricePack.price}€`;
+  } else if (pricePack.quantityFoto > 0 && pricePack.quantityVideo > 0) {
+    description = `Il tuo video e ${pricePack.quantityFoto} foto - ${pricePack.price}€`;
+  }
+
+  return description;
 }
