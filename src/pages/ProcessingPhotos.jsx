@@ -17,7 +17,7 @@ export default function ProcessingPhotos() {
   }, []);
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg-color">
+    <div className="form-sm">
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
