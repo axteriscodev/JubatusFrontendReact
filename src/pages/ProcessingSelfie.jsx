@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { listenSSE, sendRequest } from "../services/api-services";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { setUiPreset } from "../utils/graphics";
 
 /**
  * Pagina di elaborazione selfie
@@ -61,17 +62,7 @@ export default function ProcessingSelfie() {
     }
 
     ProcessSelfie();
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--bg-color",
-      eventPreset.backgroundColor
-    );
-    document.documentElement.style.setProperty(
-      "--font-color",
-      eventPreset.fontColor
-    );
+    setUiPreset(eventPreset);
   }, []);
 
   async function fetchPriceList(eventId) {

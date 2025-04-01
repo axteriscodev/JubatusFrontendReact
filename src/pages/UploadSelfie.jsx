@@ -10,6 +10,7 @@ import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
+import { setUiPreset } from "../utils/graphics";
 
 /**
  * Pagina di caricamento del selfie e inserimento della email
@@ -29,24 +30,10 @@ export default function UploadSelfie() {
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
   // inserisco il preset per l'evento nello store redux
-  dispatch(
-    competitionsActions.setCompetitionPreset({
-      backgroundColor: eventData.data.backgroundColor,
-      fontColor: eventData.data.fontColor,
-      logo: eventData.data.logo,
-    })
-  );
+  dispatch(competitionsActions.setCompetitionPreset(eventData.data));
 
   useEffect(() => {
-    console.log("sto cambiando colore al bg");
-    document.documentElement.style.setProperty(
-      "--bg-color",
-      eventData.data.backgroundColor
-    );
-    document.documentElement.style.setProperty(
-      "--font-color",
-      eventData.data.color
-    );
+    setUiPreset(eventData);
   }, []);
 
   // callback selfie

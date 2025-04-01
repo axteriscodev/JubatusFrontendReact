@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { useEffect } from "react";
+import { setUiPreset } from "../utils/graphics";
 
 /**
  * Pagina di acquisto immagini
@@ -28,14 +29,7 @@ export default function ImageShop() {
   const eventPreset = useSelector((state) => state.competition);
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--bg-color",
-      eventPreset.backgroundColor
-    );
-    document.documentElement.style.setProperty(
-      "--font-color",
-      eventPreset.fontColor
-    );
+   setUiPreset(eventPreset);
   }, []);
 
   const popover = (
