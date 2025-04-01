@@ -54,7 +54,7 @@ export default function Login() {
         showPrivacy={false}
         onErrors={formErrors}
       />
-      <Link to="/event/evento-test-mod">Selfie upload</Link>
+      <Link to="/event/nova-eroica">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
     </div>
   );
