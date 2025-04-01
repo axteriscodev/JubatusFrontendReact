@@ -29,14 +29,14 @@ export default function MailForm({
         {showPrivacy && (
           <div className="form-check form-switch text-start">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               role="switch"
               id="flexSwitchCheckDefault"
               checked={isChecked}
               onChange={handlePrivacyChange}
             />
-            <label class="form-check-label" for="flexSwitchCheckDefault">
+            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
               Accettare
             </label>{" "}
             <a href="#">Termini e Policy</a>

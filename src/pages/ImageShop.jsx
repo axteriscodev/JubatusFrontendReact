@@ -2,8 +2,9 @@ import ImageGallery from "../components/ImageGallery";
 import Logo from "../components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useSelector } from "react-redux";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import { useEffect } from "react";
 
 /**
  * Pagina di acquisto immagini
@@ -23,12 +24,47 @@ export default function ImageShop() {
   // ];
 
   const imagesList = useSelector((state) => state.cart.products);
+  const pricesList = useSelector((state) => state.cart.prices);
+  const eventPreset = useSelector((state) => state.competition);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--bg-color",
+      eventPreset.backgroundColor
+    );
+    document.documentElement.style.setProperty(
+      "--font-color",
+      eventPreset.fontColor
+    );
+  }, []);
 
   const popover = (
     <Popover id="popover-basic">
       <Popover.Body>
         <div className="text-center text-blue fw-bold">
-          1 Foto - 9€
+          {pricesList.map((pricePack, i) => (
+            <>
+            {pricePack.quantityFoto === -1 && pricePack.quantityVideo === 0 && (
+                <span>Tutte le foto - {pricePack.price}€</span>
+              )}
+
+              {pricePack.quantityFoto > 0 && pricePack.quantityVideo === 0 && (
+                <span>{pricePack.quantityFoto} Foto - {pricePack.price}€</span>
+              )}
+
+              {pricePack.quantityFoto === 0 && pricePack.quantityVideo > 0 && (
+                <span>Il tuo video - {pricePack.price}€</span>
+              )}
+
+              {pricePack.quantityFoto > 0 && pricePack.quantityVideo > 0 && (
+                <span>Il tuo video e {pricePack.quantityFoto} foto - {pricePack.price}€</span>
+              )}
+            
+            {i < pricesList.length - 1 && <hr />}
+            </>
+          ))}
+
+          {/* 1 Foto - 9€
           <hr />
           3 Foto - 25€
           <hr />
@@ -36,22 +72,31 @@ export default function ImageShop() {
           <hr />
           Il <strong>tuo</strong> video personalizzato - 25€
           <hr />
-          Il <strong>tuo</strong> video e 10 foto - 35€
+          Il <strong>tuo</strong> video e 10 foto - 35€ */}
         </div>
       </Popover.Body>
     </Popover>
   );
 
+  
+
   return (
     <div>
       <div className="d-flex justify-content-between">
-        <div><Logo size="logo-xs" /></div>
+        <div>
+          <Logo
+            src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+            size="logo-xs"
+          />
+        </div>
         <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-          <img src="/images/icon-info.png" className="logo-xs pointer"/>
+          <img src="/images/icon-info.png" className="logo-xs pointer" />
         </OverlayTrigger>
       </div>
       <div className="my-md text-start">
-        <h2>Ci siamo <strong>atleta!</strong></h2>
+        <h2>
+          Ci siamo <strong>atleta!</strong>
+        </h2>
         <p>Ecco le tue foto</p>
       </div>
       <ImageGallery images={imagesList} />

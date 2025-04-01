@@ -13,6 +13,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 export default function ProcessingSelfie() {
   const receivedData = useLocation().state;
   const eventId = useSelector((state) => state.cart.eventId);
+  const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,6 +63,17 @@ export default function ProcessingSelfie() {
     ProcessSelfie();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--bg-color",
+      eventPreset.backgroundColor
+    );
+    document.documentElement.style.setProperty(
+      "--font-color",
+      eventPreset.fontColor
+    );
+  }, []);
+
   async function fetchPriceList(eventId) {
     const response = await fetch(
       import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
@@ -74,8 +86,12 @@ export default function ProcessingSelfie() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <Logo size="logo-sm" css="mb-sm" />
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg-color">
+      <Logo
+        src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+        size="logo-sm"
+        css="mb-sm"
+      />
       <h2>
         Ciao <span>atleta!</span>
       </h2>
