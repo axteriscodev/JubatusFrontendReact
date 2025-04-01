@@ -21,24 +21,12 @@ export default function UploadSelfie() {
   const eventData = useLoaderData();
   const dispatch = useDispatch();
 
-  const [emailFromChild, setEmailFromChild] = useState("");
   const [selfie, setSelfie] = useState();
-  const [acceptPrivacyPolicy, setAcceptPrivacyPolicy] = useState(false);
 
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
-
-  // callback email
-  const handleEmailFromChild = (data) => {
-    setEmailFromChild(data);
-  };
-
-  // callback privacy policy
-  const handlePrivacyPolicy = (data) => {
-    setAcceptPrivacyPolicy(data);
-  };
 
   // callback selfie
   const handleSelfieFromChild = (data) => {
@@ -46,17 +34,17 @@ export default function UploadSelfie() {
   };
 
   //invio del selfie
-  async function handleSubmit(event) {
+  async function handleSubmit(event, data) {
     event.preventDefault();
 
     let formErrors = new FormErrors();
 
-    console.log(emailFromChild);
-    console.log(selfie);
+    console.log(data.email);
+    console.log(data.privacy);
 
-    formErrors.emailError = !validator.isEmail(emailFromChild);
+    formErrors.emailError = !validator.isEmail(data.email);
     formErrors.imageError = !selfie ? true : false;
-    formErrors.privacyError = !acceptPrivacyPolicy;
+    formErrors.privacyError = !data.privacy;
 
     if (
       formErrors.imageError ||
@@ -70,7 +58,7 @@ export default function UploadSelfie() {
     navigate("/processing-selfie", {
       state: {
         eventId: eventData.data.id,
-        email: emailFromChild,
+        email: data.email,
         image: selfie,
       },
     });
@@ -84,8 +72,6 @@ export default function UploadSelfie() {
         onError={formErrors.imageError}
       />
       <MailForm
-        onEmailDataChange={handleEmailFromChild}
-        onPrivacyDataChange={handlePrivacyPolicy}
         submitHandle={handleSubmit}
         onErrors={formErrors}
       />
@@ -104,7 +90,7 @@ export async function loader({ request, params }) {
   const eventName = params.eventSlug;
 
   const response = await fetch(
-    `http://localhost:8080/contents/event-data/${eventName}`
+    import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}`
   );
 
   if (!response.ok) {
