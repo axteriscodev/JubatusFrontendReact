@@ -23,6 +23,7 @@ export default function ImageShop() {
   // ];
 
   const imagesList = useSelector((state) => state.cart.products);
+  const eventPreset = useSelector((state) => state.competition);
 
   const popover = (
     <Popover id="popover-basic">
@@ -45,7 +46,7 @@ export default function ImageShop() {
   return (
     <div>
       <div className="d-flex justify-content-between">
-        <div><Logo size="logo-xs" /></div>
+        <div><Logo  src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo} size="logo-xs" /></div>
         <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
           <img src="/images/icon-info.png" className="logo-xs pointer"/>
         </OverlayTrigger>

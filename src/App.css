@@ -233,3 +233,7 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 .on-error{
   color: red;
 }
+
+.my-bg {
+  background-color: var(--bg-color, #000000); /* fallback bianco */
+}

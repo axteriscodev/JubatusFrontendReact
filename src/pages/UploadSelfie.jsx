@@ -9,6 +9,7 @@ import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { competitionsActions } from "../repositories/competitions/competitions-slice";
 
 /**
  * Pagina di caricamento del selfie e inserimento della email
@@ -27,6 +28,14 @@ export default function UploadSelfie() {
 
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
+  // inserisco il preset per l'evento nello store redux
+  dispatch(
+    competitionsActions.setCompetitionPreset({
+      backgroundColor: eventData.data.backgroundColor,
+      fontColor: eventData.data.fontColor,
+      logo: eventData.data.logo,
+    })
+  );
 
   // callback selfie
   const handleSelfieFromChild = (data) => {
@@ -65,16 +74,19 @@ export default function UploadSelfie() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <Logo css="mb-sm" />
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg">
+      <Logo
+        src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
+        css="mb-sm"
+      />
       <SelfieUpload
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
       />
-      <MailForm
-        submitHandle={handleSubmit}
-        onErrors={formErrors}
-      />
+      <MailForm submitHandle={handleSubmit} onErrors={formErrors} />
+      <script>
+        document.documentElement.style.setProperty('--bg-color', {eventData.data.backgroundColor});
+      </script>
     </div>
   );
 }

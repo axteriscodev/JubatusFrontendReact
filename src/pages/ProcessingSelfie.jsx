@@ -13,6 +13,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 export default function ProcessingSelfie() {
   const receivedData = useLocation().state;
   const eventId = useSelector((state) => state.cart.eventId);
+  const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -75,13 +76,26 @@ export default function ProcessingSelfie() {
 
   return (
     <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <Logo size="logo-sm" css="mb-sm" />
+      <Logo
+        src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+        size="logo-sm"
+        css="mb-sm"
+      />
       <h2>
-        Ciao <span>atleta!</span>
+        Ciao{" "}
+        <span
+          style={{
+            color: eventPreset.fontColor,
+          }}
+        >
+          atleta!
+        </span>
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
-        stiamo trovando le <span>tue</span> foto
+        stiamo trovando le <span  style={{
+            color: eventPreset.fontColor,
+          }}>tue</span> foto
       </h2>
       <h2>🌊 📸 🏄🏻</h2>
       <div
