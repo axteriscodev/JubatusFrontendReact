@@ -2,8 +2,9 @@ import ImageGallery from "../components/ImageGallery";
 import Logo from "../components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useSelector } from "react-redux";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import { useEffect } from "react";
 
 /**
  * Pagina di acquisto immagini
@@ -25,6 +26,17 @@ export default function ImageShop() {
   const imagesList = useSelector((state) => state.cart.products);
   const eventPreset = useSelector((state) => state.competition);
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--bg-color",
+      eventPreset.backgroundColor
+    );
+    document.documentElement.style.setProperty(
+      "--font-color",
+      eventPreset.fontColor
+    );
+  }, []);
+
   const popover = (
     <Popover id="popover-basic">
       <Popover.Body>
@@ -44,15 +56,22 @@ export default function ImageShop() {
   );
 
   return (
-    <div>
+    <div className="my-bg-color">
       <div className="d-flex justify-content-between">
-        <div><Logo  src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo} size="logo-xs" /></div>
+        <div>
+          <Logo
+            src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+            size="logo-xs"
+          />
+        </div>
         <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-          <img src="/images/icon-info.png" className="logo-xs pointer"/>
+          <img src="/images/icon-info.png" className="logo-xs pointer" />
         </OverlayTrigger>
       </div>
       <div className="my-md text-start">
-        <h2>Ci siamo <strong>atleta!</strong></h2>
+        <h2>
+          Ci siamo <strong>atleta!</strong>
+        </h2>
         <p>Ecco le tue foto</p>
       </div>
       <ImageGallery images={imagesList} />

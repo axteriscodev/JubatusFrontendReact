@@ -234,6 +234,10 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
   color: red;
 }
 
-.my-bg {
+.my-bg-color {
   background-color: var(--bg-color, #000000); /* fallback bianco */
+}
+
+.my-font-color{
+  color: var(--font-color, #000000);
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import validator from "validator";
 import FormErrors from "../models/form-errors";
@@ -37,6 +37,18 @@ export default function UploadSelfie() {
     })
   );
 
+  useEffect(() => {
+    console.log("sto cambiando colore al bg");
+    document.documentElement.style.setProperty(
+      "--bg-color",
+      eventData.data.backgroundColor
+    );
+    document.documentElement.style.setProperty(
+      "--font-color",
+      eventData.data.color
+    );
+  }, []);
+
   // callback selfie
   const handleSelfieFromChild = (data) => {
     setSelfie(data);
@@ -74,7 +86,7 @@ export default function UploadSelfie() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg">
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg-color">
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
         css="mb-sm"
@@ -84,9 +96,6 @@ export default function UploadSelfie() {
         onError={formErrors.imageError}
       />
       <MailForm submitHandle={handleSubmit} onErrors={formErrors} />
-      <script>
-        document.documentElement.style.setProperty('--bg-color', {eventData.data.backgroundColor});
-      </script>
     </div>
   );
 }

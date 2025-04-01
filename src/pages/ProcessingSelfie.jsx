@@ -63,6 +63,17 @@ export default function ProcessingSelfie() {
     ProcessSelfie();
   }, []);
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--bg-color",
+      eventPreset.backgroundColor
+    );
+    document.documentElement.style.setProperty(
+      "--font-color",
+      eventPreset.fontColor
+    );
+  }, []);
+
   async function fetchPriceList(eventId) {
     const response = await fetch(
       import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
@@ -75,27 +86,18 @@ export default function ProcessingSelfie() {
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
+    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto my-bg-color">
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
         css="mb-sm"
       />
       <h2>
-        Ciao{" "}
-        <span
-          style={{
-            color: eventPreset.fontColor,
-          }}
-        >
-          atleta!
-        </span>
+        Ciao <span className="my-font-color">atleta!</span>
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
-        stiamo trovando le <span  style={{
-            color: eventPreset.fontColor,
-          }}>tue</span> foto
+        stiamo trovando le <span className="my-font-color">tue</span> foto
       </h2>
       <h2>🌊 📸 🏄🏻</h2>
       <div
