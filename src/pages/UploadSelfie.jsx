@@ -33,7 +33,7 @@ export default function UploadSelfie() {
   dispatch(competitionsActions.setCompetitionPreset(eventData.data));
 
   useEffect(() => {
-    setUiPreset(eventData);
+    setUiPreset(eventData.data);
   }, []);
 
   // callback selfie

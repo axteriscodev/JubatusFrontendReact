@@ -7,13 +7,15 @@ const competitionsSlice = createSlice({
     name: "competitions",
     initialState: {
         backgroundColor: "",
-        fontColor: "",
+        primaryColor: "",
+        secondaryColor: "",
         logo: ""
     },
     reducers: {
         setCompetitionPreset(state, action) {
             state.backgroundColor = action.payload.backgroundColor;
-            state.fontColor = action.payload.fontColor;
+            state.primaryColor = action.payload.primaryColor;
+            state.secondaryColor = action.payload.secondaryColor;
             state.logo = action.payload.logo;
         }
     }
