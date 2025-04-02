@@ -15,18 +15,18 @@ import { setUiPreset } from "../utils/graphics";
  */
 export default function ImageShop() {
   const dispatch = useDispatch();
-  const imagesList = [
-    { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg", fileTypeId: 1 },
-    { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg", fileTypeId: 1 },
-    { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg", fileTypeId: 1 },
-    { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg", fileTypeId: 1 },
-    { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg", fileTypeId: 1 },
-    { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg", fileTypeId: 1 },
-    { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg", fileTypeId: 1 },
-    { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg", fileTypeId: 1 },
-  ];
+  // const imagesList = [
+  //   { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg", fileTypeId: 1 },
+  //   { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg", fileTypeId: 1 },
+  // ];
 
-  //const imagesList = useSelector((state) => state.cart.products);
+  const imagesList = useSelector((state) => state.cart.products);
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
 
