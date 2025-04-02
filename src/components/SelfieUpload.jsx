@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import Stack from "react-bootstrap/Stack";
 
 import styles from "./SelfieUpload.module.css";
 
@@ -8,6 +7,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   const [imageUrl, setImageUrl] = useState(null);
 
   const handleImageClick = () => {
+    if (imageUrl) return false;
     fileInputRef.current.click();
   };
 
@@ -29,9 +29,9 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       </h3>
 
       <div
-        className={styles.avatar}
+        className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
-        style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: "cover" }}
+        style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: "cover" } : {}}
       ></div>
       {onError && <p className="on-error">Inserisci un tuo selfie</p>}
       <input

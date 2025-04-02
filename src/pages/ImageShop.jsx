@@ -2,6 +2,10 @@ import ImageGallery from "../components/ImageGallery";
 import Logo from "../components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useSelector } from "react-redux";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import { useEffect } from "react";
+import { setUiPreset } from "../utils/graphics";
 
 /**
  * Pagina di acquisto immagini
@@ -21,19 +25,75 @@ export default function ImageShop() {
   // ];
 
   const imagesList = useSelector((state) => state.cart.products);
+  const pricesList = useSelector((state) => state.cart.prices);
+  const eventPreset = useSelector((state) => state.competition);
+
+  useEffect(() => {
+   setUiPreset(eventPreset);
+  }, []);
+
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        <div className="text-center text-blue fw-bold">
+          {pricesList.map((pricePack, i) => (
+            <>
+              {getPriceListEntry(pricePack)}
+              {i < pricesList.length - 1 && <hr />}
+            </>
+          ))}
+
+          {/* 1 Foto - 9€
+          <hr />
+          3 Foto - 25€
+          <hr />
+          <strong>Tutte</strong> le Foto - 25€
+          <hr />
+          Il <strong>tuo</strong> video personalizzato - 25€
+          <hr />
+          Il <strong>tuo</strong> video e 10 foto - 35€ */}
+        </div>
+      </Popover.Body>
+    </Popover>
+  );
 
   return (
     <div>
       <div className="d-flex justify-content-between">
-        <div><Logo size="logo-xs" /></div>
-        <div><img src="/images/icon-info.png" className="logo-xs"/></div>
+        <div>
+          <Logo
+            src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+            size="logo-xs"
+          />
+        </div>
+        <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+          <img src="/images/icon-info.png" className="logo-xs pointer" />
+        </OverlayTrigger>
       </div>
       <div className="my-md text-start">
-        <h2>Ci siamo ATLETA!</h2>
+        <h2>
+          Ci siamo <strong>atleta!</strong>
+        </h2>
         <p>Ecco le tue foto</p>
       </div>
       <ImageGallery images={imagesList} />
       <TotalShopButton />
     </div>
   );
+}
+
+function getPriceListEntry(pricePack) {
+  let description = '';
+
+  if (pricePack.quantityFoto === -1) {
+    description = `Tutte le foto - ${pricePack.price}€`;
+  } else if (pricePack.quantityFoto > 0 && pricePack.quantityVideo === 0) {
+    description = `${pricePack.quantityFoto} Foto - ${pricePack.price}€`;
+  } else if (pricePack.quantityFoto === 0 && pricePack.quantityVideo > 0) {
+    description = `Il tuo video - ${pricePack.price}€`;
+  } else if (pricePack.quantityFoto > 0 && pricePack.quantityVideo > 0) {
+    description = `Il tuo video e ${pricePack.quantityFoto} foto - ${pricePack.price}€`;
+  }
+
+  return description;
 }

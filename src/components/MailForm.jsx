@@ -1,58 +1,56 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Form from "react-bootstrap/Form";
 
 export default function MailForm({
   submitHandle,
-  onEmailDataChange,
-  onPrivacyDataChange,
   showPrivacy = true,
-  onErrors
+  onErrors,
 }) {
-  const [emailValue, setEmailValue] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-
-  const handleEmailChange = (event) => {
-    const newValue = event.target.value;
-    setEmailValue(newValue);
-    onEmailDataChange(newValue);
-  };
+  const email = useRef();
 
   const handlePrivacyChange = (event) => {
     const newValue = event.target.checked;
     setIsChecked(newValue);
-    onPrivacyDataChange(newValue);
   };
 
   return (
-    <div>
+    <div className="text-start">
+      <Form.Label>E-mail</Form.Label>
       <Form.Control
+        ref={email}
         type="email"
-        value={emailValue}
-        onChange={handleEmailChange}
         name="email"
         placeholder="Inserisci la tua e-mail"
       />
-      {onErrors.emailError && <p className="on-error">Inserisci una mail valida</p>}
+      {onErrors.emailError && (
+        <p className="on-error">Inserisci una mail valida</p>
+      )}
       <div className="my-xs">
         {showPrivacy && (
           <div className="form-check form-switch text-start">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               role="switch"
               id="flexSwitchCheckDefault"
               checked={isChecked}
               onChange={handlePrivacyChange}
             />
-            <label class="form-check-label" for="flexSwitchCheckDefault">
+            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
               Accettare
             </label>{" "}
             <a href="#">Termini e Policy</a>
           </div>
         )}
-        {onErrors.privacyError && <p className="on-error">Devi accettare la privacy policy</p>}
+        {onErrors.privacyError && (
+          <p className="on-error">Devi accettare la privacy policy</p>
+        )}
       </div>
-      <button className="my-button w-100" onClick={submitHandle}>
+      <button
+        className="my-button w-100 mt-sm"
+        onClick={(event) => submitHandle(event, { email: email.current.value, privacy: isChecked })}
+      >
         Avanti &gt;
       </button>
     </div>

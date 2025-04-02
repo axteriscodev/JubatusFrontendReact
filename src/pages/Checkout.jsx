@@ -7,9 +7,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 
-const stripePromise = loadStripe(
-  "pk_test_51R7ZQMFm5H2oHbnITXHTB2tvocnsDLNEpgeDSCpM77uVAQVND3IdEMV79tEP3bNnpcXUdVmJkbUB6fYrra5arv7V00c2972u5n"
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 /**
  * Pagina per il checkout
@@ -20,20 +18,23 @@ export default function Checkout() {
 
   const fetchClientSecret = useCallback(() => {
     // Create a Checkout Session
-    return fetch("http://localhost:8080/shop/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cart: {
-          userId: cart.userId,
-          eventId: cart.eventId,
-          amount: cart.totalPrice,
-          items: cart.items,
+    return fetch(
+      import.meta.env.VITE_API_URL + '/shop/create-checkout-session',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      }),
-    })
+        body: JSON.stringify({
+          cart: {
+            userId: cart.userId,
+            eventId: cart.eventId,
+            amount: cart.totalPrice,
+            items: cart.items,
+          },
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         dispatch(cartActions.updateOrderId(data.data.oderId));

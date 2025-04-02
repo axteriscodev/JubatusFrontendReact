@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import validator from "validator";
 import FormErrors from "../models/form-errors";
@@ -9,6 +9,8 @@ import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { competitionsActions } from "../repositories/competitions/competitions-slice";
+import { setUiPreset } from "../utils/graphics";
 
 /**
  * Pagina di caricamento del selfie e inserimento della email
@@ -21,24 +23,18 @@ export default function UploadSelfie() {
   const eventData = useLoaderData();
   const dispatch = useDispatch();
 
-  const [emailFromChild, setEmailFromChild] = useState("");
   const [selfie, setSelfie] = useState();
-  const [acceptPrivacyPolicy, setAcceptPrivacyPolicy] = useState(false);
 
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
+  // inserisco il preset per l'evento nello store redux
+  dispatch(competitionsActions.setCompetitionPreset(eventData.data));
 
-  // callback email
-  const handleEmailFromChild = (data) => {
-    setEmailFromChild(data);
-  };
-
-  // callback privacy policy
-  const handlePrivacyPolicy = (data) => {
-    setAcceptPrivacyPolicy(data);
-  };
+  useEffect(() => {
+    setUiPreset(eventData.data);
+  }, []);
 
   // callback selfie
   const handleSelfieFromChild = (data) => {
@@ -46,17 +42,17 @@ export default function UploadSelfie() {
   };
 
   //invio del selfie
-  async function handleSubmit(event) {
+  async function handleSubmit(event, data) {
     event.preventDefault();
 
     let formErrors = new FormErrors();
 
-    console.log(emailFromChild);
-    console.log(selfie);
+    console.log(data.email);
+    console.log(data.privacy);
 
-    formErrors.emailError = !validator.isEmail(emailFromChild);
+    formErrors.emailError = !validator.isEmail(data.email);
     formErrors.imageError = !selfie ? true : false;
-    formErrors.privacyError = !acceptPrivacyPolicy;
+    formErrors.privacyError = !data.privacy;
 
     if (
       formErrors.imageError ||
@@ -70,25 +66,23 @@ export default function UploadSelfie() {
     navigate("/processing-selfie", {
       state: {
         eventId: eventData.data.id,
-        email: emailFromChild,
+        email: data.email,
         image: selfie,
       },
     });
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <Logo css="mb-sm" />
+    <div className="form-sm">
+      <Logo
+        src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
+        css="mb-sm"
+      />
       <SelfieUpload
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
       />
-      <MailForm
-        onEmailDataChange={handleEmailFromChild}
-        onPrivacyDataChange={handlePrivacyPolicy}
-        submitHandle={handleSubmit}
-        onErrors={formErrors}
-      />
+      <MailForm submitHandle={handleSubmit} onErrors={formErrors} />
     </div>
   );
 }
@@ -104,7 +98,7 @@ export async function loader({ request, params }) {
   const eventName = params.eventSlug;
 
   const response = await fetch(
-    `http://localhost:8080/contents/event-data/${eventName}`
+    import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}`
   );
 
   if (!response.ok) {

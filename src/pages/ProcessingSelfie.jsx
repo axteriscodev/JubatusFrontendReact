@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { listenSSE, sendRequest } from "../services/api-services";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { setUiPreset } from "../utils/graphics";
 
 /**
  * Pagina di elaborazione selfie
@@ -13,6 +14,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 export default function ProcessingSelfie() {
   const receivedData = useLocation().state;
   const eventId = useSelector((state) => state.cart.eventId);
+  const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -30,55 +32,75 @@ export default function ProcessingSelfie() {
 
       //caricamento selfie
       const response = await sendRequest(
-        "http://localhost:8080/contents/fetch",
+        import.meta.env.VITE_API_URL + "/contents/fetch",
         "POST",
         formData
       );
 
-      if(response.ok) {
+      //impostare l'id ricerca
+
+      if (response.ok) {
         const json = await response.json();
-        dispatch(cartActions.updateProducts(json.data.contents));
-        dispatch(cartActions.updateUserId(json.data.userId));
+
+        await fetchPriceList(eventId);
+
+        //sezione elaborazione selfie e attesa risposte dal server S3
+        // import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+        listenSSE(
+          import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+          (data) => {
+            const jsonData = JSON.parse(data);
+            dispatch(cartActions.updateProducts(jsonData.contents));
+            dispatch(cartActions.updateUserId(jsonData.userId));
+
+            navigate("/image-shop");
+          },
+          () => {
+            console.log("Errore!");
+          }
+        );
       }
-
-      await fetchPriceList(eventId);
-
-      navigate("/image-shop"); //TODO - da rimuovere
-
-      //sezione elaborazione selfie e attesa risposte dal server S3
-      listenSSE(
-        "http://localhost:8080/contents/test-sse",
-        () => {
-          navigate("/image-shop");
-        },
-        () => {
-          console.log("Errore!");
-        }
-      );
     }
 
     ProcessSelfie();
+    setUiPreset(eventPreset);
   }, []);
 
-
   async function fetchPriceList(eventId) {
-    const response = await fetch('http://localhost:8080/contents/event-list/' + eventId);
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
+    );
 
-    if(response.ok) {
+    if (response.ok) {
       const json = await response.json();
       dispatch(cartActions.updatePriceList(json.data.items));
     }
   }
 
   return (
-    <div className="col-xl-4 col-lg-6 col-md-8 col-sm-10 mx-auto">
-      <Logo size="logo-sm" css="mb-sm" />
-      <h2>Ciao <span>atleta!</span></h2>
+    <div className="form-sm">
+      <Logo
+        src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+        size="logo-sm"
+        css="mb-sm"
+      />
+      <h2>
+        Ciao <span>atleta!</span>
+      </h2>
       <h2>aspetta qualche secondo...</h2>
-      <h2>stiamo trovando le <span>tue</span> foto</h2>
+      <h2>
+        stiamo trovando le <span>tue</span> foto
+      </h2>
       <h2>🌊 📸 🏄🏻</h2>
-      <div className="progress mt-md" role="progressbar" aria-label="Basic example" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-          <div className="progress-bar" style={{width: '25%'}}></div>
+      <div
+        className="progress mt-md"
+        role="progressbar"
+        aria-label="Basic example"
+        aria-valuenow="25"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div className="progress-bar" style={{ width: "25%" }}></div>
       </div>
       Caricamento
     </div>
