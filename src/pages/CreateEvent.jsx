@@ -1,119 +1,255 @@
-import { useState } from 'react';
-import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addCompetition,
+  editCompetition,
+} from "../repositories/admin-competitions/admin-competitions-actions";
 
 import "../Admin.css";
 
 /**
  * Pagina per la creazione dell'evento
- * 
- * @returns 
- * 
+ *
+ * @returns
+ *
  */
 export default function CreateEvent() {
-    const [title, setTitle] = useState('');
-    const [url, setUrl] = useState('');
-    const navigate = useNavigate();
+  const receivedComp = useLocation().state;
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [formData, setFormData] = useState(() => {
+    if (receivedComp) {
+      return {
+        id: receivedComp.id,
+        slug: receivedComp.slug,
+        backgroundColor: receivedComp.backgroundColor,
+        primaryColor: receivedComp.primaryColor,
+        secondaryColor: receivedComp.secondaryColor,
+        logo: "",
+        dateEvent: receivedComp.dateEvent,
+        dateExpiry: receivedComp.dateExpiry,
+        dateIns: receivedComp.dateIns,
+        title: receivedComp.languages.title,
+        location: receivedComp.languages.location,
+        description: receivedComp.languages.description,
+      };
+    } else {
+      return {
+        slug: "",
+        backgroundColor: "",
+        primaryColor: "",
+        secondaryColor: "",
+        logo: "",
+        dateEvent: "",
+        dateExpiry: "",
+        dateIns: "",
+        title: "",
+        location: "",
+        description: "",
+      };
+    }
+  });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    const handleReturnToList = () => navigate('/admin');
+  const handleReturnToList = () => navigate("/admin");
 
-    const handleTitleChange = (e) => {
-        const newTitle = e.target.value;
-        setTitle(newTitle);
-        setUrl('/' + slugify(newTitle));
-    };
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    setUrl("/" + slugify(newTitle));
+    setFormData({
+      ...formData,
+      title: newTitle,
+      slug: slugify(newTitle),
+    });
+  };
 
-    const slugify = (text) =>
-        text
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/\s+/g, '-')
-            .replace(/[^a-z0-9-]/g, '')
-            .replace(/--+/g, '-')
-            .replace(/^-+|-+$/g, '');
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-    return(
-    <div className='container text-start'>
-        <h1>Gestione evento</h1>
-        <Form>
-            <Row>
-                <Col sm={6} className="mb-3">
-                    <Form.Label>Titolo</Form.Label>
-                    <Form.Control placeholder="Titolo"value={title} onChange={handleTitleChange} />
-                </Col>
-                <Col sm={6} className="mb-3">
-                    <Form.Label>Url</Form.Label>
-                    <Form.Control placeholder="Url" value={url} disabled readOnly />
-                </Col>
-                <Col sm={6} className="mb-3">
-                    <Form.Label>Località</Form.Label>
-                    <Form.Control placeholder="Località" />
-                </Col>
-                <Col sm={6} className="mb-3">
-                    <Form.Label>Descrizione</Form.Label>
-                    <Form.Control placeholder="Descrizione" as="textarea" rows={3} />
-                </Col>
-                <Col sm={4} className="mb-3">
-                    <Form.Label>Data evento</Form.Label>
-                    <InputGroup>
-                        <InputGroup.Text id="basic-addon-data-e"><i class="bi bi-calendar"></i></InputGroup.Text>
-                        <Form.Control placeholder="Data evento" type='date' />
-                    </InputGroup >
-                </Col>
-                <Col sm={4} className="mb-3">
-                    <Form.Label>Data pubblicazione</Form.Label>
-                    <InputGroup>
-                        <InputGroup.Text id="basic-addon-data-p"><i class="bi bi-calendar"></i></InputGroup.Text>
-                        <Form.Control placeholder="Data pubblicazione" type='date' />
-                    </InputGroup >
-                </Col>
-                <Col sm={4} className="mb-3">
-                    <Form.Label>Data scadenza</Form.Label>
-                    <InputGroup>
-                        <InputGroup.Text id="basic-addon-data-s"><i class="bi bi-calendar"></i></InputGroup.Text>
-                        <Form.Control placeholder="Data scadenza" type='date' />
-                    </InputGroup >
-                </Col>
-                <Col sm={4} className="mb-3">
-                    <Form.Label htmlFor="exampleColorInput">Colore background</Form.Label>
-                    <Form.Control
-                        type="color"
-                        id="exampleColorInput"
-                        defaultValue="#000000"
-                        title="Choose your color"
-                    />
-                </Col>
-                <Col sm={4} className="mb-3">
-                    <Form.Label htmlFor="exampleColorInput">Colore primario</Form.Label>
-                    <Form.Control
-                        type="color"
-                        id="exampleColorInput"
-                        defaultValue="#ffffff"
-                        title="Choose your color"
-                    />
-                </Col>
-                <Col sm={4} className="mb-3">
-                    <Form.Label htmlFor="exampleColorInput">Colore secondario</Form.Label>
-                    <Form.Control
-                        type="color"
-                        id="exampleColorInput"
-                        defaultValue="#ffa500"
-                        title="Choose your color"
-                    />
-                </Col>
-                <Col xs={12}>
-                    <Form.Group controlId="formFile" className="mb-3">
-                        <Form.Label>Logo</Form.Label>
-                        <Form.Control type="file" />
-                    </Form.Group>
-                </Col>
-            </Row>
-            <div className='d-flex justify-content-between mt-sm'>
-                <Button variant="success">Salva dati</Button>
-                <Button onClick={handleReturnToList} variant="secondary">Vai all'elenco</Button>
-            </div>
-        </Form>
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]; // Prende il primo file selezionato
+    setFormData({
+      ...formData,
+      logo: file, // Memorizza il file nello stato
+    });
+  };
+
+  const handleSubmit = (event, data) => {
+    if (data.id) {
+      data.languages = {
+        title: formData.title,
+        location: formData.location,
+        description: formData.description,
+      };
+      dispatch(editCompetition(competition));
+    } else {
+      data.languages = {
+        title: formData.title,
+        location: formData.location,
+        description: formData.description,
+      };
+      dispatch(addCompetition(competition));
+    }
+  };
+
+  const slugify = (text) =>
+    text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")
+      .replace(/--+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  return (
+    <div className="container text-start">
+      <h1>Gestione evento</h1>
+      <Form>
+        <Row>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Titolo</Form.Label>
+            <Form.Control
+              placeholder="Titolo"
+              value={title}
+              onChange={handleTitleChange}
+            />
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Url</Form.Label>
+            <Form.Control placeholder="Url" value={url} disabled readOnly />
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Località</Form.Label>
+            <Form.Control
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              placeholder="Località"
+            />
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Descrizione</Form.Label>
+            <Form.Control
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Descrizione"
+              as="textarea"
+              rows={3}
+            />
+          </Col>
+          <Col sm={4} className="mb-3">
+            <Form.Label>Data evento</Form.Label>
+            <InputGroup>
+              <InputGroup.Text id="basic-addon-data-e">
+                <i class="bi bi-calendar"></i>
+              </InputGroup.Text>
+              <Form.Control
+                name="dateEvent"
+                value={formData.dateEvent}
+                onChange={handleInputChange}
+                placeholder="Data evento"
+                type="date"
+              />
+            </InputGroup>
+          </Col>
+          <Col sm={4} className="mb-3">
+            <Form.Label>Data pubblicazione</Form.Label>
+            <InputGroup>
+              <InputGroup.Text id="basic-addon-data-p">
+                <i class="bi bi-calendar"></i>
+              </InputGroup.Text>
+              <Form.Control
+                name="dateIns"
+                value={formData.dateIns}
+                onChange={handleInputChange}
+                placeholder="Data pubblicazione"
+                type="date"
+              />
+            </InputGroup>
+          </Col>
+          <Col sm={4} className="mb-3">
+            <Form.Label>Data scadenza</Form.Label>
+            <InputGroup>
+              <InputGroup.Text id="basic-addon-data-s">
+                <i class="bi bi-calendar"></i>
+              </InputGroup.Text>
+              <Form.Control
+                name="dateExpiry"
+                value={formData.dateExpiry}
+                onChange={handleInputChange}
+                placeholder="Data scadenza"
+                type="date"
+              />
+            </InputGroup>
+          </Col>
+          <Col sm={4} className="mb-3">
+            <Form.Label htmlFor="exampleColorInput">
+              Colore background
+            </Form.Label>
+            <Form.Control
+              type="color"
+              id="exampleColorInput"
+              defaultValue="#000000"
+              title="Choose your color"
+              name="backgroundColor"
+              value={formData.backgroundColor}
+              onChange={handleInputChange}
+            />
+          </Col>
+          <Col sm={4} className="mb-3">
+            <Form.Label htmlFor="exampleColorInput">Colore primario</Form.Label>
+            <Form.Control
+              type="color"
+              id="exampleColorInput"
+              defaultValue="#ffffff"
+              title="Choose your color"
+              value={formData.primaryColor}
+              onChange={handleInputChange}
+            />
+          </Col>
+          <Col sm={4} className="mb-3">
+            <Form.Label htmlFor="exampleColorInput">
+              Colore secondario
+            </Form.Label>
+            <Form.Control
+              type="color"
+              id="exampleColorInput"
+              defaultValue="#ffa500"
+              title="Choose your color"
+              value={formData.secondaryColor}
+              onChange={handleInputChange}
+            />
+          </Col>
+          <Col xs={12}>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>Logo</Form.Label>
+              <Form.Control onChange={handleFileChange} type="file" />
+            </Form.Group>
+          </Col>
+        </Row>
+        <div className="d-flex justify-content-between mt-sm">
+          <Button
+            onClick={(event) => handleSubmit(event, formData)}
+            variant="success"
+          >
+            Salva dati
+          </Button>
+          <Button onClick={handleReturnToList} variant="secondary">
+            Vai all'elenco
+          </Button>
+        </div>
+      </Form>
     </div>
-    );
+  );
 }
