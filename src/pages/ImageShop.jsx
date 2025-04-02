@@ -70,7 +70,7 @@ export default function ImageShop() {
           />
         </div>
         <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-          <img src="/images/icon-info.png" className="logo-xs pointer" />
+          <i class="bi bi-info-circle text-60 pointer"></i>
         </OverlayTrigger>
       </div>
       <div className="my-md text-start">

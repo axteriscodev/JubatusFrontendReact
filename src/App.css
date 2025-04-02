@@ -222,7 +222,7 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
   .text-80{font-size:calc(30px + 3.571428vw) !important;}
   .text-75{font-size:calc(30px + 3.214286vw) !important;}
   .text-65{font-size:calc(25px + 2.857143vw) !important;}
-  .text-60{font-size:calc(30px + 2.142857vw) !important;}
+  /* .text-60{font-size:calc(30px + 2.142857vw) !important;} */
   .text-55{font-size:calc(30px + 1.785714vw) !important;}
   .text-50{font-size:calc(25px + 1.785714vw) !important;}
   .text-45, h1, .h1{font-size:calc(25px + 1.428571vw) !important;}
