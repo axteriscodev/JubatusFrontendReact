@@ -20,46 +20,48 @@ export default function CreateEvent() {
   const dispatch = useDispatch();
   const receivedComp = useLocation().state;
   const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [formData, setFormData] = useState(() => {
+  const [slug, setSlug] = useState("");
+  const [formData, setFormData] = useState({
+    slug: "",
+    backgroundColor: "#000000",
+    primaryColor: "#000000",
+    secondaryColor: "#000000",
+    logo: "",
+    dateEvent: "",
+    dateExpiry: "",
+    dateIns: "",
+    title: "",
+    location: "",
+    description: "",
+  });
+
+  useEffect(() => {
     if (receivedComp) {
-      return {
+      setFormData ({
         id: receivedComp.id,
         slug: receivedComp.slug,
         backgroundColor: receivedComp.backgroundColor,
         primaryColor: receivedComp.primaryColor,
         secondaryColor: receivedComp.secondaryColor,
         logo: "",
-        dateEvent: receivedComp.dateEvent,
-        dateExpiry: receivedComp.dateExpiry,
-        dateIns: receivedComp.dateIns,
-        title: receivedComp.languages.title,
-        location: receivedComp.languages.location,
-        description: receivedComp.languages.description,
-      };
-    } else {
-      return {
-        slug: "",
-        backgroundColor: "#000000",
-        primaryColor: "#000000",
-        secondaryColor: "#000000",
-        logo: "",
-        dateEvent: "",
-        dateExpiry: "",
-        dateIns: "",
-        title: "",
-        location: "",
-        description: "",
-      };
+        dateEvent: receivedComp.dateEvent.split('T')[0],
+        dateExpiry: receivedComp.dateExpiry.split('T')[0],
+        dateIns: receivedComp.dateIns.split('T')[0],
+        title: receivedComp.languages[0].title,
+        location: receivedComp.languages[0].location,
+        description: receivedComp.languages[0].description,
+      });
+
+
     }
-  });
+  }, []);
 
   const handleReturnToList = () => navigate("/admin");
 
   const handleTitleChange = (e) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
-    setUrl("/" + slugify(newTitle));
+    setSlug(slugify(newTitle));
     setFormData({
       ...formData,
       title: newTitle,
@@ -85,18 +87,18 @@ export default function CreateEvent() {
 
   const handleSubmit = (event, data) => {
     if (data.id) {
-      data.languages = {
+      data.languages = [{
         title: formData.title,
         location: formData.location,
         description: formData.description,
-      };
+      }];
       dispatch(editCompetition(data));
     } else {
-      data.languages = {
+      data.languages = [{
         title: formData.title,
         location: formData.location,
         description: formData.description,
-      };
+      }];
       dispatch(addCompetition(data));
     }
   };
@@ -120,13 +122,13 @@ export default function CreateEvent() {
             <Form.Label>Titolo</Form.Label>
             <Form.Control
               placeholder="Titolo"
-              value={title}
+              value={formData.title}
               onChange={handleTitleChange}
             />
           </Col>
           <Col sm={6} className="mb-3">
             <Form.Label>Url</Form.Label>
-            <Form.Control placeholder="Url" value={url} disabled readOnly />
+            <Form.Control placeholder="Url" value={formData.slug} disabled readOnly />
           </Col>
           <Col sm={6} className="mb-3">
             <Form.Label>Località</Form.Label>
