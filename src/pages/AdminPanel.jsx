@@ -5,7 +5,6 @@ import React, { useEffect, useRef } from "react";
 import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
 
-import "../Admin.css";
 import {
   fetchCompetitions,
   editCompetition,

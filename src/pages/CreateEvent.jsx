@@ -7,8 +7,6 @@ import {
   editCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
 
-import "../Admin.css";
-
 /**
  * Pagina per la creazione dell'evento
  *
