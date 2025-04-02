@@ -60,6 +60,7 @@ export default function Login() {
       />
       <Link to="/event/nova-eroica">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
+      <Link to='/admin'>Admin</Link>
     </div>
   );
 }

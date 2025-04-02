@@ -1,8 +1,12 @@
 import {Button, ButtonGroup, Table} from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useRef } from 'react';
 import { Tooltip } from 'bootstrap';
+import { formatDate } from '../utils/data-formatter';
 
 import "../Admin.css";
+import { fetchCompetitions } from '../repositories/admin-competitions/admin-competitions-actions';
 
 /**
  * Pagina di admin
@@ -12,6 +16,9 @@ import "../Admin.css";
 
 export default function AdminPanel() {
   //const tooltipRef = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const competitions = useSelector((state) => state.adminCompetitions.competitions);
 
   useEffect(() => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -19,6 +26,12 @@ export default function AdminPanel() {
       new Tooltip(el);
     });
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchCompetitions());
+  }, []);
+
+  const handleCreateCompetition = () => navigate('/admin/create-event');
 
   return (
   <div className='container text-start'>
@@ -36,13 +49,14 @@ export default function AdminPanel() {
         </tr>
       </thead>
       <tbody>
+      {competitions.map((competition, i) => (
         <tr>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
+          <td>{competition.id}</td>
+          <td>{competition.languages[0].title}</td>
+          <td>{competition.languages[0].location}</td>
+          <td>{formatDate(competition.dateEvent)}</td>
+          <td>{formatDate(competition.dateStart)}</td>
+          <td>{formatDate(competition.dateExpiry)}</td>
           <td>
             <ButtonGroup aria-label="Azioni">
               <Button variant="secondary" className="btn-sm" data-bs-toggle="tooltip" title="Modifica evento"><i className="bi bi-pencil"></i></Button>
@@ -52,40 +66,10 @@ export default function AdminPanel() {
             </ButtonGroup>
           </td>
         </tr>
-        <tr>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>
-            <ButtonGroup aria-label="Azioni">
-              <Button variant="secondary" className="btn-sm" data-bs-toggle="tooltip" title="Modifica evento"><i className="bi bi-pencil"></i></Button>
-              <Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
-              <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>
-              <Button variant="danger" className="btn-sm" data-bs-toggle="tooltip" title="Elimina evento"><i className="bi bi-trash"></i></Button>
-            </ButtonGroup>
-          </td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td colSpan={2}>Larry the Bird</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>
-            <ButtonGroup aria-label="Azioni">
-              <Button variant="secondary" className="btn-sm" data-bs-toggle="tooltip" title="Modifica evento"><i className="bi bi-pencil"></i></Button>
-              <Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
-              <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>
-              <Button variant="danger" className="btn-sm" data-bs-toggle="tooltip" title="Elimina evento"><i className="bi bi-trash"></i></Button>
-            </ButtonGroup>
-          </td>
-        </tr>
+      ))}
       </tbody>
     </Table>
-    <Button variant='primary'><i className="bi bi-plus"></i> Aggiungi nuovo evento</Button>
+    <Button onClick={handleCreateCompetition} variant='primary'><i className="bi bi-plus"></i> Aggiungi nuovo evento</Button>
   </div>
   );
 }

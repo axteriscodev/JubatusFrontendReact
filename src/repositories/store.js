@@ -4,7 +4,7 @@ import userSlice from "./user/user-slice";
 import cartSlice from "./cart/cart-slice";
 import personalSlice from "./personal/personal-slice";
 import competitionsSlice from "./competitions/competitions-slice";
-import adminCompetitionsSlice from "./admin-competitions.js/admin-competitions-slice";
+import adminCompetitionsSlice from "./admin-competitions/admin-competitions-slice";
 
 export const store = configureStore({
     reducer: {

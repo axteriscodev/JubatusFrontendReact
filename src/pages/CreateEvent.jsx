@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
+import { useNavigate } from "react-router-dom";
 
 import "../Admin.css";
 
@@ -12,6 +13,9 @@ import "../Admin.css";
 export default function CreateEvent() {
     const [title, setTitle] = useState('');
     const [url, setUrl] = useState('');
+    const navigate = useNavigate();
+
+    const handleReturnToList = () => navigate('/admin');
 
     const handleTitleChange = (e) => {
         const newTitle = e.target.value;
@@ -107,7 +111,7 @@ export default function CreateEvent() {
             </Row>
             <div className='d-flex justify-content-between mt-sm'>
                 <Button variant="success">Salva dati</Button>
-                <Button variant="secondary">Vai all'elenco</Button>
+                <Button onClick={handleReturnToList} variant="secondary">Vai all'elenco</Button>
             </div>
         </Form>
     </div>

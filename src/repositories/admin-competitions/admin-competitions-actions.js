@@ -15,7 +15,7 @@ export const fetchCompetitions = (token) => {
 
     try {
       const competitionsData = await fetchData();
-      dispatch(adminCompetitionsActions.setCompetitions(competitionsData));
+      dispatch(adminCompetitionsActions.setCompetitions(competitionsData.data));
     } catch (error) {
       console.log("Qualcosa non ha funzionato");
     }
