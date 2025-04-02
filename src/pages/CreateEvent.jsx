@@ -29,7 +29,7 @@ export default function CreateEvent() {
     logo: "",
     dateEvent: "",
     dateExpiry: "",
-    dateIns: "",
+    dateStart: "",
     title: "",
     location: "",
     description: "",
@@ -46,7 +46,7 @@ export default function CreateEvent() {
         logo: "",
         dateEvent: receivedComp.dateEvent.split('T')[0],
         dateExpiry: receivedComp.dateExpiry.split('T')[0],
-        dateIns: receivedComp.dateIns.split('T')[0],
+        dateStart: receivedComp.dateStart.split('T')[0],
         title: receivedComp.languages[0].title,
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
@@ -172,8 +172,8 @@ export default function CreateEvent() {
                 <i className="bi bi-calendar"></i>
               </InputGroup.Text>
               <Form.Control
-                name="dateIns"
-                value={formData.dateIns}
+                name="dateStart"
+                value={formData.dateStart}
                 onChange={handleInputChange}
                 placeholder="Data pubblicazione"
                 type="date"

@@ -103,12 +103,25 @@ export const deleteListForCompetition = (token, competition, priceList) => {
 };
 
 async function performRequest(endpoint, method, token, body) {
+  let formData;
+
+  if (body) {
+    formData = new FormData();
+
+    // Aggiungi i dati dell'oggetto all'interno di FormData
+    for (const objKey in body) {
+      if (body.hasOwnProperty(objKey)) {
+        formData.append(objKey, body[objKey]);
+      }
+    }
+  }
+
   const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
     method: method,
     headers: {
       Authorization: "Bearer " + token,
     },
-    body: body,
+    body: formData,
   });
 
   return response;
