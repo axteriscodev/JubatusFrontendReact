@@ -24,7 +24,11 @@ export default function PinVerification() {
     if (response.ok) {
       const json = await response.json();
       setAuthToken(json.data.jwt);
-      navigate("/image-shop");
+      if (json.levelId <= 1) {
+        navigate("/admin");
+      } else {
+        navigate("/personal");
+      }
     } else {
       throw Response(
         JSON.stringify({ status: response.status, message: response.message })
