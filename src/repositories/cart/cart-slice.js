@@ -73,6 +73,7 @@ const cartSlice = createSlice({
      * @param {*} action
      */
     addItemToCart(state, action) {
+      //console.log(action.payload);
       const product = state.products.find(
         (item) => item.key === action.payload
       );

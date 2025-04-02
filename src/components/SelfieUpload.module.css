@@ -3,10 +3,10 @@
     height: 200px;
     border: 2px dashed;
     border-radius: 50%;
-    border-color: var(--grey);
+    border-color: var(--secondary-event-color, --secondary-color);
     margin: var(--val-sm-calc) auto;
     position: relative;
-    background: rgba(255, 255, 255, .2);
+    background: rgba(158, 158, 158, 0.2);
 }
 .avatar.add{
   cursor: pointer;
@@ -15,7 +15,7 @@
 .avatar.add::after {
   content: "";
   position: absolute;
-  background-color: var(--grey);
+  background-color: var(--secondary-event-color, --secondary-color);
 }
 
 /* Linea orizzontale */
@@ -34,4 +34,8 @@
   width: 8px;
   height: 50px;
   transform: translate(-50%, -50%);
+}
+.trash{
+  width: 3rem;
+  filter: brightness(0) saturate(100%) invert(33%) sepia(71%) saturate(1540%) hue-rotate(326deg) brightness(85%) contrast(102%);
 }

@@ -22,7 +22,6 @@ export default function Personal() {
 
     return (
     <>
-      <div className="text-start"><Logo size="logo-xs" /></div>
       <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
 
       <Carousel>
@@ -33,7 +32,7 @@ export default function Personal() {
         ))}
       </Carousel>
       <div className="mt-md">
-        <ImageGallery images={imageList} select={false} />
+        <ImageGallery images={imageList} select={false} actions={true} />
       </div>
     </>
     );

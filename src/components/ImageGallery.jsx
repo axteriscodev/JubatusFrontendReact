@@ -5,11 +5,11 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 import Lightbox from "yet-another-react-lightbox";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+//import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 
 import styles from "./ImageGallery.module.css";
 
-export default function ImageGallery({ images, select = true }) {
+export default function ImageGallery({ images, select = true, actions = false }) {
   const dispatch = useDispatch();
   const photoItems = useSelector((state) => state.cart.items);
   const [open, setOpen] = useState(false);
@@ -22,6 +22,14 @@ export default function ImageGallery({ images, select = true }) {
       dispatch(cartActions.addItemToCart(imageKey));
     }
   };
+
+  const handleDownloadClick = (image) => {
+    alert(`Download: ${image.url}`);
+  }
+
+  const handleShareClick = (image) => {
+    alert(`Share: ${image.url}`);
+  }
 
   const zoom = (i) => {
     setIndex(i);
@@ -70,7 +78,7 @@ export default function ImageGallery({ images, select = true }) {
           src: image.url,
           id: image.key,
         }))}
-        plugins={[Thumbnails]}
+        /*plugins={[Thumbnails]}*/
         render={{
           slideHeader: () => {
             if (!select) return null;
@@ -96,6 +104,28 @@ export default function ImageGallery({ images, select = true }) {
               </div>
             );
           },
+          slideFooter: () => {
+            if (!actions) return null;
+
+            const image = images[index];
+
+            return (
+              <div className={styles['actions-cnt']}>
+                <a
+                  onClick={() => handleDownloadClick(image)}
+                  aria-label="Download image"
+                >
+                  <img src="/images/box-arrow-down.svg" alt="Download" />
+                </a>
+                <a
+                  onClick={() => handleShareClick(image)}
+                  aria-label="Share image"
+                >
+                  <img src="/images/arrow-up-left.svg" alt="Share" />
+                </a>
+              </div>
+            );
+          }
         }}
       />         
       )}

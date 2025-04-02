@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import Form from "react-bootstrap/Form";
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 export default function MailForm({
   submitHandle,
@@ -8,6 +10,9 @@ export default function MailForm({
 }) {
   const [isChecked, setIsChecked] = useState(false);
   const email = useRef();
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const handlePrivacyChange = (event) => {
     const newValue = event.target.checked;
@@ -40,7 +45,16 @@ export default function MailForm({
             <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
               Accettare
             </label>{" "}
-            <a href="#">Termini e Policy</a>
+            <Button variant="link" onClick={handleShow}>Termini e Policy</Button>
+            <Modal show={show} onHide={handleClose} animation={false}>
+              <Modal.Header closeButton>
+                <Modal.Title>Informativa privacy policy</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Modal.Body>
+              <Modal.Footer>
+                <Button variant="dark" onClick={handleClose}>Chiudi</Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         )}
         {onErrors.privacyError && (
