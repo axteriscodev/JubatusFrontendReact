@@ -9,19 +9,19 @@ import ImageGallery from "../components/ImageGallery";
  */
 export default function Personal() {
 
-    const imageList = [
-        { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg" },
-        { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg" },
-        { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg" },
-        { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg" },
-        { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg" },
-        { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg" },
-        { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg" },
-        { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
-      ];
+  const imageList = [
+    { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg" },
+    { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg" },
+    { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg" },
+    { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg" },
+    { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg" },
+    { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg" },
+    { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg" },
+    { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
+  ];
 
-    return (
-    <>
+  return (
+    <div className="container">
       <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
 
       <Carousel>
@@ -34,6 +34,6 @@ export default function Personal() {
       <div className="mt-md">
         <ImageGallery images={imageList} select={false} actions={true} />
       </div>
-    </>
-    );
+    </div>
+  );
 }

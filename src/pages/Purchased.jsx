@@ -43,7 +43,7 @@ export default function Purchased() {
   ];
 
   return (
-  <>
+  <div className="container">
     <div className="text-start"><Logo size="logo-xs" /></div>
     <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
 
@@ -57,6 +57,6 @@ export default function Purchased() {
     <div className="mt-md">
       <ImageGallery images={imageList} select={false} />
     </div>
-  </>
+  </div>
   )
 }

@@ -6,7 +6,7 @@ export default function ErrorPage() {
 
   return (
     <>
-      <div className="form form-sm">
+      <div className="container">
         <h3>Qualcosa non ha funzionato</h3>
         <p>
           <strong>Errore {error.status} - </strong>

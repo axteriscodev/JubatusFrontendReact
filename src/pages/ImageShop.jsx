@@ -61,7 +61,7 @@ export default function ImageShop() {
   );
 
   return (
-    <div>
+    <div className="container">
       <div className="d-flex justify-content-between">
         <div>
           <Logo
