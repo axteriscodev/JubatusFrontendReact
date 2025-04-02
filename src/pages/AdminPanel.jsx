@@ -6,7 +6,7 @@ import { Tooltip } from 'bootstrap';
 import { formatDate } from '../utils/data-formatter';
 
 import "../Admin.css";
-import { fetchCompetitions } from '../repositories/admin-competitions/admin-competitions-actions';
+import { fetchCompetitions, editCompetition, deleteCompetition } from '../repositories/admin-competitions/admin-competitions-actions';
 
 /**
  * Pagina di admin
@@ -32,6 +32,14 @@ export default function AdminPanel() {
   }, []);
 
   const handleCreateCompetition = () => navigate('/admin/create-event');
+
+  const handleEditCompetition = (competition) => {
+    dispatch(editCompetition(competition));
+  };
+
+  const handleDeleteCompetition = (competition) => {
+    dispatch(deleteCompetition(competition));
+  };
 
   return (
   <div className='container text-start'>
@@ -59,10 +67,10 @@ export default function AdminPanel() {
           <td>{formatDate(competition.dateExpiry)}</td>
           <td>
             <ButtonGroup aria-label="Azioni">
-              <Button variant="secondary" className="btn-sm" data-bs-toggle="tooltip" title="Modifica evento"><i className="bi bi-pencil"></i></Button>
-              <Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
-              <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>
-              <Button variant="danger" className="btn-sm" data-bs-toggle="tooltip" title="Elimina evento"><i className="bi bi-trash"></i></Button>
+              <Button variant="secondary" onClick={() => handleEditCompetition(competition)} className="btn-sm" data-bs-toggle="tooltip" title="Modifica evento"><i className="bi bi-pencil"></i></Button>
+              {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
+              <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
+              <Button variant="danger" onClick={() => handleDeleteCompetition(competition)} className="btn-sm" data-bs-toggle="tooltip" title="Elimina evento"><i className="bi bi-trash"></i></Button>
             </ButtonGroup>
           </td>
         </tr>
