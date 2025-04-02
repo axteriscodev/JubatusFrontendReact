@@ -66,7 +66,7 @@ export default function AdminPanel() {
         </thead>
         <tbody>
           {competitions.map((competition, i) => (
-            <tr>
+            <tr key={competition.id}>
               <td>{competition.id}</td>
               <td>{competition.languages[0].title}</td>
               <td>{competition.languages[0].location}</td>
