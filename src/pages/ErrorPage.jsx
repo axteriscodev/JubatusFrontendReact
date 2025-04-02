@@ -10,7 +10,7 @@ export default function ErrorPage() {
         <h3>Qualcosa non ha funzionato</h3>
         <p>
           <strong>Errore {error.status} - </strong>
-          {message}
+          {message ?? 'Si è verificato un errore, si prega di riprovare.'}
         </p>
       </div>
     </>

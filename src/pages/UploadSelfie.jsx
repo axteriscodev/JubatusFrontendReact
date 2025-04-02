@@ -109,7 +109,7 @@ export async function loader({ request, params }) {
     }
 
     throw Response(
-      JSON.stringify({ message: message }, { status: response.status })
+      JSON.stringify({ status: response.status, message: message ?? response.message })
     );
   } else {
     return response;

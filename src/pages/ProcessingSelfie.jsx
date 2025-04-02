@@ -59,6 +59,10 @@ export default function ProcessingSelfie() {
             console.log("Errore!");
           }
         );
+      } else {
+        throw Response(
+          JSON.stringify({ status: response.status, message: response.message })
+        );
       }
     }
 
