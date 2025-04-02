@@ -25,6 +25,10 @@ export default function PinVerification() {
       const json = await response.json();
       setAuthToken(json.data.jwt);
       navigate("/image-shop");
+    } else {
+      throw Response(
+        JSON.stringify({ status: response.status, message: response.message })
+      );
     }
   }
 

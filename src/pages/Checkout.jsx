@@ -19,11 +19,11 @@ export default function Checkout() {
   const fetchClientSecret = useCallback(() => {
     // Create a Checkout Session
     return fetch(
-      import.meta.env.VITE_API_URL + '/shop/create-checkout-session',
+      import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           cart: {
@@ -35,7 +35,15 @@ export default function Checkout() {
         }),
       }
     )
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw Response(
+            JSON.stringify({ status: res.status, message: res.message })
+          );
+        }
+
+        return res.json();
+      })
       .then((data) => {
         dispatch(cartActions.updateOrderId(data.data.oderId));
         return data.data.clientSecret;

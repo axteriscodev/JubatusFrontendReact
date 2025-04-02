@@ -43,6 +43,10 @@ export default function Login() {
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));
       navigate('/pin-verification');
+    } else {
+      throw Response(
+        JSON.stringify({ status: response.status, message: response.message })
+      );
     }
   }
 
