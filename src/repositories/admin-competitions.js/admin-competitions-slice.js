@@ -6,16 +6,18 @@ import { createSlice } from "@reduxjs/toolkit";
 const adminCompetitionsSlice = createSlice({
   name: "admin-competitions",
   initialState: {
-    events: [],
+    competitions: [],
   },
   reducers: {
+    setCompetitions(state, action) {
+        state.competitions = [...action.payload];
+    },
     addCompetition(state, action) {},
     editCompetition(state, action) {},
     deleteCompetition(state, action) {},
     addListToCompetition(state, action) {},
     editListForCompetition(state, action) {},
     deleteListForCompetition(state, action) {},
-    setCompetitions(state, action) {},
   },
 });
 
