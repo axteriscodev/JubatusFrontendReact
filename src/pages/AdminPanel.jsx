@@ -5,7 +5,6 @@ import React, { useEffect, useRef } from "react";
 import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
 
-import "../Admin.css";
 import {
   fetchCompetitions,
   editCompetition,
@@ -33,6 +32,13 @@ export default function AdminPanel() {
     tooltipTriggerList.forEach((el) => {
       new Tooltip(el);
     });
+
+    // aggiungo la classe admin per aggiornare le variabili CSS
+    document.body.classList.add('admin');
+    // rimuovo la classe admin al "destroy" del componente
+    return () => {
+      document.body.classList.remove('admin');
+    };
   }, []);
 
   useEffect(() => {
