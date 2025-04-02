@@ -22,7 +22,7 @@ export const fetchCompetitions = (token) => {
   };
 };
 
-export const addCompetition = (token, competition) => {
+export const addCompetition = (competition, token) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
@@ -35,14 +35,14 @@ export const addCompetition = (token, competition) => {
       if (!response.ok) {
         throw new Error("Errore di comunicazione col server");
       }
-
-      try {
-        await sendRequest();
-        dispatch(adminCompetitionsActions.addCompetition(competition));
-      } catch (error) {
-        console.log("Qualcosa è andato storto");
-      }
     };
+
+    try {
+      await sendRequest();
+      dispatch(adminCompetitionsActions.addCompetition(competition));
+    } catch (error) {
+      console.log("Qualcosa è andato storto");
+    }
   };
 };
 
@@ -59,37 +59,37 @@ export const editCompetition = (token, competition) => {
       if (!response.ok) {
         throw new Error("Errore di comunicazione col server");
       }
-
-      try {
-        await sendRequest();
-        dispatch(adminCompetitionsActions.editCompetition(competition));
-      } catch (error) {
-        console.log("Qualcosa è andato storto");
-      }
     };
+
+    try {
+      await sendRequest();
+      dispatch(adminCompetitionsActions.editCompetition(competition));
+    } catch (error) {
+      console.log("Qualcosa è andato storto");
+    }
   };
 };
 export const deleteCompetition = (token, competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
-        const response = await performRequest(
-          "/events/event" + competition.id,
-          "DELETE",
-          token,
-          competition
-        );
-  
-        if (!response.ok) {
-          throw new Error("Errore di comunicazione col server");
-        }
-  
-        try {
-          await sendRequest();
-          dispatch(adminCompetitionsActions.deleteCompetition(competition));
-        } catch (error) {
-          console.log("Qualcosa è andato storto");
-        }
-      };
+      const response = await performRequest(
+        "/events/event" + competition.id,
+        "DELETE",
+        token,
+        competition
+      );
+
+      if (!response.ok) {
+        throw new Error("Errore di comunicazione col server");
+      }
+    };
+
+    try {
+      await sendRequest();
+      dispatch(adminCompetitionsActions.deleteCompetition(competition));
+    } catch (error) {
+      console.log("Qualcosa è andato storto");
+    }
   };
 };
 export const addListToCompetition = (token, competition, priceList) => {

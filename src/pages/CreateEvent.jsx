@@ -16,6 +16,8 @@ import "../Admin.css";
  *
  */
 export default function CreateEvent() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const receivedComp = useLocation().state;
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -38,9 +40,9 @@ export default function CreateEvent() {
     } else {
       return {
         slug: "",
-        backgroundColor: "",
-        primaryColor: "",
-        secondaryColor: "",
+        backgroundColor: "#000000",
+        primaryColor: "#000000",
+        secondaryColor: "#000000",
         logo: "",
         dateEvent: "",
         dateExpiry: "",
@@ -51,8 +53,6 @@ export default function CreateEvent() {
       };
     }
   });
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleReturnToList = () => navigate("/admin");
 
@@ -90,14 +90,14 @@ export default function CreateEvent() {
         location: formData.location,
         description: formData.description,
       };
-      dispatch(editCompetition(competition));
+      dispatch(editCompetition(data));
     } else {
       data.languages = {
         title: formData.title,
         location: formData.location,
         description: formData.description,
       };
-      dispatch(addCompetition(competition));
+      dispatch(addCompetition(data));
     }
   };
 
@@ -152,7 +152,7 @@ export default function CreateEvent() {
             <Form.Label>Data evento</Form.Label>
             <InputGroup>
               <InputGroup.Text id="basic-addon-data-e">
-                <i class="bi bi-calendar"></i>
+                <i className="bi bi-calendar"></i>
               </InputGroup.Text>
               <Form.Control
                 name="dateEvent"
@@ -167,7 +167,7 @@ export default function CreateEvent() {
             <Form.Label>Data pubblicazione</Form.Label>
             <InputGroup>
               <InputGroup.Text id="basic-addon-data-p">
-                <i class="bi bi-calendar"></i>
+                <i className="bi bi-calendar"></i>
               </InputGroup.Text>
               <Form.Control
                 name="dateIns"
@@ -182,7 +182,7 @@ export default function CreateEvent() {
             <Form.Label>Data scadenza</Form.Label>
             <InputGroup>
               <InputGroup.Text id="basic-addon-data-s">
-                <i class="bi bi-calendar"></i>
+                <i className="bi bi-calendar"></i>
               </InputGroup.Text>
               <Form.Control
                 name="dateExpiry"
@@ -200,7 +200,6 @@ export default function CreateEvent() {
             <Form.Control
               type="color"
               id="exampleColorInput"
-              defaultValue="#000000"
               title="Choose your color"
               name="backgroundColor"
               value={formData.backgroundColor}
@@ -212,8 +211,8 @@ export default function CreateEvent() {
             <Form.Control
               type="color"
               id="exampleColorInput"
-              defaultValue="#ffffff"
               title="Choose your color"
+              name="primaryColor"
               value={formData.primaryColor}
               onChange={handleInputChange}
             />
@@ -225,8 +224,8 @@ export default function CreateEvent() {
             <Form.Control
               type="color"
               id="exampleColorInput"
-              defaultValue="#ffa500"
               title="Choose your color"
+              name="secondaryColor"
               value={formData.secondaryColor}
               onChange={handleInputChange}
             />
