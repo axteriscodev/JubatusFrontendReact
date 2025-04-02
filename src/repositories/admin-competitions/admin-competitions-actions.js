@@ -93,13 +93,13 @@ export const deleteCompetition = (competition) => {
     }
   };
 };
-export const addListToCompetition = (token, competition, priceList) => {
+export const addListToCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
-export const editListForCompetition = (token, competition, priceList) => {
+export const editListForCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
-export const deleteListForCompetition = (token, competition, priceList) => {
+export const deleteListForCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
 
