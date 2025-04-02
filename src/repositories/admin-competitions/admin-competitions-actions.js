@@ -46,7 +46,7 @@ export const addCompetition = (competition, token) => {
   };
 };
 
-export const editCompetition = (token, competition) => {
+export const editCompetition = (competition, token) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
@@ -69,11 +69,11 @@ export const editCompetition = (token, competition) => {
     }
   };
 };
-export const deleteCompetition = (token, competition) => {
+export const deleteCompetition = (competition, token) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
-        "/events/event" + competition.id,
+        "/events/event/" + competition.id,
         "DELETE",
         token,
         competition
