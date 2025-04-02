@@ -17,6 +17,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
     if (file) {
       setImageUrl(URL.createObjectURL(file));
       onDataChange(file);
+      onError = false;
     }
   };
 
@@ -32,7 +33,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       {imageUrl && (
         <img
           src="/images/trash-fill.svg"
-          className="trash"
+          className={styles.trash}
           onClick={() => {
             const confirmDelete = window.confirm("Sei sicuro di voler rimuovere il selfie?");
             if (confirmDelete) {

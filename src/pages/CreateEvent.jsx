@@ -51,9 +51,13 @@ export default function CreateEvent() {
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
       });
-
-
     }
+    // aggiungo la classe admin per aggiornare le variabili CSS
+    document.body.classList.add('admin');
+    // rimuovo la classe admin al "destroy" del componente
+    return () => {
+      document.body.classList.remove('admin');
+    };
   }, []);
 
   const handleReturnToList = () => navigate("/admin");
