@@ -1,9 +1,10 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
+import { getAuthToken } from "../../utils/auth";
 
-export const fetchCompetitions = (token) => {
+export const fetchCompetitions = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await performRequest("/events/fetch", "GET", token);
+      const response = await performRequest("/events/fetch", "GET", getAuthToken());
 
       if (!response.ok) {
         throw new Error("Errore nel caricamento degli eventi");
@@ -22,13 +23,13 @@ export const fetchCompetitions = (token) => {
   };
 };
 
-export const addCompetition = (competition, token) => {
+export const addCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
         "/events/create",
         "POST",
-        token,
+        getAuthToken(),
         competition
       );
 
@@ -46,13 +47,13 @@ export const addCompetition = (competition, token) => {
   };
 };
 
-export const editCompetition = (competition, token) => {
+export const editCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
         "/events/event" + competition.id,
         "PUT",
-        token,
+        getAuthToken(),
         competition
       );
 
@@ -69,13 +70,13 @@ export const editCompetition = (competition, token) => {
     }
   };
 };
-export const deleteCompetition = (competition, token) => {
+export const deleteCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
         "/events/event/" + competition.id,
         "DELETE",
-        token,
+        getAuthToken(),
         competition
       );
 
