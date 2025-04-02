@@ -14,7 +14,7 @@ import { setUiPreset } from "../utils/graphics";
  * @returns {React.ReactElement}  Pagina di acquisto immagini
  */
 export default function ImageShop() {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   // const imagesList = [
   //   { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg", fileTypeId: 1 },
   //   { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg", fileTypeId: 1 },
@@ -31,7 +31,7 @@ export default function ImageShop() {
   const eventPreset = useSelector((state) => state.competition);
 
   useEffect(() => {
-    dispatch(cartActions.updateProducts(imagesList));
+    //dispatch(cartActions.updateProducts(imagesList));
    setUiPreset(eventPreset);
   }, []);
 
