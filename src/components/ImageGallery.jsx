@@ -121,7 +121,7 @@ export default function ImageGallery({ images, select = true, actions = false })
                   onClick={() => handleShareClick(image)}
                   aria-label="Share image"
                 >
-                  <img src="/images/arrow-up-left.svg" alt="Share" />
+                  <img src="/images/arrow-up-right.svg" alt="Share" />
                 </a>
               </div>
             );
