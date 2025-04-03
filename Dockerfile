@@ -18,7 +18,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copia i file di build dentro NGINX
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app /usr/share/nginx/html
 
 # Configure nginx - removed the daemon directive
 RUN echo 'server { \
