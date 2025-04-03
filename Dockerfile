@@ -32,6 +32,9 @@ RUN echo 'server { \
   gzip_comp_level 6; \
   gzip_min_length 1000; \
   } \
+       types {\
+        text/javascript js jsx mjs;\
+    }\
   }' > /etc/nginx/conf.d/default.conf
 
 # Esponi la porta 80
