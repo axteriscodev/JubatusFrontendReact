@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-export default function ContentNotFound() {
+export default function ContentUnavailable() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
 
