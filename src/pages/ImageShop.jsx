@@ -14,7 +14,7 @@ import { setUiPreset } from "../utils/graphics";
  * @returns {React.ReactElement}  Pagina di acquisto immagini
  */
 export default function ImageShop() {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   // const imagesList = [
   //   { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg", fileTypeId: 1 },
   //   { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg", fileTypeId: 1 },
@@ -31,7 +31,7 @@ export default function ImageShop() {
   const eventPreset = useSelector((state) => state.competition);
 
   useEffect(() => {
-    dispatch(cartActions.updateProducts(imagesList));
+    //dispatch(cartActions.updateProducts(imagesList));
    setUiPreset(eventPreset);
   }, []);
 
@@ -70,7 +70,7 @@ export default function ImageShop() {
           />
         </div>
         <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-          <img src="/images/icon-info.png" className="logo-xs pointer" />
+          <i class="bi bi-info-circle text-60 pointer"></i>
         </OverlayTrigger>
       </div>
       <div className="my-md text-start">
@@ -88,14 +88,14 @@ export default function ImageShop() {
 function getPriceListEntry(pricePack) {
   let description = '';
 
-  if (pricePack.quantityFoto === -1) {
+  if (pricePack.quantityPhoto === -1) {
     description = `Tutte le foto - ${pricePack.price}€`;
-  } else if (pricePack.quantityFoto > 0 && pricePack.quantityVideo === 0) {
-    description = `${pricePack.quantityFoto} Foto - ${pricePack.price}€`;
-  } else if (pricePack.quantityFoto === 0 && pricePack.quantityVideo > 0) {
+  } else if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0) {
+    description = `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
+  } else if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0) {
     description = `Il tuo video - ${pricePack.price}€`;
-  } else if (pricePack.quantityFoto > 0 && pricePack.quantityVideo > 0) {
-    description = `Il tuo video e ${pricePack.quantityFoto} foto - ${pricePack.price}€`;
+  } else if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0) {
+    description = `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
   }
 
   return description;

@@ -1,9 +1,11 @@
 import Logo from "../components/Logo";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProcessingPhotos() {
   const eventPreset = useSelector((state) => state.competition);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -14,6 +16,14 @@ export default function ProcessingPhotos() {
       "--font-color",
       eventPreset.fontColor
     );
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate("/purchased");
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -28,10 +38,7 @@ export default function ProcessingPhotos() {
       </h2>
       <h4 className="mt-sm mb-md">
         Stiamo elaborando
-        <br />i tuoi contenuti in <span>
-          MASSIMA
-        </span>{" "}
-        risoluzione
+        <br />i tuoi contenuti in <span>MASSIMA</span> risoluzione
         <br />
         🌊 📸 🏄🏻
       </h4>
