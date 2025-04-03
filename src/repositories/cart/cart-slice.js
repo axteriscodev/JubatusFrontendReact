@@ -80,7 +80,12 @@ const cartSlice = createSlice({
 
       state.totalQuantity++;
 
-      state.totalPrice = state.totalPrice + 9;
+      //state.totalPrice = state.totalPrice + 9;
+      if (state.totalPrice + 9 > 29) {
+        state.totalPrice = 29;
+      } else {
+        state.totalPrice = state.totalPrice + 9;
+      }
 
       state.items.push({ key: product.key, fileTypeId: product.fileTypeId });
 
@@ -119,7 +124,13 @@ const cartSlice = createSlice({
       //const existingItem = state.items.find((item) => item.id === id);
 
       state.totalQuantity--;
-      state.totalPrice = state.totalPrice - 9;
+      //state.totalPrice = state.totalPrice - 9;
+
+      if (9 * (state.totalQuantity) >= 29) {
+        state.totalPrice = 29;
+      } else {
+        state.totalPrice = (state.totalQuantity) * 9;
+      }
 
       state.items = state.items.filter((item) => item.key !== itemToRemove);
 

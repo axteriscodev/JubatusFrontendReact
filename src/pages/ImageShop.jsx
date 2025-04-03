@@ -45,16 +45,6 @@ export default function ImageShop() {
               {i < pricesList.length - 1 && <hr />}
             </>
           ))}
-
-          {/* 1 Foto - 9€
-          <hr />
-          3 Foto - 25€
-          <hr />
-          <strong>Tutte</strong> le Foto - 25€
-          <hr />
-          Il <strong>tuo</strong> video personalizzato - 25€
-          <hr />
-          Il <strong>tuo</strong> video e 10 foto - 35€ */}
         </div>
       </Popover.Body>
     </Popover>
