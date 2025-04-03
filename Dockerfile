@@ -23,8 +23,8 @@ COPY --from=builder /app /usr/share/nginx/html
 # Copia il file di configurazione personalizzato per NGINX
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Esponi la porta 80
-EXPOSE 80
+# Esponi la porta 5555
+EXPOSE 5555
 
 # Avvia NGINX
-CMD ["nginx"]
+CMD ["nginx", "-g", "daemon off;"]
