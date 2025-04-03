@@ -1,5 +1,5 @@
 # Fase 1: Build dell'app React
-FROM node:latest as build
+FROM node:alpine AS builder
 
 # Imposta la directory di lavoro
 WORKDIR /app
@@ -15,13 +15,10 @@ COPY . .
 RUN npm run build
 
 # Fase 2: Serve l'app con NGINX
-FROM steebchen/nginx-spa:stable
+FROM nginx:alpine
 
 # Copia i file di build dentro NGINX
 COPY --from=builder /app/build /usr/share/nginx/html
-
-# Copia il file di configurazione personalizzato per NGINX
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Configure nginx - removed the daemon directive
 RUN echo 'server { \
@@ -39,6 +36,5 @@ RUN echo 'server { \
 
 # Esponi la porta 80
 EXPOSE 5555
-
 # Avvia NGINX
-CMD ["nginx"]
+CMD ["nginx", "-g", "daemon off;"]
