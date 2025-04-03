@@ -53,7 +53,12 @@ export default function ProcessingSelfie() {
             dispatch(cartActions.updateProducts(jsonData.contents));
             dispatch(cartActions.updateUserId(jsonData.userId));
 
-            navigate("/image-shop");
+            if(jsonData.contents.length > 0) {
+
+              navigate("/image-shop");
+            } else {
+              navigate('/content-unavailable');
+            }
           },
           () => {
             console.log("Errore!");
