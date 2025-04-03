@@ -20,22 +20,11 @@ FROM nginx:alpine
 # Copia i file di build dentro NGINX
 COPY --from=builder /app /usr/share/nginx/html
 
-# Configure nginx - removed the daemon directive
-RUN echo 'server { \
-  listen 5555; \
-  location / { \
-  root /usr/share/nginx/html; \
-  index index.html; \
-  try_files $uri $uri/ /index.html; \
-  gzip on; \
-  gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript; \
-  gzip_comp_level 6; \
-  gzip_min_length 1000; \
-  } \
-  }' > /etc/nginx/conf.d/default.conf
+# Copia il file di configurazione personalizzato per NGINX
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Esponi la porta 80
-EXPOSE 5555
+EXPOSE 80
 
 # Avvia NGINX
 CMD ["nginx"]
