@@ -1,4 +1,4 @@
-.foto{
+.square{
     border: 4px solid transparent;
     z-index: 1;
 }
@@ -29,4 +29,7 @@
 .actions-cnt img{
     width: 3rem;
     filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(1deg) brightness(101%) contrast(104%);
+}
+.gallery > div > div > div{
+    border-radius: var(--border-radius);
 }

@@ -5,8 +5,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
+import Lightbox from "yet-another-react-lightbox";
 
 /**
  * Pagina di acquisto immagini
@@ -26,13 +27,52 @@ export default function ImageShop() {
   //   { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg", fileTypeId: 1 },
   // ];
 
+  const dispatch = useDispatch();
   const imagesList = useSelector((state) => state.cart.products);
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
 
+  const [open, setOpen] = useState(false);
+  const [select, setSelect] = useState(false);
+  const [actions, setActions] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [_slides, setSlides] = useState([]);
+
+  const handleImageClick = (imageKey) => {
+    console.log(`imageKey ${imageKey}`);
+    if (photoItems.some((element) => element.key === imageKey)) {
+      dispatch(cartActions.removeItemFromCart(imageKey));
+    } else {
+      dispatch(cartActions.addItemToCart(imageKey));
+    }
+    setOpen(false);
+  };
+
+  const photoItems = useSelector((state) => state.cart.items);
+
+  const handleFavouriteClick = (image) => {
+    alert(`Favourite: ${image.url}`);
+  }
+
+  const handleDownloadClick = (image) => {
+    alert(`Download: ${image.url}`);
+  }
+
+  const handleShareClick = (image) => {
+    alert(`Share: ${image.url}`);
+  }
+
+  const openLightbox = (images, startIndex = 0, select, actions) => {
+    setIndex(startIndex);
+    setOpen(true);
+    setSlides(images);
+    setSelect(select);
+    setActions(actions);
+  };
+
   useEffect(() => {
     //dispatch(cartActions.updateProducts(imagesList));
-   setUiPreset(eventPreset);
+    setUiPreset(eventPreset);
   }, []);
 
   const popover = (
@@ -51,27 +91,101 @@ export default function ImageShop() {
   );
 
   return (
-    <div className="container">
-      <div className="d-flex justify-content-between">
-        <div>
-          <Logo
-            src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
-            size="logo-xs"
-          />
+    <>
+      <div className="container">
+        <div className="d-flex justify-content-between">
+          <div>
+            <Logo
+              src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+              size="logo-xs"
+            />
+          </div>
+          <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+            <i className="bi bi-info-circle text-60 pointer"></i>
+          </OverlayTrigger>
         </div>
-        <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-          <i class="bi bi-info-circle text-60 pointer"></i>
-        </OverlayTrigger>
+        <div className="my-md text-start">
+          <h2>
+            Ci siamo <strong>atleta!</strong>
+          </h2>
+          <p>Ecco le tue foto</p>
+        </div>
+        <ImageGallery images={imagesList} select={true} actions={false} onOpenLightbox={openLightbox} onImageClick={handleImageClick} photoItems={photoItems} />
+        <TotalShopButton />
       </div>
-      <div className="my-md text-start">
-        <h2>
-          Ci siamo <strong>atleta!</strong>
-        </h2>
-        <p>Ecco le tue foto</p>
-      </div>
-      <ImageGallery images={imagesList} />
-      <TotalShopButton />
-    </div>
+
+      {open && (
+        <Lightbox
+          styles={{ container: { backgroundColor: "var(--overlay)" } }}
+          open={open}
+          close={() => setOpen(false)}
+          index={index}
+          on={{
+            view: ({ index: newIndex }) => setIndex(newIndex),
+          }}
+          slides={_slides.map((image) => ({
+            src: image.url,
+            id: image.key,
+          }))}
+          render={{
+            slideHeader: () => {
+              if (!select) return null;
+
+              const image = _slides[index];
+              console.log(`image ${image}`);
+              console.log(`image.id ${image.key}`);
+              const isSelected = photoItems.some((el) => el.key === image.key);
+        
+              return (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "16px",
+                    right: "80px",
+                    zIndex: 1000,
+                  }}
+                >
+                  <button
+                    onClick={() => handleImageClick(image.key)}
+                    className={`my-button ${isSelected ? "remove" : "add"}`}
+                  >
+                    <i className='bi bi-cart'></i> {isSelected ? "Rimuovi" : "Seleziona"}
+                  </button>
+                </div>
+              );
+            },
+            slideFooter: () => {
+              if (!actions) return null;
+
+              const image = _slides[index];
+
+              return (
+                <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
+                  <a
+                    onClick={() => handleFavouriteClick(image)}
+                    aria-label="Favourite image"
+                  >
+                    <i className="bi bi-heart-fill text-danger"></i>
+                  </a>
+                  <a
+                    onClick={() => handleDownloadClick(image)}
+                    aria-label="Download image"
+                  >
+                    <i className="bi bi-arrow-up"></i>
+                  </a>
+                  <a
+                    onClick={() => handleShareClick(image)}
+                    aria-label="Share image"
+                  >
+                    <i className="bi bi-arrow-up-right"></i>
+                  </a>
+                </div>
+              );
+            }
+          }}
+        />         
+      )}
+    </>
   );
 }
 

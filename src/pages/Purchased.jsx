@@ -46,14 +46,17 @@ export default function Purchased() {
   <div className="container">
     <div className="text-start"><Logo size="logo-xs" /></div>
     <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
-
-    <Carousel>
-    {imageList.map((image, i) => (
-      <Carousel.Item>
-        <img src={image.url} className="d-block w-100" alt="..."/>
-      </Carousel.Item>
-      ))}
-    </Carousel>
+    <div className="px-lg">
+      <Carousel>
+      {imageList.map((image, i) => (
+        <Carousel.Item>
+          <div class="ratio ratio-1-1">
+            <img src={image.url} className="d-block w-100 object-fit-cover" alt="..."/>
+          </div>
+        </Carousel.Item>
+        ))}
+      </Carousel>
+    </div>
     <div className="mt-md">
       <ImageGallery images={imageList} select={false} />
     </div>

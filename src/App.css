@@ -22,6 +22,8 @@
   --add: #198754;
   --remove: #dc3545;
   --font: "Roboto", sans-serif;
+  --border-radius: 10px;
+  --overlay: rgba(0, 0, 0, .9);
 }
 #root {
   text-align: center;
@@ -272,4 +274,7 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 .form-sm{
   max-width: 450px;
   margin:0 auto;
+}
+.carousel img{
+  border-radius: var(--border-radius);
 }
