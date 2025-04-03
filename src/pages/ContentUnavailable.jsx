@@ -1,12 +1,13 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Logo from "../components/Logo";
 
 export default function ContentUnavailable() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
 
   const buttonHandle = (event) => {
-    navigate(import.meta.env.VITE_API_URL + "/event/" + eventPreset.slug);
+    navigate("/event/" + eventPreset.slug);
   };
 
   return (
