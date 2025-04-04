@@ -7,21 +7,9 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
-import Lightbox from "yet-another-react-lightbox";
+import CustomLightbox from "../components/CustomLightbox";
 
 export default function ImageShop() {
-  //const dispatch = useDispatch();
-  // const imagesList = [
-  //   { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg", fileTypeId: 1 },
-  //   { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg", fileTypeId: 1 },
-  // ];
-
   const dispatch = useDispatch();
   const imagesList = useSelector((state) => state.cart.products);
   const pricesList = useSelector((state) => state.cart.prices);
@@ -43,18 +31,6 @@ export default function ImageShop() {
   };
 
   const photoItems = useSelector((state) => state.cart.items);
-
-  const handleFavouriteClick = (image) => {
-    alert(`Favourite: ${image.url}`);
-  }
-
-  const handleDownloadClick = (image) => {
-    alert(`Download: ${image.url}`);
-  }
-
-  const handleShareClick = (image) => {
-    alert(`Share: ${image.url}`);
-  }
 
   const openLightbox = (images, startIndex = 0, select, actions) => {
     setIndex(startIndex);
@@ -103,95 +79,36 @@ export default function ImageShop() {
           </h2>
           <p>Ecco le tue foto</p>
         </div>
-        <ImageGallery images={imagesList} select={true} actions={false} onOpenLightbox={openLightbox} onImageClick={handleImageClick} photoItems={photoItems} />
+        <ImageGallery
+          images={imagesList}
+          select={true}
+          actions={false}
+          onOpenLightbox={openLightbox}
+          onImageClick={handleImageClick}
+          photoItems={photoItems}
+        />
         <TotalShopButton />
       </div>
 
-      {open && (
-        <Lightbox
-          styles={{ container: { backgroundColor: "var(--overlay)" } }}
-          open={open}
-          close={() => setOpen(false)}
-          index={index}
-          on={{
-            view: ({ index: newIndex }) => setIndex(newIndex),
-          }}
-          slides={slides.map((image) => ({
-            src: image.url,
-            id: image.keyOriginal,
-          }))}
-          render={{
-            slideHeader: () => {
-              if (!select) return null;
-
-              const image = slides[index];
-              const isSelected = photoItems.some((el) => el.keyPreview === image.keyPreview);
-        
-              return (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "16px",
-                    right: "80px",
-                    zIndex: 1000,
-                  }}
-                >
-                  <button
-                    onClick={() => handleImageClick(image.keyPreview)}
-                    className={`my-button ${isSelected ? "remove" : "add"}`}
-                  >
-                    <i className='bi bi-cart'></i> {isSelected ? "Rimuovi" : "Seleziona"}
-                  </button>
-                </div>
-              );
-            },
-            slideFooter: () => {
-              if (!actions) return null;
-
-              const image = slides[index];
-
-              return (
-                <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
-                  <a
-                    onClick={() => handleFavouriteClick(image)}
-                    aria-label="Favourite image"
-                  >
-                    <i className="bi bi-heart-fill text-danger"></i>
-                  </a>
-                  <a
-                    onClick={() => handleDownloadClick(image)}
-                    aria-label="Download image"
-                  >
-                    <i className="bi bi-arrow-up"></i>
-                  </a>
-                  <a
-                    onClick={() => handleShareClick(image)}
-                    aria-label="Share image"
-                  >
-                    <i className="bi bi-arrow-up-right"></i>
-                  </a>
-                </div>
-              );
-            }
-          }}
-        />         
-      )}
+      <CustomLightbox
+        open={open}
+        slides={slides}
+        index={index}
+        setIndex={setIndex}
+        select={select}
+        actions={actions}
+        onClose={() => setOpen(false)}
+        onImageClick={handleImageClick}
+        photoItems={photoItems}
+      />
     </>
   );
 }
 
 function getPriceListEntry(pricePack) {
-  let description = '';
-
-  if (pricePack.quantityPhoto === -1) {
-    description = `Tutte le foto - ${pricePack.price}€`;
-  } else if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0) {
-    description = `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
-  } else if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0) {
-    description = `Il tuo video - ${pricePack.price}€`;
-  } else if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0) {
-    description = `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
-  }
-
-  return description;
+  if (pricePack.quantityPhoto === -1) return `Tutte le foto - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0) return `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0) return `Il tuo video - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0) return `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
+  return '';
 }
