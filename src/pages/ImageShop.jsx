@@ -39,8 +39,8 @@ export default function ImageShop() {
   const [_slides, setSlides] = useState([]);
 
   const handleImageClick = (imageKey) => {
-    console.log(`imageKey ${imageKey}`);
-    if (photoItems.some((element) => element.key === imageKey)) {
+    //console.log(`imageKey ${imageKey}`);
+    if (photoItems.some((element) => element.keyPreview === imageKey)) {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
       dispatch(cartActions.addItemToCart(imageKey));
@@ -71,7 +71,6 @@ export default function ImageShop() {
   };
 
   useEffect(() => {
-    //dispatch(cartActions.updateProducts(imagesList));
     setUiPreset(eventPreset);
   }, []);
 
@@ -125,16 +124,16 @@ export default function ImageShop() {
           }}
           slides={_slides.map((image) => ({
             src: image.url,
-            id: image.key,
+            id: image.keyOriginal,
           }))}
           render={{
             slideHeader: () => {
               if (!select) return null;
 
               const image = _slides[index];
-              console.log(`image ${image}`);
-              console.log(`image.id ${image.key}`);
-              const isSelected = photoItems.some((el) => el.key === image.key);
+              //console.log(`image ${image}`);
+              //console.log(`image.keyPreview ${image.keyPreview}`);
+              const isSelected = photoItems.some((el) => el.keyPreview === image.keyPreview);
         
               return (
                 <div
@@ -146,7 +145,7 @@ export default function ImageShop() {
                   }}
                 >
                   <button
-                    onClick={() => handleImageClick(image.key)}
+                    onClick={() => handleImageClick(image.keyPreview)}
                     className={`my-button ${isSelected ? "remove" : "add"}`}
                   >
                     <i className='bi bi-cart'></i> {isSelected ? "Rimuovi" : "Seleziona"}

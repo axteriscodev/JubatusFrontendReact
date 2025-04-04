@@ -1,12 +1,8 @@
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-
-//import { useSelector } from "react-redux";
-
 import styles from "./ImageGallery.module.css";
 
 export default function ImageGallery({ images, select = true, actions = false, onOpenLightbox, onImageClick, photoItems }) {
-  //const photoItems = useSelector((state) => state.cart.items);
 
   return (
     <>
@@ -15,12 +11,17 @@ export default function ImageGallery({ images, select = true, actions = false, o
           <div>
             <div
               onClick={() =>
-                photoItems.length === 0 ? onOpenLightbox(images, i, select, actions) : onImageClick(image.key)
+                {
+                  //console.log("Clicked image:", image);
+                  photoItems.length === 0
+                    ? onOpenLightbox(images, i, select, actions)
+                    : onImageClick(image.keyPreview);
+                }
               }
               className="ratio ratio-1-1"
             >
               <div className={`${styles.square} ${
-                photoItems.some((el) => el.key === image.key) ? styles.selected : ""
+                photoItems.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
               }`}></div>
               <div
                 style={{

@@ -15,6 +15,7 @@ export default function Personal() {
   const [slides, setSlides] = useState([]);
 
   const handleImageClick = (imageKey) => {
+    console.log(`handleImageClick: ${imageKey}`);
     if (photoItems.some((element) => element.key === imageKey)) {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
@@ -45,13 +46,13 @@ export default function Personal() {
     setActions(actions);
   };
 
-  const imageList = [
+  const imagesList = [
     { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg" },
     { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg" },
     { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg" },
   ];
 
-  const imageList2 = [
+  const imagesList2 = [
     { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg" },
     { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg" },
     { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg" },
@@ -65,7 +66,7 @@ export default function Personal() {
         <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
         <div className="px-lg">
           <Carousel>
-          {imageList.map((image, i) => (
+          {imagesList.map((image, i) => (
             <Carousel.Item>
               <div className="ratio ratio-1-1">
                 <img src={image.url} className="d-block w-100 object-fit-cover" alt="..." onClick={() => openLightbox(imageList, i, false, true)} />
@@ -75,7 +76,7 @@ export default function Personal() {
           </Carousel>
         </div>
         <div className="mt-md">
-          <ImageGallery images={imageList2} select={false} actions={true} onOpenLightbox={openLightbox} onImageClick={handleImageClick} photoItems={photoItems} />
+          <ImageGallery images={imagesList2} select={false} actions={true} onOpenLightbox={openLightbox} onImageClick={handleImageClick} photoItems={photoItems} />
         </div>
       </div>
 
