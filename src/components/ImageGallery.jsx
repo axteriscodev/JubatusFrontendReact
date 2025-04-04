@@ -10,29 +10,26 @@ export default function ImageGallery({ images, select = true, actions = false, o
         {images.map((image, i) => (
           <div>
             <div
-              onClick={() =>
-                {
-                  //console.log("Clicked image:", image);
-                  photoItems.length === 0
-                    ? onOpenLightbox(images, i, select, actions)
-                    : onImageClick(image.keyPreview);
-                }
-              }
+              
               className="ratio ratio-1-1"
             >
-              <div className={`${styles.square} ${
-                photoItems.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
-              }`}></div>
-              <div
-                style={{
-                  backgroundImage: `url(${image.url})`,
-                  backgroundRepeat: "no-repeat",
-                  backgroundAttachment: "scroll",
-                  backgroundPosition: "50% 50%",
-                  backgroundSize: "cover",
-                  backgroundColor: "transparent",
-                }}
-              ></div>
+              <div>
+                <div className={`${styles.picture} ${
+                    photoItems.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
+                  }`}
+                  style={{
+                    backgroundImage: `url(${image.url})`
+                  }}
+                >
+                </div>
+                <div className={styles.zoom}
+                  onClick={() => onOpenLightbox(images, i, select, actions) }>
+                    <i className="bi bi-search"></i>
+                </div>
+                <div className={styles.circle}
+                  onClick={() => onImageClick(image.keyPreview) }>
+                </div>
+              </div>
             </div>
           </div>
         ))}

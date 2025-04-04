@@ -13,10 +13,10 @@ export default function CustomLightbox({
 }) {
   const currentImage = slides[index];
 
-  const getImageKey = (image) => image.key ?? image.keyPreview;
+  //const getImageKey = (image) => image.key ?? image.keyPreview;
 
   const isSelected = photoItems.some(
-    (el) => getImageKey(el) === getImageKey(currentImage)
+    (el) => el.keyPreview === currentImage.keyPreview
   );
 
   const handleFavouriteClick = (image) => alert(`Favourite: ${image.url}`);
@@ -34,7 +34,7 @@ export default function CustomLightbox({
       }}
       slides={slides.map((image) => ({
         src: image.url,
-        id: getImageKey(image),
+        id: image.keyPreview,
       }))}
       render={{
         slideHeader: () =>
@@ -48,7 +48,7 @@ export default function CustomLightbox({
               }}
             >
               <button
-                onClick={() => onImageClick(getImageKey(currentImage))}
+                onClick={() => onImageClick(currentImage.keyPreview)}
                 className={`my-button ${isSelected ? "remove" : "add"}`}
               >
                 <i className="bi bi-cart"></i> {isSelected ? "Rimuovi" : "Seleziona"}

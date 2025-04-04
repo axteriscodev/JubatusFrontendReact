@@ -20,7 +20,7 @@ export default function Purchased() {
 
   const handleImageClick = (imageKey) => {
     console.log(`handleImageClick: ${imageKey}`);
-    if (photoItems.some((element) => element.key === imageKey)) {
+    if (photoItems.some((element) => element.keyPreview === imageKey)) {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
       dispatch(cartActions.addItemToCart(imageKey));
@@ -39,17 +39,17 @@ export default function Purchased() {
   };
 
   const imagesList1 = [
-    { key: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg" },
-    { key: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg" },
-    { key: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg" },
+    { keyPreview: 1, url: "/tmp/istockphoto-500645381-1024x1024.jpg" },
+    { keyPreview: 2, url: "/tmp/istockphoto-535967907-1024x1024.jpg" },
+    { keyPreview: 3, url: "/tmp/istockphoto-636828120-1024x1024.jpg" },
   ];
 
   const imagesList2 = [
-    { key: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg" },
-    { key: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg" },
-    { key: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg" },
-    { key: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg" },
-    { key: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
+    { keyPreview: 4, url: "/tmp/istockphoto-852157310-1024x1024.jpg" },
+    { keyPreview: 5, url: "/tmp/istockphoto-936552298-1024x1024.jpg" },
+    { keyPreview: 6, url: "/tmp/istockphoto-961494108-1024x1024.jpg" },
+    { keyPreview: 7, url: "/tmp/istockphoto-139877917-1024x1024.jpg" },
+    { keyPreview: 8, url: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
   ];
 
   return (
