@@ -63,7 +63,7 @@ export default function AdminPanel() {
 
   return (
     <div className="container text-start">
-      <div className="d-flex justify-content-left mt-sm">
+      <div className="d-flex justify-content-end my-sm">
         <Button
           onClick={handleLogout}
           variant="danger"
