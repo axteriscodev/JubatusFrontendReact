@@ -5,8 +5,17 @@ export function getAuthToken() {
     return token;
 }
 
-export function setAuthToken() {
-    localStorage.setItem('jwt');
+export function setAuthToken(token) {
+    localStorage.setItem('jwt', token);
+}
+
+export function setLevel(level) {
+    localStorage.setItem('level', level);
+}
+
+export function getLevel() {
+    const level = localStorage.getItem('level');
+    return level;
 }
 
 export function checkAuthLoader() {
@@ -17,4 +26,9 @@ export function checkAuthLoader() {
     }
 
     return null;
+}
+
+export function logOut() {
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('level');
 }
