@@ -3,3 +3,58 @@ import { cartActions } from "./cart-slice";
 /**
  * Actions per le operazioni di asincrone del carrello
  */
+
+export const fetchContents = (receivedData) => {
+  return async (dispatch) => {
+    //sezione upload email e selfie
+    const formData = new FormData();
+
+    formData.append("eventId", receivedData.eventId);
+    formData.append("email", receivedData.email);
+    formData.append("image", receivedData.image);
+
+    //caricamento selfie
+    const response = await sendRequest(
+      import.meta.env.VITE_API_URL + "/contents/fetch",
+      "POST",
+      formData
+    );
+
+    if (response.ok) {
+      const json = await response.json();
+
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
+      );
+
+      if (response.ok) {
+        const json = await response.json();
+        dispatch(cartActions.updatePriceList(json.data.items));
+      }
+
+      //sezione elaborazione selfie e attesa risposte dal server S3
+      // import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+      listenSSE(
+        import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+        (data) => {
+          const jsonData = JSON.parse(data);
+          dispatch(cartActions.updateProducts(jsonData.contents));
+          dispatch(cartActions.updateUserId(jsonData.userId));
+
+          //   if (jsonData.contents.length > 0) {
+          //     navigate("/image-shop");
+          //   } else {
+          //     navigate("/content-unavailable");
+          //   }
+        },
+        () => {
+          console.log("Errore!");
+        }
+      );
+    } else {
+      throw Response(
+        JSON.stringify({ status: response.status, message: response.message })
+      );
+    }
+  };
+};

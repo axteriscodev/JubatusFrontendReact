@@ -6,6 +6,7 @@ import {
   addCompetition,
   editCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 /**
  * Pagina per la creazione dell'evento
@@ -35,26 +36,26 @@ export default function CreateEvent() {
 
   useEffect(() => {
     if (receivedComp) {
-      setFormData ({
+      setFormData({
         id: receivedComp.id,
         slug: receivedComp.slug,
         backgroundColor: receivedComp.backgroundColor,
         primaryColor: receivedComp.primaryColor,
         secondaryColor: receivedComp.secondaryColor,
         logo: "",
-        dateEvent: receivedComp.dateEvent.split('T')[0],
-        dateExpiry: receivedComp.dateExpiry.split('T')[0],
-        dateStart: receivedComp.dateStart.split('T')[0],
+        dateEvent: receivedComp.dateEvent.split("T")[0],
+        dateExpiry: receivedComp.dateExpiry.split("T")[0],
+        dateStart: receivedComp.dateStart.split("T")[0],
         title: receivedComp.languages[0].title,
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
       });
     }
     // aggiungo la classe admin per aggiornare le variabili CSS
-    document.body.classList.add('admin');
+    document.body.classList.add("admin");
     // rimuovo la classe admin al "destroy" del componente
     return () => {
-      document.body.classList.remove('admin');
+      document.body.classList.remove("admin");
     };
   }, []);
 
@@ -87,21 +88,47 @@ export default function CreateEvent() {
     });
   };
 
-  const handleSubmit = (event, data) => {
+  const handleSubmit = async (event, data) => {
+    data.languages = [
+      {
+        title: formData.title,
+        location: formData.location,
+        description: formData.description,
+      },
+    ];
+
+    let outcome = false;
     if (data.id) {
-      data.languages = [{
-        title: formData.title,
-        location: formData.location,
-        description: formData.description,
-      }];
-      dispatch(editCompetition(data));
+      outcome = await dispatch(editCompetition(data));
     } else {
-      data.languages = [{
-        title: formData.title,
-        location: formData.location,
-        description: formData.description,
-      }];
-      dispatch(addCompetition(data));
+      outcome = await dispatch(addCompetition(data));
+    }
+
+    if (outcome) {
+      toast.success('Evento creato!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
+      navigate("/admin");
+    } else {
+      toast.error('Si è verificato un errore', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
     }
   };
 
@@ -130,7 +157,12 @@ export default function CreateEvent() {
           </Col>
           <Col sm={6} className="mb-3">
             <Form.Label>Url</Form.Label>
-            <Form.Control placeholder="Url" value={formData.slug} disabled readOnly />
+            <Form.Control
+              placeholder="Url"
+              value={formData.slug}
+              disabled
+              readOnly
+            />
           </Col>
           <Col sm={6} className="mb-3">
             <Form.Label>Località</Form.Label>
@@ -253,6 +285,7 @@ export default function CreateEvent() {
           </Button>
         </div>
       </Form>
+      <ToastContainer />
     </div>
   );
 }
