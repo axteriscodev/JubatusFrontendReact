@@ -1,4 +1,7 @@
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 
 export default function CustomLightbox({
   open,
@@ -36,6 +39,7 @@ export default function CustomLightbox({
         src: image.url,
         id: image.keyPreview,
       }))}
+      plugins={[Thumbnails]}
       render={{
         slideHeader: () =>
           select && (

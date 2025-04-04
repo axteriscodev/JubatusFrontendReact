@@ -1,5 +1,3 @@
-import "yet-another-react-lightbox/styles.css";
-import "yet-another-react-lightbox/plugins/thumbnails.css";
 import styles from "./ImageGallery.module.css";
 
 export default function ImageGallery({ images, select = true, actions = false, onOpenLightbox, onImageClick, photoItems }) {
