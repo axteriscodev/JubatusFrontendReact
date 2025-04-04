@@ -38,6 +38,7 @@ export default function Checkout() {
             amount: cart.totalPrice,
             items: cart.items,
           },
+          clientUrl: import.meta.env.VITE_APP_DOMAIN,
         }),
       }
     )
@@ -60,10 +61,10 @@ export default function Checkout() {
 
   return (
     <>
-    <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-      <EmbeddedCheckout />
-    </EmbeddedCheckoutProvider>
-    <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
+      <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+        <EmbeddedCheckout />
+      </EmbeddedCheckoutProvider>
+      <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
         Torna allo store
       </button>
     </>
