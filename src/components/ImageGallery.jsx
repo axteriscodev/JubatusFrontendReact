@@ -7,8 +7,7 @@ export default function ImageGallery({ images, select = true, actions = false, o
       <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 g-2 ${styles.gallery}`}>
         {images.map((image, i) => (
           <div>
-            <div
-              
+            <div              
               className="ratio ratio-1-1"
             >
               <div>
@@ -26,6 +25,7 @@ export default function ImageGallery({ images, select = true, actions = false, o
                 </div>
                 <div className={styles.circle}
                   onClick={() => onImageClick(image.keyPreview) }>
+                    <i class="bi bi-check"></i>
                 </div>
               </div>
             </div>

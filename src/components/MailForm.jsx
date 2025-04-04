@@ -12,7 +12,10 @@ export default function MailForm({
   const email = useRef();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = (event) => {
+    setShow(true);
+    event.preventDefault();
+  }
 
   const handlePrivacyChange = (event) => {
     const newValue = event.target.checked;
@@ -33,19 +36,21 @@ export default function MailForm({
       )}
       <div className="my-xs">
         {showPrivacy && (
-          <div className="form-check form-switch text-start">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              role="switch"
-              id="flexSwitchCheckDefault"
-              checked={isChecked}
-              onChange={handlePrivacyChange}
-            />
-            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-              Accettare
-            </label>{" "}
-            <Button variant="link" onClick={handleShow}>Termini e Policy</Button>
+          <>
+            <div className="form-check form-switch text-start">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="flexSwitchCheckDefault"
+                checked={isChecked}
+                onChange={handlePrivacyChange}
+              />
+              <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                Accettare
+              </label>{" "}
+              <a href="#" onClick={handleShow}>Termini e Policy</a>
+            </div>
             <Modal show={show} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
                 <Modal.Title>Informativa privacy policy</Modal.Title>
@@ -55,7 +60,7 @@ export default function MailForm({
                 <Button variant="dark" onClick={handleClose}>Chiudi</Button>
               </Modal.Footer>
             </Modal>
-          </div>
+          </>
         )}
         {onErrors.privacyError && (
           <p className="on-error">Devi accettare la privacy policy</p>

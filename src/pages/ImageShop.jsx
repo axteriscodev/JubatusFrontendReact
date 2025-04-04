@@ -26,8 +26,8 @@ export default function ImageShop() {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
       dispatch(cartActions.addItemToCart(imageKey));
+      setOpen(false);
     }
-    setOpen(false);
   };
 
   const photoItems = useSelector((state) => state.cart.items);
