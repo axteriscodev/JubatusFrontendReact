@@ -58,7 +58,7 @@ export default function AdminPanel() {
 
   const handleLogout = () => {
     logOut();
-    navigate("/");
+    navigate("/", { replace: true });
   };
 
   return (
