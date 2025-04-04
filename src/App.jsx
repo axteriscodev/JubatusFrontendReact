@@ -1,4 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 
 import Login from "./pages/Login";
 import PinVerification from "./pages/PinVerification";
@@ -17,27 +21,66 @@ import CreateEvent from "./pages/CreateEvent";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
+import { getLevel, isAuthenticated, isAdmin } from "./utils/auth";
+
+const getRedirectRoute = () => {
+  const userLevel = getLevel();
+
+  // Verifica il livello dell'utente
+  if (userLevel <= 1) {
+    return "/admin";
+  } else if (userLevel > 1) {
+    return "/personal";
+  }
+
+  return "/"; // Se non esiste un livello valido, rimanda al login
+};
 
 const router = createBrowserRouter([
-  { path: "/", element: <Login /> },
+  {
+    path: "/",
+    element: isAuthenticated() ? (
+      <Navigate to={getRedirectRoute()} replace />
+    ) : (
+      <Login />
+    ),
+  },
   { path: "/pin-verification", element: <PinVerification /> },
   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
-  { path: "/personal", element: <Personal /> },
+  {
+    path: "/personal",
+    element:
+      isAuthenticated() && !isAdmin() ? (
+        <Personal />
+      ) : (
+        <Navigate to="/" replace />
+      ),
+  },
   {
     path: "/event/:eventSlug",
     element: <UploadSelfie />,
     loader: updateSelfieLoader,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
-  { path: "/content-unavailable", element: <ContentUnavailable />},
+  { path: "/content-unavailable", element: <ContentUnavailable /> },
   { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
   { path: "/checkout", element: <Checkout /> },
-  { path: "/checkout-outcome", element: <CheckoutOutcome />, errorElement: <ErrorPage /> },
+  {
+    path: "/checkout-outcome",
+    element: <CheckoutOutcome />,
+    errorElement: <ErrorPage />,
+  },
   { path: "/purchased", element: <Purchased />, errorElement: <ErrorPage /> },
-  { path: "/processing-photos", element: <ProcessingPhotos />},
-  { path: "/admin", element: <AdminPanel /> },
-  { path: "/admin/create-event", element: <CreateEvent />}
+  { path: "/processing-photos", element: <ProcessingPhotos /> },
+  {
+    path: "/admin",
+    element: isAdmin() ? <AdminPanel /> : <Navigate to="/" replace />,
+  },
+  {
+    path: "/admin/create-event",
+    element: isAdmin() ? <CreateEvent /> : <Navigate to="/" replace />,
+  },
 ]);
 
 function App() {
