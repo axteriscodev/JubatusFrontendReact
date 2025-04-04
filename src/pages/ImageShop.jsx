@@ -9,11 +9,6 @@ import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
 import Lightbox from "yet-another-react-lightbox";
 
-/**
- * Pagina di acquisto immagini
- *
- * @returns {React.ReactElement}  Pagina di acquisto immagini
- */
 export default function ImageShop() {
   //const dispatch = useDispatch();
   // const imagesList = [
@@ -36,10 +31,9 @@ export default function ImageShop() {
   const [select, setSelect] = useState(false);
   const [actions, setActions] = useState(false);
   const [index, setIndex] = useState(0);
-  const [_slides, setSlides] = useState([]);
+  const [slides, setSlides] = useState([]);
 
   const handleImageClick = (imageKey) => {
-    //console.log(`imageKey ${imageKey}`);
     if (photoItems.some((element) => element.keyPreview === imageKey)) {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
@@ -122,7 +116,7 @@ export default function ImageShop() {
           on={{
             view: ({ index: newIndex }) => setIndex(newIndex),
           }}
-          slides={_slides.map((image) => ({
+          slides={slides.map((image) => ({
             src: image.url,
             id: image.keyOriginal,
           }))}
@@ -130,9 +124,7 @@ export default function ImageShop() {
             slideHeader: () => {
               if (!select) return null;
 
-              const image = _slides[index];
-              //console.log(`image ${image}`);
-              //console.log(`image.keyPreview ${image.keyPreview}`);
+              const image = slides[index];
               const isSelected = photoItems.some((el) => el.keyPreview === image.keyPreview);
         
               return (
@@ -156,7 +148,7 @@ export default function ImageShop() {
             slideFooter: () => {
               if (!actions) return null;
 
-              const image = _slides[index];
+              const image = slides[index];
 
               return (
                 <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">

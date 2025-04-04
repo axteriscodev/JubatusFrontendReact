@@ -69,7 +69,7 @@ export default function Personal() {
           {imagesList.map((image, i) => (
             <Carousel.Item>
               <div className="ratio ratio-1-1">
-                <img src={image.url} className="d-block w-100 object-fit-cover" alt="..." onClick={() => openLightbox(imageList, i, false, true)} />
+                <img src={image.url} className="d-block w-100 object-fit-cover" alt="..." onClick={() => openLightbox(imagesList, i, false, true)} />
               </div>
             </Carousel.Item>
             ))}

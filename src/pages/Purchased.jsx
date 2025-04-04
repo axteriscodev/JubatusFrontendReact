@@ -89,7 +89,7 @@ export default function Purchased() {
           {imagesList.map((image, i) => (
             <Carousel.Item>
               <div className="ratio ratio-1-1">
-                <img src={image.url} className="d-block w-100 object-fit-cover" alt="..." onClick={() => openLightbox(imageList, i, false, true)} />
+                <img src={image.url} className="d-block w-100 object-fit-cover" alt="..." onClick={() => openLightbox(imagesList, i, false, true)} />
               </div>
             </Carousel.Item>
             ))}
@@ -109,7 +109,7 @@ export default function Purchased() {
           on={{
             view: ({ index: newIndex }) => setIndex(newIndex),
           }}
-          slides={_slides.map((image) => ({
+          slides={slides.map((image) => ({
             src: image.url,
             id: image.keyOriginal,
           }))}
@@ -117,7 +117,7 @@ export default function Purchased() {
             slideHeader: () => {
               if (!select) return null;
 
-              const image = _slides[index];
+              const image = slides[index];
               const isSelected = photoItems.some((el) => el.keyPreview === image.keyPreview);
         
               return (
@@ -141,7 +141,7 @@ export default function Purchased() {
             slideFooter: () => {
               if (!actions) return null;
 
-              const image = _slides[index];
+              const image = slides[index];
 
               return (
                 <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
