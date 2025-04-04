@@ -21,7 +21,7 @@ import CreateEvent from "./pages/CreateEvent";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
-import { getLevel, isAuthenticated } from "./utils/auth";
+import { getLevel, isAuthenticated, isAdmin } from "./utils/auth";
 
 const getRedirectRoute = () => {
   const userLevel = getLevel();
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
   {
     path: "/personal",
     element:
-      isAuthenticated() && getLevel() > 1 ? (
+      isAuthenticated() && !isAdmin() ? (
         <Personal />
       ) : (
         <Navigate to="/" replace />
@@ -75,14 +75,12 @@ const router = createBrowserRouter([
   { path: "/processing-photos", element: <ProcessingPhotos /> },
   {
     path: "/admin",
-    element:
-      isAuthenticated() && getLevel() <= 1 ? (
-        <AdminPanel />
-      ) : (
-        <Navigate to="/" replace />
-      ),
+    element: isAdmin() ? <AdminPanel /> : <Navigate to="/" replace />,
   },
-  { path: "/admin/create-event", element: <CreateEvent /> },
+  {
+    path: "/admin/create-event",
+    element: isAdmin() ? <CreateEvent /> : <Navigate to="/" replace />,
+  },
 ]);
 
 function App() {
