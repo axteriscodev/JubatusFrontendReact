@@ -28,6 +28,11 @@ export function checkAuthLoader() {
     return null;
 }
 
+export function isAuthenticated() {
+    const token = getAuthToken();
+    return token !== null;
+}
+
 export function logOut() {
     localStorage.removeItem('jwt');
     localStorage.removeItem('level');
