@@ -2,7 +2,7 @@ import PinForm from "../components/PinForm";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { sendRequest } from "../services/api-services";
-import { setAuthToken } from "../utils/auth";
+import { setAuthToken, setLevel } from "../utils/auth";
 
 export default function PinVerification() {
   const navigate = useNavigate();
@@ -24,6 +24,7 @@ export default function PinVerification() {
     if (response.ok) {
       const json = await response.json();
       setAuthToken(json.data.jwt);
+      setLevel(json.data.levelId);
       if (json.levelId <= 1) {
         navigate("/admin");
       } else {

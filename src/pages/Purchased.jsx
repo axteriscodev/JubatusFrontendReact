@@ -10,6 +10,7 @@ import CustomLightbox from "../components/CustomLightbox";
 export default function Purchased() {
   const orderId = useSelector((state) => state.cart.id);
   const purchasedItems = useSelector((state) => state.cart.purchased);
+  const eventLogo = useSelector((state) => state.competition.logo);
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
@@ -54,11 +55,9 @@ export default function Purchased() {
 
   return (
     <>
-      <div className="container">
-        <div className="text-start">
-          <Logo size="logo-xs" />
-        </div>
-        <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
+  <div className="container">
+    <div className="text-start"><Logo src={import.meta.env.VITE_API_URL + "/" + eventLogo} size="logo-xs" /></div>
+    <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
         <div className="px-lg">
           <Carousel>
             {imagesList1.map((image, i) => (

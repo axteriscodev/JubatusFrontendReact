@@ -6,6 +6,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { useNavigate } from "react-router-dom";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -15,6 +16,11 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 export default function Checkout() {
   const cart = useSelector((state) => state.cart);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const buttonHandle = (event) => {
+    navigate("/image-shop/");
+  };
 
   const fetchClientSecret = useCallback(() => {
     // Create a Checkout Session
@@ -32,6 +38,7 @@ export default function Checkout() {
             amount: cart.totalPrice,
             items: cart.items,
           },
+          clientUrl: import.meta.env.VITE_APP_DOMAIN,
         }),
       }
     )
@@ -53,8 +60,13 @@ export default function Checkout() {
   const options = { fetchClientSecret };
 
   return (
-    <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-      <EmbeddedCheckout />
-    </EmbeddedCheckoutProvider>
+    <>
+      <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+        <EmbeddedCheckout />
+      </EmbeddedCheckoutProvider>
+      <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
+        Torna allo store
+      </button>
+    </>
   );
 }

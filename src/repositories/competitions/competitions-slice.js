@@ -6,6 +6,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const competitionsSlice = createSlice({
     name: "competitions",
     initialState: {
+        id: 0,
+        slug: "",
         backgroundColor: "",
         primaryColor: "",
         secondaryColor: "",
@@ -13,6 +15,8 @@ const competitionsSlice = createSlice({
     },
     reducers: {
         setCompetitionPreset(state, action) {
+            state.id = action.payload.id,
+            state.slug = action.payload.slug,
             state.backgroundColor = action.payload.backgroundColor;
             state.primaryColor = action.payload.primaryColor;
             state.secondaryColor = action.payload.secondaryColor;

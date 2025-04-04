@@ -16,6 +16,7 @@ import CheckoutOutcome from "./pages/CheckoutOutcome";
 import CreateEvent from "./pages/CreateEvent";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
+import ContentUnavailable from "./pages/ContentUnavailable";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
+  { path: "/content-unavailable", element: <ContentUnavailable />},
   { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
   { path: "/checkout", element: <Checkout /> },
   { path: "/checkout-outcome", element: <CheckoutOutcome />, errorElement: <ErrorPage /> },
