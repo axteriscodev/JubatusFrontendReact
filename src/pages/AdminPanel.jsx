@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useRef } from "react";
 import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
+import { logOut } from "../utils/auth";
 
 import {
   fetchCompetitions,
@@ -55,8 +56,21 @@ export default function AdminPanel() {
     dispatch(deleteCompetition(competition));
   };
 
+  const handleLogout = () => {
+    logOut();
+    navigate("/");
+  };
+
   return (
     <div className="container text-start">
+      <div className="d-flex justify-content-left mt-sm">
+        <Button
+          onClick={handleLogout}
+          variant="danger"
+        >
+          Logout
+        </Button>
+      </div>
       <h1>Elenco eventi</h1>
       <Table striped bordered hover className="my-sm">
         <thead>
