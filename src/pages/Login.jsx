@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { sendRequest } from "../services/api-services";
@@ -16,6 +16,13 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState(new FormErrors());
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--bg-event-color', '');
+    document.documentElement.style.setProperty('--font-button-event-color', '');
+    document.documentElement.style.setProperty('--primary-event-color', '');
+    document.documentElement.style.setProperty('--secondary-event-color', '');
+  }, []);
 
   async function handleSubmit(event, data) {
     event.preventDefault();

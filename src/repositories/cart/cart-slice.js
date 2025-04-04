@@ -75,14 +75,19 @@ const cartSlice = createSlice({
     addItemToCart(state, action) {
       //console.log(action.payload);
       const product = state.products.find(
-        (item) => item.key === action.payload
+        (item) => item.keyPreview === action.payload
       );
 
       state.totalQuantity++;
 
-      state.totalPrice = state.totalPrice + 9;
+      //state.totalPrice = state.totalPrice + 9;
+      if (state.totalPrice + 9 > 29) {
+        state.totalPrice = 29;
+      } else {
+        state.totalPrice = state.totalPrice + 9;
+      }
 
-      state.items.push({ key: product.key, fileTypeId: product.fileTypeId });
+      state.items.push({ keyPreview: product.keyPreview, fileTypeId: product.fileTypeId });
 
       // state.totalPrice = calculatePrice(
       //   state.products.filter((item) => item.fileTypeId === 1).length,
@@ -119,9 +124,15 @@ const cartSlice = createSlice({
       //const existingItem = state.items.find((item) => item.id === id);
 
       state.totalQuantity--;
-      state.totalPrice = state.totalPrice - 9;
+      //state.totalPrice = state.totalPrice - 9;
 
-      state.items = state.items.filter((item) => item.key !== itemToRemove);
+      if (9 * (state.totalQuantity) >= 29) {
+        state.totalPrice = 29;
+      } else {
+        state.totalPrice = (state.totalQuantity) * 9;
+      }
+
+      state.items = state.items.filter((item) => item.keyPreview !== itemToRemove);
 
       // state.totalPrice = calculatePrice(
       //   state.products.filter((item) => item.fileTypeId === 1).length,
