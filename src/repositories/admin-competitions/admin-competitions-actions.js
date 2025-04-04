@@ -41,8 +41,10 @@ export const addCompetition = (competition) => {
     try {
       await sendRequest();
       dispatch(adminCompetitionsActions.addCompetition(competition));
+      return Promise.resolve(true);
     } catch (error) {
       console.log("Qualcosa è andato storto");
+        return Promise.resolve(false);
     }
   };
 };
@@ -65,8 +67,10 @@ export const editCompetition = (competition) => {
     try {
       await sendRequest();
       dispatch(adminCompetitionsActions.editCompetition(competition));
+      return Promise.resolve(true);
     } catch (error) {
       console.log("Qualcosa è andato storto");
+      return Promise.resolve(false);
     }
   };
 };

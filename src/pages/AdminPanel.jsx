@@ -34,10 +34,10 @@ export default function AdminPanel() {
     });
 
     // aggiungo la classe admin per aggiornare le variabili CSS
-    document.body.classList.add('admin');
+    document.body.classList.add("admin");
     // rimuovo la classe admin al "destroy" del componente
     return () => {
-      document.body.classList.remove('admin');
+      document.body.classList.remove("admin");
     };
   }, []);
 
@@ -94,7 +94,14 @@ export default function AdminPanel() {
               <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
                   <Button
                     variant="danger"
-                    onClick={() => handleDeleteCompetition(competition)}
+                    onClick={() => {
+                      const confirmDelete = window.confirm(
+                        "Sei sicuro di voler rimuovere l'evento?"
+                      );
+                      if (confirmDelete) {
+                        handleDeleteCompetition(competition);
+                      }
+                    }}
                     className="btn-sm"
                     data-bs-toggle="tooltip"
                     title="Elimina evento"
