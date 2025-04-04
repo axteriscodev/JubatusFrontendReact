@@ -6,6 +6,7 @@ import {
   addCompetition,
   editCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 /**
  * Pagina per la creazione dell'evento
@@ -104,7 +105,30 @@ export default function CreateEvent() {
     }
 
     if (outcome) {
+      toast.success('Evento creato!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
       navigate("/admin");
+    } else {
+      toast.error('Si è verificato un errore', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+        });
     }
   };
 
@@ -261,6 +285,7 @@ export default function CreateEvent() {
           </Button>
         </div>
       </Form>
+      <ToastContainer />
     </div>
   );
 }
