@@ -6,7 +6,7 @@ import {
   addCompetition,
   editCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
-import { ToastContainer, toast, Bounce } from 'react-toastify';
+import { toast, Bounce } from 'react-toastify';
 
 /**
  * Pagina per la creazione dell'evento
@@ -22,6 +22,7 @@ export default function CreateEvent() {
   const [slug, setSlug] = useState("");
   const [formData, setFormData] = useState({
     slug: "",
+    pathS3: "",
     backgroundColor: "#000000",
     primaryColor: "#000000",
     secondaryColor: "#000000",
@@ -39,6 +40,7 @@ export default function CreateEvent() {
       setFormData({
         id: receivedComp.id,
         slug: receivedComp.slug,
+        pathS3: receivedComp.pathS3,
         backgroundColor: receivedComp.backgroundColor,
         primaryColor: receivedComp.primaryColor,
         secondaryColor: receivedComp.secondaryColor,
@@ -174,6 +176,16 @@ export default function CreateEvent() {
             />
           </Col>
           <Col sm={6} className="mb-3">
+            <Form.Label>Path S3</Form.Label>
+            <Form.Control
+              name="pathS3"
+              value={formData.pathS3}
+              onChange={handleInputChange}
+              placeholder="Path S3"
+             
+            />
+          </Col>
+          <Col sm={12} className="mb-3">
             <Form.Label>Descrizione</Form.Label>
             <Form.Control
               name="description"
@@ -269,7 +281,7 @@ export default function CreateEvent() {
           <Col xs={12}>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>Logo</Form.Label>
-              <Form.Control onChange={handleFileChange} type="file" />
+              <Form.Control onChange={handleFileChange} type="file" accept="image/*" />
             </Form.Group>
           </Col>
         </Row>
@@ -285,7 +297,6 @@ export default function CreateEvent() {
           </Button>
         </div>
       </Form>
-      <ToastContainer />
     </div>
   );
 }

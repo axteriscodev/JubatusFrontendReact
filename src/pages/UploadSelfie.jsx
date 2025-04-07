@@ -103,8 +103,9 @@ export async function loader({ request, params }) {
       message = "Nessun contenuto presente";
     }
 
-    throw Response(
-      JSON.stringify({ status: response.status, message: message ?? response.message })
+    throw new Response(
+      { status: response.status },
+      JSON.stringify({ message: message ?? response.message })
     );
   } else {
     return response;
