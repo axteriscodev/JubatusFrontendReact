@@ -55,10 +55,10 @@ export default function ImageShop() {
       <Popover.Body>
         <div className="text-center text-black fw-bold">
           {pricesList.map((pricePack, i) => (
-            <>
+            <div key={i}>
               {getPriceListEntry(pricePack)}
               {i < pricesList.length - 1 && <hr />}
-            </>
+            </div>
           ))}
         </div>
       </Popover.Body>
@@ -67,14 +67,6 @@ export default function ImageShop() {
 
   return (
     <>
-    {photoItems.length === 0 && (
-      <div className="text-center my-4">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Caricamento...</span>
-        </div>
-        <p className="mt-2">Caricamento delle immagini selezionabili...</p>
-      </div>
-    )}
       <div className="container">
         <div className="d-flex justify-content-between">
           <div>
@@ -104,7 +96,7 @@ export default function ImageShop() {
         <TotalShopButton />
       </div>
 
-      <CustomLightbox
+      { open && <CustomLightbox
         open={open}
         slides={slides}
         index={index}
@@ -114,7 +106,7 @@ export default function ImageShop() {
         onClose={() => setOpen(false)}
         onImageClick={handleImageClick}
         photoItems={photoItems}
-      />
+      />}
     </>
   );
 }

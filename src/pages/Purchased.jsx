@@ -61,7 +61,7 @@ export default function Purchased() {
         <div className="px-lg">
           <Carousel>
             {imagesList1.map((image, i) => (
-              <Carousel.Item>
+              <Carousel.Item key={image.keyPreview || i}>
                 <div className="ratio ratio-1-1">
                   <img
                     src={image.url}
@@ -86,7 +86,7 @@ export default function Purchased() {
         </div>
       </div>
 
-      <CustomLightbox
+      { open && <CustomLightbox
         open={open}
         slides={slides}
         index={index}
@@ -96,7 +96,7 @@ export default function Purchased() {
         onClose={() => setOpen(false)}
         onImageClick={handleImageClick}
         photoItems={photoItems}
-      />
+      />}
     </>
   );
 }
