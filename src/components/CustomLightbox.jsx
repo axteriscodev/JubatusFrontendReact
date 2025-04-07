@@ -16,8 +16,6 @@ export default function CustomLightbox({
 }) {
   const currentImage = slides[index];
 
-  //const getImageKey = (image) => image.key ?? image.keyPreview;
-
   const isSelected = photoItems.some(
     (el) => el.keyPreview === currentImage.keyPreview
   );

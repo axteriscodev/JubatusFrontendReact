@@ -21,16 +21,22 @@ export default function ImageShop() {
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
 
+  const photoItems = useSelector((state) => state.cart.items);
+
   const handleImageClick = (imageKey) => {
-    if (photoItems.some((element) => element.keyPreview === imageKey)) {
+    if (!imageKey || !photoItems) return;
+  
+    const isInCart = photoItems.some(
+      (element) => element?.keyPreview === imageKey
+    );
+  
+    if (isInCart) {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
       dispatch(cartActions.addItemToCart(imageKey));
       setOpen(false);
     }
   };
-
-  const photoItems = useSelector((state) => state.cart.items);
 
   const openLightbox = (images, startIndex = 0, select, actions) => {
     setIndex(startIndex);
@@ -61,6 +67,14 @@ export default function ImageShop() {
 
   return (
     <>
+    {photoItems.length === 0 && (
+      <div className="text-center my-4">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Caricamento...</span>
+        </div>
+        <p className="mt-2">Caricamento delle immagini selezionabili...</p>
+      </div>
+    )}
       <div className="container">
         <div className="d-flex justify-content-between">
           <div>

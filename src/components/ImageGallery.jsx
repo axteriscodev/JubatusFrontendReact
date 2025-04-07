@@ -25,7 +25,7 @@ export default function ImageGallery({ images, select = true, actions = false, o
                 </div>
                 <div className={styles.circle}
                   onClick={() => onImageClick(image.keyPreview) }>
-                    <i class="bi bi-check"></i>
+                    <i className="bi bi-check"></i>
                 </div>
               </div>
             </div>

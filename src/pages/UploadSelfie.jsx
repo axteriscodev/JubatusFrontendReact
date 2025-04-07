@@ -12,11 +12,6 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
 import { setUiPreset } from "../utils/graphics";
 
-/**
- * Pagina di caricamento del selfie e inserimento della email
- *
- * @returns {React.ReactElement}  Pagina di caricamento selfie.
- */
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
   const navigate = useNavigate();
