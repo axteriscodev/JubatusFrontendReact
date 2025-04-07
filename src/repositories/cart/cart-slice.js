@@ -94,19 +94,19 @@ const cartSlice = createSlice({
         fileTypeId: product.fileTypeId,
       });
 
-      // state.totalPrice = calculatePrice(
-      //   state.products.filter((item) => item.fileTypeId === 1).length,
-      //   state.prices.map((item) => {
-      //     const price = {
-      //       quantityPhoto: item.quantityPhoto,
-      //       quantityVideo: item.quantityVideo,
-      //       price: item.price,
-      //     };
-      //     return price;
-      //   }),
-      //   state.items.filter((item) => item.fileTypeId === 1).length,
-      //   state.items.filter((item) => item.fileTypeId === 2).length
-      // );
+      state.totalPrice = calculatePrice(
+        state.products.filter((item) => item.fileTypeId === 1).length,
+        state.prices.map((item) => {
+          const price = {
+            quantityPhoto: item.quantityPhoto,
+            quantityVideo: item.quantityVideo,
+            price: item.price,
+          };
+          return price;
+        }),
+        state.items.filter((item) => item.fileTypeId === 1).length,
+        state.items.filter((item) => item.fileTypeId === 2).length
+      );
 
       // al momento non sono previsti acquisti multipli dello stesso prodotto
 
@@ -141,19 +141,19 @@ const cartSlice = createSlice({
         (item) => item.keyPreview !== itemToRemove
       );
 
-      // state.totalPrice = calculatePrice(
-      //   state.products.filter((item) => item.fileTypeId === 1).length,
-      //   state.prices.map((item) => {
-      //     const price = {
-      //       quantityPhoto: item.quantityPhoto,
-      //       quantityVideo: item.quantityVideo,
-      //       price: item.price,
-      //     };
-      //     return price;
-      //   }),
-      //   state.items.filter((item) => item.fileTypeId === 1).length,
-      //   state.items.filter((item) => item.fileTypeId === 2).length
-      // );
+      state.totalPrice = calculatePrice(
+        state.products.filter((item) => item.fileTypeId === 1).length,
+        state.prices.map((item) => {
+          const price = {
+            quantityPhoto: item.quantityPhoto,
+            quantityVideo: item.quantityVideo,
+            price: item.price,
+          };
+          return price;
+        }),
+        state.items.filter((item) => item.fileTypeId === 1).length,
+        state.items.filter((item) => item.fileTypeId === 2).length
+      );
 
       // al momento non sono previsti acquisti multipli dello stesso prodotto
       //
