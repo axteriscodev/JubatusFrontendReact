@@ -55,9 +55,9 @@ export default function ProcessingSelfie() {
 
             if(jsonData.contents.length > 0) {
 
-              navigate("/image-shop");
+              navigate("/image-shop", { replace: true });
             } else {
-              navigate('/content-unavailable');
+              navigate('/content-unavailable', { replace: true });
             }
           },
           () => {

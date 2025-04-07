@@ -8,6 +8,7 @@ import Popover from "react-bootstrap/Popover";
 import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
 import CustomLightbox from "../components/CustomLightbox";
+import { Link } from "react-router-dom";
 
 export default function ImageShop() {
   const dispatch = useDispatch();
@@ -25,11 +26,11 @@ export default function ImageShop() {
 
   const handleImageClick = (imageKey) => {
     if (!imageKey || !photoItems) return;
-  
+
     const isInCart = photoItems.some(
       (element) => element?.keyPreview === imageKey
     );
-  
+
     if (isInCart) {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
@@ -70,10 +71,12 @@ export default function ImageShop() {
       <div className="container">
         <div className="d-flex justify-content-between">
           <div>
-            <Logo
-              src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
-              size="logo-xs"
-            />
+            <Link to={'/event/' + eventPreset.slug}>
+              <Logo
+                src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
+                size="logo-xs"
+              />
+            </Link>
           </div>
           <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
             <i className="bi bi-info-circle text-60 pointer"></i>
@@ -96,25 +99,31 @@ export default function ImageShop() {
         <TotalShopButton />
       </div>
 
-      { open && <CustomLightbox
-        open={open}
-        slides={slides}
-        index={index}
-        setIndex={setIndex}
-        select={select}
-        actions={actions}
-        onClose={() => setOpen(false)}
-        onImageClick={handleImageClick}
-        photoItems={photoItems}
-      />}
+      {open && (
+        <CustomLightbox
+          open={open}
+          slides={slides}
+          index={index}
+          setIndex={setIndex}
+          select={select}
+          actions={actions}
+          onClose={() => setOpen(false)}
+          onImageClick={handleImageClick}
+          photoItems={photoItems}
+        />
+      )}
     </>
   );
 }
 
 function getPriceListEntry(pricePack) {
-  if (pricePack.quantityPhoto === -1) return `Tutte le foto - ${pricePack.price}€`;
-  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0) return `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
-  if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0) return `Il tuo video - ${pricePack.price}€`;
-  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0) return `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
-  return '';
+  if (pricePack.quantityPhoto === -1)
+    return `Tutte le foto - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0)
+    return `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0)
+    return `Il tuo video - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0)
+    return `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
+  return "";
 }
