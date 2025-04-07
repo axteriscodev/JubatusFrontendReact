@@ -14,7 +14,10 @@ export default function CheckoutOutcome() {
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const sessionId = urlParams.get("session_id");
+    const sessionId = urlParams.get("session_id");  
+    const orderId = urlParams.get("order_id");
+
+    console.log(`/shop/session-status?session_id=${sessionId}&order_id=${orderId}`);
 
     fetch(
       import.meta.env.VITE_API_URL +
