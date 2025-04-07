@@ -24,14 +24,8 @@ import ContentUnavailable from "./pages/ContentUnavailable";
 import { getLevel, isAuthenticated, isAdmin } from "./utils/auth";
 
 const getRedirectRoute = () => {
-  const userLevel = getLevel();
-
-  // Verifica il livello dell'utente
-  if (userLevel <= 1) {
-    return "/admin";
-  } else if (userLevel > 1) {
-    return "/personal";
-  }
+  if (isAdmin()) return "/admin";
+  if (isAuthenticated()) return "/personal";
 
   return "/"; // Se non esiste un livello valido, rimanda al login
 };
