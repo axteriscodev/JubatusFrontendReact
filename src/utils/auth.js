@@ -19,16 +19,16 @@ export function getLevel() {
   return level;
 }
 
-export function checkAuthLoader() {
-  const token = getAuthToken();
+// export function checkAuthLoader() {
+//   const token = getAuthToken();
 
-  if (!isValid(token)) {
-    logOut();
-    return redirect("/");
-  }
+//   if (!isValid(token)) {
+//     logOut();
+//     return redirect("/");
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
 export function isAuthenticated() {
   const token = getAuthToken();
@@ -47,17 +47,17 @@ export function logOut() {
 }
 
 function isValid(token) {
-  if (!token) return true;
+  if (!token) return false;
 
   try {
     const decodedToken = jwtDecode(token);
     const currentTime = Date.now() / 1000;
 
     //Controllo se il token è scaduto
-    return decodedToken.exp < currentTime;
+    return decodedToken.exp > currentTime;
   } catch (error) {
     // Il token non è valido
     console.error("Errore durante la decodifica del token", error);
-    return true;
+    return false;
   }
 }
