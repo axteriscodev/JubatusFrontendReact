@@ -97,16 +97,13 @@ export async function loader({ request, params }) {
   );
 
   if (!response.ok) {
-    let message;
-
+    let message = "Si è verificato un errore o l'evento non è presente";
+ 
     if (response.status === 204) {
       message = "Nessun contenuto presente";
     }
 
-    throw new Response(
-      { status: response.status },
-      JSON.stringify({ message: message ?? response.message })
-    );
+    throw new Response(message, { status: response.status });
   } else {
     return response;
   }
