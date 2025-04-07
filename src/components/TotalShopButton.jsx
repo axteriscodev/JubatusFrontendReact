@@ -20,6 +20,7 @@ export default function TotalShopButton() {
     <button
       className="my-button w-75 fixed-bottom mx-auto mb-sm"
       onClick={handleCheckout}
+      disabled={totalPrice === 0}
     >
       {totalPrice === 0 ? "Seleziona" : `Totale: €${totalPrice.toFixed(2)}`}
     </button>
