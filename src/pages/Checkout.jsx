@@ -7,6 +7,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useNavigate } from "react-router-dom";
+import { isPhotoFullPackEligible } from "../utils/offers";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -36,7 +37,7 @@ export default function Checkout() {
             userId: cart.userId,
             eventId: cart.eventId,
             amount: cart.totalPrice,
-            items: cart.items,
+            items: isPhotoFullPackEligible() ? cart.products : cart.items,
           },
           clientUrl: import.meta.env.VITE_APP_DOMAIN,
         }),
