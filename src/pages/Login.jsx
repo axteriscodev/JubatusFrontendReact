@@ -18,10 +18,10 @@ export default function Login() {
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--bg-event-color', '');
-    document.documentElement.style.setProperty('--font-button-event-color', '');
-    document.documentElement.style.setProperty('--primary-event-color', '');
-    document.documentElement.style.setProperty('--secondary-event-color', '');
+    document.documentElement.style.setProperty("--bg-event-color", "");
+    document.documentElement.style.setProperty("--font-button-event-color", "");
+    document.documentElement.style.setProperty("--primary-event-color", "");
+    document.documentElement.style.setProperty("--secondary-event-color", "");
   }, []);
 
   async function handleSubmit(event, data) {
@@ -38,18 +38,22 @@ export default function Login() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('email', data.email);
-
-    const response = await sendRequest(
-      import.meta.env.VITE_API_URL + '/auth/signin',
-      'POST',
-      formData
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/auth/signin",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+        }),
+      }
     );
 
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));
-      navigate('/pin-verification');
+      navigate("/pin-verification");
     } else {
       throw Response(
         JSON.stringify({ status: response.status, message: response.message })
@@ -67,7 +71,7 @@ export default function Login() {
       />
       <Link to="/event/nova-eroica">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
-      <Link to='/admin'>Admin</Link>
+      <Link to="/admin">Admin</Link>
     </div>
   );
 }

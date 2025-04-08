@@ -86,6 +86,10 @@ a.no-hover:hover{color:unset;text-decoration:none;}
   background-color: var(--remove);
   border-color: var(--remove);
 }
+.my-button:disabled{
+  background-color: var(--primary-event-color, --primary-color) !important;
+  cursor: unset;
+}
 
 /*PLACEHOLDER*/
 input::-webkit-input-placeholder { color: var(--secondary-event-color, --secondary-color) !important; font-weight: 700 !important; }/* Chrome/Opera/Safari */
@@ -277,4 +281,28 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 }
 .carousel img{
   border-radius: var(--border-radius);
+}
+.shopNotify{
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2rem;
+  border-radius: 50rem;
+  background-color: white;
+  /* Aggiunta animazione */
+  animation: fadeInSlideDown 0.6s ease-out;
+  opacity: 0; /* punto di partenza */
+  animation-fill-mode: forwards; /* mantiene lo stato finale */
+}
+/* Definizione animazione */
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px); /* inizia più in alto */
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0); /* arriva alla posizione originale */
+  }
 }

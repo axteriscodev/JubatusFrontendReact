@@ -12,11 +12,6 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
 import { setUiPreset } from "../utils/graphics";
 
-/**
- * Pagina di caricamento del selfie e inserimento della email
- *
- * @returns {React.ReactElement}  Pagina di caricamento selfie.
- */
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
   const navigate = useNavigate();
@@ -63,6 +58,9 @@ export default function UploadSelfie() {
       return;
     }
 
+    // reset del carrello
+    dispatch(cartActions.resetStore());
+
     navigate("/processing-selfie", {
       state: {
         eventId: eventData.data.id,
@@ -102,16 +100,13 @@ export async function loader({ request, params }) {
   );
 
   if (!response.ok) {
-    let message;
-
+    let message = "Si è verificato un errore o l'evento non è presente";
+ 
     if (response.status === 204) {
       message = "Nessun contenuto presente";
     }
 
-    throw new Response(
-      { status: response.status },
-      JSON.stringify({ message: message ?? response.message })
-    );
+    throw new Response(message, { status: response.status });
   } else {
     return response;
   }

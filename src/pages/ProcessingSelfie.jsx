@@ -19,6 +19,8 @@ export default function ProcessingSelfie() {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
+  // Stato per il progresso della barra (da 0 a 100)
+  const [progress, setProgress] = useState(0);
 
   //upload della foto
   useEffect(() => {
@@ -53,11 +55,10 @@ export default function ProcessingSelfie() {
             dispatch(cartActions.updateProducts(jsonData.contents));
             dispatch(cartActions.updateUserId(jsonData.userId));
 
-            if(jsonData.contents.length > 0) {
-
-              navigate("/image-shop");
+            if (jsonData.contents.length > 0) {
+              navigate("/image-shop", { replace: true });
             } else {
-              navigate('/content-unavailable');
+              navigate("/content-unavailable", { replace: true });
             }
           },
           () => {
@@ -73,6 +74,24 @@ export default function ProcessingSelfie() {
 
     ProcessSelfie();
     setUiPreset(eventPreset);
+  }, []);
+
+  useEffect(() => {
+    // Funzione che incrementa il progresso
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 99) {
+          clearInterval(interval);
+          return 99;
+        }
+        const newValue = prevProgress + 100 / 6;
+
+        return newValue < 99 ? newValue : 99;
+      });
+    }, 1000);
+
+    // cleanup function
+    return () => clearInterval(interval);
   }, []);
 
   async function fetchPriceList(eventId) {
@@ -105,11 +124,11 @@ export default function ProcessingSelfie() {
         className="progress mt-md"
         role="progressbar"
         aria-label="Basic example"
-        aria-valuenow="25"
+        aria-valuenow={progress}
         aria-valuemin="0"
         aria-valuemax="100"
       >
-        <div className="progress-bar" style={{ width: "25%" }}></div>
+        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
       </div>
       Caricamento
     </div>

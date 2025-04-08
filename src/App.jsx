@@ -10,7 +10,6 @@ import Personal from "./pages/Personal";
 import UploadSelfie, {
   loader as updateSelfieLoader,
 } from "./pages/UploadSelfie";
-import { checkAuthLoader } from "./utils/auth";
 import ProcessingSelfie from "./pages/ProcessingSelfie";
 import ImageShop from "./pages/ImageShop";
 import Purchased from "./pages/Purchased";
@@ -21,17 +20,11 @@ import CreateEvent from "./pages/CreateEvent";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
-import { getLevel, isAuthenticated, isAdmin } from "./utils/auth";
+import { isAuthenticated, isAdmin } from "./utils/auth";
 
 const getRedirectRoute = () => {
-  const userLevel = getLevel();
-
-  // Verifica il livello dell'utente
-  if (userLevel <= 1) {
-    return "/admin";
-  } else if (userLevel > 1) {
-    return "/personal";
-  }
+  if (isAdmin()) return "/admin";
+  if (isAuthenticated()) return "/personal";
 
   return "/"; // Se non esiste un livello valido, rimanda al login
 };
@@ -49,12 +42,7 @@ const router = createBrowserRouter([
   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
   {
     path: "/personal",
-    element:
-      isAuthenticated() && !isAdmin() ? (
-        <Personal />
-      ) : (
-        <Navigate to="/" replace />
-      ),
+    element: isAuthenticated() ? <Personal /> : <Navigate to="/" replace />,
   },
   {
     path: "/event/:eventSlug",

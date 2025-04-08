@@ -8,12 +8,49 @@ const personalSlice = createSlice({
     initialState: {
         id: 0,
         email: "",
-        jwt: "",
+        purchased: [],
     },
     reducers: {
-        updateEmail(state, action) {},
-        updateJwt (state, action) {},
-        clearUser(state, action) {},
+        /**
+         * Aggiornamento dell'ID utente
+         * 
+         * @param {*} state 
+         * @param {*} action 
+         */
+        updateId(state, action) {
+            state.id = action.payload;
+        },
+
+        /**
+         * Aggiornamento dell'email utente
+         * @param {*} state 
+         * @param {*} action 
+         */
+        updateEmail(state, action) {
+            state.email = action.payload;
+        },
+
+        /**
+         * Aggrionamento dei prodotti acquistati
+         * 
+         * @param {*} state 
+         * @param {*} action 
+         */
+        updatePurchased(state, action) {
+            state.purchased = [...action.payload];
+        },
+
+        /**
+         * Reset dell'utente
+         * 
+         * @param {*} state 
+         * @param {*} action 
+         */
+        clearUser(state, action) {
+            state.id = 0;
+            state.email = "";
+            state.purchased = [];
+        },
     }
 
 });

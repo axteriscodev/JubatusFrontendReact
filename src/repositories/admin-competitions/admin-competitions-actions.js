@@ -1,6 +1,10 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
 import { getAuthToken } from "../../utils/auth";
 
+/**
+ * Fetch delle competizioni
+ *  
+ */
 export const fetchCompetitions = () => {
   return async (dispatch) => {
     const fetchData = async () => {
@@ -23,6 +27,11 @@ export const fetchCompetitions = () => {
   };
 };
 
+/**
+ * Aggiunta di una competizione
+ * 
+ * @param {*} competition - competizione da aggiungere 
+ */
 export const addCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
@@ -49,6 +58,10 @@ export const addCompetition = (competition) => {
   };
 };
 
+/**
+ * Modifica di una competizione
+ * @param {*} competition - competizione da modificare
+ */
 export const editCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
@@ -74,6 +87,11 @@ export const editCompetition = (competition) => {
     }
   };
 };
+
+/**
+ * Cancellazione di una competizione
+ * @param {*} competition - competizione da cancellare
+ */
 export const deleteCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
@@ -97,16 +115,44 @@ export const deleteCompetition = (competition) => {
     }
   };
 };
+
+/**
+ * Aggiunta di un listino prezzi per una competizione
+ * @param {*} competition - competizione a cui aggiungere il listino
+ * @param {*} priceList - listino da aggiungere
+ */
 export const addListToCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
+
+/**
+ * Modifica di un listino prezzi per una competizione
+ * @param {*} competition - competizione a cui aggiungere il listino
+ * @param {*} priceList - listino da aggiungere
+ */
 export const editListForCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
+
+/**
+ * Cancellazione di un listino prezzi per una competizione
+ * @param {*} competition - competizione a cui aggiungere il listino
+ * @param {*} priceList - listino da aggiungere
+ */
 export const deleteListForCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
 
+/**
+ * Metodo di servizio per l'invio di richieste API per la seione admin
+ * 
+ * NOTA: Probabilmente si può accorpare con l'altra
+ * 
+ * @param {*} endpoint - URL dell'API
+ * @param {*} method - metodo di richiesta (GET, POST, PUT, DELETE)
+ * @param {*} token - token di autenticazione
+ * @param {*} body - body della richiesta
+ */
 async function performRequest(endpoint, method, token, body) {
   let formData;
 

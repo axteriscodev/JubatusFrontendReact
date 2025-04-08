@@ -1,29 +1,67 @@
 import Logo from "../components/Logo";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { cartActions } from "../repositories/cart/cart-slice";
+import { setUiPreset } from "../utils/graphics";
+import { listenSSE } from "../services/api-services";
+import { personalActions } from "../repositories/personal/personal-slice";
 
+/**
+ * Pagina di attesa durante l'elaborazione delle foto acquistate
+ * @returns
+ */
 export default function ProcessingPhotos() {
   const eventPreset = useSelector((state) => state.competition);
+  const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Stato per il progresso della barra (da 0 a 100)
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--bg-color",
-      eventPreset.backgroundColor
-    );
-    document.documentElement.style.setProperty(
-      "--font-color",
-      eventPreset.fontColor
+    //impostazioni evento
+    setUiPreset(eventPreset);
+
+    //sse elaborazione dati
+    listenSSE(
+      import.meta.env.VITE_API_URL + "/shop/purchased-contents/" + orderId,
+
+      (data) => {
+        const jsonData = JSON.parse(data);
+        dispatch(cartActions.setPurchasedItems(jsonData.contents));
+        dispatch(personalActions.updatePurchased(jsonData.otherContents));
+        navigate("/purchased", { replace: true });
+
+        // if (jsonData.contents.length > 0) {
+        //   navigate("/image-shop", { replace: true });
+        // } else {
+        //   navigate("/content-unavailable", { replace: true });
+        // }
+      },
+      () => {
+        console.log("Errore!");
+      }
     );
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/purchased");
-    }, 2000);
+    // Funzione che incrementa il progresso
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 99) {
+          clearInterval(interval);
+          return 99;
+        }
+        const newValue = prevProgress + 100 / 6;
 
-    return () => clearTimeout(timer);
+        return newValue < 99 ? newValue : 99;
+      });
+    }, 1000);
+
+    // cleanup function
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -46,11 +84,11 @@ export default function ProcessingPhotos() {
         className="progress mt-md"
         role="progressbar"
         aria-label="Basic example"
-        aria-valuenow="25"
+        aria-valuenow={progress}
         aria-valuemin="0"
         aria-valuemax="100"
       >
-        <div className="progress-bar" style={{ width: "25%" }}></div>
+        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
       </div>
       Caricamento
     </div>

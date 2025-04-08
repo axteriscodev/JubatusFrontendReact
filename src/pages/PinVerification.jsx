@@ -11,14 +11,18 @@ export default function PinVerification() {
   async function handleSubmit(event, data) {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append("email", emailValue);
-    formData.append("token", data.pin);
-
-    const response = await sendRequest(
+    const response = await fetch(
       import.meta.env.VITE_API_URL + "/auth/validate",
-      "POST",
-      formData
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: emailValue,
+          token: data.pin,
+        }),
+      }
     );
 
     if (response.ok) {

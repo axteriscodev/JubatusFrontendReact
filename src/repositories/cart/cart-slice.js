@@ -1,22 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
+
+/**
+ * Stato iniziale del carrello
+ */
+const initialState = {
+  id: 0,
+  userId: 0,
+  eventId: 0,
+  products: [],
+  items: [],
+  prices: [],
+  purchased: [],
+  totalQuantity: 0,
+  totalPrice: 0,
+  alertPack: false,
+};
 
 /**
  * Slice per la gestione del carrello
  */
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    id: 0,
-    userId: 0,
-    eventId: 0,
-    products: [],
-    items: [],
-    prices: [],
-    purchased: [],
-    totalQuantity: 0,
-    totalPrice: 0,
-  },
+  initialState: initialState,
   reducers: {
     replaceCart(state, action) {},
 
@@ -80,37 +86,50 @@ const cartSlice = createSlice({
 
       state.totalQuantity++;
 
-      //state.totalPrice = state.totalPrice + 9;
-      if (state.totalPrice + 9 > 29) {
-        state.totalPrice = 29;
-      } else {
-        state.totalPrice = state.totalPrice + 9;
-      }
+      state.items.push({
+        keyPreview: product.keyPreview,
+        keyOriginal: product.keyOriginal,
+        keyThumbnail: product.keyThumbnail,
+        fileTypeId: product.fileTypeId,
+      });
 
-      state.items.push({ keyPreview: product.keyPreview, fileTypeId: product.fileTypeId });
+      //numero foto selezionate
+      const photosCount = state.items.filter(
+        (item) => item.fileTypeId === 1
+      ).length;
+      //numero video selezionati
+      const videosCount = state.items.filter(
+        (item) => item.fileTypeId === 2
+      ).length;
 
-      // state.totalPrice = calculatePrice(
-      //   state.products.filter((item) => item.fileTypeId === 1).length,
-      //   state.prices.map((item) => {
-      //     const price = {
-      //       quantityPhoto: item.quantityPhoto,
-      //       quantityVideo: item.quantityVideo,
-      //       price: item.price,
-      //     };
-      //     return price;
-      //   }),
-      //   state.items.filter((item) => item.fileTypeId === 1).length,
-      //   state.items.filter((item) => item.fileTypeId === 2).length
-      // );
+      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
+      const formattedPrices = state.prices.map(
+        ({ quantityPhoto, quantityVideo, price }) => ({
+          quantityPhoto,
+          quantityVideo,
+          price,
+        })
+      );
 
-      // al momento non sono previsti acquisti multipli dello stesso prodotto
+      //prezzo foto singole
+      const photoPrice =
+        state.prices.find((item) => item.quantityPhoto == 1)?.price ?? 0;
+      //prezzo 'pacchetto tutte le foto'
+      const photoPackPrice =
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+      //calcolo il prezzo totale in base ai pacchetti
+      const totalPrice = calculatePrice(
+        formattedPrices,
+        photosCount,
+        videosCount
+      );
+      //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
+      state.alertPack =
+        totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
 
-      // if (!existingItem) {
-      //     state.items.push({ id: newItem.id, price: newItem.price, quantity: 1, totalPrice: newItem.price, name: newItem.title });
-      // } else {
-      //     existingItem.quantity++;
-      //     existingItem.totalPrice = existingItem.totalPrice + newItem.price;
-      // }
+      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
+      state.totalPrice =
+        totalPrice > photoPackPrice ? photoPackPrice : totalPrice;
     },
 
     /**
@@ -126,40 +145,73 @@ const cartSlice = createSlice({
       state.totalQuantity--;
       //state.totalPrice = state.totalPrice - 9;
 
-      if (9 * (state.totalQuantity) >= 29) {
-        state.totalPrice = 29;
-      } else {
-        state.totalPrice = (state.totalQuantity) * 9;
-      }
+      state.items = state.items.filter(
+        (item) => item.keyPreview !== itemToRemove
+      );
 
-      state.items = state.items.filter((item) => item.keyPreview !== itemToRemove);
+      //numero foto selezionate
+      const photosCount = state.items.filter(
+        (item) => item.fileTypeId === 1
+      ).length;
+      //numero video selezionati
+      const videosCount = state.items.filter(
+        (item) => item.fileTypeId === 2
+      ).length;
 
-      // state.totalPrice = calculatePrice(
-      //   state.products.filter((item) => item.fileTypeId === 1).length,
-      //   state.prices.map((item) => {
-      //     const price = {
-      //       quantityPhoto: item.quantityPhoto,
-      //       quantityVideo: item.quantityVideo,
-      //       price: item.price,
-      //     };
-      //     return price;
-      //   }),
-      //   state.items.filter((item) => item.fileTypeId === 1).length,
-      //   state.items.filter((item) => item.fileTypeId === 2).length
-      // );
+      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
+      const formattedPrices = state.prices.map(
+        ({ quantityPhoto, quantityVideo, price }) => ({
+          quantityPhoto,
+          quantityVideo,
+          price,
+        })
+      );
 
-      // al momento non sono previsti acquisti multipli dello stesso prodotto
-      //
-      // if (existingItem.quantity === 1) {
-      //     state.items = state.items.filter(item => item.id !== id);
-      // } else {
-      //     existingItem.quantity--;
-      //     existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
-      // }
+      //prezzo foto singole
+      const photoPrice =
+        state.prices.find((item) => item.quantityPhoto == 1)?.price ?? 0;
+      //prezzo 'pacchetto tutte le foto'
+      const photoPackPrice =
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+      //calcolo il prezzo totale in base ai pacchetti
+      const totalPrice = calculatePrice(
+        formattedPrices,
+        photosCount,
+        videosCount
+      );
+      //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
+      state.alertPack =
+        totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
+
+      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
+      state.totalPrice =
+        totalPrice > photoPackPrice ? photoPackPrice : totalPrice;
     },
 
+    /**
+     * Aggiorna i prodotti acquistati
+     *
+     * @param {*} state
+     * @param {*} action
+     */
     setPurchasedItems(state, action) {
       state.purchased = [...action.payload];
+    },
+
+    /**
+     * Reset del carrello - preserva solo l'id evento
+     * @returns
+     */
+    resetStore(state, action) {
+      state.id = initialState.id;
+      state.userId = initialState.userId;
+      state.products = initialState.products;
+      state.items = initialState.items;
+      state.prices = initialState.prices;
+      state.purchased = initialState.purchased;
+      state.totalQuantity = initialState.totalQuantity;
+      state.totalPrice = initialState.totalPrice;
+      state.alertPack = initialState.alertPack;
     },
   },
 });
