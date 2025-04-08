@@ -1,6 +1,13 @@
 import styles from "./ImageGallery.module.css";
 
-export default function ImageGallery({ images, select = true, actions = false, onOpenLightbox, onImageClick, photoItems }) {
+export default function ImageGallery({
+  images,
+  select = true,
+  actions = false,
+  onOpenLightbox = null,
+  onImageClick = null,
+  photoItems = null
+}) {
 
   return (
     <>
@@ -12,19 +19,19 @@ export default function ImageGallery({ images, select = true, actions = false, o
             >
               <div>
                 <div className={`${styles.picture} ${
-                    photoItems.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
+                    photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
                   }`}
                   style={{
-                    backgroundImage: `url(${image.url})`
+                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail || image.url})`
                   }}
                 >
                 </div>
                 <div className={styles.zoom}
-                  onClick={() => onOpenLightbox(images, i, select, actions) }>
+                  onClick={() => onOpenLightbox?.(images, i, select, actions) }>
                     <i className="bi bi-search"></i>
                 </div>
                 <div className={styles.circle}
-                  onClick={() => onImageClick(image.keyPreview) }>
+                  onClick={() => onImageClick?.(image.keyPreview) }>
                     <i className="bi bi-check"></i>
                 </div>
               </div>

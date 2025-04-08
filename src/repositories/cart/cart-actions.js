@@ -1,4 +1,5 @@
 import { cartActions } from "./cart-slice";
+import { store } from "../store";
 
 /**
  * Actions per le operazioni di asincrone del carrello
@@ -58,3 +59,19 @@ export const fetchContents = (receivedData) => {
     }
   };
 };
+
+export function getAllItemsPrice() {
+  const state = store.getState();
+
+  const prices = state.cart.prices;
+
+  return prices.find((price) => price.quantityPhoto === -1);
+}
+
+export function getSingleItemPrice() {
+  const state = store.getState();
+
+  const prices = state.cart.prices;
+
+  return prices.find((price) => price.quantityPhoto === 1);
+}

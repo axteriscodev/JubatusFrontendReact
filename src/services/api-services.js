@@ -1,5 +1,13 @@
 import { getAuthToken } from '../utils/auth';
 
+/**
+ * Metodo per invio rischieste API
+ * 
+ * @param {*} api - URL dell'API
+ * @param {*} method - metodo di richiesta (GET, POST, PUT, DELETE)
+ * @param {*} body - body della richiesta
+ * @returns 
+ */
 export async function sendRequest(api, method, body) {
   const token = getAuthToken();
 
@@ -19,6 +27,12 @@ export async function sendRequest(api, method, body) {
   return response;
 }
 
+/**
+ * Metodo per ascolto di eventi SSE
+ * @param {*} api - URL dell'API
+ * @param {*} onmessage - funzione di callback per la ricezione dei messaggi
+ * @param {*} onerror - funzione di callback per la gestione degli errori
+ */
 export function listenSSE(api, onmessage, onerror) {
   const sse = new EventSource(api);
 

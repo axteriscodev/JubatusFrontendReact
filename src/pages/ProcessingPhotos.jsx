@@ -1,29 +1,46 @@
 import Logo from "../components/Logo";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { cartActions } from "../repositories/cart/cart-slice";
+import { setUiPreset } from "../utils/graphics";
+import { listenSSE } from "../services/api-services";
+import { personalActions } from "../repositories/personal/personal-slice";
 
+/**
+ * Pagina di attesa durante l'elaborazione delle foto acquistate
+ * @returns
+ */
 export default function ProcessingPhotos() {
   const eventPreset = useSelector((state) => state.competition);
+  const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--bg-color",
-      eventPreset.backgroundColor
-    );
-    document.documentElement.style.setProperty(
-      "--font-color",
-      eventPreset.fontColor
-    );
-  }, []);
+    //impostazioni evento
+    setUiPreset(eventPreset);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/purchased");
-    }, 2000);
+    //sse elaborazione dati
+    listenSSE(
+      import.meta.env.VITE_API_URL + "/shop/purchased-contents/" + orderId,
 
-    return () => clearTimeout(timer);
+      (data) => {
+        const jsonData = JSON.parse(data);
+        dispatch(cartActions.setPurchasedItems(jsonData.contents));
+        dispatch(personalActions.updatePurchased(jsonData.otherContents));
+        navigate("/purchased", { replace: true });
+
+        // if (jsonData.contents.length > 0) {
+        //   navigate("/image-shop", { replace: true });
+        // } else {
+        //   navigate("/content-unavailable", { replace: true });
+        // }
+      },
+      () => {
+        console.log("Errore!");
+      }
+    );
   }, []);
 
   return (
