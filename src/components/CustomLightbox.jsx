@@ -34,7 +34,7 @@ export default function CustomLightbox({
         view: ({ index: newIndex }) => setIndex(newIndex),
       }}
       slides={slides.map((image) => ({
-        src: image.url,
+        src: image.urlPreview || image.urlThumbnail || image.url,
         id: image.keyPreview,
       }))}
       plugins={[Thumbnails]}
@@ -50,7 +50,7 @@ export default function CustomLightbox({
               }}
             >
               <button
-                onClick={() => onImageClick?.(currentImage.keyPreview)}
+                onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyPreview)}
                 className={`my-button ${isSelected ? "remove" : "add"}`}
               >
                 <i className="bi bi-cart"></i> {isSelected ? "Rimuovi" : "Seleziona"}

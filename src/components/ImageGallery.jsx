@@ -22,7 +22,7 @@ export default function ImageGallery({
                     photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
                   }`}
                   style={{
-                    backgroundImage: `url(${image.url})`
+                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail || image.url})`
                   }}
                 >
                 </div>
