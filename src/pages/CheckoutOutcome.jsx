@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { cartActions } from "../repositories/cart/cart-slice";
 
 const PAYMENT_COMPLETE = "complete";
 const PAYMENT_OPEN = "open";
@@ -9,15 +10,16 @@ export default function CheckoutOutcome() {
   const [status, setStatus] = useState(null);
   const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // fetch dell'esito
   useEffect(() => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const sessionId = urlParams.get("session_id");  
+    const sessionId = urlParams.get("session_id");
     const orderId = urlParams.get("order_id");
 
-    console.log(`/shop/session-status?session_id=${sessionId}&order_id=${orderId}`);
+    dispatch(cartActions.updateOrderId(orderId));
 
     fetch(
       import.meta.env.VITE_API_URL +
@@ -25,9 +27,7 @@ export default function CheckoutOutcome() {
     )
       .then((res) => {
         if (!res.ok) {
-          throw Response(
-            JSON.stringify({ status: res.status, message: res.message })
-          );
+          throw Response(res.message, { status: res.status });
         }
 
         return res.json();

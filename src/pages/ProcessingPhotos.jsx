@@ -2,28 +2,48 @@ import Logo from "../components/Logo";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { cartActions } from "../repositories/cart/cart-slice";
+import { setUiPreset } from "../utils/graphics";
 
 export default function ProcessingPhotos() {
   const eventPreset = useSelector((state) => state.competition);
+  const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--bg-color",
-      eventPreset.backgroundColor
-    );
-    document.documentElement.style.setProperty(
-      "--font-color",
-      eventPreset.fontColor
-    );
+    // document.documentElement.style.setProperty(
+    //   "--bg-color",
+    //   eventPreset.backgroundColor
+    // );
+    // document.documentElement.style.setProperty(
+    //   "--font-color",
+    //   eventPreset.fontColor
+    // );
+
+    setUiPreset(eventPreset);
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate("/purchased");
-    }, 2000);
+    listenSSE(
+      import.meta.env.VITE_API_URL + "/shop/purchased-contents/" + orderId,
+      (data) => {
+        const jsonData = JSON.parse(data);
+        dispatch(cartActions.setPurchasedItems(jsonData.contents));
+        navigate("/purchased", { replace: true });
 
-    return () => clearTimeout(timer);
+        //dispatch(cartActions.updateUserId(jsonData.userId));
+        
+
+        // if (jsonData.contents.length > 0) {
+        //   navigate("/image-shop", { replace: true });
+        // } else {
+        //   navigate("/content-unavailable", { replace: true });
+        // }
+      },
+      () => {
+        console.log("Errore!");
+      }
+    );
   }, []);
 
   return (
