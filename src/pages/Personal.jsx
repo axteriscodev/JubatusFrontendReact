@@ -1,30 +1,15 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { cartActions } from "../repositories/cart/cart-slice";
 
 import Carousel from 'react-bootstrap/Carousel';
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 
 export default function Personal() {
-  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
   const [actions, setActions] = useState(false);
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
-
-  const handleImageClick = (imageKey) => {
-    console.log(`handleImageClick: ${imageKey}`);
-    if (photoItems.some((element) => element.keyPreview === imageKey)) {
-      dispatch(cartActions.removeItemFromCart(imageKey));
-    } else {
-      dispatch(cartActions.addItemToCart(imageKey));
-    }
-    setOpen(false);
-  };
-
-  const photoItems = useSelector((state) => state.cart.items);
 
   const openLightbox = (images, startIndex = 0, select, actions) => {
     setIndex(startIndex);
@@ -74,8 +59,6 @@ export default function Personal() {
             select={false}
             actions={true}
             onOpenLightbox={openLightbox}
-            onImageClick={handleImageClick}
-            photoItems={photoItems}
           />
         </div>
       </div>
@@ -88,8 +71,6 @@ export default function Personal() {
         select={select}
         actions={actions}
         onClose={() => setOpen(false)}
-        onImageClick={handleImageClick}
-        photoItems={photoItems}
       />}
     </>
   );
