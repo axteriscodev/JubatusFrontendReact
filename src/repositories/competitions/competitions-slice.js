@@ -14,6 +14,11 @@ const competitionsSlice = createSlice({
         logo: ""
     },
     reducers: {
+        /**
+         * Imposta i parametri della competizione
+         * @param {*} state 
+         * @param {*} action 
+         */
         setCompetitionPreset(state, action) {
             state.id = action.payload.id,
             state.slug = action.payload.slug,
