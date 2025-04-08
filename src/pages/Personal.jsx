@@ -10,7 +10,7 @@ import { fetchPurchased } from "../repositories/personal/personal-actions";
 
 export default function Personal() {
   const dispatch = useDispatch();
-  const purchasedItems = useSelector((state) => state.personal.purchased);
+  const purchasedItems = useSelector((state) => state.personal.purchased) ?? [];
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
