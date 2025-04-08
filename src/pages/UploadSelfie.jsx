@@ -58,6 +58,9 @@ export default function UploadSelfie() {
       return;
     }
 
+    // reset del carrello
+    dispatch(cartActions.resetStore());
+
     navigate("/processing-selfie", {
       state: {
         eventId: eventData.data.id,
