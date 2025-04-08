@@ -5,7 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { setUiPreset } from "../utils/graphics";
 import { listenSSE } from "../services/api-services";
+import { personalActions } from "../repositories/personal/personal-slice";
 
+/**
+ * Pagina di attesa durante l'elaborazione delle foto acquistate
+ * @returns
+ */
 export default function ProcessingPhotos() {
   const eventPreset = useSelector((state) => state.competition);
   const orderId = useSelector((state) => state.cart.id);
@@ -13,28 +18,18 @@ export default function ProcessingPhotos() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // document.documentElement.style.setProperty(
-    //   "--bg-color",
-    //   eventPreset.backgroundColor
-    // );
-    // document.documentElement.style.setProperty(
-    //   "--font-color",
-    //   eventPreset.fontColor
-    // );
-
+    //impostazioni evento
     setUiPreset(eventPreset);
-  }, []);
 
-  useEffect(() => {
+    //sse elaborazione dati
     listenSSE(
       import.meta.env.VITE_API_URL + "/shop/purchased-contents/" + orderId,
+
       (data) => {
         const jsonData = JSON.parse(data);
         dispatch(cartActions.setPurchasedItems(jsonData.contents));
+        dispatch(personalActions.updatePurchased(jsonData.otherContents));
         navigate("/purchased", { replace: true });
-
-        //dispatch(cartActions.updateUserId(jsonData.userId));
-        
 
         // if (jsonData.contents.length > 0) {
         //   navigate("/image-shop", { replace: true });

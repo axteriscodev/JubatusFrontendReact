@@ -2,12 +2,20 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import Logo from "../components/Logo";
-import Carousel from 'react-bootstrap/Carousel';
+import Carousel from "react-bootstrap/Carousel";
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 
+/**
+ * Pagina contenente le foto appena acquistate (slider) e galleria con tutte le foto
+ * acquistate sulla piattaforma
+ * 
+ * @returns 
+ */
 export default function Purchased() {
   const eventLogo = useSelector((state) => state.competition.logo);
+  const currentPurchasedItems = useSelector((state) => state.cart.purchased);
+  const allPurchasedItems = useSelector((state) => state.personal.purchased);
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
@@ -39,19 +47,24 @@ export default function Purchased() {
 
   return (
     <>
-  <div className="container">
-    <div className="text-start"><Logo src={import.meta.env.VITE_API_URL + "/" + eventLogo} size="logo-xs" /></div>
-    <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
+      <div className="container">
+        <div className="text-start">
+          <Logo
+            src={import.meta.env.VITE_API_URL + "/" + eventLogo}
+            size="logo-xs"
+          />
+        </div>
+        <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
         <div className="px-lg">
           <Carousel>
-            {imagesList1.map((image, i) => (
+            {currentPurchasedItems.map((image, i) => (
               <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
                 <div className="ratio ratio-1-1">
                   <img
                     src={image.urlPreview || image.urlThumbnail}
                     className="d-block w-100 object-fit-cover"
                     alt="..."
-                    onClick={() => openLightbox(imagesList1, i, false, true)}
+                    onClick={() => openLightbox(currentPurchasedItems, i, false, true)}
                   />
                 </div>
               </Carousel.Item>
@@ -60,7 +73,7 @@ export default function Purchased() {
         </div>
         <div className="mt-md">
           <ImageGallery
-            images={imagesList2}
+            images={allPurchasedItems}
             select={false}
             actions={true}
             onOpenLightbox={openLightbox}
