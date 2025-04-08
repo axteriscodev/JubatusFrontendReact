@@ -8,19 +8,10 @@
  * @returns
  */
 export function calculatePrice(
-  totalPhotos,
   packages,
   requiredPhotos,
   requiredVideos
 ) {
-  if (totalPhotos === requiredPhotos) {
-    const totalPack = packages.find((price) => price.quantityPhoto === -1);
-
-    if (totalPack) {
-      return totalPack.price;
-    }
-  }
-
   const filteredPackages = packages.filter((price) => price.quantityPhoto !== -1);
 
   // Crea una tabella DP per memorizzare il miglior prezzo per ogni combinazione di foto e video

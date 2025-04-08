@@ -51,6 +51,8 @@ export default function ImageShop() {
     setUiPreset(eventPreset);
   }, []);
 
+  const alertPack = useSelector((state) => state.cart.alertPack);
+
   const popover = (
     <Popover id="popover-basic">
       <Popover.Body>
@@ -68,6 +70,11 @@ export default function ImageShop() {
 
   return (
     <>
+    {alertPack && (
+      <div className="shopNotify shadow">
+        Metti nel carrello un'altra foto per ottenere il pacchetto completo
+      </div>
+    )}
       <div className="container">
         <div className="d-flex justify-content-between">
           <div>
