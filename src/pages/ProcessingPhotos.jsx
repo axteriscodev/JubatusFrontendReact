@@ -1,14 +1,16 @@
 import Logo from "../components/Logo";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { setUiPreset } from "../utils/graphics";
+import { listenSSE } from "../services/api-services";
 
 export default function ProcessingPhotos() {
   const eventPreset = useSelector((state) => state.competition);
   const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // document.documentElement.style.setProperty(
