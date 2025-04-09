@@ -77,28 +77,37 @@ export default function ImageShop() {
     )}
       <div className="container">
         <div className="d-flex justify-content-between">
-          <div>
+          <div className="text-start">
             <Link to={'/event/' + eventPreset.slug}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
                 size="logo-xs"
               />
             </Link>
+            <div className="my-md">
+              <h2>
+                Ci siamo <strong>atleta!</strong>
+              </h2>
+              <p>Ecco le tue foto</p>
+            </div>
           </div>
-          <OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
+          <div className="border fw-bold p-3 rounded-3 mb-3">
+            {pricesList.map((pricePack, i) => (
+              <div key={i}>
+                {getPriceListEntry(pricePack)}
+                {i < pricesList.length - 1 && <hr />}
+              </div>
+            ))}
+          </div>
+          {/* {<OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
             <i className="bi bi-info-circle text-60 pointer"></i>
-          </OverlayTrigger>
-        </div>
-        <div className="my-md text-start">
-          <h2>
-            Ci siamo <strong>atleta!</strong>
-          </h2>
-          <p>Ecco le tue foto</p>
+          </OverlayTrigger>} */}
         </div>
         <ImageGallery
           images={imagesList}
           select={true}
           actions={false}
+          highLightPurchased={true}
           onOpenLightbox={openLightbox}
           onImageClick={handleImageClick}
           photoItems={photoItems}

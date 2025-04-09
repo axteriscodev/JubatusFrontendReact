@@ -15,7 +15,7 @@ import CustomLightbox from "../components/CustomLightbox";
  */
 export default function Purchased() {
   const eventLogo = useSelector((state) => state.competition.logo);
-  //const currentPurchasedItems = useSelector((state) => state.cart.purchased);
+  const currentPurchasedItems = useSelector((state) => state.cart.purchased);
   const allPurchasedItems = useSelector((state) => state.personal.purchased);
   const eventPreset = useSelector((state) => state.competition);
 
@@ -37,32 +37,32 @@ export default function Purchased() {
     setUiPreset(eventPreset);
   }, []);
 
-  const currentPurchasedItems = [
-    {
-      keyPreview: "/tmp/istockphoto-500645381-1024x1024.jpg",
-      keyThumbnail: "/tmp/istockphoto-500645381-1024x1024.jpg",
-      keyOriginal: "/tmp/istockphoto-500645381-1024x1024.jpg",
-      urlPreview: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-500645381-1024x1024.jpg",
-      urlThumbnail: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-500645381-1024x1024.jpg",
-      urlOriginal: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-500645381-1024x1024.jpg",
-    },
-    {
-      keyPreview: "/tmp/istockphoto-535967907-1024x1024.jpg",
-      keyThumbnail: "/tmp/istockphoto-535967907-1024x1024.jpg",
-      keyOriginal: "/tmp/istockphoto-535967907-1024x1024.jpg",
-      urlPreview: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-535967907-1024x1024.jpg",
-      urlThumbnail: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-535967907-1024x1024.jpg",
-      urlOriginal: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-535967907-1024x1024.jpg",
-    },
-    {
-      keyPreview: "/tmp/istockphoto-636828120-1024x1024.jpg",
-      keyThumbnail: "/tmp/istockphoto-636828120-1024x1024.jpg",
-      keyOriginal: "/tmp/istockphoto-636828120-1024x1024.jpg",
-      urlPreview: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-636828120-1024x1024.jpg",
-      urlThumbnail: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-636828120-1024x1024.jpg",
-      urlOriginal: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-636828120-1024x1024.jpg",
-    },
-  ];
+  // const currentPurchasedItems = [
+  //   {
+  //     keyPreview: "/tmp/istockphoto-500645381-1024x1024.jpg",
+  //     keyThumbnail: "/tmp/istockphoto-500645381-1024x1024.jpg",
+  //     keyOriginal: "/tmp/istockphoto-500645381-1024x1024.jpg",
+  //     urlPreview: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-500645381-1024x1024.jpg",
+  //     urlThumbnail: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-500645381-1024x1024.jpg",
+  //     urlOriginal: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-500645381-1024x1024.jpg",
+  //   },
+  //   {
+  //     keyPreview: "/tmp/istockphoto-535967907-1024x1024.jpg",
+  //     keyThumbnail: "/tmp/istockphoto-535967907-1024x1024.jpg",
+  //     keyOriginal: "/tmp/istockphoto-535967907-1024x1024.jpg",
+  //     urlPreview: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-535967907-1024x1024.jpg",
+  //     urlThumbnail: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-535967907-1024x1024.jpg",
+  //     urlOriginal: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-535967907-1024x1024.jpg",
+  //   },
+  //   {
+  //     keyPreview: "/tmp/istockphoto-636828120-1024x1024.jpg",
+  //     keyThumbnail: "/tmp/istockphoto-636828120-1024x1024.jpg",
+  //     keyOriginal: "/tmp/istockphoto-636828120-1024x1024.jpg",
+  //     urlPreview: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-636828120-1024x1024.jpg",
+  //     urlThumbnail: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-636828120-1024x1024.jpg",
+  //     urlOriginal: import.meta.env.VITE_APP_DOMAIN + "/tmp/istockphoto-636828120-1024x1024.jpg",
+  //   },
+  // ];
 
   // const allPurchasedItems = [
   //   {
@@ -72,6 +72,7 @@ export default function Purchased() {
   //     urlPreview: "/tmp/istockphoto-852157310-1024x1024.jpg",
   //     urlThumbnail: "/tmp/istockphoto-852157310-1024x1024.jpg",
   //     urlOriginal: "/tmp/istockphoto-852157310-1024x1024.jpg",
+  //     favourite: true
   //   },
   //   {
   //     keyPreview: "istockphoto-936552298-1024x1024.jpg",
@@ -148,6 +149,7 @@ export default function Purchased() {
               images={allPurchasedItems}
               select={false}
               actions={true}
+              highLightFavourite={true}
               onOpenLightbox={openLightbox}
             />
           </div>

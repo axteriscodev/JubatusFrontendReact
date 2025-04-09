@@ -67,3 +67,19 @@
     background-color: rgba(255, 255, 255, .5);
     z-index: 1;
 }
+.purchased{
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--acid-green);
+    padding: 0.2rem 0.5rem;
+    color: #666666;
+    font-size: 12px;
+    border-radius: var(--border-radius);
+}
+.favourite{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
