@@ -126,6 +126,8 @@ export default function ImageShop() {
 function getPriceListEntry(pricePack) {
   if (pricePack.quantityPhoto === -1)
     return `Tutte le foto - ${pricePack.price}€`;
+  if (pricePack.quantityPhoto === -1 && pricePack.quantityVideo === -1)
+    return `Pacchetto completo - ${pricePack.price}€`;
   if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0)
     return `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
   if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0)
