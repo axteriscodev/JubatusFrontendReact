@@ -20,6 +20,7 @@ import adminCompetitionsSlice from "./admin-competitions/admin-competitions-slic
 const persistConfig = {
   key: "root",
   storage,
+  whitelist: ["cart", "competition"]
 };
 
 const rootReducer = combineReducers({
