@@ -17,12 +17,12 @@ export default function CustomLightbox({
   const currentImage = slides[index] ?? 0;
 
   const isSelected = photoItems?.some(
-    (el) => el.keyPreview === currentImage.keyPreview
+    (el) => el.keyPreview === (currentImage.keyPreview || currentImage.keyOriginal)
   );
 
-  const handleFavouriteClick = (image) => alert(`Favourite: ${image.url}`);
-  const handleDownloadClick = (image) => alert(`Download: ${image.urlOriginal}`);
-  const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
+  //const handleFavouriteClick = (image) => alert(`Favourite: ${image.url}`);
+  //const handleDownloadClick = (image) => alert(`Download: ${image.urlOriginal}`);
+  //const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
 
   return (
     <Lightbox
@@ -34,8 +34,8 @@ export default function CustomLightbox({
         view: ({ index: newIndex }) => setIndex(newIndex),
       }}
       slides={slides.map((image) => ({
-        src: image.urlPreview || image.urlThumbnail || image.url,
-        id: image.keyPreview,
+        src: image.urlPreview || image.urlThumbnail,
+        id: image.keyPreview || image.keyOriginal,
       }))}
       plugins={[Thumbnails]}
       render={{
@@ -50,7 +50,7 @@ export default function CustomLightbox({
               }}
             >
               <button
-                onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyPreview)}
+                onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyThumbnail)}
                 className={`my-button ${isSelected ? "remove" : "add"}`}
               >
                 <i className="bi bi-cart"></i> {isSelected ? "Rimuovi" : "Seleziona"}
@@ -63,12 +63,12 @@ export default function CustomLightbox({
               {/* <a onClick={() => handleFavouriteClick(currentImage)} aria-label="Favourite image">
                 <i className="bi bi-heart-fill text-danger"></i>
               </a> */}
-              <a onClick={() => handleDownloadClick(currentImage)} aria-label="Download image">
-                <i className="bi bi-arrow-up"></i>
+              <a href={currentImage.urlOriginal} download={currentImage.keyOriginal} title="Download" aria-label="Download image">
+                <i className="bi bi-box-arrow-down text-white"></i>
               </a>
-              <a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
+              {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
                 <i className="bi bi-arrow-up-right"></i>
-              </a>
+              </a>} */}
             </div>
           ),
       }}

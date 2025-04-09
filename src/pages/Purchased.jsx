@@ -15,8 +15,8 @@ import CustomLightbox from "../components/CustomLightbox";
  */
 export default function Purchased() {
   const eventLogo = useSelector((state) => state.competition.logo);
-  const currentPurchasedItems = useSelector((state) => state.cart.purchased);
-  const allPurchasedItems = useSelector((state) => state.personal.purchased);
+  //const currentPurchasedItems = useSelector((state) => state.cart.purchased);
+  //const allPurchasedItems = useSelector((state) => state.personal.purchased);
   const eventPreset = useSelector((state) => state.competition);
 
   const [open, setOpen] = useState(false);
@@ -37,19 +37,75 @@ export default function Purchased() {
     setUiPreset(eventPreset);
   }, []);
 
-  // const currentPurchasedItems = [
-  //   { keyThumbnail: 10,  urlThumbnail: "/tmp/istockphoto-500645381-1024x1024.jpg" },
-  //   { keyPreview: 2, keyThumbnail: 20, urlPreview: "/tmp/istockphoto-535967907-1024x1024.jpg", urlThumbnail: "/tmp/istockphoto-535967907-1024x1024.jpg" },
-  //   { keyPreview: 3, keyThumbnail: 30, urlPreview: "/tmp/istockphoto-636828120-1024x1024.jpg", urlThumbnail: "/tmp/istockphoto-535967907-1024x1024.jpg" },
-  // ];
+  const currentPurchasedItems = [
+    {
+      keyPreview: "istockphoto-500645381-1024x1024.jpg",
+      keyThumbnail: "istockphoto-500645381-1024x1024.jpg",
+      keyOriginal: "istockphoto-500645381-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-500645381-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-500645381-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-500645381-1024x1024.jpg",
+    },
+    {
+      keyPreview: "istockphoto-535967907-1024x1024.jpg",
+      keyThumbnail: "istockphoto-535967907-1024x1024.jpg",
+      keyOriginal: "istockphoto-535967907-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-535967907-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-535967907-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-535967907-1024x1024.jpg",
+    },
+    {
+      keyPreview: "istockphoto-636828120-1024x1024.jpg",
+      keyThumbnail: "istockphoto-636828120-1024x1024.jpg",
+      keyOriginal: "istockphoto-636828120-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-636828120-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-636828120-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-636828120-1024x1024.jpg",
+    },
+  ];
 
-  // const allPurchasedItems = [
-  //   { keyPreview: 4, keyThumbnail: 40, urlPreview: "/tmp/istockphoto-852157310-1024x1024.jpg" },
-  //   { keyPreview: 5, keyThumbnail: 50, urlPreview: "/tmp/istockphoto-936552298-1024x1024.jpg" },
-  //   { keyPreview: 6, keyThumbnail: 60, urlPreview: "/tmp/istockphoto-961494108-1024x1024.jpg" },
-  //   { keyPreview: 7, keyThumbnail: 70, urlPreview: "/tmp/istockphoto-139877917-1024x1024.jpg" },
-  //   { keyPreview: 8, keyThumbnail: 80, urlPreview: "/tmp/istockphoto-1139730571-1024x1024.jpg" },
-  // ];
+  const allPurchasedItems = [
+    {
+      keyPreview: "istockphoto-852157310-1024x1024.jpg",
+      keyThumbnail: "istockphoto-852157310-1024x1024.jpg",
+      keyOriginal: "istockphoto-852157310-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-852157310-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-852157310-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-852157310-1024x1024.jpg",
+    },
+    {
+      keyPreview: "istockphoto-936552298-1024x1024.jpg",
+      keyThumbnail: "istockphoto-936552298-1024x1024.jpg",
+      keyOriginal: "istockphoto-936552298-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-936552298-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-936552298-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-936552298-1024x1024.jpg",
+    },
+    {
+      keyPreview: "istockphoto-961494108-1024x1024.jpg",
+      keyThumbnail: "istockphoto-961494108-1024x1024.jpg",
+      keyOriginal: "istockphoto-961494108-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-961494108-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-961494108-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-961494108-1024x1024.jpg",
+    },
+    {
+      keyPreview: "istockphoto-139877917-1024x1024.jpg",
+      keyThumbnail: "istockphoto-139877917-1024x1024.jpg",
+      keyOriginal: "istockphoto-139877917-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-139877917-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-139877917-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-139877917-1024x1024.jpg",
+    },
+    {
+      keyPreview: "istockphoto-1139730571-1024x1024.jpg",
+      keyThumbnail: "istockphoto-1139730571-1024x1024.jpg",
+      keyOriginal: "istockphoto-1139730571-1024x1024.jpg",
+      urlPreview: "/tmp/istockphoto-1139730571-1024x1024.jpg",
+      urlThumbnail: "/tmp/istockphoto-1139730571-1024x1024.jpg",
+      urlOriginal: "/tmp/istockphoto-1139730571-1024x1024.jpg",
+    },
+  ];
 
   return (
     <>

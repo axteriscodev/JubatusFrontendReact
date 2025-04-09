@@ -22,7 +22,7 @@ export default function ImageGallery({
                     photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
                   }`}
                   style={{
-                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail || image.url})`
+                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail})`
                   }}
                 >
                 </div>
@@ -32,7 +32,7 @@ export default function ImageGallery({
                 </div>
                 {select && 
                 <div className={styles.circle}
-                  onClick={() => onImageClick?.(image.keyPreview) }>
+                  onClick={() => onImageClick?.(image.keyPreview || image.keyThumbnail) }>
                     <i className="bi bi-check"></i>
                 </div>
                 }

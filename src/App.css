@@ -110,6 +110,7 @@ input:focus::placeholder { opacity:0.4; }
 .bg-secondary{background-color: var(--secondary-event-color, --secondary-color) !important;}
 
 /*TESTI STANDARD*/
+.text-white{color: white !important;}
 .text-black{color: #000000 !important;}
 .text-primary {color: var(--primary-event-color, --primary-color) !important; fill: var(--primary-event-color, --primary-color) !important;}
 .text-secondary {color: var(--secondary-event-color, --secondary-color) !important; fill: var(--secondary-event-color, --secondary-color) !important;}
