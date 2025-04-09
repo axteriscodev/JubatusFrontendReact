@@ -63,9 +63,23 @@ export default function CustomLightbox({
               {/* <a onClick={() => handleFavouriteClick(currentImage)} aria-label="Favourite image">
                 <i className="bi bi-heart-fill text-danger"></i>
               </a> */}
-              <a href={currentImage.urlOriginal} download={currentImage.keyOriginal} title="Download" aria-label="Download image">
-                <i className="bi bi-box-arrow-down text-white"></i>
-              </a>
+              {(() => {
+                const url = currentImage.urlOriginal;
+                const timestamp = Date.now();
+                const extension = url?.split('.').pop().split('?')[0]; // Prende estensione ignorando query params
+                const filename = `image_${timestamp}.${extension}`;
+
+                return (
+                  <a
+                    href={url}
+                    download={filename}
+                    title="Download"
+                    aria-label="Download image"
+                  >
+                    <i className="bi bi-box-arrow-down text-white"></i>
+                  </a>
+                );
+              })()}
               {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
                 <i className="bi bi-arrow-up-right"></i>
               </a>} */}
