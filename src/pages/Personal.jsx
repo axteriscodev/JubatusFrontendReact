@@ -7,6 +7,8 @@ import Carousel from 'react-bootstrap/Carousel';
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 import { fetchPurchased } from "../repositories/personal/personal-actions";
+import { isAuthenticated } from "../utils/auth";
+import { redirect } from "react-router-dom";
 
 export default function Personal() {
   const dispatch = useDispatch();
@@ -86,4 +88,11 @@ export default function Personal() {
       />}
     </>
   );
+}
+
+export function loader() {
+  if (!isAuthenticated()) {
+    return redirect("/");
+  }
+  return null;
 }

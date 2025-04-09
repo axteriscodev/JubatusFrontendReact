@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addCompetition,
   editCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
 import { toast, Bounce } from 'react-toastify';
+import { isAdmin } from "../utils/auth";
 
 /**
  * Pagina per la creazione dell'evento
@@ -300,3 +301,11 @@ export default function CreateEvent() {
     </div>
   );
 }
+
+export function loader() {
+  if (!isAdmin()) {
+    return redirect("/");
+  }
+  return null;
+}
+
