@@ -37,7 +37,7 @@ export default function Checkout() {
             userId: cart.userId,
             eventId: cart.eventId,
             amount: cart.totalPrice,
-            items: isPhotoFullPackEligible() ? cart.products : cart.items,
+            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices) ? cart.products : cart.items,
           },
           clientUrl: import.meta.env.VITE_APP_DOMAIN,
         }),
