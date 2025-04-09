@@ -71,8 +71,8 @@ export default function CustomLightbox({
 
                 return (
                   <a
-                    href={url}
-                    download={filename}
+                    href={currentImage.urlOriginal}
+                    download
                     title="Download"
                     aria-label="Download image"
                   >
