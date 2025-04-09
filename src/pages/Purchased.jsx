@@ -33,9 +33,9 @@ export default function Purchased() {
     setActions(actions);
   };
   
-    useEffect(() => {
-      setUiPreset(eventPreset);
-    }, []);
+  useEffect(() => {
+    setUiPreset(eventPreset);
+  }, []);
 
   // const currentPurchasedItems = [
   //   { keyThumbnail: 10,  urlThumbnail: "/tmp/istockphoto-500645381-1024x1024.jpg" },
