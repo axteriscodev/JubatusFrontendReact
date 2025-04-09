@@ -21,6 +21,9 @@ import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
 import { isAuthenticated, isAdmin } from "./utils/auth";
+import { loader as personalLoader} from "./pages/Personal";
+import { loader as adminLoader } from "./pages/AdminPanel";
+import { loader as createEventLoader } from "./pages/CreateEvent";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -42,7 +45,8 @@ const router = createBrowserRouter([
   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
   {
     path: "/personal",
-    element: isAuthenticated() ? <Personal /> : <Navigate to="/" replace />,
+    element: <Personal />,
+    loader: personalLoader
   },
   {
     path: "/event/:eventSlug",
@@ -63,11 +67,13 @@ const router = createBrowserRouter([
   { path: "/processing-photos", element: <ProcessingPhotos /> },
   {
     path: "/admin",
-    element: isAdmin() ? <AdminPanel /> : <Navigate to="/" replace />,
+    element:<AdminPanel />,
+    loader: adminLoader,
   },
   {
     path: "/admin/create-event",
-    element: isAdmin() ? <CreateEvent /> : <Navigate to="/" replace />,
+    element: <CreateEvent />,
+    loader: createEventLoader,
   },
 ]);
 

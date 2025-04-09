@@ -35,9 +35,7 @@ export default function PinVerification() {
         navigate("/personal");
       }
     } else {
-      throw Response(
-        JSON.stringify({ status: response.status, message: response.message })
-      );
+      throw new Response(response.message, { status: response.status });
     }
   }
 
