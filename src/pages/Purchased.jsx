@@ -72,6 +72,7 @@ export default function Purchased() {
   //     urlPreview: "/tmp/istockphoto-852157310-1024x1024.jpg",
   //     urlThumbnail: "/tmp/istockphoto-852157310-1024x1024.jpg",
   //     urlOriginal: "/tmp/istockphoto-852157310-1024x1024.jpg",
+  //     favourite: true
   //   },
   //   {
   //     keyPreview: "istockphoto-936552298-1024x1024.jpg",
@@ -148,6 +149,7 @@ export default function Purchased() {
               images={allPurchasedItems}
               select={false}
               actions={true}
+              highLightFavourite={true}
               onOpenLightbox={openLightbox}
             />
           </div>

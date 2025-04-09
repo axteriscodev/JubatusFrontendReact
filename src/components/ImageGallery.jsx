@@ -4,6 +4,8 @@ export default function ImageGallery({
   images,
   select = true,
   actions = false,
+  highLightPurchased = false,
+  highLightFavourite = false,
   onOpenLightbox = null,
   onImageClick = null,
   photoItems = null
@@ -22,7 +24,7 @@ export default function ImageGallery({
                     photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
                   }`}
                   style={{
-                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail})`
+                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail || image.url})`
                   }}
                 >
                 </div>
@@ -30,11 +32,19 @@ export default function ImageGallery({
                   onClick={() => onOpenLightbox?.(images, i, select, actions) }>
                     <i className="bi bi-search"></i>
                 </div>
-                {select && 
+                {select && highLightPurchased && !image.purchased &&
                 <div className={styles.circle}
                   onClick={() => onImageClick?.(image.keyPreview || image.keyThumbnail) }>
                     <i className="bi bi-check"></i>
                 </div>
+                }
+                {highLightPurchased && image.purchased &&
+                <div className={styles.purchased}>
+                  Acquistata
+                </div>
+                }
+                {highLightFavourite && image.favourite &&
+                <div className={styles.favourite}><i className="bi bi-heart-fill text-danger"></i></div>
                 }
               </div>
             </div>

@@ -137,6 +137,8 @@ export default function Personal() {
               images={purchasedItems}
               select={false}
               actions={true}
+              highLightFavourite={true}
+              highLightPurchased={true}
               onOpenLightbox={openLightbox}
             />
           </div>
