@@ -117,7 +117,7 @@ const cartSlice = createSlice({
 
       //prezzo foto singole
       const photoPrice =
-        state.prices.find((item) => item.quantityPhoto == 1)?.price ?? 0;
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
@@ -173,7 +173,7 @@ const cartSlice = createSlice({
 
       //prezzo foto singole
       const photoPrice =
-        state.prices.find((item) => item.quantityPhoto == 1)?.price ?? 0;
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
@@ -216,6 +216,73 @@ const cartSlice = createSlice({
       state.totalQuantity = initialState.totalQuantity;
       state.totalPrice = initialState.totalPrice;
       state.alertPack = initialState.alertPack;
+    },
+
+    /**
+     * Metodo per aggiungere tutti gli elementi al carrello
+     * @param {*} state
+     * @param {*} action
+     */
+    addAllItems(state, action) {
+      const mappedItems = state.products.map(({ product }) => ({
+        keyPreview: product.keyPreview,
+        keyOriginal: product.keyOriginal,
+        keyThumbnail: product.keyThumbnail,
+        fileTypeId: product.fileTypeId ?? 1,
+      }));
+
+      state.totalQuantity = mappedItems.length;
+
+      state.items = [...mappedItems];
+
+      //numero foto selezionate
+      const photosCount = mappedItems.filter(
+        (item) => item.fileTypeId === 1
+      ).length;
+      //numero video selezionati
+      const videosCount = mappedItems.filter(
+        (item) => item.fileTypeId === 2
+      ).length;
+
+      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
+      const formattedPrices = state.prices.map(
+        ({ quantityPhoto, quantityVideo, price }) => ({
+          quantityPhoto,
+          quantityVideo,
+          price,
+        })
+      );
+
+      //prezzo foto singole
+      const photoPrice =
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
+      //prezzo 'pacchetto tutte le foto'
+      const photoPackPrice =
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+      //calcolo il prezzo totale in base ai pacchetti
+      const totalPrice = calculatePrice(
+        formattedPrices,
+        photosCount,
+        videosCount
+      );
+      //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
+      state.alertPack =
+        totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
+
+      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
+      state.totalPrice =
+        totalPrice > photoPackPrice ? photoPackPrice : totalPrice;
+    },
+
+    /**
+     * Metodo per rimuovere tutti gli elementi dal carrello
+     * @param {*} state
+     * @param {*} action
+     */
+    removeAllItems(state, action) {
+      state.totalPrice = 0;
+      state.totalQuantity = 0;
+      state.items = [];
     },
   },
 });
