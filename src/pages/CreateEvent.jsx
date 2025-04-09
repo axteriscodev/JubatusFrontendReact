@@ -24,6 +24,7 @@ export default function CreateEvent() {
   const [formData, setFormData] = useState({
     slug: "",
     pathS3: "",
+    emotes: "",
     backgroundColor: "#000000",
     primaryColor: "#000000",
     secondaryColor: "#000000",
@@ -42,6 +43,7 @@ export default function CreateEvent() {
         id: receivedComp.id,
         slug: receivedComp.slug,
         pathS3: receivedComp.pathS3,
+        emotes: receivedComp.emotes,
         backgroundColor: receivedComp.backgroundColor,
         primaryColor: receivedComp.primaryColor,
         secondaryColor: receivedComp.secondaryColor,
@@ -183,6 +185,16 @@ export default function CreateEvent() {
               value={formData.pathS3}
               onChange={handleInputChange}
               placeholder="Path S3"
+             
+            />
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Emote attesa</Form.Label>
+            <Form.Control
+              name="emotes"
+              value={formData.emotes}
+              onChange={handleInputChange}
+              placeholder="Inserisci delle emote (es: 🚴)"
              
             />
           </Col>
