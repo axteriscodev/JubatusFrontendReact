@@ -63,7 +63,7 @@ export default function CustomLightbox({
         view: ({ index: newIndex }) => setIndex(newIndex),
       }}
       slides={slides.map((image) => ({
-        src: image.urlPreview || image.urlThumbnail,
+        src: image.urlPreview || image.urlThumbnail || image.url,
         id: image.keyPreview || image.keyOriginal,
       }))}
       plugins={[Thumbnails]}
