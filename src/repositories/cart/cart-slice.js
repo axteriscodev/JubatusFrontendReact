@@ -90,8 +90,12 @@ const cartSlice = createSlice({
         keyPreview: product.keyPreview,
         keyOriginal: product.keyOriginal,
         keyThumbnail: product.keyThumbnail,
-        fileTypeId: product.fileTypeId,
+        fileTypeId: product.fileTypeId ?? 1,
       });
+
+      if (!product.fileTypeId) {
+        console.log("Manca il file type");
+      }
 
       //numero foto selezionate
       const photosCount = state.items.filter(

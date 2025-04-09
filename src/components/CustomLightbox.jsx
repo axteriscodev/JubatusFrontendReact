@@ -21,8 +21,8 @@ export default function CustomLightbox({
   );
 
   const handleFavouriteClick = (image) => alert(`Favourite: ${image.url}`);
-  const handleDownloadClick = (image) => alert(`Download: ${image.url}`);
-  const handleShareClick = (image) => alert(`Share: ${image.url}`);
+  const handleDownloadClick = (image) => alert(`Download: ${image.urlOriginal}`);
+  const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
 
   return (
     <Lightbox
@@ -60,9 +60,9 @@ export default function CustomLightbox({
         slideFooter: () =>
           actions && (
             <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
-              <a onClick={() => handleFavouriteClick(currentImage)} aria-label="Favourite image">
+              {/* <a onClick={() => handleFavouriteClick(currentImage)} aria-label="Favourite image">
                 <i className="bi bi-heart-fill text-danger"></i>
-              </a>
+              </a> */}
               <a onClick={() => handleDownloadClick(currentImage)} aria-label="Download image">
                 <i className="bi bi-arrow-up"></i>
               </a>
