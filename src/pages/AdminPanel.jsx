@@ -1,10 +1,10 @@
 import { Button, ButtonGroup, Table } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useRef } from "react";
 import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
-import { logOut } from "../utils/auth";
+import { isAdmin, logOut } from "../utils/auth";
 
 import {
   fetchCompetitions,
@@ -133,4 +133,12 @@ export default function AdminPanel() {
       </Button>
     </div>
   );
+}
+
+
+export function loader() {
+  if (!isAdmin()) {
+    return redirect("/");
+  }
+  return null;
 }
