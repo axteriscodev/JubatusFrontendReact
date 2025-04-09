@@ -21,14 +21,16 @@ export default function CustomLightbox({
   );
 
   const handleFavouriteClick = async () => {
+    const rq = {contentId: currentImage.id};
     const response = await fetch(
       import.meta.env.VITE_API_URL + "/utility/my-like",
       {
+        headers: {"content-type":"application/json"},
         method: "POST",
-        body: currentImage.id
+        body: JSON.stringify(rq)
       }
     );
-    console.log('response', JSON.stringify(response));
+    console.log('response', await response.json());
   };
 
   const handleDownload = async () => {
