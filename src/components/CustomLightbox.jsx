@@ -24,6 +24,25 @@ export default function CustomLightbox({
   //const handleDownloadClick = (image) => alert(`Download: ${image.urlOriginal}`);
   //const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
 
+  const handleDownload = async () => {
+    const url = currentImage.urlOriginal;
+    const response = await fetch(url);
+    const blob = await response.blob();
+  
+    const urlParts = url.split('/');
+    const filename = urlParts[urlParts.length - 1]?.split('?')[0] || `image`;
+  
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  };
+  
+
   return (
     <Lightbox
       styles={{ container: { backgroundColor: "var(--overlay)" } }}
@@ -63,23 +82,13 @@ export default function CustomLightbox({
               {/* <a onClick={() => handleFavouriteClick(currentImage)} aria-label="Favourite image">
                 <i className="bi bi-heart-fill text-danger"></i>
               </a> */}
-              {(() => {
-                const url = currentImage.urlOriginal;
-                const timestamp = Date.now();
-                const extension = url?.split('.').pop().split('?')[0]; // Prende estensione ignorando query params
-                const filename = `image_${timestamp}.${extension}`;
-
-                return (
-                  <a
-                    href={currentImage.urlOriginal}
-                    download
-                    title="Download"
-                    aria-label="Download image"
-                  >
-                    <i className="bi bi-box-arrow-down text-white"></i>
-                  </a>
-                );
-              })()}
+              <a
+                onClick={handleDownload}
+                title="Download"
+                aria-label="Download image"
+              >
+                <i className="bi bi-box-arrow-down text-white"></i>
+              </a>
               {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
                 <i className="bi bi-arrow-up-right"></i>
               </a>} */}
