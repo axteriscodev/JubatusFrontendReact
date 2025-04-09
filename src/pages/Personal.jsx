@@ -50,32 +50,44 @@ export default function Personal() {
   return (
     <>
       <div className="container">
-        <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
-        <div className="px-lg">
-          <Carousel>
-            {purchasedItems.map((image, i) => (
-              <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
-                <div className="ratio ratio-1-1">
-                  <img
-                    src={image.urlPreview || image.urlThumbnail}
-                    className="d-block w-100 object-fit-cover"
-                    alt="..."
-                    onClick={() => openLightbox(purchasedItems, i, false, true)}
-                  />
-                </div>
-              </Carousel.Item>
-            ))}
-          </Carousel>
-        </div>
-        <div className="mt-md">
-          <ImageGallery
-            images={purchasedItems}
-            select={false}
-            actions={true}
-            onOpenLightbox={openLightbox}
-          />
-        </div>
-      </div>
+        { purchasedItems?.length > 0 ?
+        <>
+          <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
+          <div className="px-lg">
+            <Carousel>
+              {purchasedItems.map((image, i) => (
+                <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
+                  <div className="ratio ratio-1-1">
+                    <img
+                      src={image.urlPreview || image.urlThumbnail}
+                      className="d-block w-100 object-fit-cover"
+                      alt="..."
+                      onClick={() => openLightbox(purchasedItems, i, false, true)}
+                    />
+                  </div>
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          </div>
+        </>
+        :
+        <>
+          <h2 className="my-sm">Non hai effettuato acquisti</h2>
+        </>
+        }
+        { purchasedItems?.length > 0 &&
+        <>
+          <div className="mt-md">
+            <ImageGallery
+              images={purchasedItems}
+              select={false}
+              actions={true}
+              onOpenLightbox={openLightbox}
+            />
+          </div>
+        </>
+        }
+      </div> 
 
       { open && <CustomLightbox
         open={open}

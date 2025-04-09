@@ -30,10 +30,12 @@ export default function ImageGallery({
                   onClick={() => onOpenLightbox?.(images, i, select, actions) }>
                     <i className="bi bi-search"></i>
                 </div>
+                {select && 
                 <div className={styles.circle}
                   onClick={() => onImageClick?.(image.keyPreview) }>
                     <i className="bi bi-check"></i>
                 </div>
+                }
               </div>
             </div>
           </div>

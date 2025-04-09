@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
  * Slice per la gestione delle competizioni
  */
 const competitionsSlice = createSlice({
-    name: "competitions",
+    name: "competition",
     initialState: {
         id: 0,
         slug: "",
