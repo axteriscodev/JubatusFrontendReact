@@ -69,9 +69,9 @@ export default function Login() {
         showPrivacy={false}
         onErrors={formErrors}
       />
-      <Link to="/event/nova-eroica">Selfie upload</Link>
+      {/* <Link to="/event/nova-eroica">Selfie upload</Link>
       <Link to="/checkout">Checkout</Link>
-      <Link to="/admin">Admin</Link>
+      <Link to="/admin">Admin</Link> */}
     </div>
   );
 }
