@@ -64,15 +64,9 @@ export default function ImageShop() {
             <Link to={'/event/' + eventPreset.slug}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
-                size="logo-xs"
+                size="logo-sm"
               />
             </Link>
-            <div className="my-md">
-              <h2>
-                Ci siamo <strong>atleta!</strong>
-              </h2>
-              <p>Ecco le tue foto</p>
-            </div>
           </div>
           <div>
             <div className="price-list-container">
@@ -83,6 +77,12 @@ export default function ImageShop() {
               ))}
             </div>
           </div>
+        </div>
+        <div className="my-md text-start">
+          <h2>
+            Ci siamo <strong>atleta!</strong>
+          </h2>
+          <p>Ecco le tue foto</p>
         </div>
         <ImageGallery
           images={imagesList}
