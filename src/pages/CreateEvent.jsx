@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
 import { useNavigate, useLocation, redirect } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   addCompetition,
   editCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
-import { toast, Bounce } from 'react-toastify';
+import { toast, Bounce } from "react-toastify";
 import { isAdmin } from "../utils/auth";
+import { slugify } from "../utils/data-formatter";
 
 /**
  * Pagina per la creazione dell'evento
@@ -24,6 +25,7 @@ export default function CreateEvent() {
   const [formData, setFormData] = useState({
     slug: "",
     pathS3: "",
+    emoji: "",
     backgroundColor: "#000000",
     primaryColor: "#000000",
     secondaryColor: "#000000",
@@ -42,6 +44,7 @@ export default function CreateEvent() {
         id: receivedComp.id,
         slug: receivedComp.slug,
         pathS3: receivedComp.pathS3,
+        emoji: receivedComp.emoji,
         backgroundColor: receivedComp.backgroundColor,
         primaryColor: receivedComp.primaryColor,
         secondaryColor: receivedComp.secondaryColor,
@@ -97,6 +100,7 @@ export default function CreateEvent() {
         title: formData.title,
         location: formData.location,
         description: formData.description,
+        emoji: formData.emoji,
       },
     ];
 
@@ -108,7 +112,7 @@ export default function CreateEvent() {
     }
 
     if (outcome) {
-      toast.success('Evento creato!', {
+      toast.success("Evento creato!", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -118,10 +122,10 @@ export default function CreateEvent() {
         progress: undefined,
         theme: "colored",
         transition: Bounce,
-        });
+      });
       navigate("/admin");
     } else {
-      toast.error('Si è verificato un errore', {
+      toast.error("Si è verificato un errore", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -131,19 +135,9 @@ export default function CreateEvent() {
         progress: undefined,
         theme: "colored",
         transition: Bounce,
-        });
+      });
     }
   };
-
-  const slugify = (text) =>
-    text
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
-      .replace(/--+/g, "-")
-      .replace(/^-+|-+$/g, "");
 
   return (
     <div className="container text-start">
@@ -183,7 +177,15 @@ export default function CreateEvent() {
               value={formData.pathS3}
               onChange={handleInputChange}
               placeholder="Path S3"
-             
+            />
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Emote attesa</Form.Label>
+            <Form.Control
+              name="emoji"
+              value={formData.emoji}
+              onChange={handleInputChange}
+              placeholder="Inserisci delle emote (es: 🚴)"
             />
           </Col>
           <Col sm={12} className="mb-3">
@@ -282,7 +284,11 @@ export default function CreateEvent() {
           <Col xs={12}>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>Logo</Form.Label>
-              <Form.Control onChange={handleFileChange} type="file" accept="image/*" />
+              <Form.Control
+                onChange={handleFileChange}
+                type="file"
+                accept="image/*"
+              />
             </Form.Group>
           </Col>
         </Row>
@@ -308,4 +314,3 @@ export function loader() {
   }
   return null;
 }
-

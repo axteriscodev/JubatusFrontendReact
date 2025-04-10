@@ -78,7 +78,7 @@ export default function ProcessingPhotos() {
         Stiamo elaborando
         <br />i tuoi contenuti in <span>MASSIMA</span> risoluzione
         <br />
-        🌊 📸 🏄🏻
+        {eventPreset.emoji ?? "🚴 📸 🏃"}
       </h4>
       <div
         className="progress mt-md"

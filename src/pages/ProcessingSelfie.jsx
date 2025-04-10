@@ -119,7 +119,7 @@ export default function ProcessingSelfie() {
       <h2>
         stiamo trovando le <span>tue</span> foto
       </h2>
-      <h2>🚴 📸 🏃</h2>
+      <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       <div
         className="progress mt-md"
         role="progressbar"

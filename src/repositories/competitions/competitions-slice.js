@@ -11,7 +11,8 @@ const competitionsSlice = createSlice({
         backgroundColor: "",
         primaryColor: "",
         secondaryColor: "",
-        logo: ""
+        logo: "",
+        emoji: "",
     },
     reducers: {
         /**
@@ -26,6 +27,7 @@ const competitionsSlice = createSlice({
             state.primaryColor = action.payload.primaryColor;
             state.secondaryColor = action.payload.secondaryColor;
             state.logo = action.payload.logo;
+            state.emoji = action.payload.languages[0].emoji;
         }
     }
 });

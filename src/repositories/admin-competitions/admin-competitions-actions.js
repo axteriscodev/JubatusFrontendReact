@@ -66,7 +66,7 @@ export const editCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
-        "/events/event" + competition.id,
+        "/events/event/" + competition.id,
         "PUT",
         getAuthToken(),
         competition
