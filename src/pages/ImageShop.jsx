@@ -64,7 +64,7 @@ export default function ImageShop() {
             <Link to={'/event/' + eventPreset.slug}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
-                size="logo-xs"
+                size="logo-sm"
               />
             </Link>
           </div>

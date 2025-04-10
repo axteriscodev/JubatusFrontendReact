@@ -46,10 +46,10 @@ export default function Personal() {
             <Carousel>
               {purchasedItems.map((image, i) => (
                 <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
-                  <div className="ratio ratio-1-1">
+                  <div className="carousel-square d-flex justify-content-center align-items-center">
                     <img
                       src={image.urlPreview || image.urlThumbnail}
-                      className="d-block w-100 object-fit-cover"
+                      className="img-fluid"
                       alt="..."
                       onClick={() => openLightbox(purchasedItems, i, false, true, true)}
                     />
