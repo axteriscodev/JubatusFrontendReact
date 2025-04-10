@@ -8,7 +8,6 @@ import { isAdmin, logOut } from "../utils/auth";
 
 import {
   fetchCompetitions,
-  editCompetition,
   deleteCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
 
