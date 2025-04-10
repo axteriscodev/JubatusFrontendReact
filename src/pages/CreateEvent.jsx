@@ -38,6 +38,28 @@ export default function CreateEvent() {
     description: "",
   });
 
+  const [priceRows, setPriceRows] = useState([
+    { quantityPhoto: "", quantityVideo: "", price: "" },
+  ]);
+
+  const addRow = () => {
+    setPriceRows([...priceRows, { quantityPhoto: "", quantityVideo: "", price: "" }]);
+  };
+
+  // Rimuove la riga all'indice dato
+  const removeRow = (index) => {
+    const newRows = priceRows.filter((_, i) => i !== index);
+    setPriceRows(newRows);
+  };
+
+  // Aggiorna un campo in una riga specifica
+  const handleRowChange = (index, field, value) => {
+    const newRows = [...priceRows];
+    // Se vuoi i valori come numeri (non stringhe), puoi usare parseFloat
+    newRows[index][field] = value === "" ? "" : value;
+    setPriceRows(newRows);
+  };
+
   useEffect(() => {
     if (receivedComp) {
       setFormData({
@@ -290,6 +312,65 @@ export default function CreateEvent() {
                 accept="image/*"
               />
             </Form.Group>
+          </Col>
+          <Col xs={4}>
+            <Button variant="secondary" onClick={addRow} className="me-2">
+              Aggiungi riga
+            </Button>
+          </Col>
+          <Col xs={12}>
+            {priceRows.map((row, index) => (
+              <Row key={index} className="mb-3 align-items-end">
+                <Col md={3}>
+                  <Form.Group controlId={`quantityPhoto-${index}`}>
+                    <Form.Label>Quantità foto</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={row.quantityPhoto}
+                      onChange={(e) =>
+                        handleChange(index, "quantityPhoto", e.target.value)
+                      }
+                      placeholder="Inserisci numero"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Form.Group controlId={`quantityVideo-${index}`}>
+                    <Form.Label>Quantità Video</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={row.quantityVideo}
+                      onChange={(e) =>
+                        handleChange(index, "quantityVideo", e.target.value)
+                      }
+                      placeholder="Inserisci numero"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Form.Group controlId={`price-${index}`}>
+                    <Form.Label>Prezzo</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={row.price}
+                      onChange={(e) =>
+                        handleChange(index, "price", e.target.value)
+                      }
+                      placeholder="Inserisci numero"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={3}>
+                  <Button
+                    variant="danger"
+                    onClick={() => removeRow(index)}
+                    disabled={rows.length === 1}
+                  >
+                    Rimuovi
+                  </Button>
+                </Col>
+              </Row>
+            ))}
           </Col>
         </Row>
         <div className="d-flex justify-content-between mt-sm">
