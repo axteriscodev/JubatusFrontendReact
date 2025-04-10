@@ -3,8 +3,6 @@ import Logo from "../components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
 import CustomLightbox from "../components/CustomLightbox";
@@ -53,21 +51,6 @@ export default function ImageShop() {
 
   const alertPack = useSelector((state) => state.cart.alertPack);
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Body>
-        <div className="text-center text-black fw-bold">
-          {pricesList.map((pricePack, i) => (
-            <div key={i}>
-              {getPriceListEntry(pricePack)}
-              {i < pricesList.length - 1 && <hr />}
-            </div>
-          ))}
-        </div>
-      </Popover.Body>
-    </Popover>
-  );
-
   return (
     <>
     {alertPack && (
@@ -91,7 +74,7 @@ export default function ImageShop() {
               <p>Ecco le tue foto</p>
             </div>
           </div>
-          <div className="border fw-bold p-3 rounded-3 mb-3">
+          <div className="price-list-container">
             {pricesList.map((pricePack, i) => (
               <div key={i}>
                 {getPriceListEntry(pricePack)}
@@ -99,9 +82,6 @@ export default function ImageShop() {
               </div>
             ))}
           </div>
-          {/* {<OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-            <i className="bi bi-info-circle text-60 pointer"></i>
-          </OverlayTrigger>} */}
         </div>
         <ImageGallery
           images={imagesList}

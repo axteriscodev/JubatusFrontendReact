@@ -1,3 +1,4 @@
+//import { useDispatch } from "react-redux";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
@@ -11,27 +12,42 @@ export default function CustomLightbox({
   select,
   actions,
   onClose,
+  onUpdateSlide = null,
   onImageClick = null,
   photoItems =  null,
 }) {
+  //const dispatch = useDispatch();
+  
   const currentImage = slides[index] ?? 0;
 
   const isSelected = photoItems?.some(
-    (el) => el.keyPreview === (currentImage.keyPreview || currentImage.keyOriginal)
+    (el) => el.keyPreview === (currentImage.keyPreview || currentImage.keyThumbnail || currentImage.keyOriginal)
   );
 
   const handleFavouriteClick = async () => {
-    const rq = {contentId: currentImage.id};
+    const rq = { contentId: currentImage.id };
     const response = await fetch(
       import.meta.env.VITE_API_URL + "/utility/my-like",
       {
-        headers: {"content-type":"application/json"},
+        headers: { "content-type": "application/json" },
         method: "POST",
-        body: JSON.stringify(rq)
+        body: JSON.stringify(rq),
       }
     );
-    console.log('response', await response.json());
-  };
+    const data = await response.json();
+    console.log("response", data);
+    console.log("data.data", data.data);
+  
+    // Aggiorna lo slide corrente via callback
+    if (onUpdateSlide) {
+      const updatedSlide = {
+        ...currentImage,
+        //favorite: !currentImage.favorite
+        favorite: data.data,
+      };
+      onUpdateSlide(index, updatedSlide);
+    }
+  };  
 
   const handleDownload = async () => {
     const url = currentImage.urlOriginal;
@@ -64,7 +80,7 @@ export default function CustomLightbox({
       }}
       slides={slides.map((image) => ({
         src: image.urlPreview || image.urlThumbnail || image.url,
-        id: image.keyPreview || image.keyOriginal,
+        id: image.keyPreview || image.keyThumbnail || image.keyOriginal,
       }))}
       plugins={[Thumbnails]}
       render={{
@@ -90,7 +106,7 @@ export default function CustomLightbox({
           actions && (
             <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
               <a onClick={handleFavouriteClick} aria-label="Favourite image">
-                <i className={`bi ${currentImage.favourite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
+                <i className={`bi ${currentImage.favorite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
               </a>
               <a
                 onClick={handleDownload}

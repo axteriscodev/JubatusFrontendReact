@@ -31,7 +31,7 @@ const personalSlice = createSlice({
         },
 
         /**
-         * Aggrionamento dei prodotti acquistati
+         * Aggiornamento dei prodotti acquistati
          * 
          * @param {*} state 
          * @param {*} action 
@@ -50,6 +50,25 @@ const personalSlice = createSlice({
             state.id = 0;
             state.email = "";
             state.purchased = [];
+        },
+
+        /**
+         * Aggiornamento stato favorite
+         * 
+         * @param {*} state 
+         * @param {*} action 
+         */
+        updatePersonalItem: (state, action) => {
+            const updated = action.payload;
+            const index = state.purchased.findIndex(
+              (img) =>
+                img.keyPreview === updated.keyPreview ||
+                img.keyThumbnail === updated.keyThumbnail ||
+                img.keyOriginal === updated.keyOriginal
+            );
+            if (index !== -1) {
+              state.purchased[index] = updated;
+            }
         },
     }
 
