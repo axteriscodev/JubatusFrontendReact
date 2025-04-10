@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import { personalActions } from '../repositories/personal/personal-slice';
-
 import Carousel from 'react-bootstrap/Carousel';
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 import { fetchPurchased } from "../repositories/personal/personal-actions";
 import { isAuthenticated } from "../utils/auth";
 import { redirect } from "react-router-dom";
+
+import { cartActions } from "../repositories/cart/cart-slice";
+import { personalActions } from "../repositories/personal/personal-slice";
 
 export default function Personal() {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ export default function Personal() {
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
   const [actions, setActions] = useState(false);
+  const [personalSlice, setPersonalSlice] = useState(false);
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
 
@@ -25,83 +27,15 @@ export default function Personal() {
     dispatch(fetchPurchased())
   }, []);
 
-  const openLightbox = (images, startIndex = 0, select, actions) => {
+  const openLightbox = (images, startIndex = 0, select, actions, personalSlice) => {
     setIndex(startIndex);
     setOpen(true);
     setSlides(images);
     setSelect(select);
     setActions(actions);
+    setPersonalSlice(personalSlice);
   };
 
-   // const purchasedItems = [
-  //   {
-  //     keyPreview: "istockphoto-500645381-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-500645381-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-500645381-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-500645381-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-500645381-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-500645381-1024x1024.jpg",
-  //   },
-  //   {
-  //     keyPreview: "istockphoto-535967907-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-535967907-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-535967907-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-535967907-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-535967907-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-535967907-1024x1024.jpg",
-  //   },
-  //   {
-  //     keyPreview: "istockphoto-636828120-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-636828120-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-636828120-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-636828120-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-636828120-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-636828120-1024x1024.jpg",
-  //   },
-  // ];
-
-  // const allPurchasedItems = [
-  //   {
-  //     keyPreview: "istockphoto-852157310-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-852157310-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-852157310-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-852157310-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-852157310-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-852157310-1024x1024.jpg",
-  //   },
-  //   {
-  //     keyPreview: "istockphoto-936552298-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-936552298-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-936552298-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-936552298-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-936552298-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-936552298-1024x1024.jpg",
-  //   },
-  //   {
-  //     keyPreview: "istockphoto-961494108-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-961494108-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-961494108-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-961494108-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-961494108-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-961494108-1024x1024.jpg",
-  //   },
-  //   {
-  //     keyPreview: "istockphoto-139877917-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-139877917-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-139877917-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-139877917-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-139877917-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-139877917-1024x1024.jpg",
-  //   },
-  //   {
-  //     keyPreview: "istockphoto-1139730571-1024x1024.jpg",
-  //     keyThumbnail: "istockphoto-1139730571-1024x1024.jpg",
-  //     keyOriginal: "istockphoto-1139730571-1024x1024.jpg",
-  //     urlPreview: "/tmp/istockphoto-1139730571-1024x1024.jpg",
-  //     urlThumbnail: "/tmp/istockphoto-1139730571-1024x1024.jpg",
-  //     urlOriginal: "/tmp/istockphoto-1139730571-1024x1024.jpg",
-  //   },
-  // ];
   return (
     <>
       <div className="container">
@@ -112,12 +46,12 @@ export default function Personal() {
             <Carousel>
               {purchasedItems.map((image, i) => (
                 <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
-                  <div className="ratio ratio-1-1">
+                  <div className="carousel-square d-flex justify-content-center align-items-center">
                     <img
                       src={image.urlPreview || image.urlThumbnail}
-                      className="d-block w-100 object-fit-cover"
+                      className="img-fluid"
                       alt="..."
-                      onClick={() => openLightbox(purchasedItems, i, false, true)}
+                      onClick={() => openLightbox(purchasedItems, i, false, true, true)}
                     />
                   </div>
                 </Carousel.Item>
@@ -139,6 +73,7 @@ export default function Personal() {
               actions={true}
               highLightFavourite={true}
               highLightPurchased={true}
+              personalSlice={true}
               onOpenLightbox={openLightbox}
             />
           </div>
@@ -154,6 +89,20 @@ export default function Personal() {
         select={select}
         actions={actions}
         onClose={() => setOpen(false)}
+        onUpdateSlide={(i, updatedSlide) => {
+          // Aggiorna Redux
+          if (personalSlice){
+            dispatch(personalActions.updatePersonalItem(updatedSlide));
+          } else {
+            dispatch(cartActions.updatePurchasedItem(updatedSlide));
+          }
+          // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
+          setSlides((prev) => {
+            const copy = [...prev];
+            copy[i] = updatedSlide;
+            return copy;
+          });
+        }}
       />}
     </>
   );

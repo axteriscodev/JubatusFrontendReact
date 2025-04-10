@@ -287,6 +287,27 @@ const cartSlice = createSlice({
       state.totalQuantity = 0;
       state.items = [];
     },
+
+    /**
+     * Metodo per aggiornare stato favorite
+     * @param {*} state
+     * @param {*} action
+     */
+    updatePurchasedItem(state, action) {
+      const updated = action.payload;
+      const index = state.purchased.findIndex(
+        (img) =>
+          img.keyPreview === updated.keyPreview ||
+          img.keyThumbnail === updated.keyThumbnail ||
+          img.keyOriginal === updated.keyOriginal
+      );
+      if (index !== -1) {
+        state.purchased[index] = {
+          ...state.purchased[index],
+          ...updated
+        };
+      }
+    },
   },
 });
 

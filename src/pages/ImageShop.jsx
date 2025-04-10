@@ -3,8 +3,6 @@ import Logo from "../components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
 import CustomLightbox from "../components/CustomLightbox";
@@ -53,21 +51,6 @@ export default function ImageShop() {
 
   const alertPack = useSelector((state) => state.cart.alertPack);
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Body>
-        <div className="text-center text-black fw-bold">
-          {pricesList.map((pricePack, i) => (
-            <div key={i}>
-              {getPriceListEntry(pricePack)}
-              {i < pricesList.length - 1 && <hr />}
-            </div>
-          ))}
-        </div>
-      </Popover.Body>
-    </Popover>
-  );
-
   return (
     <>
     {alertPack && (
@@ -81,27 +64,25 @@ export default function ImageShop() {
             <Link to={'/event/' + eventPreset.slug}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
-                size="logo-xs"
+                size="logo-sm"
               />
             </Link>
-            <div className="my-md">
-              <h2>
-                Ci siamo <strong>atleta!</strong>
-              </h2>
-              <p>Ecco le tue foto</p>
+          </div>
+          <div>
+            <div className="price-list-container">
+              {pricesList.map((pricePack, i) => (
+                <div key={i}>
+                  {getPriceListEntry(pricePack)}
+                </div>
+              ))}
             </div>
           </div>
-          <div className="border fw-bold p-3 rounded-3 mb-3">
-            {pricesList.map((pricePack, i) => (
-              <div key={i}>
-                {getPriceListEntry(pricePack)}
-                {i < pricesList.length - 1 && <hr />}
-              </div>
-            ))}
-          </div>
-          {/* {<OverlayTrigger trigger="click" placement="bottom" overlay={popover}>
-            <i className="bi bi-info-circle text-60 pointer"></i>
-          </OverlayTrigger>} */}
+        </div>
+        <div className="my-md text-start">
+          <h2>
+            Ci siamo <strong>atleta!</strong>
+          </h2>
+          <p>Ecco le tue foto</p>
         </div>
         <ImageGallery
           images={imagesList}
@@ -134,14 +115,20 @@ export default function ImageShop() {
 
 function getPriceListEntry(pricePack) {
   if (pricePack.quantityPhoto === -1)
-    return `Tutte le foto - ${pricePack.price}€`;
+    return (
+      <>
+        <strong>Tutte</strong> le foto - {pricePack.price}€
+      </>);
   if (pricePack.quantityPhoto === -1 && pricePack.quantityVideo === -1)
-    return `Pacchetto completo - ${pricePack.price}€`;
+    return (
+      <>
+        <strong>Pacchetto completo</strong> - {pricePack.price}€
+      </>);
   if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0)
-    return `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
+    return (<>{pricePack.quantityPhoto} Foto - {pricePack.price}€</>);
   if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0)
-    return `Il tuo video - ${pricePack.price}€`;
+    return (<>Il <strong>tuo</strong> video - {pricePack.price}€</>);
   if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0)
-    return `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
+    return (<>Il <strong>tuo</strong> video e {pricePack.quantityPhoto} foto - {pricePack.price}€</>);
   return "";
 }

@@ -63,7 +63,7 @@ const router = createBrowserRouter([
     element: <CheckoutOutcome />,
     errorElement: <ErrorPage />,
   },
-  { path: "/purchased", element: <Purchased />, errorElement: <ErrorPage /> },
+  { path: "/purchased", element: <Purchased />/*, errorElement: <ErrorPage />*/ },
   { path: "/processing-photos", element: <ProcessingPhotos /> },
   {
     path: "/admin",

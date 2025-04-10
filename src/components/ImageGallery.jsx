@@ -8,14 +8,15 @@ export default function ImageGallery({
   highLightFavourite = false,
   onOpenLightbox = null,
   onImageClick = null,
-  photoItems = null
+  photoItems = null,
+  personalSlice = false
 }) {
 
   return (
     <>
-      <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 g-2 ${styles.gallery}`}>
+      <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 ${styles.gallery}`}>
         {images.map((image, i) => (
-          <div key={image.keyPreview || i}>
+          <div key={image.keyPreview || image.keyThumbnail || image.keyOriginal || i}>
             <div              
               className="ratio ratio-1-1"
             >
@@ -29,7 +30,7 @@ export default function ImageGallery({
                 >
                 </div>
                 <div className={styles.zoom}
-                  onClick={() => onOpenLightbox?.(images, i, select, actions) }>
+                  onClick={() => onOpenLightbox?.(images, i, select, actions, personalSlice) }>
                     <i className="bi bi-search"></i>
                 </div>
                 {select && highLightPurchased && !image.purchased &&
@@ -43,8 +44,8 @@ export default function ImageGallery({
                   Acquistata
                 </div>
                 }
-                {highLightFavourite && image.favourite &&
-                <div className={styles.favourite}><i className="bi bi-heart-fill text-danger"></i></div>
+                {highLightFavourite && image.favorite &&
+                <div className={styles.favorite}><i className="bi bi-heart-fill text-danger"></i></div>
                 }
               </div>
             </div>
