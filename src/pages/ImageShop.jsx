@@ -51,8 +51,6 @@ export default function ImageShop() {
 
   const alertPack = useSelector((state) => state.cart.alertPack);
 
-  console.log(JSON.stringify(imagesList));
-
   return (
     <>
     {alertPack && (
