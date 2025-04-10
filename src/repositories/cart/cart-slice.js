@@ -229,18 +229,21 @@ const cartSlice = createSlice({
         keyOriginal: product.keyOriginal,
         keyThumbnail: product.keyThumbnail,
         fileTypeId: product.fileTypeId ?? 1,
+        purchased: product.purchased ?? false,
       }));
 
-      state.totalQuantity = mappedItems.length;
+      const itemToBuy = mappedItems.filter((item) => item.purchased !== true);
 
-      state.items = [...mappedItems];
+      state.totalQuantity = itemToBuy.length;
+
+      state.items = [...itemToBuy];
 
       //numero foto selezionate
-      const photosCount = mappedItems.filter(
+      const photosCount = itemToBuy.filter(
         (item) => item.fileTypeId === 1
       ).length;
       //numero video selezionati
-      const videosCount = mappedItems.filter(
+      const videosCount = itemToBuy.filter(
         (item) => item.fileTypeId === 2
       ).length;
 
