@@ -16,7 +16,7 @@ export default function ImageGallery({
     <>
       <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 g-2 ${styles.gallery}`}>
         {images.map((image, i) => (
-          <div key={`gallery${image.keyPreview || image.keyThumbnail || image.keyOriginal || i}`}>
+          <div key={image.keyPreview || image.keyThumbnail || image.keyOriginal || i}>
             <div              
               className="ratio ratio-1-1"
             >

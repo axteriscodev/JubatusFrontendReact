@@ -51,6 +51,8 @@ export default function ImageShop() {
 
   const alertPack = useSelector((state) => state.cart.alertPack);
 
+  console.log(JSON.stringify(imagesList));
+
   return (
     <>
     {alertPack && (
@@ -74,13 +76,14 @@ export default function ImageShop() {
               <p>Ecco le tue foto</p>
             </div>
           </div>
-          <div className="price-list-container">
-            {pricesList.map((pricePack, i) => (
-              <div key={i}>
-                {getPriceListEntry(pricePack)}
-                {i < pricesList.length - 1 && <hr />}
-              </div>
-            ))}
+          <div>
+            <div className="price-list-container">
+              {pricesList.map((pricePack, i) => (
+                <div key={i}>
+                  {getPriceListEntry(pricePack)}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <ImageGallery
@@ -114,14 +117,20 @@ export default function ImageShop() {
 
 function getPriceListEntry(pricePack) {
   if (pricePack.quantityPhoto === -1)
-    return `Tutte le foto - ${pricePack.price}€`;
+    return (
+      <>
+        <strong>Tutte</strong> le foto - {pricePack.price}€
+      </>);
   if (pricePack.quantityPhoto === -1 && pricePack.quantityVideo === -1)
-    return `Pacchetto completo - ${pricePack.price}€`;
+    return (
+      <>
+        <strong>Pacchetto completo</strong> - {pricePack.price}€
+      </>);
   if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0)
-    return `${pricePack.quantityPhoto} Foto - ${pricePack.price}€`;
+    return (<>{pricePack.quantityPhoto} Foto - {pricePack.price}€</>);
   if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0)
-    return `Il tuo video - ${pricePack.price}€`;
+    return (<>Il <strong>tuo</strong> video - {pricePack.price}€</>);
   if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0)
-    return `Il tuo video e ${pricePack.quantityPhoto} foto - ${pricePack.price}€`;
+    return (<>Il <strong>tuo</strong> video e {pricePack.quantityPhoto} foto - {pricePack.price}€</>);
   return "";
 }

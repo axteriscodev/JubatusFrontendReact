@@ -58,16 +58,19 @@ const personalSlice = createSlice({
          * @param {*} state 
          * @param {*} action 
          */
-        updatePersonalItem: (state, action) => {
+        updatePersonalItem(state, action) {
             const updated = action.payload;
             const index = state.purchased.findIndex(
-              (img) =>
-                img.keyPreview === updated.keyPreview ||
-                img.keyThumbnail === updated.keyThumbnail ||
-                img.keyOriginal === updated.keyOriginal
+                (img) =>
+                //img.keyPreview === updated.keyPreview ||
+                //img.keyThumbnail === updated.keyThumbnail ||
+                img.id === updated.id
             );
             if (index !== -1) {
-              state.purchased[index] = updated;
+                state.purchased[index] = {
+                ...state.purchased[index],
+                ...updated
+                };
             }
         },
     }

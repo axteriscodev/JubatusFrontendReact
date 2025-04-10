@@ -35,8 +35,6 @@ export default function CustomLightbox({
       }
     );
     const data = await response.json();
-    console.log("response", data);
-    console.log("data.data", data.data);
   
     // Aggiorna lo slide corrente via callback
     if (onUpdateSlide) {

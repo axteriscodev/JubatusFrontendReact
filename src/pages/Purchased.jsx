@@ -109,8 +109,6 @@ export default function Purchased() {
           } else {
             dispatch(cartActions.updatePurchasedItem(updatedSlide));
           }
-          console.log("personalSlice", personalSlice);
-          console.log("updatedSlide", updatedSlide);
           // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
           setSlides((prev) => {
             const copy = [...prev];

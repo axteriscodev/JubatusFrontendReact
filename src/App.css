@@ -307,3 +307,18 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
     transform: translate(-50%, 0); /* arriva alla posizione originale */
   }
 }
+.price-list-container{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: end;
+}
+.price-list-container > div{
+  padding: 4px 6px;
+  border: 1px solid var(--primary-event-color, --primary-color);
+  border-radius: 5px;
+  gap: 1rem;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}

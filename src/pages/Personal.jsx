@@ -91,13 +91,11 @@ export default function Personal() {
         onClose={() => setOpen(false)}
         onUpdateSlide={(i, updatedSlide) => {
           // Aggiorna Redux
-          if (personalSlice)
+          if (personalSlice){
             dispatch(personalActions.updatePersonalItem(updatedSlide));
-          else
+          } else {
             dispatch(cartActions.updatePurchasedItem(updatedSlide));
-          
-            console.log("personalSlice", personalSlice);
-            console.log("updatedSlide", updatedSlide);
+          }
           // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
           setSlides((prev) => {
             const copy = [...prev];
