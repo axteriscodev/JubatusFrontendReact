@@ -38,29 +38,33 @@ export default function CreateEvent() {
     description: "",
   });
 
+  //Righe dei pacchetto prezzi
   const [priceRows, setPriceRows] = useState([
     { quantityPhoto: "", quantityVideo: "", price: "" },
   ]);
 
+  //Aggiunta di un pacchetto
   const addRow = () => {
     setPriceRows([...priceRows, { quantityPhoto: "", quantityVideo: "", price: "" }]);
   };
 
-  // Rimuove la riga all'indice dato
+  //Rimozione di un pacchetto
   const removeRow = (index) => {
     const newRows = priceRows.filter((_, i) => i !== index);
     setPriceRows(newRows);
   };
 
-  // Aggiorna un campo in una riga specifica
+  // Aggiorna i valori all'interno di una righa
   const handleRowChange = (index, field, value) => {
     const newRows = [...priceRows];
-    // Se vuoi i valori come numeri (non stringhe), puoi usare parseFloat
     newRows[index][field] = value === "" ? "" : value;
     setPriceRows(newRows);
   };
 
+
   useEffect(() => {
+
+    //in caso modifica evento, precompilo i campi
     if (receivedComp) {
       setFormData({
         id: receivedComp.id,
@@ -79,6 +83,8 @@ export default function CreateEvent() {
         description: receivedComp.languages[0].description,
       });
     }
+
+
     // aggiungo la classe admin per aggiornare le variabili CSS
     document.body.classList.add("admin");
     // rimuovo la classe admin al "destroy" del componente
@@ -87,8 +93,10 @@ export default function CreateEvent() {
     };
   }, []);
 
+  //pulsante ritorno alla lista eventi
   const handleReturnToList = () => navigate("/admin");
 
+  //gestione del titolo evento e slug
   const handleTitleChange = (e) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
@@ -100,6 +108,7 @@ export default function CreateEvent() {
     });
   };
 
+  //metodo per aggiornare i campi
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -314,8 +323,8 @@ export default function CreateEvent() {
             </Form.Group>
           </Col>
           <Col xs={4}>
-            <Button variant="secondary" onClick={addRow} className="me-2">
-              Aggiungi riga
+            <Button onClick={addRow} className="me-2 mt-5 mb-3">
+              Aggiungi pacchetto prezzi
             </Button>
           </Col>
           <Col xs={12}>
@@ -328,7 +337,7 @@ export default function CreateEvent() {
                       type="number"
                       value={row.quantityPhoto}
                       onChange={(e) =>
-                        handleChange(index, "quantityPhoto", e.target.value)
+                        handleRowChange(index, "quantityPhoto", e.target.value)
                       }
                       placeholder="Inserisci numero"
                     />
@@ -341,7 +350,7 @@ export default function CreateEvent() {
                       type="number"
                       value={row.quantityVideo}
                       onChange={(e) =>
-                        handleChange(index, "quantityVideo", e.target.value)
+                        handleRowChange(index, "quantityVideo", e.target.value)
                       }
                       placeholder="Inserisci numero"
                     />
@@ -354,7 +363,7 @@ export default function CreateEvent() {
                       type="number"
                       value={row.price}
                       onChange={(e) =>
-                        handleChange(index, "price", e.target.value)
+                        handleRowChange(index, "price", e.target.value)
                       }
                       placeholder="Inserisci numero"
                     />
@@ -364,7 +373,7 @@ export default function CreateEvent() {
                   <Button
                     variant="danger"
                     onClick={() => removeRow(index)}
-                    disabled={rows.length === 1}
+                    disabled={priceRows.length === 1}
                   >
                     Rimuovi
                   </Button>
