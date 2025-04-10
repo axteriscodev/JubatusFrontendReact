@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { listenSSE, sendRequest } from "../services/api-services";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { listenSSE, sendRequest } from "../services/api-services";
 import { setUiPreset } from "../utils/graphics";
+import { toast, Bounce } from "react-toastify";
 
 /**
  * Pagina di elaborazione selfie
@@ -62,7 +63,19 @@ export default function ProcessingSelfie() {
             }
           },
           () => {
-            console.log("Errore!");
+            //console.log("Errore!");
+            toast.error("Si è verificato un errore", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Bounce,
+            });
+            navigate("/event/" + eventPreset.slug, {replace: true});
           }
         );
       } else {
