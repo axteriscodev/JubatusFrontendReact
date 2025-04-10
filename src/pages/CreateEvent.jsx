@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Form, Row, Col, Button, InputGroup } from "react-bootstrap";
+import { Form, Row, Col, Button, InputGroup, Card } from "react-bootstrap";
 import { useNavigate, useLocation, redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -38,32 +38,67 @@ export default function CreateEvent() {
     description: "",
   });
 
-  //Righe dei pacchetto prezzi
-  const [priceRows, setPriceRows] = useState([
-    { quantityPhoto: "", quantityVideo: "", price: "" },
+  //Listini
+  const [priceLists, setPriceLists] = useState([
+    {
+      dateStart: "",
+      dateExpiry: "",
+      items: [{ quantityPhoto: "", quantityVideo: "", price: "" }],
+    },
   ]);
 
+  //Aggiunta listino
+  const addList = () => {
+    setPriceLists([
+      ...priceLists,
+      {
+        dateStart: "",
+        dateExpiry: "",
+        items: [{ quantityPhoto: "", quantityVideo: "", price: "" }],
+      },
+    ]);
+  };
+
+  //Rimozione listino
+  const removeList = (priceListIndex) => {
+    setPriceLists(priceLists.filter((_, i) => i !== priceListIndex));
+  };
+
+  //Gestione date listino
+  const handleFormDateChange = (formIndex, field, value) => {
+    const newPriceList = [...priceLists];
+    newPriceList[formIndex][field] = value;
+    setPriceLists(newPriceList);
+  };
+
   //Aggiunta di un pacchetto
-  const addRow = () => {
-    setPriceRows([...priceRows, { quantityPhoto: "", quantityVideo: "", price: "" }]);
+  const addRowToList = (formIndex) => {
+    const newPriceList = [...priceLists];
+    newPriceList[formIndex].items.push({
+      quantityPhoto: "",
+      quantityVideo: "",
+      price: "",
+    });
+    setPriceLists(newPriceList);
   };
 
   //Rimozione di un pacchetto
-  const removeRow = (index) => {
-    const newRows = priceRows.filter((_, i) => i !== index);
-    setPriceRows(newRows);
+  const removeRowFromList = (formIndex, rowIndex) => {
+    const newPriceList = [...priceLists];
+    newPriceList[formIndex].items = newPriceList[formIndex].items.filter(
+      (_, i) => i !== rowIndex
+    );
+    setPriceLists(newPriceList);
   };
 
   // Aggiorna i valori all'interno di una righa
-  const handleRowChange = (index, field, value) => {
-    const newRows = [...priceRows];
-    newRows[index][field] = value === "" ? "" : value;
-    setPriceRows(newRows);
+  const handleRowChange = (formIndex, rowIndex, field, value) => {
+    const newPriceList = [...priceLists];
+    newPriceList[formIndex].row[rowIndex][field] = value === "" ? "" : value;
+    setPriceLists(newPriceList);
   };
 
-
   useEffect(() => {
-
     //in caso modifica evento, precompilo i campi
     if (receivedComp) {
       setFormData({
@@ -83,7 +118,6 @@ export default function CreateEvent() {
         description: receivedComp.languages[0].description,
       });
     }
-
 
     // aggiungo la classe admin per aggiornare le variabili CSS
     document.body.classList.add("admin");
@@ -322,64 +356,148 @@ export default function CreateEvent() {
               />
             </Form.Group>
           </Col>
-          <Col xs={4}>
-            <Button onClick={addRow} className="me-2 mt-5 mb-3">
-              Aggiungi pacchetto prezzi
-            </Button>
-          </Col>
-          <Col xs={12}>
-            {priceRows.map((row, index) => (
-              <Row key={index} className="mb-3 align-items-end">
-                <Col md={3}>
-                  <Form.Group controlId={`quantityPhoto-${index}`}>
-                    <Form.Label>Quantità foto</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={row.quantityPhoto}
-                      onChange={(e) =>
-                        handleRowChange(index, "quantityPhoto", e.target.value)
-                      }
-                      placeholder="Inserisci numero"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={3}>
-                  <Form.Group controlId={`quantityVideo-${index}`}>
-                    <Form.Label>Quantità Video</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={row.quantityVideo}
-                      onChange={(e) =>
-                        handleRowChange(index, "quantityVideo", e.target.value)
-                      }
-                      placeholder="Inserisci numero"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={3}>
-                  <Form.Group controlId={`price-${index}`}>
-                    <Form.Label>Prezzo</Form.Label>
-                    <Form.Control
-                      type="number"
-                      value={row.price}
-                      onChange={(e) =>
-                        handleRowChange(index, "price", e.target.value)
-                      }
-                      placeholder="Inserisci numero"
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={3}>
+
+          <Col xs={12} className="mt-4">
+          <h3>Listini prezzi</h3>
+            {priceLists.map((form, formIndex) => (
+              <Card className="mb-4" key={formIndex}>
+                <Card.Header className="d-flex justify-content-between align-items-center">
+                  
                   <Button
-                    variant="danger"
-                    onClick={() => removeRow(index)}
-                    disabled={priceRows.length === 1}
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => removeList(formIndex)}
+                    disabled={priceLists.length === 1}
                   >
-                    Rimuovi
+                    Rimuovi listino
                   </Button>
-                </Col>
-              </Row>
+                </Card.Header>
+                <Card.Body>
+                  {/* Campi Data */}
+                  <Row className="mb-3">
+                    <Col md={6}>
+                      <Form.Group controlId={`dateStart-${formIndex}`}>
+                        <Form.Label>Data Inizio</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={form.dateStart}
+                          onChange={(e) =>
+                            handleFormDateChange(
+                              formIndex,
+                              "dateStart",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group controlId={`dateExpiry-${formIndex}`}>
+                        <Form.Label>Data Fine</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={form.dateExpiry}
+                          onChange={(e) =>
+                            handleFormDateChange(
+                              formIndex,
+                              "dateExpiry",
+                              e.target.value
+                            )
+                          }
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  {/* Righe */}
+                  {form.items.map((row, rowIndex) => (
+                    <Row key={rowIndex} className="mb-3 align-items-end">
+                      <Col md={3}>
+                        <Form.Group
+                          controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}
+                        >
+                          <Form.Label>Quantità foto</Form.Label>
+                          <Form.Control
+                            type="number"
+                            value={row.quantityPhoto}
+                            onChange={(e) =>
+                              handleRowChange(
+                                formIndex,
+                                rowIndex,
+                                "quantityPhoto",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Numero"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={3}>
+                        <Form.Group
+                          controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}
+                        >
+                          <Form.Label>Quantità video</Form.Label>
+                          <Form.Control
+                            type="number"
+                            value={row.quantityVideo}
+                            onChange={(e) =>
+                              handleRowChange(
+                                formIndex,
+                                rowIndex,
+                                "quantityVideo",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Numero"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={3}>
+                        <Form.Group
+                          controlId={`f${formIndex}-r${rowIndex}-price`}
+                        >
+                          <Form.Label>Prezzo</Form.Label>
+                          <Form.Control
+                            type="number"
+                            value={row.price}
+                            onChange={(e) =>
+                              handleRowChange(
+                                formIndex,
+                                rowIndex,
+                                "price",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Prezzo"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={3}>
+                        <Button
+                          variant="danger"
+                          onClick={() => removeRowFromList(formIndex, rowIndex)}
+                          disabled={form.items.length === 1}
+                        >
+                          Rimuovi
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+
+                  <Button
+                    variant="secondary"
+                    onClick={() => addRowToList(formIndex)}
+                    className="mt-2"
+                  >
+                    Aggiungi pacchetto
+                  </Button>
+                </Card.Body>
+              </Card>
+            
             ))}
+               <Button variant="primary" onClick={addList} className="me-2">
+               Aggiungi listino
+             </Button>
           </Col>
         </Row>
         <div className="d-flex justify-content-between mt-sm">
