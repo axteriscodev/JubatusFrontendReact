@@ -56,7 +56,7 @@ export default function MailForm({
                 <Modal.Title><font className="text-black">Informativa sul trattamento dei dati personali</font></Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <p className="text-black">Ai sensi del Regolamento UE 2016/679, i dati personali raccolti tramite questo form saranno trattati da Studio42 Soc. Coop. (Jubatus) per rispondere alla tua richiesta e per l’erogazione dei servizi richiesti. I dati potranno essere usati per finalità contrattuali, amministrative e, previo consenso, per comunicazioni promozionali.</p>
+                <p className="text-black">Ai sensi del Regolamento UE 2016/679, i dati personali raccolti tramite questo form saranno trattati da Jubatus S.r.l. per rispondere alla tua richiesta e per l’erogazione dei servizi richiesti. I dati potranno essere usati per finalità contrattuali, amministrative e, previo consenso, per comunicazioni promozionali.</p>
                 <p className="text-black">Per maggiori dettagli consulta l’<a href="https://www.jubatus.it/utility/privacy-policy" target="_blank" className="text-primary">Informativa Privacy</a>.</p>
               </Modal.Body>
               <Modal.Footer>
