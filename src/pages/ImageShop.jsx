@@ -11,8 +11,16 @@ import { Link } from "react-router-dom";
 export default function ImageShop() {
   const dispatch = useDispatch();
   const imagesList = useSelector((state) => state.cart.products);
+  const hasPhoto = useSelector((state) => state.cart.hasPhoto);
+  const hasVideo = useSelector((state) => state.cart.hasVideo);
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
+
+  const numPhoto = imagesList?.filter(image => image.fileTypeId === 1).length;
+  const numVideo = imagesList?.filter(image => image.fileTypeId === 2).length;
+
+  console.log("numPhoto", numPhoto);
+  console.log("numVideo", numVideo);
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
@@ -78,12 +86,50 @@ export default function ImageShop() {
             </div>
           </div>
         </div>
+        {hasPhoto && !hasVideo &&
         <div className="my-md text-start">
           <h2>
             Ci siamo <strong>atleta!</strong>
           </h2>
           <p>Ecco le tue foto</p>
         </div>
+        }
+        {!hasPhoto && hasVideo && numVideo == 0 &&
+        <div className="my-md">
+          <h2>
+            Ciao <strong>atleta</strong>, il <strong>tuo</strong> video è in preparazione.
+          </h2>
+          <p>Riceverai per e-mail un link per accedere alla piattaforma e vederlo</p>
+        </div>
+        }
+        {!hasPhoto && hasVideo && numVideo > 0 &&
+        <div className="my-md text-start">
+          <h2>
+          Ci siamo <strong>atleta!</strong>
+          </h2>
+          <p>Ecco il tuo video</p>
+        </div>
+        }
+        {hasPhoto && hasVideo && numVideo == 0 &&
+        <div className="my-md text-start">
+          <h2>
+          Ci siamo <strong>atleta!</strong>
+          </h2>
+          <p>Ecco le tue foto</p>
+          <h4>Il <strong>tuo</strong> video è in preparazione, riceverai per e-mail un link per accedere alla piattaforma e vederlo</h4>
+        </div>
+        }
+        {hasPhoto && hasVideo && numVideo > 0 &&
+        <div className="my-md text-start">
+          <h2>
+          Ci siamo <strong>atleta!</strong>
+          </h2>
+          <p>Ecco le tue foto e il tuo video</p>
+        </div>
+        }
+        
+        {imagesList &&
+        <>
         <ImageGallery
           images={imagesList}
           select={true}
@@ -94,6 +140,8 @@ export default function ImageShop() {
           photoItems={photoItems}
         />
         <TotalShopButton />
+        </>
+        }
       </div>
 
       {open && (

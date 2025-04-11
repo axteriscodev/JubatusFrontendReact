@@ -15,6 +15,8 @@ const initialState = {
   totalQuantity: 0,
   totalPrice: 0,
   alertPack: false,
+  hasPhoto: false,
+  hasVideo: false,
 };
 
 /**
@@ -54,10 +56,40 @@ const cartSlice = createSlice({
       state.eventId = newId;
     },
 
+    /**
+     * Update elenco products
+     *
+     * @param {*} state
+     * @param {*} action
+     */
     updateProducts(state, action) {
       const newItems = action.payload;
 
       state.products = [...newItems];
+    },
+
+    /**
+     * Update hasPhoto
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    updateHasPhoto(state, action) {
+      const hasPhoto = action.payload;
+
+      state.hasPhoto = hasPhoto;
+    },
+
+    /**
+     * Update hasVideo
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    updateHasVideo(state, action) {
+      const hasVideo = action.payload;
+
+      state.hasVideo = hasVideo;
     },
 
     /**
@@ -216,6 +248,8 @@ const cartSlice = createSlice({
       state.totalQuantity = initialState.totalQuantity;
       state.totalPrice = initialState.totalPrice;
       state.alertPack = initialState.alertPack;
+      state.hasPhoto = initialState.hasPhoto;
+      state.hasVideo = initialState.hasVideo;
     },
 
     /**

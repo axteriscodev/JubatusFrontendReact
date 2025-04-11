@@ -76,12 +76,31 @@ export default function CustomLightbox({
       on={{
         view: ({ index: newIndex }) => setIndex(newIndex),
       }}
-      slides={slides.map((image) => ({
-        src: image.urlPreview || image.urlThumbnail || image.url,
-        id: image.keyPreview || image.keyThumbnail || image.keyOriginal,
+      slides={slides.map((slide) => ({
+        src: slide.urlPreview || slide.urlThumbnail || slide.url,
+        id: slide.keyPreview || slide.keyThumbnail || slide.keyOriginal,
+        fileTypeId: slide.fileTypeId,
+        urlOriginal: slide.urlPreview || slide.urlThumbnail || slide.urlOriginal || slide.url,
       }))}
       plugins={[Thumbnails]}
       render={{
+        slide: ({ slide }) => {
+          if (slide.fileTypeId === 2) {
+            // Video
+            return (
+              <video
+                controls
+                autoPlay
+                style={{ maxWidth: "100%", maxHeight: "100%", margin: "0 auto" }}
+              >
+                <source src={slide.urlOriginal} type="video/mp4" />
+                Il tuo browser non supporta il tag video.
+              </video>
+            );
+          }
+          // Immagine normale (fallback)
+          return <img src={slide.src} alt="" style={{ maxWidth: "100%", maxHeight: "100%" }} />;
+        },
         slideHeader: () =>
           select && (
             <div
