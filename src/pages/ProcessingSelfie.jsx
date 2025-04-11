@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
-import { listenSSE, sendRequest } from "../services/api-services";
+import { apiRequest, listenSSE } from "../services/api-services";
 import { setUiPreset } from "../utils/graphics";
 import { toast, Bounce } from "react-toastify";
 
@@ -26,19 +26,33 @@ export default function ProcessingSelfie() {
   //upload della foto
   useEffect(() => {
     async function ProcessSelfie() {
-      //sezione upload email e selfie
-      const formData = new FormData();
+      let response;
 
-      formData.append("eventId", receivedData.eventId);
-      formData.append("email", receivedData.email);
-      formData.append("image", receivedData.image);
+      /**
+       * Se c'è l'hash, l'utente ha già fatto una ricerca ed è
+       * in attesa di riceve ulteriori contenuti
+       */
+      if (receivedData.userHash) {
+        response = await apiRequest({
+          api: import.meta.env.VITE_API_URL + "/contents/fetch-hash",
+          method: "POST",
+          body: JSON.stringify({ hashId: receivedData.userHash }),
+        });
+      } else {
+        //sezione upload email e selfie
+        const formData = new FormData();
 
-      //caricamento selfie
-      const response = await sendRequest(
-        import.meta.env.VITE_API_URL + "/contents/fetch",
-        "POST",
-        formData
-      );
+        formData.append("eventId", receivedData.eventId);
+        formData.append("email", receivedData.email);
+        formData.append("image", receivedData.image);
+
+        //caricamento selfie
+        response = await apiRequest({
+          api: import.meta.env.VITE_API_URL + "/contents/fetch",
+          method: "POST",
+          body: formData,
+        });
+      }
 
       //impostare l'id ricerca
 
@@ -48,15 +62,16 @@ export default function ProcessingSelfie() {
         await fetchPriceList(eventId);
 
         //sezione elaborazione selfie e attesa risposte dal server S3
-        // import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
         listenSSE(
           import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
           (data) => {
             const jsonData = JSON.parse(data);
             dispatch(cartActions.updateProducts(jsonData.contents));
+            dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
+            dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
             dispatch(cartActions.updateUserId(jsonData.userId));
 
-            if (jsonData.contents.length > 0) {
+            if (jsonData.contents.length > 0 || jsonData.hasVideo) {
               navigate("/image-shop", { replace: true });
             } else {
               navigate("/content-unavailable", { replace: true });
@@ -75,7 +90,7 @@ export default function ProcessingSelfie() {
               theme: "colored",
               transition: Bounce,
             });
-            navigate("/event/" + eventPreset.slug, {replace: true});
+            navigate("/event/" + eventPreset.slug, { replace: true });
           }
         );
       } else {

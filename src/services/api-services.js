@@ -1,7 +1,7 @@
 import { getAuthToken } from "../utils/auth";
 
 /**
- * Metodo per invio rischieste API
+ * @deprecated - Metodo deprecato, usare apiRequest
  *
  * @param {*} api - URL dell'API
  * @param {*} method - metodo di richiesta (GET, POST, PUT, DELETE)
