@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { sendRequest } from "../services/api-services";
+import { apiRequest, sendRequest } from "../services/api-services";
 import { userActions } from "../repositories/user/user-slice";
 import validator from "validator";
 import MailForm from "../components/MailForm";
@@ -38,18 +38,13 @@ export default function Login() {
       return;
     }
 
-    const response = await fetch(
-      import.meta.env.VITE_API_URL + "/auth/signin",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-        }),
-      }
-    );
+    const response = await apiRequest({
+      api: import.meta.env.VITE_API_URL + "/auth/signin",
+      method: "POST",
+      body: JSON.stringify({
+        email: data.email,
+      }),
+    });
 
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));

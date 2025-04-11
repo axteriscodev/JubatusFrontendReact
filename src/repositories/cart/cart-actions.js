@@ -1,5 +1,7 @@
 import { cartActions } from "./cart-slice";
 import { store } from "../store";
+import { apiRequest } from "../../services/api-services";
+import { objectToFormData } from "../../utils/form-data-converters"
 
 /**
  * Actions per le operazioni di asincrone del carrello
@@ -8,18 +10,18 @@ import { store } from "../store";
 export const fetchContents = (receivedData) => {
   return async (dispatch) => {
     //sezione upload email e selfie
-    const formData = new FormData();
+    // const formData = new FormData();
 
-    formData.append("eventId", receivedData.eventId);
-    formData.append("email", receivedData.email);
-    formData.append("image", receivedData.image);
+    // formData.append("eventId", receivedData.eventId);
+    // formData.append("email", receivedData.email);
+    // formData.append("image", receivedData.image);
 
     //caricamento selfie
-    const response = await sendRequest(
-      import.meta.env.VITE_API_URL + "/contents/fetch",
-      "POST",
-      formData
-    );
+    const response = await apiRequest({
+      api: import.meta.env.VITE_API_URL + "/contents/fetch",
+      method: "POST",
+      body: objectToFormData(receivedData)
+  });
 
     if (response.ok) {
       const json = await response.json();

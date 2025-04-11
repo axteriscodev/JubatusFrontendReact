@@ -1,7 +1,7 @@
 import PinForm from "../components/PinForm";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { sendRequest } from "../services/api-services";
+import { apiRequest } from "../services/api-services";
 import { setAuthToken, setLevel } from "../utils/auth";
 
 export default function PinVerification() {
@@ -11,19 +11,14 @@ export default function PinVerification() {
   async function handleSubmit(event, data) {
     event.preventDefault();
 
-    const response = await fetch(
-      import.meta.env.VITE_API_URL + "/auth/validate",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: emailValue,
-          token: data.pin,
-        }),
-      }
-    );
+    const response = await apiRequest({
+      api: import.meta.env.VITE_API_URL + "/auth/validate",
+      method: "POST",
+      body: JSON.stringify({
+        email: emailValue,
+        token: data.pin,
+      }),
+    });
 
     if (response.ok) {
       const json = await response.json();

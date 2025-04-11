@@ -7,6 +7,7 @@ import { apiRequest, listenSSE } from "../services/api-services";
 import { setUiPreset } from "../utils/graphics";
 import { toast, Bounce } from "react-toastify";
 import { fetchPriceList } from "../repositories/cart/cart-actions";
+import { objectToFormData } from "../utils/form-data-converters";
 
 /**
  * Pagina di elaborazione selfie
@@ -41,17 +42,17 @@ export default function ProcessingSelfie() {
         });
       } else {
         //sezione upload email e selfie
-        const formData = new FormData();
+        // const formData = new FormData();
 
-        formData.append("eventId", receivedData.eventId);
-        formData.append("email", receivedData.email);
-        formData.append("image", receivedData.image);
+        // formData.append("eventId", receivedData.eventId);
+        // formData.append("email", receivedData.email);
+        // formData.append("image", receivedData.image);
 
         //caricamento selfie
         response = await apiRequest({
           api: import.meta.env.VITE_API_URL + "/contents/fetch",
           method: "POST",
-          body: formData,
+          body: objectToFormData(receivedData),
         });
       }
 
