@@ -7,7 +7,9 @@
  */
 export function isPhotoFullPackEligible(actualPrice, prices) {
     const fullPackPrice = prices.find((price) => price.quantityPhoto === -1);
-
+    if (!fullPackPrice)
+        return false;
+    
     if(actualPrice >= fullPackPrice.price) {
         return true;
     } else {
