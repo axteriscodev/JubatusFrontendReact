@@ -71,7 +71,7 @@ export default function ProcessingSelfie() {
             dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
             dispatch(cartActions.updateUserId(jsonData.userId));
 
-            if (jsonData.contents.length > 0) {
+            if (jsonData.contents.length > 0 || jsonData.hasVideo) {
               navigate("/image-shop", { replace: true });
             } else {
               navigate("/content-unavailable", { replace: true });

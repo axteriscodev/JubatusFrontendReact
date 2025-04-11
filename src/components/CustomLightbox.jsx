@@ -101,6 +101,42 @@ export default function CustomLightbox({
           // Immagine normale (fallback)
           return <img src={slide.src} alt="" style={{ maxWidth: "100%", maxHeight: "100%" }} />;
         },
+        thumbnail: ({ slide, rect }) => (
+          <div
+            style={{
+              width: rect.width,
+              height: rect.height,
+              position: "relative",
+              overflow: "hidden",
+              borderRadius: "4px",
+            }}
+          >
+            {slide.fileTypeId === 2 ? (
+              <img
+                src="/images/play-icon.webp"
+                alt="Play icon"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            ) : (
+              <img
+              src={slide.src}
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+
+            )}
+          </div>
+        ),
         slideHeader: () =>
           select && (
             <div
