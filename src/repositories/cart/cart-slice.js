@@ -165,7 +165,7 @@ const cartSlice = createSlice({
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
       state.totalPrice =
-        totalPrice > photoPackPrice ? photoPackPrice : totalPrice;
+        totalPrice > photoPackPrice && photoPackPrice > 0 ? photoPackPrice : totalPrice;
     },
 
     /**
@@ -209,6 +209,10 @@ const cartSlice = createSlice({
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+      const videoPackPrice = 
+        state.prices.find((item) => item.quantityVideo !== 0)?.price ?? 0;
+      
+      
       //calcolo il prezzo totale in base ai pacchetti
       const totalPrice = calculatePrice(
         formattedPrices,
@@ -221,7 +225,7 @@ const cartSlice = createSlice({
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
       state.totalPrice =
-        totalPrice > photoPackPrice ? photoPackPrice : totalPrice;
+        totalPrice > photoPackPrice && photoPackPrice > 0 ? photoPackPrice : totalPrice;
     },
 
     /**
