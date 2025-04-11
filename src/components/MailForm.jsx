@@ -53,9 +53,12 @@ export default function MailForm({
             </div>
             <Modal show={show} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
-                <Modal.Title>Informativa privacy policy</Modal.Title>
+                <Modal.Title><font className="text-black">Informativa sul trattamento dei dati personali</font></Modal.Title>
               </Modal.Header>
-              <Modal.Body>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Modal.Body>
+              <Modal.Body>
+                <p className="text-black">Ai sensi del Regolamento UE 2016/679, i dati personali raccolti tramite questo form saranno trattati da Studio42 Soc. Coop. (Jubatus) per rispondere alla tua richiesta e per l’erogazione dei servizi richiesti. I dati potranno essere usati per finalità contrattuali, amministrative e, previo consenso, per comunicazioni promozionali.</p>
+                <p className="text-black">Per maggiori dettagli consulta l’<a href="https://www.jubatus.it/utility/privacy-policy" target="_blank" className="text-primary">Informativa Privacy</a>.</p>
+              </Modal.Body>
               <Modal.Footer>
                 <Button variant="dark" onClick={handleClose}>Chiudi</Button>
               </Modal.Footer>
