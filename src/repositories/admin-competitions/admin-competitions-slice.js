@@ -34,7 +34,7 @@ const adminCompetitionsSlice = createSlice({
      * @param {*} action
      */
     editCompetition(state, action) {
-      const indexToEdit = state.competitions.find(
+      const indexToEdit = state.competitions.findIndex(
         (item) => item.id === action.payload.id
       );
 

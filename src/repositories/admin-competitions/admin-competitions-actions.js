@@ -66,7 +66,7 @@ export const editCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
       const response = await performRequest(
-        "/events/event" + competition.id,
+        "/events/event/" + competition.id,
         "PUT",
         getAuthToken(),
         competition
@@ -157,14 +157,14 @@ async function performRequest(endpoint, method, token, body) {
   let formData;
 
   if (body) {
-    formData = new FormData();
+    formData = jsonToFormData(body);
 
     // Aggiungi i dati dell'oggetto all'interno di FormData
-    for (const objKey in body) {
-      if (body.hasOwnProperty(objKey)) {
-        formData.append(objKey, body[objKey]);
-      }
-    }
+    // for (const objKey in body) {
+    //   if (body.hasOwnProperty(objKey)) {
+    //     formData.append(objKey, body[objKey]);
+    //   }
+    // }
   }
 
   const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
@@ -176,4 +176,34 @@ async function performRequest(endpoint, method, token, body) {
   });
 
   return response;
+}
+
+function jsonToFormData(obj, form = new FormData(), parentKey = '') {
+  if (obj === null || obj === undefined) return form;
+
+  if (typeof obj !== 'object' || obj instanceof File || obj instanceof Blob) {
+    form.append(parentKey, obj ?? '');
+    return form;
+  }
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const formKey = parentKey
+      ? Array.isArray(obj)
+        ? `${parentKey}[${key}]`
+        : `${parentKey}.${key}`
+      : key;
+
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        jsonToFormData(item, form, `${formKey}[${index}]`);
+      });
+    } else if (typeof value === 'object' && value !== null) {
+      jsonToFormData(value, form, formKey);
+    } else {
+      // Gestione valori null o undefined
+      form.append(formKey, value ?? '');
+    }
+  });
+
+  return form;
 }
