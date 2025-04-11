@@ -1,5 +1,6 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
 import { getAuthToken } from "../../utils/auth";
+import { objectToFormData } from "../../utils/form-data-converters";
 
 /**
  * Fetch delle competizioni
@@ -157,14 +158,15 @@ async function performRequest(endpoint, method, token, body) {
   let formData;
 
   if (body) {
-    formData = new FormData();
+    //formData = jsonToFormData(body);
+    formData = objectToFormData(body);
 
     // Aggiungi i dati dell'oggetto all'interno di FormData
-    for (const objKey in body) {
-      if (body.hasOwnProperty(objKey)) {
-        formData.append(objKey, body[objKey]);
-      }
-    }
+    // for (const objKey in body) {
+    //   if (body.hasOwnProperty(objKey)) {
+    //     formData.append(objKey, body[objKey]);
+    //   }
+    // }
   }
 
   const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
@@ -177,3 +179,6 @@ async function performRequest(endpoint, method, token, body) {
 
   return response;
 }
+
+
+
