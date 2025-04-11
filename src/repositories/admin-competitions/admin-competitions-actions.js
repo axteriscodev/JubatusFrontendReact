@@ -1,5 +1,6 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
 import { getAuthToken } from "../../utils/auth";
+import { objectToFormData } from "../../utils/form-data-converters";
 
 /**
  * Fetch delle competizioni
@@ -157,7 +158,8 @@ async function performRequest(endpoint, method, token, body) {
   let formData;
 
   if (body) {
-    formData = jsonToFormData(body);
+    //formData = jsonToFormData(body);
+    formData = objectToFormData(body);
 
     // Aggiungi i dati dell'oggetto all'interno di FormData
     // for (const objKey in body) {
@@ -178,32 +180,5 @@ async function performRequest(endpoint, method, token, body) {
   return response;
 }
 
-function jsonToFormData(obj, form = new FormData(), parentKey = '') {
-  if (obj === null || obj === undefined) return form;
 
-  if (typeof obj !== 'object' || obj instanceof File || obj instanceof Blob) {
-    form.append(parentKey, obj ?? '');
-    return form;
-  }
 
-  Object.entries(obj).forEach(([key, value]) => {
-    const formKey = parentKey
-      ? Array.isArray(obj)
-        ? `${parentKey}[${key}]`
-        : `${parentKey}.${key}`
-      : key;
-
-    if (Array.isArray(value)) {
-      value.forEach((item, index) => {
-        jsonToFormData(item, form, `${formKey}[${index}]`);
-      });
-    } else if (typeof value === 'object' && value !== null) {
-      jsonToFormData(value, form, formKey);
-    } else {
-      // Gestione valori null o undefined
-      form.append(formKey, value ?? '');
-    }
-  });
-
-  return form;
-}
