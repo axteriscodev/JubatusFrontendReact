@@ -54,6 +54,12 @@ const router = createBrowserRouter([
     loader: updateSelfieLoader,
     errorElement: <ErrorPage />,
   },
+  {
+    path: "/event/:eventSlug/:userHash",
+    element: <UploadSelfie />,
+    loader: updateSelfieLoader,
+    errorElement: <ErrorPage />,
+  },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
   { path: "/content-unavailable", element: <ContentUnavailable /> },
   { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
