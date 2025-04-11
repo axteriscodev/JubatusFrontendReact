@@ -1,15 +1,20 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
 import { getAuthToken } from "../../utils/auth";
 import { objectToFormData } from "../../utils/form-data-converters";
+import { apiRequest } from "../../services/api-services";
 
 /**
  * Fetch delle competizioni
- *  
+ *
  */
 export const fetchCompetitions = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const response = await performRequest("/events/fetch", "GET", getAuthToken());
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/fetch",
+        method: "GET",
+        needAuth: true,
+      });
 
       if (!response.ok) {
         throw new Error("Errore nel caricamento degli eventi");
@@ -30,18 +35,18 @@ export const fetchCompetitions = () => {
 
 /**
  * Aggiunta di una competizione
- * 
- * @param {*} competition - competizione da aggiungere 
+ *
+ * @param {*} competition - competizione da aggiungere
  */
 export const addCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
-      const response = await performRequest(
-        "/events/create",
-        "POST",
-        getAuthToken(),
-        competition
-      );
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/create",
+        method: "POST",
+        needAuth: true,
+        body: objectToFormData(competition),
+      });
 
       if (!response.ok) {
         throw new Error("Errore di comunicazione col server");
@@ -54,7 +59,7 @@ export const addCompetition = (competition) => {
       return Promise.resolve(true);
     } catch (error) {
       console.log("Qualcosa è andato storto");
-        return Promise.resolve(false);
+      return Promise.resolve(false);
     }
   };
 };
@@ -66,12 +71,12 @@ export const addCompetition = (competition) => {
 export const editCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
-      const response = await performRequest(
-        "/events/event/" + competition.id,
-        "PUT",
-        getAuthToken(),
-        competition
-      );
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/event/" + competition.id,
+        method: "PUT",
+        needAuth: true,
+        body: objectToFormData(competition),
+      });
 
       if (!response.ok) {
         throw new Error("Errore di comunicazione col server");
@@ -96,12 +101,12 @@ export const editCompetition = (competition) => {
 export const deleteCompetition = (competition) => {
   return async (dispatch) => {
     const sendRequest = async () => {
-      const response = await performRequest(
-        "/events/event/" + competition.id,
-        "DELETE",
-        getAuthToken(),
-        competition
-      );
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/event/" + competition.id,
+        method: "DELETE",
+        needAuth: true,
+        body: objectToFormData(competition),
+      });
 
       if (!response.ok) {
         throw new Error("Errore di comunicazione col server");
@@ -143,42 +148,5 @@ export const editListForCompetition = (competition, priceList) => {
 export const deleteListForCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
-
-/**
- * Metodo di servizio per l'invio di richieste API per la seione admin
- * 
- * NOTA: Probabilmente si può accorpare con l'altra
- * 
- * @param {*} endpoint - URL dell'API
- * @param {*} method - metodo di richiesta (GET, POST, PUT, DELETE)
- * @param {*} token - token di autenticazione
- * @param {*} body - body della richiesta
- */
-async function performRequest(endpoint, method, token, body) {
-  let formData;
-
-  if (body) {
-    //formData = jsonToFormData(body);
-    formData = objectToFormData(body);
-
-    // Aggiungi i dati dell'oggetto all'interno di FormData
-    // for (const objKey in body) {
-    //   if (body.hasOwnProperty(objKey)) {
-    //     formData.append(objKey, body[objKey]);
-    //   }
-    // }
-  }
-
-  const response = await fetch(import.meta.env.VITE_API_URL + endpoint, {
-    method: method,
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-    body: formData,
-  });
-
-  return response;
-}
-
 
 
