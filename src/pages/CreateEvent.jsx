@@ -355,8 +355,10 @@ export default function CreateEvent() {
             <Logo
               src={
                 formData.logo === ""
-                  ? import.meta.env.VITE_API_URL + "/" + receivedComp.logo
-                  : URL.createObjectURL(formData.logo) 
+                  ? receivedComp
+                    ? import.meta.env.VITE_API_URL + "/" + receivedComp?.logo
+                    : "/public/images/noimage.jpg"
+                  : URL.createObjectURL(formData.logo)
               }
               css="mb-sm"
             />
