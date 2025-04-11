@@ -6,6 +6,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { apiRequest, listenSSE } from "../services/api-services";
 import { setUiPreset } from "../utils/graphics";
 import { toast, Bounce } from "react-toastify";
+import { fetchPriceList } from "../repositories/cart/cart-actions";
 
 /**
  * Pagina di elaborazione selfie
@@ -59,7 +60,7 @@ export default function ProcessingSelfie() {
       if (response.ok) {
         const json = await response.json();
 
-        await fetchPriceList(eventId);
+        await dispatch(fetchPriceList(eventId));
 
         //sezione elaborazione selfie e attesa risposte dal server S3
         listenSSE(
@@ -119,17 +120,6 @@ export default function ProcessingSelfie() {
     // cleanup function
     return () => clearInterval(interval);
   }, []);
-
-  async function fetchPriceList(eventId) {
-    const response = await fetch(
-      import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
-    );
-
-    if (response.ok) {
-      const json = await response.json();
-      dispatch(cartActions.updatePriceList(json.data.items));
-    }
-  }
 
   return (
     <div className="form-sm">
