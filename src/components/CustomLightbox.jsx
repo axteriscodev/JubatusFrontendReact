@@ -137,24 +137,32 @@ export default function CustomLightbox({
             )}
           </div>
         ),
-        slideHeader: () =>
-          select && (
+        slideHeader: () => (
+          <>
+          { select && !currentImage.purchased && (
             <div
               style={{
                 position: "absolute",
-                top: "16px",
-                right: "80px",
+                top: "1rem",
+                left: "25%",
+                width: "50%",
                 zIndex: 1000,
               }}
             >
               <button
                 onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyThumbnail)}
-                className={`my-button ${isSelected ? "remove" : "add"}`}
+                className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
               >
-                <i className="bi bi-cart"></i> {isSelected ? "Rimuovi" : "Seleziona"}
+                {isSelected ? (<><i class="bi bi-trash-fill"></i> Rimuovi</>) : (<><i className="bi bi-cart"></i> Seleziona</>)}
               </button>
             </div>
-          ),
+          )}
+          {currentImage.purchased && (
+            <div className="shopBadge">🎉 Acquistato!</div>
+          )}
+          </>
+        )
+        ,
         slideFooter: () =>
           actions && (
             <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">

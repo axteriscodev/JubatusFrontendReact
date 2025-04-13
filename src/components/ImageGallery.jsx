@@ -14,7 +14,7 @@ export default function ImageGallery({
 
   return (
     <>
-      <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 ${styles.gallery}`}>
+      <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 pb-lg ${styles.gallery}`}>
         {images.map((image, i) => (
           <div key={image.keyPreview || image.keyThumbnail || image.keyOriginal || i}>
             <div className="ratio ratio-1-1">
