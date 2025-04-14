@@ -16,8 +16,8 @@ export default function ImageShop() {
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
 
-  //const numPhoto = imagesList?.filter(image => image.fileTypeId === 1).length;
-  const numVideo = imagesList?.filter(image => image.fileTypeId === 2).length;
+  //const numPhoto = imagesList?.filter(item => item.fileTypeId === 1).length;
+  const numVideo = imagesList?.filter(item => item.fileTypeId === 2).length;
 
   //console.log("numPhoto", numPhoto);
   //console.log("numVideo", numVideo);

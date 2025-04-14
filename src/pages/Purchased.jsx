@@ -21,6 +21,10 @@ export default function Purchased() {
 
   const eventLogo = useSelector((state) => state.competition.logo);
   const currentPurchasedItems = useSelector((state) => state.cart.purchased);
+  const hasPhoto = useSelector((state) => state.cart.hasPhoto);
+  const hasVideo = useSelector((state) => state.cart.hasVideo);
+  const numVideo = currentPurchasedItems?.filter(item => item.fileTypeId === 2).length;
+
   const allPurchasedItems = useSelector((state) => state.personal.purchased);
   const eventPreset = useSelector((state) => state.competition);
 
@@ -53,9 +57,45 @@ export default function Purchased() {
             size="logo-xs"
           />
         </div>
+        {hasPhoto && !hasVideo &&
+        <div className="my-md text-start">
+          <h2>
+            Ecco le <strong>tue</strong> Foto!
+          </h2>
+        </div>
+        }
+        {!hasPhoto && hasVideo && numVideo == 0 &&
+        <div className="my-md">
+          <h2>
+            Il <strong>tuo</strong> video è in preparazione.
+          </h2>
+          <p>Riceverai per e-mail un link per accedere alla piattaforma e vederlo</p>
+        </div>
+        }
+        {!hasPhoto && hasVideo && numVideo > 0 &&
+        <div className="my-md text-start">
+          <h2>
+            Ecco il <strong>tuo</strong> Video!
+          </h2>
+        </div>
+        }
+        {hasPhoto && hasVideo && numVideo == 0 &&
+        <div className="my-md text-start">
+          <h2>
+            Ecco le <strong>tue</strong> foto!
+          </h2>
+          <h4>Il <strong>tuo</strong> video è in preparazione, riceverai per e-mail un link per accedere alla piattaforma e vederlo</h4>
+        </div>
+        }
+        {hasPhoto && hasVideo && numVideo > 0 &&
+        <div className="my-md text-start">
+          <h2>
+            Ecco le <strong>tue</strong> foto e il <strong>tuo</strong> video acquistati!
+          </h2>
+        </div>
+        }
         { currentPurchasedItems?.length > 0 ? 
         <>
-          <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
           <div className="px-lg">
             <Carousel>
               {currentPurchasedItems.map((image, i) => (
