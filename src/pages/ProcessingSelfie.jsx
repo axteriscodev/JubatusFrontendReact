@@ -135,7 +135,7 @@ export default function ProcessingSelfie() {
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
-        stiamo trovando le <span>tue</span> foto
+        stiamo trovando il <span>tuo</span> video
       </h2>
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       <div

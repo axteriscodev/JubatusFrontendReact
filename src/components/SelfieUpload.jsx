@@ -24,7 +24,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   return (
     <div>
       <h3>Carica il tuo selfie</h3>
-      <p className="my-sm text-secondary">Carica il selfie e inserisci la tua e-mail per visualizzare i tuoi video e le tue foto</p>    
+      <p className="my-sm text-secondary">Carica il selfie e inserisci la tua e-mail per visualizzare il tuo video</p>    
       <div
         className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
