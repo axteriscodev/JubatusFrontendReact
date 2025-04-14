@@ -1,18 +1,22 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import Carousel from 'react-bootstrap/Carousel';
+import Carousel from "react-bootstrap/Carousel";
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 import { fetchPurchased } from "../repositories/personal/personal-actions";
 import { isAuthenticated } from "../utils/auth";
-import { redirect } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { logOut } from "../utils/auth";
 
 import { cartActions } from "../repositories/cart/cart-slice";
 import { personalActions } from "../repositories/personal/personal-slice";
+import { resetHeaderData } from "../utils/graphics";
 
 export default function Personal() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const purchasedItems = useSelector((state) => state.personal.purchased) ?? [];
 
   const [open, setOpen] = useState(false);
@@ -24,10 +28,22 @@ export default function Personal() {
 
   // recuper dei contenuti
   useEffect(() => {
-    dispatch(fetchPurchased())
+    resetHeaderData();
+    dispatch(fetchPurchased());
   }, []);
 
-  const openLightbox = (images, startIndex = 0, select, actions, personalSlice) => {
+  const handleLogout = () => {
+    logOut();
+    navigate("/", { replace: true });
+  };
+
+  const openLightbox = (
+    images,
+    startIndex = 0,
+    select,
+    actions,
+    personalSlice
+  ) => {
     setIndex(startIndex);
     setOpen(true);
     setSlides(images);
@@ -39,71 +55,88 @@ export default function Personal() {
   return (
     <>
       <div className="container">
-        { purchasedItems?.length > 0 ?
-        <>
-          <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
-          <div className="px-lg">
-            <Carousel>
-              {purchasedItems.map((image, i) => (
-                <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
-                  <div className="carousel-square d-flex justify-content-center align-items-center">
-                    <img
-                      src={!image.fileTypeId || image.fileTypeId == 1 ? image.urlPreview || image.urlThumbnail || image.url : "/images/play-icon.webp"}
-                      className="img-fluid"
-                      alt="..."
-                      onClick={() => openLightbox(purchasedItems, i, false, true, true)}
-                    />
-                  </div>
-                </Carousel.Item>
-              ))}
-            </Carousel>
-          </div>
-        </>
-        :
-        <>
-          <h2 className="my-sm">Non hai effettuato acquisti</h2>
-        </>
-        }
-        { purchasedItems?.length > 0 &&
-        <>
-          <div className="mt-md">
-            <ImageGallery
-              images={purchasedItems}
-              select={false}
-              actions={true}
-              highLightFavourite={true}
-              highLightPurchased={true}
-              personalSlice={true}
-              onOpenLightbox={openLightbox}
-            />
-          </div>
-        </>
-        }
-      </div> 
+        <div className="d-flex justify-content-end my-sm">
+          <Button onClick={handleLogout} variant="outline-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </Button>
+        </div>
+        {purchasedItems?.length > 0 ? (
+          <>
+            <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
+            <div className="px-lg">
+              <Carousel>
+                {purchasedItems.map((image, i) => (
+                  <Carousel.Item
+                    key={image.keyPreview || image.keyThumbnail || i}
+                  >
+                    <div className="carousel-square d-flex justify-content-center align-items-center">
+                      <img
+                        src={
+                          !image.fileTypeId || image.fileTypeId == 1
+                            ? image.urlPreview ||
+                              image.urlThumbnail ||
+                              image.url
+                            : "/images/play-icon.webp"
+                        }
+                        className="img-fluid"
+                        alt="..."
+                        onClick={() =>
+                          openLightbox(purchasedItems, i, false, true, true)
+                        }
+                      />
+                    </div>
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="my-sm">Non hai effettuato acquisti</h2>
+          </>
+        )}
+        {purchasedItems?.length > 0 && (
+          <>
+            <div className="mt-md">
+              <ImageGallery
+                images={purchasedItems}
+                select={false}
+                actions={true}
+                highLightFavourite={true}
+                highLightPurchased={true}
+                personalSlice={true}
+                onOpenLightbox={openLightbox}
+              />
+            </div>
+          </>
+        )}
+      </div>
 
-      { open && <CustomLightbox
-        open={open}
-        slides={slides}
-        index={index}
-        setIndex={setIndex}
-        select={select}
-        actions={actions}
-        onClose={() => setOpen(false)}
-        onUpdateSlide={(i, updatedSlide) => {
-          // Aggiorna Redux
-          if (personalSlice){
-            dispatch(personalActions.updatePersonalItem(updatedSlide));
-          } else {
-            dispatch(cartActions.updatePurchasedItem(updatedSlide));
-          }
-          // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
-          setSlides((prev) => {
-            const copy = [...prev];
-            copy[i] = updatedSlide;
-            return copy;
-          });
-        }}
-      />}
+      {open && (
+        <CustomLightbox
+          open={open}
+          slides={slides}
+          index={index}
+          setIndex={setIndex}
+          select={select}
+          actions={actions}
+          onClose={() => setOpen(false)}
+          onUpdateSlide={(i, updatedSlide) => {
+            // Aggiorna Redux
+            if (personalSlice) {
+              dispatch(personalActions.updatePersonalItem(updatedSlide));
+            } else {
+              dispatch(cartActions.updatePurchasedItem(updatedSlide));
+            }
+            // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
+            setSlides((prev) => {
+              const copy = [...prev];
+              copy[i] = updatedSlide;
+              return copy;
+            });
+          }}
+        />
+      )}
     </>
   );
 }

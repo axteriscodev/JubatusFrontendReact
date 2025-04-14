@@ -48,11 +48,11 @@ export async function apiRequest({
   const headers = new Headers();
 
   if (!(body instanceof FormData)) {
-    headers.append("Content-Type", contentType);
+    headers.append('Content-Type', contentType);
   }
 
   if (needAuth) {
-    headers.Authorization = "Bearer " + token;
+    headers.append('Authorization', `Bearer ${token}`);
   }
 
   const response = await fetch(api, {
