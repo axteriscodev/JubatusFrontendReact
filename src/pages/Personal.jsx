@@ -12,6 +12,7 @@ import { logOut } from "../utils/auth";
 
 import { cartActions } from "../repositories/cart/cart-slice";
 import { personalActions } from "../repositories/personal/personal-slice";
+import { resetHeaderData } from "../utils/graphics";
 
 export default function Personal() {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ export default function Personal() {
 
   // recuper dei contenuti
   useEffect(() => {
+    resetHeaderData();
     dispatch(fetchPurchased());
   }, []);
 

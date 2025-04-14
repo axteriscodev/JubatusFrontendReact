@@ -6,6 +6,7 @@ import { userActions } from "../repositories/user/user-slice";
 import validator from "validator";
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
+import { resetHeaderData } from "../utils/graphics";
 
 /**
  * Pagina di login
@@ -22,6 +23,8 @@ export default function Login() {
     document.documentElement.style.setProperty("--font-button-event-color", "");
     document.documentElement.style.setProperty("--primary-event-color", "");
     document.documentElement.style.setProperty("--secondary-event-color", "");
+
+    resetHeaderData();
   }, []);
 
   async function handleSubmit(event, data) {

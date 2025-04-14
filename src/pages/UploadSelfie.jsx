@@ -10,7 +10,7 @@ import MailForm from "../components/MailForm";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
-import { setUiPreset } from "../utils/graphics";
+import { setUiPreset, setHeaderData } from "../utils/graphics";
 
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
@@ -31,6 +31,7 @@ export default function UploadSelfie() {
   //carico tema evento
   useEffect(() => {
     setUiPreset(eventData.data);
+    setHeaderData(eventData.data);
   }, []);
 
 
