@@ -101,9 +101,9 @@ export default function ImageShop() {
         {!hasPhoto && hasVideo && numVideo == 0 &&
         <div className="my-md">
           <h2>
-            Ciao <strong>atleta</strong>, il <strong>tuo</strong> video è in preparazione.
+            Ciao <strong>atleta</strong>, il <strong>tuo</strong> video è in preparazione:
           </h2>
-          <p>Riceverai per e-mail un link per accedere alla piattaforma e vederlo</p>
+          <p>riceverai una mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥</p>
         </div>
         }
         {!hasPhoto && hasVideo && numVideo > 0 &&
@@ -120,7 +120,7 @@ export default function ImageShop() {
           Ci siamo <strong>atleta!</strong>
           </h2>
           <p>Ecco le tue foto</p>
-          <h4>Il <strong>tuo</strong> video è in preparazione, riceverai per e-mail un link per accedere alla piattaforma e vederlo</h4>
+          <h4>il <strong>tuo</strong> video è in preparazione: riceverai una mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥</h4>
         </div>
         }
         {hasPhoto && hasVideo && numVideo > 0 &&

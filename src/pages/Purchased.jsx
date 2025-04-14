@@ -69,7 +69,7 @@ export default function Purchased() {
           <h2>
             Il <strong>tuo</strong> video è in preparazione.
           </h2>
-          <p>Riceverai per e-mail un link per accedere alla piattaforma e vederlo</p>
+          <p>riceverai una mail per avvisarti appena pronto</p>
         </div>
         }
         {!hasPhoto && hasVideo && numVideo > 0 &&
@@ -84,7 +84,7 @@ export default function Purchased() {
           <h2>
             Ecco le <strong>tue</strong> foto!
           </h2>
-          <h4>Il <strong>tuo</strong> video è in preparazione, riceverai per e-mail un link per accedere alla piattaforma e vederlo</h4>
+          <h4>Il <strong>tuo</strong> video è in preparazione, riceverai una mail per avvisarti appena pronto</h4>
         </div>
         }
         {hasPhoto && hasVideo && numVideo > 0 &&
