@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, Table } from "react-bootstrap";
 import { redirect, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
 import { isAdmin, logOut } from "../utils/auth";
@@ -65,9 +65,9 @@ export default function AdminPanel() {
       <div className="d-flex justify-content-end my-sm">
         <Button
           onClick={handleLogout}
-          variant="danger"
+          variant="outline-danger"
         >
-          Logout
+          <i class="bi bi-box-arrow-right"></i> Logout
         </Button>
       </div>
       <h1>Elenco eventi</h1>
