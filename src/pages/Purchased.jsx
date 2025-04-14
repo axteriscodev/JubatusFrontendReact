@@ -62,7 +62,7 @@ export default function Purchased() {
                 <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
                   <div className="carousel-square d-flex justify-content-center align-items-center">
                     <img
-                      src={image.urlPreview || image.urlThumbnail}
+                      src={!image.fileTypeId || image.fileTypeId == 1 ? image.urlPreview || image.urlThumbnail || image.url : "/images/play-icon.webp"}
                       className="img-fluid"
                       alt="..."
                       onClick={() => openLightbox(currentPurchasedItems, i, false, true, false)}
