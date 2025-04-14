@@ -76,30 +76,92 @@ export default function CustomLightbox({
       on={{
         view: ({ index: newIndex }) => setIndex(newIndex),
       }}
-      slides={slides.map((image) => ({
-        src: image.urlPreview || image.urlThumbnail || image.url,
-        id: image.keyPreview || image.keyThumbnail || image.keyOriginal,
+      slides={slides.map((slide) => ({
+        src: slide.urlPreview || slide.urlThumbnail || slide.url,
+        id: slide.keyPreview || slide.keyThumbnail || slide.keyOriginal,
+        fileTypeId: slide.fileTypeId,
+        urlOriginal: slide.urlPreview || slide.urlThumbnail || slide.urlOriginal || slide.url,
       }))}
       plugins={[Thumbnails]}
       render={{
-        slideHeader: () =>
-          select && (
+        slide: ({ slide }) => {
+          if (slide.fileTypeId === 2) {
+            // Video
+            return (
+              <video
+                controls
+                style={{ maxWidth: "100%", maxHeight: "100%", margin: "0 auto" }}
+              >
+                <source src={slide.urlOriginal} type="video/mp4" />
+                Il tuo browser non supporta il tag video.
+              </video>
+            );
+          }
+          // Immagine normale (fallback)
+          return <img src={slide.src} alt="" style={{ maxWidth: "100%", maxHeight: "100%" }} />;
+        },
+        thumbnail: ({ slide, rect }) => (
+          <div
+            style={{
+              width: rect.width,
+              height: rect.height,
+              position: "relative",
+              overflow: "hidden",
+              borderRadius: "4px",
+            }}
+          >
+            {slide.fileTypeId === 2 ? (
+              <img
+                src="/images/play-icon.webp"
+                alt="Play icon"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            ) : (
+              <img
+              src={slide.src}
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+
+            )}
+          </div>
+        ),
+        slideHeader: () => (
+          <>
+          { select && !currentImage.purchased && (
             <div
               style={{
                 position: "absolute",
-                top: "16px",
-                right: "80px",
+                top: "1rem",
+                left: "25%",
+                width: "50%",
                 zIndex: 1000,
               }}
             >
               <button
                 onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyThumbnail)}
-                className={`my-button ${isSelected ? "remove" : "add"}`}
+                className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
               >
-                <i className="bi bi-cart"></i> {isSelected ? "Rimuovi" : "Seleziona"}
+                {isSelected ? (<><i class="bi bi-trash-fill"></i> Rimuovi</>) : (<><i className="bi bi-cart"></i> Seleziona</>)}
               </button>
             </div>
-          ),
+          )}
+          {currentImage.purchased && (
+            <div className="shopBadge">🎉 Acquistato!</div>
+          )}
+          </>
+        )
+        ,
         slideFooter: () =>
           actions && (
             <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">

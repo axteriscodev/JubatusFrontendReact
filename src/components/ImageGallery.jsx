@@ -14,18 +14,16 @@ export default function ImageGallery({
 
   return (
     <>
-      <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 ${styles.gallery}`}>
+      <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 pb-lg ${styles.gallery}`}>
         {images.map((image, i) => (
           <div key={image.keyPreview || image.keyThumbnail || image.keyOriginal || i}>
-            <div              
-              className="ratio ratio-1-1"
-            >
+            <div className="ratio ratio-1-1">
               <div>
                 <div className={`${styles.picture} ${
                     photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
                   }`}
                   style={{
-                    backgroundImage: `url(${image.urlPreview || image.urlThumbnail || image.url})`
+                    backgroundImage: `url(${!image.fileTypeId || image.fileTypeId == 1 ? image.urlPreview || image.urlThumbnail || image.url : "/images/play-icon.webp"})`
                   }}
                 >
                 </div>

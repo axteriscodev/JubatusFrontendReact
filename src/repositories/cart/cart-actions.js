@@ -40,6 +40,8 @@ export const fetchContents = (receivedData) => {
         (data) => {
           const jsonData = JSON.parse(data);
           dispatch(cartActions.updateProducts(jsonData.contents));
+          dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
+          dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
           dispatch(cartActions.updateUserId(jsonData.userId));
 
           //   if (jsonData.contents.length > 0) {

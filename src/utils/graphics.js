@@ -9,3 +9,15 @@ export function setUiPreset(eventData) {
     document.documentElement.style.setProperty( "--primary-event-color", eventData.primaryColor );
     document.documentElement.style.setProperty( "--secondary-event-color", eventData.secondaryColor );
 }
+
+export function setHeaderData(eventData) {
+    //da ripristinare quando passerà la favicon
+    // let link = document.querySelector("link[rel='icon']");
+    // link.href = eventData.faviconUrl;
+
+    document.title = eventData.languages[0].title;
+}
+
+export function resetHeaderData() {
+    document.title = 'My Memories';
+}

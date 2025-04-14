@@ -1,12 +1,14 @@
-import PinForm from "../components/PinForm";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { sendRequest } from "../services/api-services";
 import { setAuthToken, setLevel } from "../utils/auth";
+import PinForm from "../components/PinForm";
+import FormErrors from "../models/form-errors";
 
 export default function PinVerification() {
   const navigate = useNavigate();
   const emailValue = useSelector((state) => state.user.email);
+  const [formErrors, setFormErrors] = useState(new FormErrors());
 
   async function handleSubmit(event, data) {
     event.preventDefault();
@@ -35,6 +37,12 @@ export default function PinVerification() {
         navigate("/personal");
       }
     } else {
+      if (response.status === 401) {
+        let formErrors = new FormErrors(); 
+        formErrors.pinError = true;
+        setFormErrors(formErrors);
+        return;
+      }
       throw new Response(response.message, { status: response.status });
     }
   }
@@ -42,7 +50,7 @@ export default function PinVerification() {
   return (
     <div className="form form-sm">
       <h1 className="mb-md">Accedi ai tuoi contenuti!</h1>
-      <PinForm submitHandle={handleSubmit} />
+      <PinForm submitHandle={handleSubmit} onErrors={formErrors} />
     </div>
   );
 }
