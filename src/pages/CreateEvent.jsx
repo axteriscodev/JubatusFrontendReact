@@ -9,6 +9,7 @@ import {
 import { toast, Bounce } from "react-toastify";
 import { isAdmin } from "../utils/auth";
 import { slugify } from "../utils/data-formatter";
+import Logo from "../components/Logo";
 
 /**
  * Pagina per la creazione dell'evento
@@ -66,14 +67,14 @@ export default function CreateEvent() {
 
   //Gestione date listino
   const handleFormDateChange = (formIndex, field, value) => {
-    const newPriceList = [...priceLists];
+    const newPriceList = structuredClone(priceLists);
     newPriceList[formIndex][field] = value;
     setPriceLists(newPriceList);
   };
 
   //Aggiunta di un pacchetto
   const addRowToList = (formIndex) => {
-    const newPriceList = [...priceLists];
+    const newPriceList = structuredClone(priceLists);
     newPriceList[formIndex].items.push({
       quantityPhoto: "",
       quantityVideo: "",
@@ -84,7 +85,7 @@ export default function CreateEvent() {
 
   //Rimozione di un pacchetto
   const removeRowFromList = (formIndex, rowIndex) => {
-    const newPriceList = [...priceLists];
+    const newPriceList = structuredClone(priceLists);
     newPriceList[formIndex].items = newPriceList[formIndex].items.filter(
       (_, i) => i !== rowIndex
     );
@@ -93,8 +94,8 @@ export default function CreateEvent() {
 
   // Aggiorna i valori all'interno di una righa
   const handleRowChange = (formIndex, rowIndex, field, value) => {
-    const newPriceList = [...priceLists];
-    newPriceList[formIndex].row[rowIndex][field] = value === "" ? "" : value;
+    const newPriceList = structuredClone(priceLists);
+    newPriceList[formIndex].items[rowIndex][field] = value === "" ? "" : value;
     setPriceLists(newPriceList);
   };
 
@@ -117,6 +118,8 @@ export default function CreateEvent() {
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
       });
+
+      setPriceLists(receivedComp.lists);
     }
 
     // aggiungo la classe admin per aggiornare le variabili CSS
@@ -168,6 +171,8 @@ export default function CreateEvent() {
         emoji: formData.emoji,
       },
     ];
+
+    data.lists = priceLists;
 
     let outcome = false;
     if (data.id) {
@@ -346,7 +351,19 @@ export default function CreateEvent() {
               onChange={handleInputChange}
             />
           </Col>
-          <Col xs={12}>
+          <Col xs={6} className="my-4">
+            <Logo
+              src={
+                formData.logo === ""
+                  ? receivedComp
+                    ? import.meta.env.VITE_API_URL + "/" + receivedComp?.logo
+                    : "/public/images/noimage.jpg"
+                  : URL.createObjectURL(formData.logo)
+              }
+              css="mb-sm"
+            />
+          </Col>
+          <Col xs={6}>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>Logo</Form.Label>
               <Form.Control
@@ -358,11 +375,10 @@ export default function CreateEvent() {
           </Col>
 
           <Col xs={12} className="mt-4">
-          <h3>Listini prezzi</h3>
+            <h3>Listini prezzi</h3>
             {priceLists.map((form, formIndex) => (
               <Card className="mb-4" key={formIndex}>
                 <Card.Header className="d-flex justify-content-between align-items-center">
-                  
                   <Button
                     variant="outline-danger"
                     size="sm"
@@ -493,11 +509,10 @@ export default function CreateEvent() {
                   </Button>
                 </Card.Body>
               </Card>
-            
             ))}
-               <Button variant="primary" onClick={addList} className="me-2">
-               Aggiungi listino
-             </Button>
+            <Button variant="primary" onClick={addList} className="me-2">
+              Aggiungi listino
+            </Button>
           </Col>
         </Row>
         <div className="d-flex justify-content-between mt-sm">

@@ -60,6 +60,27 @@ export const fetchContents = (receivedData) => {
   };
 };
 
+/**
+ * Fetch del listino prezzi
+ *  
+ */
+export const fetchPriceList = (eventId) => {
+  return async (dispatch) => {
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
+    );
+
+    if (response.ok) {
+      const json = await response.json();
+      dispatch(cartActions.updatePriceList(json.data.items));
+      return Promise.resolve(true);
+    }
+
+    return Promise.resolve(false);
+  }
+
+}
+
 export function getAllItemsPrice() {
   const state = store.getState();
 

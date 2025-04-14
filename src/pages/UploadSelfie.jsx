@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import validator from "validator";
 import FormErrors from "../models/form-errors";
 
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
 import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "../components/MailForm";
@@ -17,6 +17,7 @@ export default function UploadSelfie() {
   const navigate = useNavigate();
   const eventData = useLoaderData();
   const dispatch = useDispatch();
+  const { eventSlug, userHash } = useParams();
 
   const [selfie, setSelfie] = useState();
 
@@ -27,8 +28,26 @@ export default function UploadSelfie() {
   // inserisco il preset per l'evento nello store redux
   dispatch(competitionsActions.setCompetitionPreset(eventData.data));
 
+  //carico tema evento
   useEffect(() => {
     setUiPreset(eventData.data);
+  }, []);
+
+
+  //se l'utente ha già fatto una ricerca precedente ed aspetta solo il video
+  //lo mando subito alla fase successiva
+  useEffect(() => {
+    if (userHash) {
+      // reset del carrello
+      dispatch(cartActions.resetStore());
+      navigate("/processing-selfie", {
+        state: {
+          eventId: eventData.data.id,
+          eventSlug: eventSlug,
+          userHash: userHash,
+        },
+      });
+    }
   }, []);
 
   // callback selfie
@@ -66,6 +85,8 @@ export default function UploadSelfie() {
         eventId: eventData.data.id,
         email: data.email,
         image: selfie,
+        eventSlug: eventSlug,
+        userHash: userHash,
       },
     });
   }
@@ -94,6 +115,7 @@ export default function UploadSelfie() {
  */
 export async function loader({ request, params }) {
   const eventName = params.eventSlug;
+  const userHash = params.userHash;
 
   const response = await fetch(
     import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}`
@@ -101,7 +123,7 @@ export async function loader({ request, params }) {
 
   if (!response.ok) {
     let message = "Si è verificato un errore o l'evento non è presente";
- 
+
     if (response.status === 204) {
       message = "Nessun contenuto presente";
     }
