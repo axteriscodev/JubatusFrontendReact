@@ -20,11 +20,11 @@ export default function ImageShop() {
   const numVideo = imagesList?.filter(image => image.fileTypeId === 2).length;
 
   //console.log("numPhoto", numPhoto);
-  console.log("numVideo", numVideo);
-  console.log("hasPhoto", hasPhoto);
-  console.log("hasVideo", hasVideo);
+  //console.log("numVideo", numVideo);
+  //console.log("hasPhoto", hasPhoto);
+  //console.log("hasVideo", hasVideo);
 
-  console.log("imagesList", JSON.stringify(imagesList));
+  //console.log("imagesList", JSON.stringify(imagesList));
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
@@ -132,7 +132,7 @@ export default function ImageShop() {
         </div>
         }
         
-        {imagesList &&
+        {imagesList?.length > 0 &&
         <>
         <ImageGallery
           images={imagesList}
