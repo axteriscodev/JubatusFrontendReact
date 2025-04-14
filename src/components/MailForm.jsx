@@ -34,6 +34,7 @@ export default function MailForm({
       {onErrors.emailError && (
         <p className="on-error">Inserisci una mail valida</p>
       )}
+      {onErrors.emailNotPresent && (<p className="on-error">La mail inserita non è presente. Effettua il tuo primo acquisto.</p>)}
       <div className="my-xs">
         {showPrivacy && (
           <>

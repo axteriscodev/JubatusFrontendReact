@@ -55,6 +55,12 @@ export default function Login() {
       dispatch(userActions.updateEmail(data.email));
       navigate("/pin-verification");
     } else {
+      if(response.status === 401) {
+        formErrors.emailNotPresent = true;
+        setFormErrors(formErrors);
+        return;
+      }
+
       throw Response(
         JSON.stringify({ status: response.status, message: response.message })
       );
