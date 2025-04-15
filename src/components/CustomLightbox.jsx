@@ -117,7 +117,7 @@ export default function CustomLightbox({
               overflow: "hidden",
               borderRadius: "4px",
             }}
-            className={slide.fileTypeId === 2 && slide.src && styles.video}
+            className={slide.fileTypeId === 2 && slide.src && "video"}
           >
             <img
               src={slide.src || "/images/play-icon.webp"}
