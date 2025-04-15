@@ -71,7 +71,10 @@ export default function Personal() {
                   <Carousel.Item
                     key={image.keyPreview || image.keyThumbnail || i}
                   >
-                    <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}>
+                    <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
+                      onClick={() =>
+                        openLightbox(purchasedItems, i, false, true, true)
+                      }>
                       <img
                         src={
                           !image.fileTypeId || image.fileTypeId == 1
@@ -82,9 +85,6 @@ export default function Personal() {
                         }
                         className="img-fluid"
                         alt="..."
-                        onClick={() =>
-                          openLightbox(purchasedItems, i, false, true, true)
-                        }
                       />
                     </div>
                   </Carousel.Item>

@@ -22,7 +22,7 @@ export default function ImageGallery({
                 <div className={`${styles.picture} ${
                     photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
                   } ${
-                    image.urlCover && styles.video
+                    image.urlCover && "video"
                   }`}
                   style={{
                     backgroundImage: `url(

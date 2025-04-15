@@ -100,7 +100,10 @@ export default function Purchased() {
             <Carousel>
               {currentPurchasedItems.map((image, i) => (
                 <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
-                  <div className="carousel-square d-flex justify-content-center align-items-center">
+                  <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
+                    onClick={() =>
+                      openLightbox(currentPurchasedItems, i, false, true, false)
+                    }>
                     <img
                       src={
                         !image.fileTypeId || image.fileTypeId == 1
@@ -111,7 +114,6 @@ export default function Purchased() {
                       }
                       className="img-fluid"
                       alt="..."
-                      onClick={() => openLightbox(currentPurchasedItems, i, false, true, false)}
                     />
                   </div>
                 </Carousel.Item>

@@ -35,7 +35,7 @@
         font-size:calc(30px + 2.142857vw) !important;
     }
 }
-.video::after{
+/* .video::after{
     content: "";
     width: 0;
     height: 0;
@@ -59,7 +59,7 @@
     top: 50%;
     transform: translate(-50%, -50%);   
     z-index: 2;
-}
+} */
 .picture:hover + .zoom, .zoom:hover {
     display: unset;
 }

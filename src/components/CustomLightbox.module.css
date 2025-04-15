@@ -4,7 +4,7 @@
     object-fit: cover;
     display: "block";
 }
-.video::after{
+/* .video::after{
     content: "";
     width: 0;
     height: 0;
@@ -28,4 +28,4 @@
     top: 50%;
     transform: translate(-50%, -50%);   
     z-index: 20;
-}
+} */

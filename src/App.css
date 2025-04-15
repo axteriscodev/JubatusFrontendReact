@@ -350,26 +350,29 @@ h1 > span, h2 > span, h3 > span, h4 > span, .h1 > span, .h2 > span, .h3 > span, 
 }
 .video::after{
   content: "";
-  width: 0;
-  height: 0;
-  border-left: 40px solid white;
-  border-top: 24px solid transparent;
-  border-bottom: 24px solid transparent;
+  width: 15%;
+  aspect-ratio: 1 / 1;
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
+  background: white;
+  clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
 }
 .video::before{
   content: "";
-  width: 80px;
-  height: 80px;
+  width: 25%;
+  aspect-ratio: 1 / 1;
   border: 1px solid white;
-  border-radius: 50rem;
+  border-radius: 50% !important;
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);   
   z-index: 2;
+}
+.switch-scale {
+  transform: scale(1.5);
+  transform-origin: left;
 }
