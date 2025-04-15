@@ -3,6 +3,7 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import styles from "./CustomLightbox.module.css";
 
 export default function CustomLightbox({
   open,
@@ -74,10 +75,17 @@ export default function CustomLightbox({
       close={onClose}
       index={index}
       on={{
-        view: ({ index: newIndex }) => setIndex(newIndex),
+        view: ({ index: newIndex }) => {
+          // Pausa eventuale video prima del cambio slide
+          const playingVideo = document.querySelector("video");
+          if (playingVideo && !playingVideo.paused) {
+            playingVideo.pause();
+          }
+          setIndex(newIndex);
+        },
       }}
       slides={slides.map((slide) => ({
-        src: slide.urlPreview || slide.urlThumbnail || slide.url,
+        src: slide.urlPreview || slide.urlThumbnail || slide.urlCover || slide.url,
         id: slide.keyPreview || slide.keyThumbnail || slide.keyOriginal,
         fileTypeId: slide.fileTypeId,
         urlOriginal: slide.urlPreview || slide.urlThumbnail || slide.urlOriginal || slide.url,
@@ -109,31 +117,13 @@ export default function CustomLightbox({
               overflow: "hidden",
               borderRadius: "4px",
             }}
+            className={slide.fileTypeId === 2 && slide.src && styles.video}
           >
-            {slide.fileTypeId === 2 ? (
-              <img
-                src="/images/play-icon.webp"
-                alt="Play icon"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                }}
-              />
-            ) : (
-              <img
-              src={slide.src}
+            <img
+              src={slide.src || "/images/play-icon.webp"}
               alt=""
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-              }}
+              className={styles.thunbnail}
             />
-
-            )}
           </div>
         ),
         slideHeader: () => (

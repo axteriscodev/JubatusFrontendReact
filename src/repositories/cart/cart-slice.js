@@ -122,6 +122,7 @@ const cartSlice = createSlice({
         keyPreview: product.keyPreview,
         keyOriginal: product.keyOriginal,
         keyThumbnail: product.keyThumbnail,
+        keyCover: product.keyCover ?? "",
         fileTypeId: product.fileTypeId ?? 1,
       });
 
@@ -266,6 +267,7 @@ const cartSlice = createSlice({
         keyPreview: product.keyPreview,
         keyOriginal: product.keyOriginal,
         keyThumbnail: product.keyThumbnail,
+        keyCover: product.keyCover ?? "",
         fileTypeId: product.fileTypeId ?? 1,
         purchased: product.purchased ?? false,
       }));
