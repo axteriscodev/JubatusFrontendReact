@@ -19,6 +19,8 @@ export default function Personal() {
   const navigate = useNavigate();
   const purchasedItems = useSelector((state) => state.personal.purchased) ?? [];
 
+  //console.log(JSON.stringify(purchasedItems));
+
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
   const [actions, setActions] = useState(false);
@@ -69,20 +71,20 @@ export default function Personal() {
                   <Carousel.Item
                     key={image.keyPreview || image.keyThumbnail || i}
                   >
-                    <div className="carousel-square d-flex justify-content-center align-items-center">
+                    <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
+                      onClick={() =>
+                        openLightbox(purchasedItems, i, false, true, true)
+                      }>
                       <img
                         src={
                           !image.fileTypeId || image.fileTypeId == 1
                             ? image.urlPreview ||
-                              image.urlThumbnail ||
+                              image.urlThumbnail ||                              
                               image.url
-                            : "/images/play-icon.webp"
+                            : image.urlCover || "/images/play-icon.webp"
                         }
                         className="img-fluid"
                         alt="..."
-                        onClick={() =>
-                          openLightbox(purchasedItems, i, false, true, true)
-                        }
                       />
                     </div>
                   </Carousel.Item>

@@ -38,7 +38,7 @@ export default function MailForm({
       <div className="my-xs">
         {showPrivacy && (
           <>
-            <div className="form-check form-switch text-start">
+            <div className="form-check form-switch switch-scale">
               <input
                 className="form-check-input"
                 type="checkbox"
@@ -47,10 +47,10 @@ export default function MailForm({
                 checked={isChecked}
                 onChange={handlePrivacyChange}
               />
-              <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+              <label className="form-check-label text-10" htmlFor="flexSwitchCheckDefault">
                 Accettare
               </label>{" "}
-              <a href="#" onClick={handleShow}>Termini e Policy</a>
+              <a href="#" className="text-10" onClick={handleShow}>Termini e Policy</a>
             </div>
             <Modal show={show} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
