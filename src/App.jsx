@@ -21,9 +21,10 @@ import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
 import { isAuthenticated, isAdmin } from "./utils/auth";
-import { loader as personalLoader} from "./pages/Personal";
+import { loader as personalLoader } from "./pages/Personal";
 import { loader as adminLoader } from "./pages/AdminPanel";
 import { loader as createEventLoader } from "./pages/CreateEvent";
+import EmailSent from "./pages/EmailSent";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -41,12 +42,16 @@ const router = createBrowserRouter([
       <Login />
     ),
   },
-  { path: "/pin-verification", element: <PinVerification /> },
+  {
+    path: "/email-sent",
+    element: <EmailSent />,
+  },
+  { path: "/pin-verification/:userPin", element: <PinVerification /> },
   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
   {
     path: "/personal",
     element: <Personal />,
-    loader: personalLoader
+    loader: personalLoader,
   },
   {
     path: "/event/:eventSlug",
@@ -69,11 +74,14 @@ const router = createBrowserRouter([
     element: <CheckoutOutcome />,
     errorElement: <ErrorPage />,
   },
-  { path: "/purchased", element: <Purchased />/*, errorElement: <ErrorPage />*/ },
+  {
+    path: "/purchased",
+    element: <Purchased /> /*, errorElement: <ErrorPage />*/,
+  },
   { path: "/processing-photos", element: <ProcessingPhotos /> },
   {
     path: "/admin",
-    element:<AdminPanel />,
+    element: <AdminPanel />,
     loader: adminLoader,
   },
   {
