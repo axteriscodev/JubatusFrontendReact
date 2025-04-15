@@ -149,12 +149,8 @@ export default function CustomLightbox({
           {currentImage.purchased && (
             <div className="shopBadge">🎉 Acquistato!</div>
           )}
-          </>
-        )
-        ,
-        slideFooter: () =>
-          actions && (
-            <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
+          {actions && (
+            <div className="text-50 d-flex gap-3 justify-content-between position-absolute top-0 start-50 translate-middle-x">
               <a onClick={handleFavouriteClick} aria-label="Favourite image">
                 <i className={`bi ${currentImage.favorite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
               </a>
@@ -169,6 +165,28 @@ export default function CustomLightbox({
                 <i className="bi bi-arrow-up-right"></i>
               </a>} */}
             </div>
+          )}
+          </>
+        )
+        ,
+        slideFooter: () =>
+          actions && (
+            <></>
+            // <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
+            //   <a onClick={handleFavouriteClick} aria-label="Favourite image">
+            //     <i className={`bi ${currentImage.favorite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
+            //   </a>
+            //   <a
+            //     onClick={handleDownload}
+            //     title="Download"
+            //     aria-label="Download image"
+            //   >
+            //     <i className="bi bi-box-arrow-down text-white"></i>
+            //   </a>
+            //   {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
+            //     <i className="bi bi-arrow-up-right"></i>
+            //   </a>} */}
+            // </div>
           ),
       }}
     />
