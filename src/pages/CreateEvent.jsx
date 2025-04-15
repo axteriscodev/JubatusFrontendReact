@@ -106,7 +106,7 @@ export default function CreateEvent() {
         id: receivedComp.id,
         slug: receivedComp.slug,
         pathS3: receivedComp.pathS3,
-        emoji: receivedComp.emoji,
+        emoji: receivedComp.languages[0].emoji,
         backgroundColor: receivedComp.backgroundColor,
         primaryColor: receivedComp.primaryColor,
         secondaryColor: receivedComp.secondaryColor,
