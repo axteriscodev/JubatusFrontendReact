@@ -7,6 +7,8 @@ import { apiRequest, listenSSE } from "../services/api-services";
 import { setUiPreset } from "../utils/graphics";
 import { toast, Bounce } from "react-toastify";
 import { fetchPriceList } from "../repositories/cart/cart-actions";
+import ProgressBar from "../components/ProgressBar";
+import { errorToast } from "../utils/toast-manager";
 
 /**
  * Pagina di elaborazione selfie
@@ -21,8 +23,6 @@ export default function ProcessingSelfie() {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
-  // Stato per il progresso della barra (da 0 a 100)
-  const [progress, setProgress] = useState(0);
 
   //upload della foto
   useEffect(() => {
@@ -79,18 +79,8 @@ export default function ProcessingSelfie() {
             }
           },
           () => {
-            //console.log("Errore!");
-            toast.error("Si è verificato un errore", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Bounce,
-            });
+            errorToast("Si è verificato un errore");
+            console.log(`Errore per la ricerca ${json.data}`);
             navigate("/event/" + eventPreset.slug, { replace: true });
           }
         );
@@ -105,22 +95,15 @@ export default function ProcessingSelfie() {
     setUiPreset(eventPreset);
   }, []);
 
+  //pagina timeout
   useEffect(() => {
-    // Funzione che incrementa il progresso
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 99) {
-          clearInterval(interval);
-          return 99;
-        }
-        const newValue = prevProgress + 100 / 6;
-
-        return newValue < 99 ? newValue : 99;
-      });
-    }, 1000);
+    const timeOut = setInterval(() => {
+      errorToast("Si è verificato un errore");
+      navigate("/event/" + eventPreset.slug, { replace: true });
+    }, 60000);
 
     // cleanup function
-    return () => clearInterval(interval);
+    return () => clearInterval(timeOut);
   }, []);
 
   return (
@@ -135,19 +118,10 @@ export default function ProcessingSelfie() {
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
-        stiamo trovando il <span>tuo</span> video
+        ti stiamo cercando in mezzo alla folla
       </h2>
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
-      <div
-        className="progress mt-md"
-        role="progressbar"
-        aria-label="Basic example"
-        aria-valuenow={progress}
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
-        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-      </div>
+      <ProgressBar />
       Caricamento
     </div>
   );
