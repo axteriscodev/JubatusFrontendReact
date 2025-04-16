@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
  *
  * @returns {React.ReactElement}  TotalShopButton
  */
-export default function TotalShopButton() {
+export default function TotalShopButton({
+  onButtonClick = null
+}) {
   const navigate = useNavigate();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
 
@@ -19,10 +21,9 @@ export default function TotalShopButton() {
   return (
     <button
       className="my-button w-75 fixed-bottom mx-auto mb-sm"
-      onClick={handleCheckout}
-      disabled={totalPrice === 0}
+      onClick={totalPrice === 0 ? onButtonClick : handleCheckout}
     >
-      {totalPrice === 0 ? "Seleziona" : `Totale: €${totalPrice.toFixed(2)}`}
+      {totalPrice === 0 ? "Seleziona tutto" : `Totale: €${totalPrice.toFixed(2)}`}
     </button>
   );
 }

@@ -49,6 +49,10 @@ export default function ImageShop() {
     }
   };
 
+  const handleButtonClick = () => {
+    dispatch(cartActions.addAllItems());
+  }
+
   const openLightbox = (images, startIndex = 0, select, actions) => {
     setIndex(startIndex);
     setOpen(true);
@@ -143,7 +147,7 @@ export default function ImageShop() {
           onImageClick={handleImageClick}
           photoItems={photoItems}
         />
-        <TotalShopButton />
+        <TotalShopButton onButtonClick={handleButtonClick} />
         </>
         }
       </div>

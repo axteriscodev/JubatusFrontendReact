@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 
-export default function ContentUnavailable() {
+export default function ContentError() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
 
@@ -17,9 +17,10 @@ export default function ContentUnavailable() {
         size="logo-sm"
         css="mb-sm"
       />
-      <h2>Peccato, foto e video non ancora disponibili.</h2>
-      <h2>Tieni d'occhio la mail: ti scriveremo appena pronte!</h2>
-      <h2>{eventPreset.emoji ?? "📷 ⌛ 📧"}</h2>
+      <h2>C'è stato un errore imprevisto,</h2>
+      <h2>ma non ti preoccupare,</h2>
+      <h2>i tuoi acquisti saranno presto disponibili!</h2>
+      <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       {/* <div
         className="progress mt-md"
         role="progressbar"

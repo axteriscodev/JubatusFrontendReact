@@ -10,6 +10,7 @@ import { toast, Bounce } from "react-toastify";
 import { isAdmin } from "../utils/auth";
 import { slugify } from "../utils/data-formatter";
 import Logo from "../components/Logo";
+import { errorToast, successToast } from "../utils/toast-manager";
 
 /**
  * Pagina per la creazione dell'evento
@@ -182,30 +183,10 @@ export default function CreateEvent() {
     }
 
     if (outcome) {
-      toast.success("Evento creato!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
+      successToast("Evento creato!");
       navigate("/admin");
     } else {
-      toast.error("Si è verificato un errore", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
+      errorToast("Si è verificato un errore");
     }
   };
 

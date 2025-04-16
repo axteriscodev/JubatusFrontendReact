@@ -24,6 +24,7 @@ import { isAuthenticated, isAdmin } from "./utils/auth";
 import { loader as personalLoader} from "./pages/Personal";
 import { loader as adminLoader } from "./pages/AdminPanel";
 import { loader as createEventLoader } from "./pages/CreateEvent";
+import ContentError from "./pages/ContentError";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -71,6 +72,7 @@ const router = createBrowserRouter([
   },
   { path: "/purchased", element: <Purchased />/*, errorElement: <ErrorPage />*/ },
   { path: "/processing-photos", element: <ProcessingPhotos /> },
+  { path: "/content-error", element: <ContentError />},
   {
     path: "/admin",
     element:<AdminPanel />,
