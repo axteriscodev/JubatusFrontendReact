@@ -115,7 +115,7 @@ export default function ImageShop() {
           <h2>
           Ci siamo <strong>atleta!</strong>
           </h2>
-          <p>Ecco il tuo video</p>
+          <p>Il tuo video è pronto! Sbloccalo in HD e senza filigrana completando il pagamento.</p>
         </div>
         }
         {hasPhoto && hasVideo && numVideo == 0 &&
