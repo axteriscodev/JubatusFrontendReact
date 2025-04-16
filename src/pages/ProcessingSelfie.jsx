@@ -8,6 +8,7 @@ import { setUiPreset } from "../utils/graphics";
 import { toast, Bounce } from "react-toastify";
 import { fetchPriceList } from "../repositories/cart/cart-actions";
 import ProgressBar from "../components/ProgressBar";
+import { errorToast } from "../utils/toast-manager";
 
 /**
  * Pagina di elaborazione selfie
@@ -107,17 +108,7 @@ export default function ProcessingSelfie() {
   //pagina timeout
   useEffect(() => {
     const timeOut = setInterval(() => {
-      toast.error("Si è verificato un errore", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
+      errorToast("Si è verificato un errore");
       navigate("/event/" + eventPreset.slug, { replace: true });
     }, 60000);
 
