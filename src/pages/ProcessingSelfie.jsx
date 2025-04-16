@@ -118,7 +118,7 @@ export default function ProcessingSelfie() {
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
-        stiamo trovando il <span>tuo</span> video
+        ti stiamo cercando in mezzo alla folla
       </h2>
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       <ProgressBar />

@@ -98,6 +98,7 @@ export default function CustomLightbox({
             return (
               <video
                 controls
+                controlsList="nodownload"
                 style={{ maxWidth: "100%", maxHeight: "100%", margin: "0 auto" }}
               >
                 <source src={slide.urlOriginal} type="video/mp4" />

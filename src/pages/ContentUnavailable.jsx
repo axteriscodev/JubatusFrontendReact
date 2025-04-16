@@ -17,10 +17,9 @@ export default function ContentUnavailable() {
         size="logo-sm"
         css="mb-sm"
       />
-      <h2>Le tue foto non sono</h2>
-      <h2>ancora visibili,</h2>
-      <h2>riceverai una mail appena disponibili</h2>
-      <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
+      <h2>Peccato, foto e video non ancora disponibili.</h2>
+      <h2>Tieni d'occhio la mail: ti scriveremo appena pronte!</h2>
+      <h2>{eventPreset.emoji ?? "📷 ⌛ 📧"}</h2>
       {/* <div
         className="progress mt-md"
         role="progressbar"
