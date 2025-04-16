@@ -79,17 +79,7 @@ export default function ProcessingSelfie() {
             }
           },
           () => {
-            toast.error("Si è verificato un errore", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Bounce,
-            });
+            errorToast("Si è verificato un errore");
             console.log(`Errore per la ricerca ${json.data}`);
             navigate("/event/" + eventPreset.slug, { replace: true });
           }
