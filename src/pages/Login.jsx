@@ -55,7 +55,7 @@ export default function Login() {
 
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));
-      navigate("/pin-verification");
+      navigate("/email-sent");
     } else {
       if(response.status === 401) {
         formErrors.emailNotPresent = true;
