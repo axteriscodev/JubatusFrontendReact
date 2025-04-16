@@ -6,6 +6,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { setUiPreset } from "../utils/graphics";
 import { listenSSE } from "../services/api-services";
 import { personalActions } from "../repositories/personal/personal-slice";
+import ProgressBar from "../components/ProgressBar";
 
 /**
  * Pagina di attesa durante l'elaborazione delle foto acquistate
@@ -16,9 +17,6 @@ export default function ProcessingPhotos() {
   const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Stato per il progresso della barra (da 0 a 100)
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     //impostazioni evento
@@ -57,25 +55,6 @@ export default function ProcessingPhotos() {
     return () => clearInterval(timeOut);
   }, []);
 
-  //gestione barra di caricamento
-  useEffect(() => {
-    // Funzione che incrementa il progresso
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 99) {
-          clearInterval(interval);
-          return 99;
-        }
-        const newValue = prevProgress + 100 / 6;
-
-        return newValue < 99 ? newValue : 99;
-      });
-    }, 1000);
-
-    // cleanup function
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="form-sm">
       <Logo
@@ -92,16 +71,7 @@ export default function ProcessingPhotos() {
         <br />
         {eventPreset.emoji ?? "🚴 📸 🏃"}
       </h4>
-      <div
-        className="progress mt-md"
-        role="progressbar"
-        aria-label="Basic example"
-        aria-valuenow={progress}
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
-        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-      </div>
+      <ProgressBar />
       Caricamento
     </div>
   );
