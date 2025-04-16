@@ -41,11 +41,23 @@ export default function ProcessingPhotos() {
         // }
       },
       () => {
-        console.log("Errore!");
+        console.log(`Errore nel recupero dei contenuti ordine: ${orderId}`);
+        navigate("/content-error");
       }
     );
   }, []);
 
+  //pagina timeout
+  useEffect(() => {
+    const timeOut = setInterval(() => {
+      navigate("/content-error");
+    }, 60000);
+
+    // cleanup function
+    return () => clearInterval(timeOut);
+  }, []);
+
+  //gestione barra di caricamento
   useEffect(() => {
     // Funzione che incrementa il progresso
     const interval = setInterval(() => {

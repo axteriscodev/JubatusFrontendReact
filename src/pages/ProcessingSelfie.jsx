@@ -79,7 +79,6 @@ export default function ProcessingSelfie() {
             }
           },
           () => {
-            //console.log("Errore!");
             toast.error("Si è verificato un errore", {
               position: "top-right",
               autoClose: 3000,
@@ -91,6 +90,7 @@ export default function ProcessingSelfie() {
               theme: "colored",
               transition: Bounce,
             });
+            console.log(`Errore per la ricerca ${json.data}`);
             navigate("/event/" + eventPreset.slug, { replace: true });
           }
         );
@@ -103,6 +103,27 @@ export default function ProcessingSelfie() {
 
     ProcessSelfie();
     setUiPreset(eventPreset);
+  }, []);
+
+  //pagina timeout
+  useEffect(() => {
+    const timeOut = setInterval(() => {
+      toast.error("Si è verificato un errore", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+      navigate("/event/" + eventPreset.slug, { replace: true });
+    }, 60000);
+
+    // cleanup function
+    return () => clearInterval(timeOut);
   }, []);
 
   useEffect(() => {
