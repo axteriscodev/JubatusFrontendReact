@@ -1,0 +1,42 @@
+.pack{
+    border: 1px solid var(--primary-event-color, --primary-color);
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    position: relative;
+}
+.pack.selected{
+    color: var(--bg-event-color, --bg-color);
+    background-color: var(--primary-event-color, --primary-color);
+}
+.pack:hover{
+    cursor: pointer;
+}
+.pack.bestOffer {
+    border-color: var(--secondary-event-color, --secondary-color);
+}
+.pack.bestOffer::after{
+    content: 'Offerta migliore';
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    font-size: 13px;
+    text-transform: uppercase;
+    background-color: var(--secondary-event-color, --secondary-color);
+    padding: 0 0.5rem;
+    transform: translateY(-50%);
+    border-radius: 5px;
+}
+.mediaContainer img {
+    border-radius: var(--border-radius);
+}
+.imageContainer img {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.videoCover{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

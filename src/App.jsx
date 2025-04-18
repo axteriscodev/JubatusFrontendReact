@@ -69,7 +69,8 @@ const router = createBrowserRouter([
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
   { path: "/content-unavailable", element: <ContentUnavailable /> },
-  { path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
+  //{ path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
+  { path: "/pre-order", element: <PreOrder /> },
   { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
   { path: "/checkout", element: <Checkout /> },
   {
