@@ -172,15 +172,11 @@ const cartSlice = createSlice({
       );
 
       //prezzo foto singole
-      const photoPrice = calculateDiscount(
-        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0,
-        state.prices.find((item) => item.quantityPhoto === 1)?.discount ?? 0
-      );
+      const photoPrice =
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
       //prezzo 'pacchetto tutte le foto'
-      const photoPackPrice =calculateDiscount(
-        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0,
-        state.prices.find((item) => item.quantityPhoto === -1)?.discount ?? 0
-      );
+      const photoPackPrice =
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
       //calcolo il prezzo totale in base ai pacchetti
       const totalPrice = calculatePrice(
         formattedPrices,
@@ -356,15 +352,11 @@ const cartSlice = createSlice({
       //console.log("formattedPrices", JSON.stringify(formattedPrices));
 
       //prezzo foto singole
-      const photoPrice = calculateDiscount(
-        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0,
-        state.prices.find((item) => item.quantityPhoto === 1)?.discount ?? 0
-      );
+      const photoPrice =
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
       //prezzo 'pacchetto tutte le foto'
-      const photoPackPrice = calculateDiscount(
-        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0,
-        state.prices.find((item) => item.quantityPhoto === -1)?.discount ?? 0
-      );
+      const photoPackPrice =
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
 
       //console.log("photoPrice", photoPrice);
       //console.log("photoPackPrice", photoPackPrice);
