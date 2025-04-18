@@ -7,6 +7,7 @@ import styles from "./PreOrder.module.css";
 
 export default function PreOrder() {
     const eventPreset = useSelector((state) => state.competition);
+    const pricelist = useSelector((state) => state.cart.prices);
 
     const [presaleMedia, setPresaleMedia] = useState([]);
     const [loadingGallery, setLoadingGallery] = useState(true);
@@ -50,11 +51,11 @@ export default function PreOrder() {
         return (price * (100 - (discount ?? 0)) / 100).toFixed(2);
     };
 
-    const pricelist = [
-        { title: "Video personalizzato", subTitle: "30-45 secondi di momenti selezionati", price: 30, discount: 30, bestOffer: false, selected: true },
-        { title: "Pacchetto foto HD", subTitle: "Tutte le tue foto dell'evento", price: 40, discount: 30, bestOffer: false },
-        { title: "Combo Video + Foto", subTitle: "Tutti i tuoi contenuti della competizione", price: 50, discount: 30, bestOffer: true }
-    ];
+    // const pricelist = [
+    //     { title: "Video personalizzato", subTitle: "30-45 secondi di momenti selezionati", price: 30, discount: 30, bestOffer: false, selected: true },
+    //     { title: "Pacchetto foto HD", subTitle: "Tutte le tue foto dell'evento", price: 40, discount: 30, bestOffer: false },
+    //     { title: "Combo Video + Foto", subTitle: "Tutti i tuoi contenuti della competizione", price: 50, discount: 30, bestOffer: true }
+    // ];
 
     return (
         <div className="form-sm">
