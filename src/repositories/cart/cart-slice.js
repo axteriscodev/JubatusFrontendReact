@@ -190,6 +190,16 @@ const cartSlice = createSlice({
         totalPrice > photoPackPrice && photoPackPrice > 0
           ? photoPackPrice
           : totalPrice;
+
+      //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
+      if (totalPrice > photoPackPrice && photoPackPrice > 0) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      //se nel carrello c'è almeno un video, imposto video a true
+      state.video = state.items.some((item) => item.fileTypeId === 2);
     },
 
     /**
@@ -251,6 +261,16 @@ const cartSlice = createSlice({
         totalPrice > photoPackPrice && photoPackPrice > 0
           ? photoPackPrice
           : totalPrice;
+
+      //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
+      if (totalPrice > photoPackPrice && photoPackPrice > 0) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      //se nel carrello c'è almeno un video, imposto video a true
+      state.video = state.items.some((item) => item.fileTypeId === 2);
     },
 
     /**
@@ -270,6 +290,7 @@ const cartSlice = createSlice({
     resetStore(state, action) {
       state.id = initialState.id;
       state.userId = initialState.userId;
+      state.searchId = initialState.searchId;
       state.products = initialState.products;
       state.items = initialState.items;
       state.prices = initialState.prices;
@@ -279,6 +300,8 @@ const cartSlice = createSlice({
       state.alertPack = initialState.alertPack;
       state.hasPhoto = initialState.hasPhoto;
       state.hasVideo = initialState.hasVideo;
+      state.allPhotos = initialState.allPhotos;
+      state.video = initialState.video;
     },
 
     /**
@@ -352,6 +375,16 @@ const cartSlice = createSlice({
           ? photoPackPrice
           : totalPrice;
 
+      //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
+      if (totalPrice > photoPackPrice && photoPackPrice > 0) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      //se nel carrello c'è almeno un video, imposto video a true
+      state.video = state.items.some((item) => item.fileTypeId === 2);
+
       //console.log("state.totalPrice", state.totalPrice);
     },
 
@@ -364,6 +397,8 @@ const cartSlice = createSlice({
       state.totalPrice = 0;
       state.totalQuantity = 0;
       state.items = [];
+      state.allPhotos = false;
+      state.video = false;
     },
 
     /**
