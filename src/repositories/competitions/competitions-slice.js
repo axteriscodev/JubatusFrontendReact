@@ -13,6 +13,7 @@ const competitionsSlice = createSlice({
         secondaryColor: "",
         logo: "",
         emoji: "",
+        preOrder: false
     },
     reducers: {
         /**
@@ -28,6 +29,7 @@ const competitionsSlice = createSlice({
             state.secondaryColor = action.payload.secondaryColor;
             state.logo = action.payload.logo;
             state.emoji = action.payload.languages[0].emoji;
+            state.preOrder = action.payload.preOrder ?? false;
         }
     }
 });

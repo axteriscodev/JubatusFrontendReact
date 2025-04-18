@@ -11,6 +11,7 @@ import UploadSelfie, {
   loader as updateSelfieLoader,
 } from "./pages/UploadSelfie";
 import ProcessingSelfie from "./pages/ProcessingSelfie";
+import PreOrder from "./pages/PreOrder";
 import ImageShop from "./pages/ImageShop";
 import Purchased from "./pages/Purchased";
 import AdminPanel from "./pages/AdminPanel";
@@ -68,6 +69,7 @@ const router = createBrowserRouter([
   },
   { path: "/processing-selfie", element: <ProcessingSelfie /> },
   { path: "/content-unavailable", element: <ContentUnavailable /> },
+  { path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
   { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
   { path: "/checkout", element: <Checkout /> },
   {
