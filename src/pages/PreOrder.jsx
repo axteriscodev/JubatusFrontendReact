@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { setUiPreset } from "../utils/graphics";
 import { Link } from "react-router-dom";
 import styles from "./PreOrder.module.css";
+import { cartActions } from "../repositories/cart/cart-slice";
 
 export default function PreOrder() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const eventPreset = useSelector((state) => state.competition);
     const pricelist = useSelector((state) => state.cart.prices);
+    const selectedPreorder = useSelector((state) => state.cart.selectedPreorder);
 
     const [presaleMedia, setPresaleMedia] = useState([]);
     const [loadingGallery, setLoadingGallery] = useState(true);
@@ -56,6 +61,16 @@ export default function PreOrder() {
     //     { title: "Pacchetto foto HD", subTitle: "Tutte le tue foto dell'evento", price: 40, discount: 30, bestOffer: false },
     //     { title: "Combo Video + Foto", subTitle: "Tutti i tuoi contenuti della competizione", price: 50, discount: 30, bestOffer: true }
     // ];
+
+    function handleSelection(event, list) {
+        dispatch(cartActions.selectPreorder(list));
+    }
+
+    function handlePreorderCheckout(event) {
+        event.preventDefault();
+
+        navigate("/checkout");
+    }
 
     return (
         <div className="form-sm">
@@ -125,7 +140,7 @@ export default function PreOrder() {
                 <h3 className="text-24">Scegli tra:</h3>
                 {
                     pricelist.map((list, i) => (
-                        <div className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.selected ? styles.selected : ""}`}>
+                        <div key={i} onClick={(event) => handleSelection(event, list)} className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list === selectedPreorder ? styles.selected : ""}`}>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div className="text-22">{list.title}</div>
@@ -139,7 +154,7 @@ export default function PreOrder() {
                         </div>
                     ))}
             </div>
-            <button className="my-button w-100 mt-sm">Preordina ORA</button>
+            <button onClick={handlePreorderCheckout} className="my-button w-100 mt-sm">Preordina ORA</button>
         </div>
     );
 }
