@@ -70,7 +70,7 @@ export default function ImageShop() {
   return (
     <>
     {alertPack && (
-      <div className="shopNotify shadow">
+      <div className="shopNotify shadow text-black">
         Metti nel carrello un'altra foto per ottenere il pacchetto completo
       </div>
     )}
