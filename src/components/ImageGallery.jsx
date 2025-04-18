@@ -21,9 +21,18 @@ export default function ImageGallery({
               <div>
                 <div className={`${styles.picture} ${
                     photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
+                  } ${
+                    image.urlCover && "video"
                   }`}
                   style={{
-                    backgroundImage: `url(${!image.fileTypeId || image.fileTypeId == 1 ? image.urlPreview || image.urlThumbnail || image.url : "/images/play-icon.webp"})`
+                    backgroundImage: `url(
+                    ${
+                      !image.fileTypeId || image.fileTypeId == 1
+                      ? 
+                      image.urlPreview || image.urlThumbnail || image.url
+                      : 
+                      image.urlCover || "/images/play-icon.webp"
+                    })`
                   }}
                 >
                 </div>
@@ -33,7 +42,7 @@ export default function ImageGallery({
                 </div>
                 {select && highLightPurchased && !image.purchased &&
                 <div className={styles.circle}
-                  onClick={() => onImageClick?.(image.keyPreview || image.keyThumbnail) }>
+                  onClick={() => onImageClick?.(image.keyPreview || image.keyThumbnail || image.keyOriginal) }>
                     <i className="bi bi-check"></i>
                 </div>
                 }

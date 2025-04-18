@@ -49,6 +49,10 @@ export default function ImageShop() {
     }
   };
 
+  const handleButtonClick = () => {
+    dispatch(cartActions.addAllItems());
+  }
+
   const openLightbox = (images, startIndex = 0, select, actions) => {
     setIndex(startIndex);
     setOpen(true);
@@ -66,7 +70,7 @@ export default function ImageShop() {
   return (
     <>
     {alertPack && (
-      <div className="shopNotify shadow">
+      <div className="shopNotify shadow text-black">
         Metti nel carrello un'altra foto per ottenere il pacchetto completo
       </div>
     )}
@@ -111,7 +115,7 @@ export default function ImageShop() {
           <h2>
           Ci siamo <strong>atleta!</strong>
           </h2>
-          <p>Ecco il tuo video</p>
+          <p>Il tuo video è pronto! Sbloccalo in HD e senza filigrana completando il pagamento</p>
         </div>
         }
         {hasPhoto && hasVideo && numVideo == 0 &&
@@ -143,7 +147,7 @@ export default function ImageShop() {
           onImageClick={handleImageClick}
           photoItems={photoItems}
         />
-        <TotalShopButton />
+        <TotalShopButton onButtonClick={handleButtonClick} />
         </>
         }
       </div>

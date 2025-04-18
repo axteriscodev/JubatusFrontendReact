@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { sendRequest } from "../services/api-services";
 import { userActions } from "../repositories/user/user-slice";
 import validator from "validator";
 import MailForm from "../components/MailForm";
@@ -56,7 +55,7 @@ export default function Login() {
 
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));
-      navigate("/pin-verification");
+      navigate("/email-sent");
     } else {
       if(response.status === 401) {
         formErrors.emailNotPresent = true;
@@ -78,9 +77,6 @@ export default function Login() {
         showPrivacy={false}
         onErrors={formErrors}
       />
-      {/* <Link to="/event/nova-eroica">Selfie upload</Link>
-      <Link to="/checkout">Checkout</Link>
-      <Link to="/admin">Admin</Link> */}
     </div>
   );
 }

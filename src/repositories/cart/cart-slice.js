@@ -122,6 +122,7 @@ const cartSlice = createSlice({
         keyPreview: product.keyPreview,
         keyOriginal: product.keyOriginal,
         keyThumbnail: product.keyThumbnail,
+        keyCover: product.keyCover ?? "",
         fileTypeId: product.fileTypeId ?? 1,
       });
 
@@ -262,10 +263,12 @@ const cartSlice = createSlice({
      * @param {*} action
      */
     addAllItems(state, action) {
-      const mappedItems = state.products.map(({ product }) => ({
+      //console.log("state.products", JSON.stringify(state.products));
+      const mappedItems = state.products.map((product) => ({
         keyPreview: product.keyPreview,
         keyOriginal: product.keyOriginal,
         keyThumbnail: product.keyThumbnail,
+        keyCover: product.keyCover ?? "",
         fileTypeId: product.fileTypeId ?? 1,
         purchased: product.purchased ?? false,
       }));
@@ -275,15 +278,18 @@ const cartSlice = createSlice({
       state.totalQuantity = itemToBuy.length;
 
       state.items = [...itemToBuy];
+      //console.log("state.items", JSON.stringify(state.items));
 
       //numero foto selezionate
-      const photosCount = itemToBuy.filter(
+      const photosCount = state.items.filter(
         (item) => item.fileTypeId === 1
       ).length;
       //numero video selezionati
-      const videosCount = itemToBuy.filter(
+      const videosCount = state.items.filter(
         (item) => item.fileTypeId === 2
       ).length;
+      //console.log("photosCount", photosCount);
+      //console.log("videosCount", videosCount);
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
@@ -293,6 +299,7 @@ const cartSlice = createSlice({
           price,
         })
       );
+      //console.log("formattedPrices", JSON.stringify(formattedPrices));
 
       //prezzo foto singole
       const photoPrice =
@@ -300,19 +307,26 @@ const cartSlice = createSlice({
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+
+      //console.log("photoPrice", photoPrice);
+      //console.log("photoPackPrice", photoPackPrice);
+
       //calcolo il prezzo totale in base ai pacchetti
       const totalPrice = calculatePrice(
         formattedPrices,
         photosCount,
         videosCount
       );
+      //console.log("totalPrice", totalPrice);
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
       state.alertPack =
         totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
       state.totalPrice =
-        totalPrice > photoPackPrice ? photoPackPrice : totalPrice;
+      totalPrice > photoPackPrice && photoPackPrice > 0 ? photoPackPrice : totalPrice;
+
+      //console.log("state.totalPrice", state.totalPrice);
     },
 
     /**
