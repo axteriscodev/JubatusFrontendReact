@@ -61,6 +61,7 @@ export default function ProcessingSelfie() {
         const json = await response.json();
 
         await dispatch(fetchPriceList(eventId));
+        dispatch(cartActions.updateSearchId(json.data));
 
         //sezione elaborazione selfie e attesa risposte dal server S3
         listenSSE(

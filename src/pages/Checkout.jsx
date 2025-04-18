@@ -36,6 +36,9 @@ export default function Checkout() {
           cart: {
             userId: cart.userId,
             eventId: cart.eventId,
+            searchId: cart.searchId,
+            allPhotos: cart.allPhotos,
+            video: cart.video,
             amount: cart.totalPrice,
             items: isPhotoFullPackEligible(cart.totalPrice, cart.prices) ? cart.products.filter((item) => item.purchased !== true) : cart.items,
           },
