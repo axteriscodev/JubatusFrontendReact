@@ -1,5 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
+import { calculateDiscount } from "../../utils/offers";
 
 /**
  * Stato iniziale del carrello
@@ -162,19 +163,24 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ quantityPhoto, quantityVideo, price, discount }) => ({
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
         })
       );
 
       //prezzo foto singole
-      const photoPrice =
-        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
+      const photoPrice = calculateDiscount(
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0,
+        state.prices.find((item) => item.quantityPhoto === 1)?.discount ?? 0
+      );
       //prezzo 'pacchetto tutte le foto'
-      const photoPackPrice =
-        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+      const photoPackPrice =calculateDiscount(
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0,
+        state.prices.find((item) => item.quantityPhoto === -1)?.discount ?? 0
+      );
       //calcolo il prezzo totale in base ai pacchetti
       const totalPrice = calculatePrice(
         formattedPrices,
@@ -340,20 +346,25 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ quantityPhoto, quantityVideo, price, discount }) => ({
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
         })
       );
       //console.log("formattedPrices", JSON.stringify(formattedPrices));
 
       //prezzo foto singole
-      const photoPrice =
-        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
+      const photoPrice = calculateDiscount(
+        state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0,
+        state.prices.find((item) => item.quantityPhoto === 1)?.discount ?? 0
+      );
       //prezzo 'pacchetto tutte le foto'
-      const photoPackPrice =
-        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
+      const photoPackPrice = calculateDiscount(
+        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0,
+        state.prices.find((item) => item.quantityPhoto === -1)?.discount ?? 0
+      );
 
       //console.log("photoPrice", photoPrice);
       //console.log("photoPackPrice", photoPackPrice);
