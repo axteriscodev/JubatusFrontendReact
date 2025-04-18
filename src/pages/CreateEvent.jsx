@@ -35,6 +35,8 @@ export default function CreateEvent() {
     dateEvent: "",
     dateExpiry: "",
     dateStart: "",
+    datePreorderStart: "",
+    datePreorderExpiry: "",
     title: "",
     location: "",
     description: "",
@@ -45,7 +47,9 @@ export default function CreateEvent() {
     {
       dateStart: "",
       dateExpiry: "",
-      items: [{ quantityPhoto: "", quantityVideo: "", price: "" }],
+      items: [
+        { quantityPhoto: "", quantityVideo: "", price: "", discount: "" },
+      ],
     },
   ]);
 
@@ -56,7 +60,9 @@ export default function CreateEvent() {
       {
         dateStart: "",
         dateExpiry: "",
-        items: [{ quantityPhoto: "", quantityVideo: "", price: "" }],
+        items: [
+          { quantityPhoto: "", quantityVideo: "", price: "", discount: "" },
+        ],
       },
     ]);
   };
@@ -80,6 +86,7 @@ export default function CreateEvent() {
       quantityPhoto: "",
       quantityVideo: "",
       price: "",
+      discount: "",
     });
     setPriceLists(newPriceList);
   };
@@ -115,6 +122,8 @@ export default function CreateEvent() {
         dateEvent: receivedComp.dateEvent.split("T")[0],
         dateExpiry: receivedComp.dateExpiry.split("T")[0],
         dateStart: receivedComp.dateStart.split("T")[0],
+        datePreorderStart: receivedComp.datePreorderStart.split("T")[0],
+        datePreorderExpiry: receivedComp.datePreorderExpiry.split("T")[0],
         title: receivedComp.languages[0].title,
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
@@ -295,6 +304,36 @@ export default function CreateEvent() {
               />
             </InputGroup>
           </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Data inizio preordini</Form.Label>
+            <InputGroup>
+              <InputGroup.Text id="basic-addon-data-s">
+                <i className="bi bi-calendar"></i>
+              </InputGroup.Text>
+              <Form.Control
+                name="datePreorderStart"
+                value={formData.datePreorderStart}
+                onChange={handleInputChange}
+                placeholder="Data inizio preordini"
+                type="date"
+              />
+            </InputGroup>
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Label>Data fine preordini</Form.Label>
+            <InputGroup>
+              <InputGroup.Text id="basic-addon-data-s">
+                <i className="bi bi-calendar"></i>
+              </InputGroup.Text>
+              <Form.Control
+                name="datePreorderExpiry"
+                value={formData.datePreorderExpiry}
+                onChange={handleInputChange}
+                placeholder="Data fine preordini"
+                type="date"
+              />
+            </InputGroup>
+          </Col>
           <Col sm={4} className="mb-3">
             <Form.Label htmlFor="exampleColorInput">
               Colore background
@@ -409,7 +448,7 @@ export default function CreateEvent() {
                   {/* Righe */}
                   {form.items.map((row, rowIndex) => (
                     <Row key={rowIndex} className="mb-3 align-items-end">
-                      <Col md={3}>
+                      <Col md={2}>
                         <Form.Group
                           controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}
                         >
@@ -429,7 +468,7 @@ export default function CreateEvent() {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={3}>
+                      <Col md={2}>
                         <Form.Group
                           controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}
                         >
@@ -449,7 +488,7 @@ export default function CreateEvent() {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={3}>
+                      <Col md={2}>
                         <Form.Group
                           controlId={`f${formIndex}-r${rowIndex}-price`}
                         >
@@ -469,13 +508,33 @@ export default function CreateEvent() {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={3}>
+                      <Col md={2}>
+                        <Form.Group
+                          controlId={`f${formIndex}-r${rowIndex}-discount`}
+                        >
+                          <Form.Label>Sconto</Form.Label>
+                          <Form.Control
+                            type="number"
+                            value={row.discount}
+                            onChange={(e) =>
+                              handleRowChange(
+                                formIndex,
+                                rowIndex,
+                                "discount",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Sconto"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={2}>
                         <Button
                           variant="danger"
                           onClick={() => removeRowFromList(formIndex, rowIndex)}
                           disabled={form.items.length === 1}
                         >
-                          Rimuovi
+                          <i className="bi bi-trash"></i>
                         </Button>
                       </Col>
                     </Row>
