@@ -33,3 +33,11 @@ export function isVideoFullPackEligible(actualPrice, prices) {
         return false;
     }
 }
+
+export function calculateDiscount(price, pricePack) {
+    if(pricePack.discount === null || pricePack.discount === 0) {
+        return price;
+    } else {
+        return (price - (price * pricePack.discount / 100)).toFixed(2);
+    }
+}

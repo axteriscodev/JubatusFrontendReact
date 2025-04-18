@@ -48,7 +48,15 @@ export default function CreateEvent() {
       dateStart: "",
       dateExpiry: "",
       items: [
-        { quantityPhoto: "", quantityVideo: "", price: "", discount: "" },
+        {
+          title: "",
+          subTitle: "",
+          bestOffer: false,
+          quantityPhoto: "",
+          quantityVideo: "",
+          price: "",
+          discount: "",
+        },
       ],
     },
   ]);
@@ -61,7 +69,15 @@ export default function CreateEvent() {
         dateStart: "",
         dateExpiry: "",
         items: [
-          { quantityPhoto: "", quantityVideo: "", price: "", discount: "" },
+          {
+            title: "",
+            subTitle: "",
+            bestOffer: false,
+            quantityPhoto: "",
+            quantityVideo: "",
+            price: "",
+            discount: "",
+          },
         ],
       },
     ]);
@@ -83,6 +99,9 @@ export default function CreateEvent() {
   const addRowToList = (formIndex) => {
     const newPriceList = structuredClone(priceLists);
     newPriceList[formIndex].items.push({
+      title: "",
+      subTitle: "",
+      bestOffer: false,
       quantityPhoto: "",
       quantityVideo: "",
       price: "",
@@ -447,97 +466,161 @@ export default function CreateEvent() {
 
                   {/* Righe */}
                   {form.items.map((row, rowIndex) => (
-                    <Row key={rowIndex} className="mb-3 align-items-end">
-                      <Col md={2}>
-                        <Form.Group
-                          controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}
-                        >
-                          <Form.Label>Quantità foto</Form.Label>
-                          <Form.Control
-                            type="number"
-                            value={row.quantityPhoto}
-                            onChange={(e) =>
-                              handleRowChange(
-                                formIndex,
-                                rowIndex,
-                                "quantityPhoto",
-                                e.target.value
-                              )
+                    <Col key={rowIndex} md={12}>
+                      <Row>
+                        <Col md={4}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-title`}
+                          >
+                            <Form.Label>Titolo</Form.Label>
+                            <Form.Control
+                              value={row.title}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "title",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Titolo"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-subTitle`}
+                          >
+                            <Form.Label>Sottotitolo</Form.Label>
+                            <Form.Control
+                              value={row.subTitle}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "subTitle",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Titolo"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-bestOffer`}
+                          >
+                             <Form.Label>Miglior offerta</Form.Label>
+                            <Form.Check
+                              type="checkbox"
+                              
+                              value={row.bestOffer}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "bestOffer",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row className="mb-3 align-items-end">
+                        <Col md={2}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}
+                          >
+                            <Form.Label>Quantità foto</Form.Label>
+                            <Form.Control
+                              type="number"
+                              value={row.quantityPhoto}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "quantityPhoto",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Numero"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}
+                          >
+                            <Form.Label>Quantità video</Form.Label>
+                            <Form.Control
+                              type="number"
+                              value={row.quantityVideo}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "quantityVideo",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Numero"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-price`}
+                          >
+                            <Form.Label>Prezzo</Form.Label>
+                            <Form.Control
+                              type="number"
+                              value={row.price}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "price",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Prezzo"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                          <Form.Group
+                            controlId={`f${formIndex}-r${rowIndex}-discount`}
+                          >
+                            <Form.Label>Sconto</Form.Label>
+                            <Form.Control
+                              type="number"
+                              value={row.discount}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  formIndex,
+                                  rowIndex,
+                                  "discount",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Sconto"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={2}>
+                          <Button
+                            variant="danger"
+                            onClick={() =>
+                              removeRowFromList(formIndex, rowIndex)
                             }
-                            placeholder="Numero"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={2}>
-                        <Form.Group
-                          controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}
-                        >
-                          <Form.Label>Quantità video</Form.Label>
-                          <Form.Control
-                            type="number"
-                            value={row.quantityVideo}
-                            onChange={(e) =>
-                              handleRowChange(
-                                formIndex,
-                                rowIndex,
-                                "quantityVideo",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Numero"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={2}>
-                        <Form.Group
-                          controlId={`f${formIndex}-r${rowIndex}-price`}
-                        >
-                          <Form.Label>Prezzo</Form.Label>
-                          <Form.Control
-                            type="number"
-                            value={row.price}
-                            onChange={(e) =>
-                              handleRowChange(
-                                formIndex,
-                                rowIndex,
-                                "price",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Prezzo"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={2}>
-                        <Form.Group
-                          controlId={`f${formIndex}-r${rowIndex}-discount`}
-                        >
-                          <Form.Label>Sconto</Form.Label>
-                          <Form.Control
-                            type="number"
-                            value={row.discount}
-                            onChange={(e) =>
-                              handleRowChange(
-                                formIndex,
-                                rowIndex,
-                                "discount",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Sconto"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col md={2}>
-                        <Button
-                          variant="danger"
-                          onClick={() => removeRowFromList(formIndex, rowIndex)}
-                          disabled={form.items.length === 1}
-                        >
-                          <i className="bi bi-trash"></i>
-                        </Button>
-                      </Col>
-                    </Row>
+                            disabled={form.items.length === 1}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Col>
                   ))}
 
                   <Button

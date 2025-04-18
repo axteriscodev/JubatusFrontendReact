@@ -1,5 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
+import { calculateDiscount } from "../../utils/offers";
 
 /**
  * Stato iniziale del carrello
@@ -15,6 +16,7 @@ const initialState = {
   purchased: [],
   totalQuantity: 0,
   totalPrice: 0,
+  selectedPreorder: null,
   alertPack: false,
   hasPhoto: false,
   hasVideo: false,
@@ -162,10 +164,11 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ quantityPhoto, quantityVideo, price, discount }) => ({
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
         })
       );
 
@@ -340,10 +343,11 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ quantityPhoto, quantityVideo, price, discount }) => ({
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
         })
       );
       //console.log("formattedPrices", JSON.stringify(formattedPrices));
@@ -389,6 +393,30 @@ const cartSlice = createSlice({
     },
 
     /**
+     * Selezione del preordine
+     * @param {*} state 
+     * @param {*} action 
+     */
+    selectPreorder(state, action) {
+      state.selectedPreorder = action.payload;
+
+      if(action.payload.quantityPhoto === -1) {
+        state.allPhotos = false;
+      } else {
+        state.allPhotos = false;
+      }
+
+      if(action.payload.quantityVideo !== 0) {
+        state.video = true;
+      } else {
+        state.video = false;
+      }
+
+      state.totalPrice = action.payload.price;
+
+    },
+
+    /**
      * Metodo per rimuovere tutti gli elementi dal carrello
      * @param {*} state
      * @param {*} action
@@ -399,6 +427,7 @@ const cartSlice = createSlice({
       state.items = [];
       state.allPhotos = false;
       state.video = false;
+      state.selectedPreorder = null;
     },
 
     /**
