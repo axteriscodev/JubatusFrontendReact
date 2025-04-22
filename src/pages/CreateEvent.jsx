@@ -500,7 +500,7 @@ export default function CreateEvent() {
                           >
                             <Form.Label>Titolo</Form.Label>
                             <Form.Control
-                              value={row.itemsLanguages[0].title}
+                              value={row.itemsLanguages[0]?.title ?? ""}
                               onChange={(e) =>
                                 handleRowSubListChange(
                                   formIndex,
@@ -519,7 +519,7 @@ export default function CreateEvent() {
                           >
                             <Form.Label>Sottotitolo</Form.Label>
                             <Form.Control
-                              value={row.itemsLanguages[0].subTitle}
+                              value={row.itemsLanguages[0]?.subTitle ?? ""}
                               onChange={(e) =>
                                 handleRowSubListChange(
                                   formIndex,
