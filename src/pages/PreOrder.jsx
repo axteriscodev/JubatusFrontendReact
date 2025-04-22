@@ -48,7 +48,7 @@ export default function PreOrder() {
     }, []);
 
     //console.log("presaleMedia", presaleMedia);
-    //console.log("pricelist", JSON.stringify(pricelist));
+    console.log("pricelist", JSON.stringify(pricelist));
     //console.log("selectedPreorder", selectedPreorder);
 
     const numPhoto = presaleMedia?.images?.length ?? 0;
@@ -66,7 +66,7 @@ export default function PreOrder() {
     // ];
 
     function handleSelection(event, list) {
-        if (list.price === selectedPreorder?.price)
+        if (list.id === selectedPreorder?.id)
             dispatch(cartActions.unSelectPreorder());
         else
             dispatch(cartActions.selectPreorder(list));
@@ -116,9 +116,9 @@ export default function PreOrder() {
                     </div>
                     <div className="my-sm">
                         {loadingGallery ? (
-                            <div class="d-flex justify-content-center">
-                                <div class="spinner-border" role="status">
-                                    <span class="visually-hidden">Loading...</span>
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
                                 </div>
                             </div>
                         ) : error ? (
@@ -130,7 +130,7 @@ export default function PreOrder() {
                                         <div className={hasVideo ? "col-7" : "col"}>
                                             <div className={`row row-cols-2 g-2 ${styles.imageContainer}`}>
                                                 {presaleMedia.images.map((img, i) => (
-                                                    <div>
+                                                    <div key={i}>
                                                         <img
                                                             key={i}
                                                             src={typeof img === "string" ? img : img.url}
@@ -165,11 +165,11 @@ export default function PreOrder() {
                     {
                         pricelist.map((list, i) => (
                             <div key={i} onClick={(event) => handleSelection(event, list)}
-                                className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.price === selectedPreorder?.price ? styles.selected : ""}`}>
+                                className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}>
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div className="text-22">{list.title}</div>
-                                        <span className="text-13 opacity">{list.subTitle}</span>
+                                        <div className="text-22">{list.itemsLanguages[0]?.title}</div>
+                                        <span className="text-13 opacity">{list.itemsLanguages[0]?.subTitle}</span>
                                     </div>
                                     <div className="text-end lh-1">
                                         <div className="text-decoration-line-through">{list.price} €</div>

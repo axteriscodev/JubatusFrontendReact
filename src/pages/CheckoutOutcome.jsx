@@ -9,6 +9,7 @@ const PAYMENT_OPEN = "open";
 export default function CheckoutOutcome() {
   const [status, setStatus] = useState(null);
   const orderId = useSelector((state) => state.cart.id);
+  const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -44,7 +45,10 @@ export default function CheckoutOutcome() {
       const timer = setTimeout(() => {
         // il pagamento è completo, vado a richiedere le foto reali
         if (status === PAYMENT_COMPLETE) {
-          navigate("/processing-photos");
+          if (eventPreset.preOrder)
+            navigate("/pre-order-purchased");
+          else
+            navigate("/processing-photos");
         }
 
         // il pagamento risulta ancora in sospeso, ritorno al checkout
