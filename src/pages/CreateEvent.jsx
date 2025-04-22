@@ -528,7 +528,7 @@ export default function CreateEvent() {
                                   e.target.value
                                 )
                               }
-                              placeholder="Titolo"
+                              placeholder="Sottotitolo"
                             />
                           </Form.Group>
                         </Col>
