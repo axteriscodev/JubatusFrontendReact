@@ -401,7 +401,7 @@ const cartSlice = createSlice({
       state.selectedPreorder = action.payload;
 
       if(action.payload.quantityPhoto === -1) {
-        state.allPhotos = false;
+        state.allPhotos = true;
       } else {
         state.allPhotos = false;
       }
@@ -414,6 +414,16 @@ const cartSlice = createSlice({
 
       state.totalPrice = action.payload.price;
 
+    },
+
+    /**
+     * Deselezione del preordine
+     * @param {*} state 
+     * @param {*} action 
+     */
+    unSelectPreorder(state, action) {
+      state.selectedPreorder = null;
+      state.totalPrice = 0;
     },
 
     /**

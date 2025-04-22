@@ -1,4 +1,3 @@
-//import { useDispatch } from "react-redux";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
@@ -7,11 +6,12 @@ import styles from "./CustomLightbox.module.css";
 
 export default function CustomLightbox({
   open,
-  slides,
-  index,
-  setIndex,
-  select,
-  actions,
+  slides = null,
+  slide = null,
+  index = 0,
+  setIndex = null,
+  select = false,
+  actions = false,
   onClose,
   onUpdateSlide = null,
   onImageClick = null,
@@ -19,7 +19,15 @@ export default function CustomLightbox({
 }) {
   //const dispatch = useDispatch();
   
-  const currentImage = slides[index] ?? 0;
+  //const currentImage = slides[index] ?? 0;
+
+  const effectiveSlides = slides && slides.length > 0 
+  ? slides 
+  : slide 
+    ? [{ url: slide, keyOriginal: slide, fileTypeId: 2, urlOriginal: slide }] 
+    : [];
+
+  const currentImage = effectiveSlides[index] ?? effectiveSlides[0] ?? {};
 
   const isSelected = photoItems?.some(
     (el) => el.keyPreview === (currentImage.keyPreview || currentImage.keyThumbnail || currentImage.keyOriginal)
@@ -81,16 +89,16 @@ export default function CustomLightbox({
           if (playingVideo && !playingVideo.paused) {
             playingVideo.pause();
           }
-          setIndex(newIndex);
+          setIndex?.(newIndex);
         },
       }}
-      slides={slides.map((slide) => ({
+      slides={effectiveSlides.map((slide) => ({
         src: slide.urlPreview || slide.urlThumbnail || slide.urlCover || slide.url,
         id: slide.keyPreview || slide.keyThumbnail || slide.keyOriginal,
         fileTypeId: slide.fileTypeId,
         urlOriginal: slide.urlPreview || slide.urlThumbnail || slide.urlOriginal || slide.url,
       }))}
-      plugins={[Thumbnails]}
+      plugins={effectiveSlides.length > 1 ? [Thumbnails] : []}
       render={{
         slide: ({ slide }) => {
           if (slide.fileTypeId === 2) {
