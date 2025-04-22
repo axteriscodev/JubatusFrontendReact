@@ -87,6 +87,9 @@ a.no-hover:hover{color:unset;text-decoration:none;}
   border-color: var(--remove);
 }
 .my-button:disabled{
+  opacity: 0.5;
+}
+.my-button:disabled:hover{
   background-color: var(--primary-event-color, --primary-color) !important;
   cursor: unset;
 }

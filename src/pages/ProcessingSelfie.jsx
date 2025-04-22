@@ -59,34 +59,36 @@ export default function ProcessingSelfie() {
 
       if (response.ok) {
         const json = await response.json();
-
         await dispatch(fetchPriceList(eventId));
         dispatch(cartActions.updateSearchId(json.data));
 
-        //sezione elaborazione selfie e attesa risposte dal server S3
-        listenSSE(
-          import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
-          (data) => {
-            const jsonData = JSON.parse(data);
-            dispatch(cartActions.updateProducts(jsonData.contents));
-            dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
-            dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
-            dispatch(cartActions.updateUserId(jsonData.userId));
+        if (eventPreset.preOrder) {
+          navigate("/pre-order", { replace: true });
+        } else {
 
-            if (eventPreset.preOrder){
-              navigate("/pre-order", { replace: true });
-            } else if (jsonData.contents.length > 0 || jsonData.hasVideo) {
-              navigate("/image-shop", { replace: true });
-            } else {
-              navigate("/content-unavailable", { replace: true });
+          //sezione elaborazione selfie e attesa risposte dal server S3
+          listenSSE(
+            import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+            (data) => {
+              const jsonData = JSON.parse(data);
+              dispatch(cartActions.updateProducts(jsonData.contents));
+              dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
+              dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
+              dispatch(cartActions.updateUserId(jsonData.userId));
+
+              if (jsonData.contents.length > 0 || jsonData.hasVideo) {
+                navigate("/image-shop", { replace: true });
+              } else {
+                navigate("/content-unavailable", { replace: true });
+              }
+            },
+            () => {
+              errorToast("Si è verificato un errore");
+              console.log(`Errore per la ricerca ${json.data}`);
+              navigate("/event/" + eventPreset.slug, { replace: true });
             }
-          },
-          () => {
-            errorToast("Si è verificato un errore");
-            console.log(`Errore per la ricerca ${json.data}`);
-            navigate("/event/" + eventPreset.slug, { replace: true });
-          }
-        );
+          );
+        }
       } else {
         throw Response(
           JSON.stringify({ status: response.status, message: response.message })

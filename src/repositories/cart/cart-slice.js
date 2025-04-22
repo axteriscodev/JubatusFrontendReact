@@ -164,11 +164,13 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price, discount }) => ({
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
           quantityPhoto,
           quantityVideo,
           price,
           discount,
+          bestOffer,
         })
       );
 
@@ -233,10 +235,13 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
+          bestOffer,
         })
       );
 
@@ -343,11 +348,13 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price, discount }) => ({
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
           quantityPhoto,
           quantityVideo,
           price,
           discount,
+          bestOffer,
         })
       );
       //console.log("formattedPrices", JSON.stringify(formattedPrices));
@@ -401,7 +408,7 @@ const cartSlice = createSlice({
       state.selectedPreorder = action.payload;
 
       if(action.payload.quantityPhoto === -1) {
-        state.allPhotos = false;
+        state.allPhotos = true;
       } else {
         state.allPhotos = false;
       }
@@ -414,6 +421,16 @@ const cartSlice = createSlice({
 
       state.totalPrice = action.payload.price;
 
+    },
+
+    /**
+     * Deselezione del preordine
+     * @param {*} state 
+     * @param {*} action 
+     */
+    unSelectPreorder(state, action) {
+      state.selectedPreorder = null;
+      state.totalPrice = 0;
     },
 
     /**

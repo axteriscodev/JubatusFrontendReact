@@ -16,11 +16,15 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
  */
 export default function Checkout() {
   const cart = useSelector((state) => state.cart);
+  const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const buttonHandle = (event) => {
-    navigate("/image-shop/");
+    if (eventPreset.preOrder)
+      navigate("/pre-order");
+    else
+      navigate("/image-shop/");
   };
 
   const fetchClientSecret = useCallback(() => {
