@@ -99,13 +99,13 @@ export default function PreOrder() {
                         </Link>
                     </div>
                 </div>
-                <h2>Sarai <strong>Protagonista</strong>!</h2>
+                <h2 className="text-30">Sarai <strong>Protagonista</strong>!</h2>
                 <div className="row row-cols-lg-2">
                     <div className="text-start">
-                        <p className="mt-sm">Stai per correre uno degli eventi più belli d’Italia<br />
+                        <p className="mt-md">Stai per correre uno degli eventi più belli d’Italia<br />
                             Noi saremo lì, al tuo fianco, per catturare <strong className="text-lowercase">ogni passo dall'adrenalina prima della partenza alla gioia del tuo traguardo</strong></p>
-                        <h2 className="mt-sm text-center">🎥 Il tuo momento va reso immortale:</h2>
-                        <div className="ms-4 mt-xs">
+                        <h2 className="mt-md text-center text-30">🎥 Il tuo momento va reso immortale:</h2>
+                        <div className="ms-4 mt-md">
                             <p>
                                 <i className="bi bi-check-square-fill text-success me-2"></i> droni professionali<br />
                                 <i className="bi bi-check-square-fill text-success me-2"></i> i migliori fotografi sportivi<br />
@@ -113,7 +113,7 @@ export default function PreOrder() {
                             </p>
                         </div>
                     </div>
-                    <div className="my-sm">
+                    <div className="my-md">
                         {loadingGallery ? (
                             <div className="d-flex justify-content-center">
                                 <div className="spinner-border" role="status">
@@ -159,12 +159,12 @@ export default function PreOrder() {
                         )}
                     </div>
                 </div>
-                <div>
-                    <h2 className="text-center">⏱️ Pronto in <strong>24 ore</strong></h2>
-                    <p><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale dopo l'evento.</p>
-                    <h2>&#128576; Sapevi che prenotando prima della gara spendi il 20% in meno?</h2>
+                <div className="text-start">
+                    <h2 className="text-center text-30">⏱️ Pronto in <strong>24 ore</strong></h2>
+                    <p className="mt-md"><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale dopo l'evento.</p>
+                    <p className="mt-md">&#128576; Sapevi che prenotando prima della gara spendi il 20% in meno?</p>
                 </div>
-                <div className="text-start mt-sm">
+                <div className="text-start mt-md">
                     <h3 className="text-24">Scegli tra:</h3>
                     {
                         pricelist.map((list, i) => (
