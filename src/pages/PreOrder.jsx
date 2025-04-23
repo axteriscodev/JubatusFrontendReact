@@ -48,7 +48,7 @@ export default function PreOrder() {
     }, []);
 
     //console.log("presaleMedia", presaleMedia);
-    console.log("pricelist", JSON.stringify(pricelist));
+    //console.log("pricelist", JSON.stringify(pricelist));
     //console.log("selectedPreorder", selectedPreorder);
 
     const numPhoto = presaleMedia?.images?.length ?? 0;
@@ -102,17 +102,16 @@ export default function PreOrder() {
                 <h2>Sarai <strong>Protagonista</strong>!</h2>
                 <div className="row row-cols-lg-2">
                     <div className="text-start">
-                        <p className="mt-sm">Stai per correre uno degli eventi più belli d’Italia</p>
-                        <p>Noi saremo lì, al tuo fianco, per catturare <strong className="text-lowercase">ogni passo dall'adrenalina prima della partenza alla gioia del tuo traguardo</strong></p>
-                        <h3 className="mt-sm text-24">Il tuo momento va reso immortale:</h3>
+                        <p className="mt-sm">Stai per correre uno degli eventi più belli d’Italia<br />
+                            Noi saremo lì, al tuo fianco, per catturare <strong className="text-lowercase">ogni passo dall'adrenalina prima della partenza alla gioia del tuo traguardo</strong></p>
+                        <h2 className="mt-sm text-center">🎥 Il tuo momento va reso immortale:</h2>
                         <div className="ms-4 mt-xs">
-                            <p><i className="bi bi-check-square-fill text-success me-2"></i> droni professionali</p>
-                            <p><i className="bi bi-check-square-fill text-success me-2"></i> i migliori fotografi sportivi</p>
-                            <p><i className="bi bi-check-square-fill text-success me-2"></i> un team di videomakers al tuo servizio</p>
+                            <p>
+                                <i className="bi bi-check-square-fill text-success me-2"></i> droni professionali<br />
+                                <i className="bi bi-check-square-fill text-success me-2"></i> i migliori fotografi sportivi<br />
+                                <i className="bi bi-check-square-fill text-success me-2"></i> un team di videomakers al tuo servizio
+                            </p>
                         </div>
-                        <h2 className="mt-sm">Pronto in <strong>24 ore</strong></h2>
-                        <p>Subito dopo l'evento troverai foto e video grazie al <strong className="text-lowercase">riconoscimento facciale</strong>.</p>
-                        <p><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale.</p>
                     </div>
                     <div className="my-sm">
                         {loadingGallery ? (
@@ -159,8 +158,13 @@ export default function PreOrder() {
                             </>
                         )}
                     </div>
+                    <div>
+                        <h2 className="text-center">⏱️ Pronto in <strong>24 ore</strong></h2>
+                        <p><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale.</p>
+                        <h2>&#128576; Sapevi che prenotando prima della gara spendi il 20% in meno?</h2>
+                    </div>
                 </div>
-                <div className="text-start">
+                <div className="text-start mt-sm">
                     <h3 className="text-24">Scegli tra:</h3>
                     {
                         pricelist.map((list, i) => (
@@ -168,8 +172,8 @@ export default function PreOrder() {
                                 className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}>
                                 <div className="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div className="text-22">{list.itemsLanguages[0]?.title}</div>
-                                        <span className="text-13 opacity">{list.itemsLanguages[0]?.subTitle}</span>
+                                        <div className="text-22">{list.itemsLanguages?.[0]?.title}</div>
+                                        <span className="text-13 opacity">{list.itemsLanguages?.[0]?.subTitle}</span>
                                     </div>
                                     <div className="text-end lh-1">
                                         <div className="text-decoration-line-through">{list.price} €</div>
