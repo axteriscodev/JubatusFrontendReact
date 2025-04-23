@@ -419,7 +419,11 @@ const cartSlice = createSlice({
         state.video = false;
       }
 
-      state.totalPrice = action.payload.price - ((action.payload.price * action.payload.discount) / 100);
+      if(action.payload.discount) {
+        state.totalPrice = action.payload.price - ((action.payload.price * action.payload.discount) / 100);
+      } else {
+        state.totalPrice = action.payload.price;
+      }
 
     },
 
