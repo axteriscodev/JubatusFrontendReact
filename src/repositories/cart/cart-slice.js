@@ -420,7 +420,11 @@ const cartSlice = createSlice({
       }
 
       if(action.payload.discount) {
-        state.totalPrice = action.payload.price - ((action.payload.price * action.payload.discount) / 100);
+
+        const discountPrice = action.payload.price * (1 - action.payload.discount / 100);
+        const ceiled = Math.ceil(discountPrice * 100) / 100;  
+
+        state.totalPrice = ceiled.toFixed(2);
       } else {
         state.totalPrice = action.payload.price;
       }
