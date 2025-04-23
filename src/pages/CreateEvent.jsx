@@ -56,6 +56,12 @@ export default function CreateEvent() {
           quantityVideo: "",
           price: "",
           discount: "",
+          itemsLanguages: [
+            {
+              title: "",
+              subTitle: "",
+            },
+          ],
         },
       ],
     },
@@ -77,6 +83,12 @@ export default function CreateEvent() {
             quantityVideo: "",
             price: "",
             discount: "",
+            itemsLanguages: [
+              {
+                title: "",
+                subTitle: "",
+              },
+            ],
           },
         ],
       },
@@ -106,6 +118,12 @@ export default function CreateEvent() {
       quantityVideo: "",
       price: "",
       discount: "",
+      itemsLanguages: [
+        {
+          title: "",
+          subTitle: "",
+        },
+      ],
     });
     setPriceLists(newPriceList);
   };
@@ -123,6 +141,14 @@ export default function CreateEvent() {
   const handleRowChange = (formIndex, rowIndex, field, value) => {
     const newPriceList = structuredClone(priceLists);
     newPriceList[formIndex].items[rowIndex][field] = value === "" ? "" : value;
+    setPriceLists(newPriceList);
+  };
+
+  const handleRowSubListChange = (formIndex, rowIndex, field, value) => {
+    const newPriceList = structuredClone(priceLists);
+    newPriceList[formIndex].items[rowIndex][field] = value === "" ? "" : value;
+    newPriceList[formIndex].items[rowIndex]["itemsLanguages"][0][field] =
+      value === "" ? "" : value;
     setPriceLists(newPriceList);
   };
 
@@ -474,9 +500,9 @@ export default function CreateEvent() {
                           >
                             <Form.Label>Titolo</Form.Label>
                             <Form.Control
-                              value={row.title}
+                              value={row.itemsLanguages[0]?.title ?? ""}
                               onChange={(e) =>
-                                handleRowChange(
+                                handleRowSubListChange(
                                   formIndex,
                                   rowIndex,
                                   "title",
@@ -493,16 +519,16 @@ export default function CreateEvent() {
                           >
                             <Form.Label>Sottotitolo</Form.Label>
                             <Form.Control
-                              value={row.subTitle}
+                              value={row.itemsLanguages[0]?.subTitle ?? ""}
                               onChange={(e) =>
-                                handleRowChange(
+                                handleRowSubListChange(
                                   formIndex,
                                   rowIndex,
                                   "subTitle",
                                   e.target.value
                                 )
                               }
-                              placeholder="Titolo"
+                              placeholder="Sottotitolo"
                             />
                           </Form.Group>
                         </Col>
@@ -510,10 +536,10 @@ export default function CreateEvent() {
                           <Form.Group
                             controlId={`f${formIndex}-r${rowIndex}-bestOffer`}
                           >
-                             <Form.Label>Miglior offerta</Form.Label>
+                            <Form.Label>Miglior offerta</Form.Label>
                             <Form.Check
                               type="checkbox"
-                              
+                              checked={row.bestOffer}
                               value={row.bestOffer}
                               onChange={(e) =>
                                 handleRowChange(
