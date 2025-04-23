@@ -167,8 +167,8 @@ export default function CreateEvent() {
         dateEvent: receivedComp.dateEvent.split("T")[0],
         dateExpiry: receivedComp.dateExpiry.split("T")[0],
         dateStart: receivedComp.dateStart.split("T")[0],
-        datePreorderStart: receivedComp.datePreorderStart.split("T")[0],
-        datePreorderExpiry: receivedComp.datePreorderExpiry.split("T")[0],
+        datePreorderStart: receivedComp.datePreorderStart?.split("T")[0],
+        datePreorderExpiry: receivedComp.datePreorderExpiry?.split("T")[0],
         title: receivedComp.languages[0].title,
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
@@ -540,13 +540,13 @@ export default function CreateEvent() {
                             <Form.Check
                               type="checkbox"
                               checked={row.bestOffer}
-                              value={row.bestOffer}
+                              
                               onChange={(e) =>
                                 handleRowChange(
                                   formIndex,
                                   rowIndex,
                                   "bestOffer",
-                                  e.target.value
+                                  e.target.checked
                                 )
                               }
                             />
