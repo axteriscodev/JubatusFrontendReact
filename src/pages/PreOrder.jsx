@@ -158,11 +158,11 @@ export default function PreOrder() {
                             </>
                         )}
                     </div>
-                    <div>
-                        <h2 className="text-center">⏱️ Pronto in <strong>24 ore</strong></h2>
-                        <p><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale.</p>
-                        <h2>&#128576; Sapevi che prenotando prima della gara spendi il 20% in meno?</h2>
-                    </div>
+                </div>
+                <div>
+                    <h2 className="text-center">⏱️ Pronto in <strong>24 ore</strong></h2>
+                    <p><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale dopo l'evento.</p>
+                    <h2>&#128576; Sapevi che prenotando prima della gara spendi il 20% in meno?</h2>
                 </div>
                 <div className="text-start mt-sm">
                     <h3 className="text-24">Scegli tra:</h3>
