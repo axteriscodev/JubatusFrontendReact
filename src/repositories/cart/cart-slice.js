@@ -1,5 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
+import { calculateDiscount } from "../../utils/offers";
 
 /**
  * Stato iniziale del carrello
@@ -8,15 +9,19 @@ const initialState = {
   id: 0,
   userId: 0,
   eventId: 0,
+  searchId: 0,
   products: [],
   items: [],
   prices: [],
   purchased: [],
   totalQuantity: 0,
   totalPrice: 0,
+  selectedPreorder: null,
   alertPack: false,
   hasPhoto: false,
   hasVideo: false,
+  allPhotos: false,
+  video: false,
 };
 
 /**
@@ -38,6 +43,12 @@ const cartSlice = createSlice({
       state.id = action.payload;
     },
 
+    /**
+     * Aggiorna id utente
+     *
+     * @param {*} state
+     * @param {*} action
+     */
     updateUserId(state, action) {
       const newId = action.payload;
 
@@ -54,6 +65,18 @@ const cartSlice = createSlice({
       const newId = action.payload;
 
       state.eventId = newId;
+    },
+
+    /**
+     * Update search id
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    updateSearchId(state, action) {
+      const newSearchId = action.payload;
+
+      state.searchId = newSearchId;
     },
 
     /**
@@ -141,10 +164,13 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
+          bestOffer,
         })
       );
 
@@ -166,7 +192,19 @@ const cartSlice = createSlice({
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
       state.totalPrice =
-        totalPrice > photoPackPrice && photoPackPrice > 0 ? photoPackPrice : totalPrice;
+        totalPrice > photoPackPrice && photoPackPrice > 0
+          ? photoPackPrice
+          : totalPrice;
+
+      //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
+      if (totalPrice > photoPackPrice && photoPackPrice > 0) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      //se nel carrello c'è almeno un video, imposto video a true
+      state.video = state.items.some((item) => item.fileTypeId === 2);
     },
 
     /**
@@ -197,10 +235,13 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
+          bestOffer,
         })
       );
 
@@ -210,10 +251,9 @@ const cartSlice = createSlice({
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
-      const videoPackPrice = 
+      const videoPackPrice =
         state.prices.find((item) => item.quantityVideo !== 0)?.price ?? 0;
-      
-      
+
       //calcolo il prezzo totale in base ai pacchetti
       const totalPrice = calculatePrice(
         formattedPrices,
@@ -226,7 +266,19 @@ const cartSlice = createSlice({
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
       state.totalPrice =
-        totalPrice > photoPackPrice && photoPackPrice > 0 ? photoPackPrice : totalPrice;
+        totalPrice > photoPackPrice && photoPackPrice > 0
+          ? photoPackPrice
+          : totalPrice;
+
+      //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
+      if (totalPrice > photoPackPrice && photoPackPrice > 0) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      //se nel carrello c'è almeno un video, imposto video a true
+      state.video = state.items.some((item) => item.fileTypeId === 2);
     },
 
     /**
@@ -246,6 +298,7 @@ const cartSlice = createSlice({
     resetStore(state, action) {
       state.id = initialState.id;
       state.userId = initialState.userId;
+      state.searchId = initialState.searchId;
       state.products = initialState.products;
       state.items = initialState.items;
       state.prices = initialState.prices;
@@ -255,6 +308,8 @@ const cartSlice = createSlice({
       state.alertPack = initialState.alertPack;
       state.hasPhoto = initialState.hasPhoto;
       state.hasVideo = initialState.hasVideo;
+      state.allPhotos = initialState.allPhotos;
+      state.video = initialState.video;
     },
 
     /**
@@ -293,10 +348,13 @@ const cartSlice = createSlice({
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
       const formattedPrices = state.prices.map(
-        ({ quantityPhoto, quantityVideo, price }) => ({
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
           quantityPhoto,
           quantityVideo,
           price,
+          discount,
+          bestOffer,
         })
       );
       //console.log("formattedPrices", JSON.stringify(formattedPrices));
@@ -324,9 +382,55 @@ const cartSlice = createSlice({
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
       state.totalPrice =
-      totalPrice > photoPackPrice && photoPackPrice > 0 ? photoPackPrice : totalPrice;
+        totalPrice > photoPackPrice && photoPackPrice > 0
+          ? photoPackPrice
+          : totalPrice;
+
+      //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
+      if (totalPrice > photoPackPrice && photoPackPrice > 0) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      //se nel carrello c'è almeno un video, imposto video a true
+      state.video = state.items.some((item) => item.fileTypeId === 2);
 
       //console.log("state.totalPrice", state.totalPrice);
+    },
+
+    /**
+     * Selezione del preordine
+     * @param {*} state 
+     * @param {*} action 
+     */
+    selectPreorder(state, action) {
+      state.selectedPreorder = action.payload;
+
+      if(action.payload.quantityPhoto === -1) {
+        state.allPhotos = true;
+      } else {
+        state.allPhotos = false;
+      }
+
+      if(action.payload.quantityVideo !== 0) {
+        state.video = true;
+      } else {
+        state.video = false;
+      }
+
+      state.totalPrice = action.payload.price;
+
+    },
+
+    /**
+     * Deselezione del preordine
+     * @param {*} state 
+     * @param {*} action 
+     */
+    unSelectPreorder(state, action) {
+      state.selectedPreorder = null;
+      state.totalPrice = 0;
     },
 
     /**
@@ -338,6 +442,9 @@ const cartSlice = createSlice({
       state.totalPrice = 0;
       state.totalQuantity = 0;
       state.items = [];
+      state.allPhotos = false;
+      state.video = false;
+      state.selectedPreorder = null;
     },
 
     /**
@@ -356,7 +463,7 @@ const cartSlice = createSlice({
       if (index !== -1) {
         state.purchased[index] = {
           ...state.purchased[index],
-          ...updated
+          ...updated,
         };
       }
     },

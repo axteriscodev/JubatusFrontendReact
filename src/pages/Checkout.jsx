@@ -16,11 +16,15 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
  */
 export default function Checkout() {
   const cart = useSelector((state) => state.cart);
+  const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const buttonHandle = (event) => {
-    navigate("/image-shop/");
+    if (eventPreset.preOrder)
+      navigate("/pre-order");
+    else
+      navigate("/image-shop/");
   };
 
   const fetchClientSecret = useCallback(() => {
@@ -36,6 +40,9 @@ export default function Checkout() {
           cart: {
             userId: cart.userId,
             eventId: cart.eventId,
+            searchId: cart.searchId,
+            allPhotos: cart.allPhotos,
+            video: cart.video,
             amount: cart.totalPrice,
             items: isPhotoFullPackEligible(cart.totalPrice, cart.prices) ? cart.products.filter((item) => item.purchased !== true) : cart.items,
           },
