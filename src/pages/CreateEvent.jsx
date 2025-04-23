@@ -540,13 +540,13 @@ export default function CreateEvent() {
                             <Form.Check
                               type="checkbox"
                               checked={row.bestOffer}
-                              value={row.bestOffer}
+                              
                               onChange={(e) =>
                                 handleRowChange(
                                   formIndex,
                                   rowIndex,
                                   "bestOffer",
-                                  e.target.value
+                                  e.target.checked
                                 )
                               }
                             />
