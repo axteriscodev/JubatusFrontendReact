@@ -177,24 +177,20 @@ export default function ImageShop() {
 }
 
 function getPriceListEntry(pricePack) {
-  if (pricePack.quantityPhoto === -1)
-    return (
-      <>
-        <strong>Tutte</strong> le foto - {pricePack.price}€
-      </>
-    );
-  if (pricePack.quantityPhoto === -1 && pricePack.quantityVideo === -1)
-    return (
-      <>
-        <strong>Pacchetto completo</strong> - {pricePack.price}€
-      </>
-    );
   if (pricePack.quantityPhoto === -1 && pricePack.quantityVideo !== 0)
     return (
       <>
         <strong>Pacchetto completo</strong> - {pricePack.price}€
       </>
     );
+
+  if (pricePack.quantityPhoto === -1)
+    return (
+      <>
+        <strong>Tutte</strong> le foto - {pricePack.price}€
+      </>
+    );
+
   if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0)
     return (
       <>
