@@ -23,7 +23,7 @@ export default function Purchased() {
   const currentPurchasedItems = useSelector((state) => state.cart.purchased);
   const hasPhoto = useSelector((state) => state.cart.hasPhoto);
   const hasVideo = useSelector((state) => state.cart.hasVideo);
-  const numVideo = currentPurchasedItems?.filter(item => item.fileTypeId === 2).length;
+  const numVideo = currentPurchasedItems?.filter(item => item.fileTypeId === 2 && item.keyOriginal).length;
 
   const allPurchasedItems = useSelector((state) => state.personal.purchased);
   const eventPreset = useSelector((state) => state.competition);
