@@ -147,9 +147,11 @@ export default function PreOrder() {
                                                     src={presaleMedia.video.cover}
                                                     className={styles.videoCover}
                                                     alt="Cover"
+                                                    title="Clicca per vedere un video di esempio"
                                                     onClick={() =>
                                                         openLightbox(presaleMedia.video.url, 0, false, false)
                                                     }
+                                                    role="button"
                                                 />
                                             </>
                                         )}
@@ -186,7 +188,7 @@ export default function PreOrder() {
                 <button
                     onClick={handlePreorderCheckout}
                     className="my-button w-100 mt-sm"
-                    disabled={!selectedPreorder}>Preordina ORA</button>
+                    disabled={!selectedPreorder}>Prenota ora</button>
             </div>
             {open && <CustomLightbox
                 open={open}
