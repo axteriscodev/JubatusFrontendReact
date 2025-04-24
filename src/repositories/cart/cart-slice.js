@@ -153,48 +153,22 @@ const cartSlice = createSlice({
         console.log("Manca il file type");
       }
 
-      //numero foto selezionate
-      const photosCount = state.items.filter(
-        (item) => item.fileTypeId === 1
-      ).length;
-      //numero video selezionati
-      const videosCount = state.items.filter(
-        (item) => item.fileTypeId === 2
-      ).length;
-
-      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
-      const formattedPrices = state.prices.map(
-        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
-          id,
-          quantityPhoto,
-          quantityVideo,
-          price,
-          discount,
-          bestOffer,
-        })
-      );
+      let totalPrice = packageCalculator(state.items, state.prices);
 
       //prezzo foto singole
       const photoPrice =
         state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
-        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
-      //calcolo il prezzo totale in base ai pacchetti
-      const totalPrice = calculatePrice(
-        formattedPrices,
-        photosCount,
-        videosCount
-      );
+        state.prices.find(
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0
+        )?.price ?? 0;
+
+
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
       state.alertPack =
-        totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
-
-      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
-      state.totalPrice =
-        totalPrice > photoPackPrice && photoPackPrice > 0
-          ? photoPackPrice
-          : totalPrice;
+        totalPrice + photoPrice >= photoPackPrice &&
+        totalPrice < photoPackPrice;
 
       //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
       if (totalPrice > photoPackPrice && photoPackPrice > 0) {
@@ -205,6 +179,7 @@ const cartSlice = createSlice({
 
       //se nel carrello c'è almeno un video, imposto video a true
       state.video = state.items.some((item) => item.fileTypeId === 2);
+      state.totalPrice = totalPrice;
     },
 
     /**
@@ -224,51 +199,22 @@ const cartSlice = createSlice({
         (item) => item.keyPreview !== itemToRemove
       );
 
-      //numero foto selezionate
-      const photosCount = state.items.filter(
-        (item) => item.fileTypeId === 1
-      ).length;
-      //numero video selezionati
-      const videosCount = state.items.filter(
-        (item) => item.fileTypeId === 2
-      ).length;
-
-      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
-      const formattedPrices = state.prices.map(
-        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
-          id,
-          quantityPhoto,
-          quantityVideo,
-          price,
-          discount,
-          bestOffer,
-        })
-      );
+      let totalPrice = packageCalculator(state.items, state.prices);
 
       //prezzo foto singole
       const photoPrice =
         state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
-        state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
-      const videoPackPrice =
-        state.prices.find((item) => item.quantityVideo !== 0)?.price ?? 0;
+        state.prices.find(
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0
+        )?.price ?? 0;
 
-      //calcolo il prezzo totale in base ai pacchetti
-      const totalPrice = calculatePrice(
-        formattedPrices,
-        photosCount,
-        videosCount
-      );
+
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
       state.alertPack =
-        totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
-
-      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
-      state.totalPrice =
-        totalPrice > photoPackPrice && photoPackPrice > 0
-          ? photoPackPrice
-          : totalPrice;
+        totalPrice + photoPrice >= photoPackPrice &&
+        totalPrice < photoPackPrice;
 
       //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
       if (totalPrice > photoPackPrice && photoPackPrice > 0) {
@@ -279,6 +225,7 @@ const cartSlice = createSlice({
 
       //se nel carrello c'è almeno un video, imposto video a true
       state.video = state.items.some((item) => item.fileTypeId === 2);
+      state.totalPrice = totalPrice;
     },
 
     /**
@@ -401,40 +348,39 @@ const cartSlice = createSlice({
 
     /**
      * Selezione del preordine
-     * @param {*} state 
-     * @param {*} action 
+     * @param {*} state
+     * @param {*} action
      */
     selectPreorder(state, action) {
       state.selectedPreorder = action.payload;
 
-      if(action.payload.quantityPhoto === -1) {
+      if (action.payload.quantityPhoto === -1) {
         state.allPhotos = true;
       } else {
         state.allPhotos = false;
       }
 
-      if(action.payload.quantityVideo !== 0) {
+      if (action.payload.quantityVideo !== 0) {
         state.video = true;
       } else {
         state.video = false;
       }
 
-      if(action.payload.discount) {
-
-        const discountPrice = action.payload.price * (1 - action.payload.discount / 100);
-        const ceiled = Math.ceil(discountPrice * 100) / 100;  
+      if (action.payload.discount) {
+        const discountPrice =
+          action.payload.price * (1 - action.payload.discount / 100);
+        const ceiled = Math.ceil(discountPrice * 100) / 100;
 
         state.totalPrice = ceiled.toFixed(2);
       } else {
         state.totalPrice = action.payload.price;
       }
-
     },
 
     /**
      * Deselezione del preordine
-     * @param {*} state 
-     * @param {*} action 
+     * @param {*} state
+     * @param {*} action
      */
     unSelectPreorder(state, action) {
       state.selectedPreorder = null;
@@ -477,6 +423,94 @@ const cartSlice = createSlice({
     },
   },
 });
+
+/**
+ * Funzione per calcolare il prezzo dei contenuti acquistati controllando i vari pacchetti
+ * @param {*} items 
+ * @param {*} prices 
+ * @returns 
+ */
+function packageCalculator(items, prices){
+
+  let result = 0;
+  const formattedItems = items.map((product) => ({
+    keyPreview: product.keyPreview,
+    keyOriginal: product.keyOriginal,
+    keyThumbnail: product.keyThumbnail,
+    keyCover: product.keyCover ?? "",
+    fileTypeId: product.fileTypeId ?? 1,
+    purchased: product.purchased ?? false,
+  }));
+
+      //numero foto selezionate
+      const photosCount = formattedItems.filter(
+        (item) => item.fileTypeId === 1
+      ).length;
+      //numero video selezionati
+      const videosCount = formattedItems.filter(
+        (item) => item.fileTypeId === 2
+      ).length;
+
+      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
+      const formattedPrices = prices.map(
+        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+          id,
+          quantityPhoto,
+          quantityVideo,
+          price,
+          discount,
+          bestOffer,
+        })
+      );
+
+      //prezzo foto singole
+      // const photoPrice =
+      // formattedPrices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
+      // const videoPrice =
+      // formattedPrices.find((item) => item.quantityVideo === 1)?.price ?? 0;
+      //prezzo 'pacchetto tutte le foto'
+      const photoPackPrice =
+      formattedPrices.find(
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0
+        )?.price ?? 0;
+      const fullPackPrice =
+      formattedPrices.find(
+          (item) => item.quantityPhoto === -1 && item.quantityVideo !== 0
+        )?.price ?? 0;
+      const videoPackPrice =
+      formattedPrices.find(
+          (item) => item.quantityPhoto === 0 && item.quantityVideo === -1
+        )?.price ?? 0;
+      //calcolo il prezzo totale in base ai pacchetti
+      const totalPrice = calculatePrice(
+        formattedPrices,
+        photosCount,
+        videosCount
+      );
+
+      //calcolo prezzo solo foto
+      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
+      if (videosCount === 0 && photosCount > 0) {
+        result =
+          totalPrice > photoPackPrice && photoPackPrice > 0
+            ? photoPackPrice
+            : totalPrice;
+        //calcolo prezzo solo video
+      } else if (videosCount > 0 && photosCount === 0) {
+        result =
+          totalPrice > videoPackPrice && videoPackPrice > 0
+            ? videoPackPrice
+            : totalPrice;
+        //calcolo prezzo foto + video
+      } else {
+        result =
+          totalPrice > fullPackPrice && fullPackPrice > 0
+            ? fullPackPrice
+            : totalPrice;
+      }
+
+      return result;
+}
 
 export const cartActions = cartSlice.actions;
 
