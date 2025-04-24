@@ -2,6 +2,7 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Video from "yet-another-react-lightbox/plugins/video";
 import styles from "./CustomLightbox.module.css";
 
 export default function CustomLightbox({
@@ -98,7 +99,7 @@ export default function CustomLightbox({
         fileTypeId: slide.fileTypeId,
         urlOriginal: slide.urlPreview || slide.urlThumbnail || slide.urlOriginal || slide.url,
       }))}
-      plugins={effectiveSlides.length > 1 ? [Thumbnails] : []}
+      plugins={effectiveSlides.length > 1 ? [Thumbnails, Video] : [Video]}
       render={{
         slide: ({ slide }) => {
           if (slide.fileTypeId === 2) {
@@ -126,7 +127,7 @@ export default function CustomLightbox({
               overflow: "hidden",
               borderRadius: "4px",
             }}
-            className={slide.fileTypeId === 2 && slide.src && "video"}
+            className={slide.fileTypeId === 2 && slide.src ? "video" : ""}
           >
             <img
               src={slide.src || "/images/play-icon.webp"}
@@ -151,7 +152,7 @@ export default function CustomLightbox({
                   onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyThumbnail)}
                   className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
                 >
-                  {isSelected ? (<><i class="bi bi-trash-fill"></i> Rimuovi</>) : (<><i className="bi bi-cart"></i> Seleziona</>)}
+                  {isSelected ? (<><i className="bi bi-trash-fill"></i> Rimuovi</>) : (<><i className="bi bi-cart"></i> Seleziona</>)}
                 </button>
               </div>
             )}
@@ -176,26 +177,8 @@ export default function CustomLightbox({
               </div>
             )}
           </>
-        ),
-        slideFooter: () =>
-          actions && (
-            <></>
-            // <div className="text-50 d-flex gap-3 justify-content-between position-absolute bottom-0 start-50 translate-middle-x">
-            //   <a onClick={handleFavouriteClick} aria-label="Favourite image">
-            //     <i className={`bi ${currentImage.favorite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
-            //   </a>
-            //   <a
-            //     onClick={handleDownload}
-            //     title="Download"
-            //     aria-label="Download image"
-            //   >
-            //     <i className="bi bi-box-arrow-down text-white"></i>
-            //   </a>
-            //   {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
-            //     <i className="bi bi-arrow-up-right"></i>
-            //   </a>} */}
-            // </div>
-          ),
+        )
+        ,
       }}
     />
   );
