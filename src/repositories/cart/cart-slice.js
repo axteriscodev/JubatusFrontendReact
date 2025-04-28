@@ -283,27 +283,27 @@ const cartSlice = createSlice({
       //console.log("state.items", JSON.stringify(state.items));
 
       //numero foto selezionate
-      const photosCount = state.items.filter(
-        (item) => item.fileTypeId === 1
-      ).length;
+      // const photosCount = state.items.filter(
+      //   (item) => item.fileTypeId === 1
+      // ).length;
       //numero video selezionati
-      const videosCount = state.items.filter(
-        (item) => item.fileTypeId === 2
-      ).length;
+      // const videosCount = state.items.filter(
+      //   (item) => item.fileTypeId === 2
+      // ).length;
       //console.log("photosCount", photosCount);
       //console.log("videosCount", videosCount);
 
       //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
-      const formattedPrices = state.prices.map(
-        ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
-          id,
-          quantityPhoto,
-          quantityVideo,
-          price,
-          discount,
-          bestOffer,
-        })
-      );
+      // const formattedPrices = state.prices.map(
+      //   ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
+      //     id,
+      //     quantityPhoto,
+      //     quantityVideo,
+      //     price,
+      //     discount,
+      //     bestOffer,
+      //   })
+      // );
       //console.log("formattedPrices", JSON.stringify(formattedPrices));
 
       //prezzo foto singole
@@ -317,21 +317,27 @@ const cartSlice = createSlice({
       //console.log("photoPackPrice", photoPackPrice);
 
       //calcolo il prezzo totale in base ai pacchetti
-      const totalPrice = calculatePrice(
-        formattedPrices,
-        photosCount,
-        videosCount
-      );
+      // const totalPrice = calculatePrice(
+      //   formattedPrices,
+      //   photosCount,
+      //   videosCount
+      // );
+
+      let totalPrice = packageCalculator(state.items, state.prices);
+
+
       //console.log("totalPrice", totalPrice);
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
       state.alertPack =
         totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
 
       //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
-      state.totalPrice =
-        totalPrice > photoPackPrice && photoPackPrice > 0
-          ? photoPackPrice
-          : totalPrice;
+      // state.totalPrice =
+      //   totalPrice > photoPackPrice && photoPackPrice > 0
+      //     ? photoPackPrice
+      //     : totalPrice;
+
+      state.totalPrice = totalPrice;
 
       //se rientro nel pacchetto di tutte le foto, imposto allPhotos a true
       if (totalPrice > photoPackPrice && photoPackPrice > 0) {
