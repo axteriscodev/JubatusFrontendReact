@@ -28,7 +28,7 @@ export default function PreOrder() {
         const fetchImages = async () => {
             try {
                 const response = await fetch(
-                    import.meta.env.VITE_API_URL + "/assets/presale",
+                    import.meta.env.VITE_API_URL + "/assets/presale?event_id" + eventPreset.id,
                     {
                         method: "GET", // se è GET
                     }
