@@ -75,7 +75,10 @@ export default function PreOrder() {
     function handlePreorderCheckout(event) {
         event.preventDefault();
 
-        navigate("/checkout");
+        if(selectedPreorder) {
+            navigate("/checkout");
+        }
+
     }
 
     const [open, setOpen] = useState(false);
