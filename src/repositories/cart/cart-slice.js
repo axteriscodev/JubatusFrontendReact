@@ -253,6 +253,7 @@ const cartSlice = createSlice({
       state.totalQuantity = initialState.totalQuantity;
       state.totalPrice = initialState.totalPrice;
       state.alertPack = initialState.alertPack;
+      state.selectedPreorder = initialState.selectedPreorder;
       state.hasPhoto = initialState.hasPhoto;
       state.hasVideo = initialState.hasVideo;
       state.allPhotos = initialState.allPhotos;
