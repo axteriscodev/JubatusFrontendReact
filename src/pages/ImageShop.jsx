@@ -95,7 +95,7 @@ export default function ImageShop() {
         {hasPhoto && !hasVideo && (
           <div className="my-md text-start">
             <h2>
-              Ci siamo <strong>atleta!</strong>
+              Ci siamo!
             </h2>
             <p>Ecco le tue foto</p>
           </div>
@@ -103,7 +103,7 @@ export default function ImageShop() {
         {!hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md">
             <h2>
-              Ciao <strong>atleta</strong>, il <strong>tuo</strong> video è in
+              Ciao, il <strong>tuo</strong> video è in
               preparazione:
             </h2>
             <p>
@@ -114,7 +114,7 @@ export default function ImageShop() {
         {!hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
             <h2>
-              Ci siamo <strong>atleta!</strong>
+              Ci siamo!
             </h2>
             <p>
               Il tuo video è pronto! Sbloccalo in HD e senza filigrana
@@ -125,7 +125,7 @@ export default function ImageShop() {
         {hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md text-start">
             <h2>
-              Ci siamo <strong>atleta!</strong>
+              Ci siamo!
             </h2>
             <p>Ecco le tue foto</p>
             <h4>
@@ -137,7 +137,7 @@ export default function ImageShop() {
         {hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
             <h2>
-              Ci siamo <strong>atleta!</strong>
+              Ci siamo!
             </h2>
             <p>Ecco le tue foto e il tuo video</p>
           </div>
