@@ -119,7 +119,7 @@ export default function ProcessingSelfie() {
         css="mb-sm"
       />
       <h2>
-        Ciao <span>atleta!</span>
+        Ciao!
       </h2>
       <h2>aspetta qualche secondo...</h2>
       <h2>
