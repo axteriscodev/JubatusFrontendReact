@@ -28,6 +28,7 @@ import { loader as adminLoader } from "./pages/AdminPanel";
 import { loader as createEventLoader } from "./pages/CreateEvent";
 import EmailSent from "./pages/EmailSent";
 import ContentError from "./pages/ContentError";
+import MailConfirmation from "./pages/MailConfirmation";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -81,11 +82,15 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/mail-confirmation",
+    element: <MailConfirmation />,
+  },
+  {
     path: "/purchased",
     element: <Purchased /> /*, errorElement: <ErrorPage />*/,
   },
   { path: "/processing-photos", element: <ProcessingPhotos /> },
-  { path: "/content-error", element: <ContentError />},
+  { path: "/content-error", element: <ContentError /> },
   {
     path: "/admin",
     element: <AdminPanel />,

@@ -29,6 +29,8 @@ export default function ProcessingSelfie() {
     async function ProcessSelfie() {
       let response;
 
+      dispatch(cartActions.updateUserEmail(receivedData.email));
+
       /**
        * Se c'è l'hash, l'utente ha già fatto una ricerca ed è
        * in attesa di riceve ulteriori contenuti

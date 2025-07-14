@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 export default function MailForm({
+  userEmail,
   submitHandle,
   showPrivacy = true,
   onErrors,
@@ -29,6 +30,7 @@ export default function MailForm({
         ref={email}
         type="email"
         name="email"
+        value={userEmail}
         placeholder="Inserisci la tua e-mail"
       />
       {onErrors.emailError && (

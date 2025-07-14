@@ -7,6 +7,7 @@ import { calculateDiscount } from "../../utils/offers";
  */
 const initialState = {
   id: 0,
+  userEmail: "",
   userId: 0,
   eventId: 0,
   searchId: 0,
@@ -54,6 +55,18 @@ const cartSlice = createSlice({
 
       state.userId = newId;
     },
+
+    /**
+     * Aggiorna mail utente
+     * 
+     * @param {*} state 
+     * @param {*} action 
+     */
+    updateUserEmail(state, action) {
+      const newEmail = action.payload;
+
+      state.userEmail = newEmail;
+    }
 
     /**
      * Update dell'id evento
@@ -260,6 +273,7 @@ const cartSlice = createSlice({
      */
     resetStore(state, action) {
       state.id = initialState.id;
+      state.userEmail = initialState.userEmail;
       state.userId = initialState.userId;
       state.searchId = initialState.searchId;
       state.products = initialState.products;
