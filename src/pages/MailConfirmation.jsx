@@ -3,7 +3,9 @@ import { useSelector } from "react-redux";
 export default function MailConfirmation() {
   const userEmail = useSelector((state) => state.cart.eventId);
 
-  async function handleSubmit(event, data) {}
+  async function handleSubmit(event, data) {
+    //TODO chiamare endpoint
+  }
 
   return (
     <div className="form-sm">
@@ -12,7 +14,7 @@ export default function MailConfirmation() {
             Acquisto effettuato con l'email <strong>{userEmail}</strong>. È corretta?
         </h2>
       </div>
-      <MailForm submitHandle={handleSubmit} />
+      <MailForm submitHandle={handleSubmit} defaultEmail={userEmail} />
     </div>
   );
 }
