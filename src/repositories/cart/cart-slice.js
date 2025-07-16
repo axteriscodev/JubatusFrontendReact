@@ -66,7 +66,7 @@ const cartSlice = createSlice({
       const newEmail = action.payload;
 
       state.userEmail = newEmail;
-    }
+    },
 
     /**
      * Update dell'id evento

@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { apiRequest, listenSSE } from "../services/api-services";
 import { setUiPreset } from "../utils/graphics";
-import { toast, Bounce } from "react-toastify";
 import { fetchPriceList } from "../repositories/cart/cart-actions";
 import ProgressBar from "../components/ProgressBar";
 import { errorToast } from "../utils/toast-manager";
@@ -21,8 +20,6 @@ export default function ProcessingSelfie() {
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [isLoading, setIsLoading] = useState(true);
 
   //upload della foto
   useEffect(() => {

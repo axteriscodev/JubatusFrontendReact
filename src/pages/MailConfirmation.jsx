@@ -4,7 +4,9 @@ export default function MailConfirmation() {
   const userEmail = useSelector((state) => state.cart.eventId);
 
   async function handleSubmit(event, data) {
-    //TODO chiamare endpoint
+    //da implementare con la chiamata a node
+
+    console.log(`event: ${event} - Data: ${data}`)
   }
 
   return (
