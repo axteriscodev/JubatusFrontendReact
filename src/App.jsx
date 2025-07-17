@@ -29,6 +29,7 @@ import { loader as createEventLoader } from "./pages/CreateEvent";
 import EmailSent from "./pages/EmailSent";
 import ContentError from "./pages/ContentError";
 import MailConfirmation from "./pages/MailConfirmation";
+import ThankYou from "./pages/ThankYou";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -81,9 +82,15 @@ const router = createBrowserRouter([
     element: <CheckoutOutcome />,
     errorElement: <ErrorPage />,
   },
+  //Conferma dell email post acquisto
   {
     path: "/mail-confirmation",
     element: <MailConfirmation />,
+  },
+  //pagina di ringraziamenti
+  {
+    path:"/thank-you",
+    element: <ThankYou />
   },
   {
     path: "/purchased",
