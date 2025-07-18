@@ -46,10 +46,10 @@ export default function CheckoutOutcome() {
         // il pagamento è completo, vado a richiedere le foto reali
         if (status === PAYMENT_COMPLETE) {
           if (eventPreset.preOrder)
-            //navigate("/pre-order-purchased");
-            navigate("/mail-confirmation");
+            navigate("/pre-order-purchased");
           else
-            navigate("/processing-photos");
+            //navigate("/processing-photos");
+              navigate("/mail-confirmation");
         }
 
         // il pagamento risulta ancora in sospeso, ritorno al checkout
