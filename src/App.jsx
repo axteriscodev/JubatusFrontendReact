@@ -39,6 +39,7 @@ const getRedirectRoute = () => {
 };
 
 const router = createBrowserRouter([
+
   {
     path: "/",
     element: isAuthenticated() ? (
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
     element: <CheckoutOutcome />,
     errorElement: <ErrorPage />,
   },
-  //Conferma dell email post acquisto
+    //Conferma dell email post acquisto
   {
     path: "/mail-confirmation",
     element: <MailConfirmation />,
