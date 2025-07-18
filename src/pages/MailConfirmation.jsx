@@ -35,12 +35,15 @@ export default function MailConfirmation() {
         return;
       }
 
-      const response = apiRequest({
+      let body = JSON.stringify({ userId, orderId, email });
+      console.log(`body: ${body}`);
+      const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/confirm-email",
         method: "POST",
-        body: JSON.stringify({ userId, orderId, email }),
+        body: body,
       });
       if (response.ok) {
+        console.log("risposta ok");
         dispatch(cartActions.updateUserEmail(email));
         navigate("/thank-you");
       }
@@ -74,7 +77,7 @@ export default function MailConfirmation() {
       </div>
       <MailForm
         submitHandle={handleSubmit}
-        defaultEmail={userEmail}
+        defaultEmail={userEmail ?? ""}
         showPrivacy={false}
         onErrors={formErrors}
       />
