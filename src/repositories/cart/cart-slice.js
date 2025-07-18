@@ -253,7 +253,6 @@ const cartSlice = createSlice({
         state.allPhotos = totalPrice >= photoPackPrice && photoPackPrice > 0;
       }
 
-
       state.totalPrice = totalPrice;
     },
 
@@ -311,32 +310,7 @@ const cartSlice = createSlice({
       state.totalQuantity = itemToBuy.length;
 
       state.items = [...itemToBuy];
-      //console.log("state.items", JSON.stringify(state.items));
-
-      //numero foto selezionate
-      // const photosCount = state.items.filter(
-      //   (item) => item.fileTypeId === 1
-      // ).length;
-      //numero video selezionati
-      // const videosCount = state.items.filter(
-      //   (item) => item.fileTypeId === 2
-      // ).length;
-      //console.log("photosCount", photosCount);
-      //console.log("videosCount", videosCount);
-
-      //Prende la lista di prezzi e la trasforma in una lista di oggetti più pulita
-      // const formattedPrices = state.prices.map(
-      //   ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
-      //     id,
-      //     quantityPhoto,
-      //     quantityVideo,
-      //     price,
-      //     discount,
-      //     bestOffer,
-      //   })
-      // );
-      //console.log("formattedPrices", JSON.stringify(formattedPrices));
-
+   
       //prezzo foto singole
       const photoPrice =
         state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
@@ -344,29 +318,12 @@ const cartSlice = createSlice({
       const photoPackPrice =
         state.prices.find((item) => item.quantityPhoto === -1)?.price ?? 0;
 
-      //console.log("photoPrice", photoPrice);
-      //console.log("photoPackPrice", photoPackPrice);
-
-      //calcolo il prezzo totale in base ai pacchetti
-      // const totalPrice = calculatePrice(
-      //   formattedPrices,
-      //   photosCount,
-      //   videosCount
-      // );
-
       let totalPrice = packageCalculator(state.items, state.prices);
 
-
-      //console.log("totalPrice", totalPrice);
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
       state.alertPack =
         totalPrice + photoPrice > photoPackPrice && totalPrice < photoPackPrice;
 
-      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
-      // state.totalPrice =
-      //   totalPrice > photoPackPrice && photoPackPrice > 0
-      //     ? photoPackPrice
-      //     : totalPrice;
 
       state.totalPrice = totalPrice;
 
@@ -499,24 +456,6 @@ function packageCalculator(items, prices){
         })
       );
 
-      //prezzo foto singole
-      // const photoPrice =
-      // formattedPrices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
-      // const videoPrice =
-      // formattedPrices.find((item) => item.quantityVideo === 1)?.price ?? 0;
-      //prezzo 'pacchetto tutte le foto'
-      const photoPackPrice =
-      formattedPrices.find(
-          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0
-        )?.price ?? 0;
-      const fullPackPrice =
-      formattedPrices.find(
-          (item) => item.quantityPhoto === -1 && item.quantityVideo !== 0
-        )?.price ?? 0;
-      const videoPackPrice =
-      formattedPrices.find(
-          (item) => item.quantityPhoto === 0 && item.quantityVideo === -1
-        )?.price ?? 0;
       //calcolo il prezzo totale in base ai pacchetti
       const totalPrice = calculatePrice(
         formattedPrices,
@@ -524,27 +463,8 @@ function packageCalculator(items, prices){
         videosCount
       );
 
-      //calcolo prezzo solo foto
-      //se il prezzo dei prodotti selezionati supera l'importo del 'pacchetto tutte le foto' metto il valore del pack
-      if (videosCount === 0 && photosCount > 0) {
-        result =
-          totalPrice > photoPackPrice && photoPackPrice > 0
-            ? photoPackPrice
-            : totalPrice;
-        //calcolo prezzo solo video
-      } else if (videosCount > 0 && photosCount === 0) {
-        result =
-          totalPrice > videoPackPrice && videoPackPrice > 0
-            ? videoPackPrice
-            : totalPrice;
-        //calcolo prezzo foto + video
-      } else {
-        result =
-          totalPrice > fullPackPrice && fullPackPrice > 0
-            ? fullPackPrice
-            : totalPrice;
-      }
-
+      result = totalPrice;
+      console.log(result);
       return result;
 }
 
