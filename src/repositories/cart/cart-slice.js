@@ -275,6 +275,8 @@ const cartSlice = createSlice({
        totalPrice = packageCalculator(state.items, state.prices, state.previousAllPhotosPurchase);
       }
 
+      state.totalPrice = totalPrice;
+
     },
 
     /**
