@@ -480,7 +480,7 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   let basePrice = calculatePrice(formattedPrices, photosCount, videosCount);
 
   // Applica logica custom se presenti video e flag attivo
-  if (videosCount > 0 && previousAllPhotosPurchase) {
+  if (videosCount > 0 && previousAllPhotosPurchase && photosCount === 0) {
     const discountFromCompletePack = completePackPrice - photoPackPrice;
 
     // Se c'è **solo un video**, il prezzo è la differenza tra pacchetto completo e foto
