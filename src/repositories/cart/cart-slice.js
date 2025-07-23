@@ -23,6 +23,8 @@ const initialState = {
   hasVideo: false,
   allPhotos: false,
   video: false,
+  //meno booleano, più storico
+  previousAllPhotosPurchase  : false,
 };
 
 /**
@@ -198,6 +200,7 @@ const cartSlice = createSlice({
     } else{
       state.allPhotos = totalPrice >= photoPackPrice && photoPackPrice > 0;
     }
+
 
 
       state.totalPrice = totalPrice;
