@@ -496,7 +496,6 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   } else {
     result = basePrice;
   }
-
   return result;
 }
 
