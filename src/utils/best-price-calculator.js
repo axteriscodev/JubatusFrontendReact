@@ -8,98 +8,90 @@
  * @returns
  */
 export function calculatePrice(packages, requiredPhotos, requiredVideos) {
-  const filteredPackages = packages.filter(
-    (price) => price.quantityPhoto !== -1
+   const hasAllPhotos = (pkg) => pkg.quantityPhoto === -1;
+  const hasAllVideos = (pkg) => pkg.quantityVideo === -1;
+
+  let bestPrice = Infinity;
+
+  // Pacchetti con quantità finite
+  const finitePackages = packages.filter(
+    (pkg) => pkg.quantityPhoto >= 0 && pkg.quantityVideo >= 0
   );
 
-  // Crea una tabella DP per memorizzare il miglior prezzo per ogni combinazione di foto e video
+  // === 1. Programmazione dinamica in avanti (permette più copie dello stesso pacchetto) ===
   const dp = Array.from({ length: requiredPhotos + 1 }, () =>
     Array(requiredVideos + 1).fill(Infinity)
   );
-
-  // La base: il prezzo per 0 foto e 0 video è 0
   dp[0][0] = 0;
 
-  // Esploriamo ogni pacchetto
-  for (let i = 0; i < filteredPackages.length; i++) {
-    const { quantityPhoto, quantityVideo, price } = filteredPackages[i];
+  for (let p = 0; p <= requiredPhotos; p++) {
+    for (let v = 0; v <= requiredVideos; v++) {
+      if (dp[p][v] === Infinity) continue;
 
-    // Aggiorniamo la tabella DP
-    for (let photos = 0; photos <= requiredPhotos; photos++) {
-      for (let videos = 0; videos <= requiredVideos; videos++) {
-        // Verifica se è possibile aggiungere il pacchetto a questa combinazione
-        if (photos >= quantityPhoto && videos >= quantityVideo) {
-          // Calcoliamo il nuovo prezzo
-          const newPrice =
-            dp[photos - quantityPhoto][videos - quantityVideo] + price;
-          dp[photos][videos] = Math.min(dp[photos][videos], newPrice);
-        }
+      for (const pkg of finitePackages) {
+        const nextP = Math.min(p + pkg.quantityPhoto, requiredPhotos);
+        const nextV = Math.min(v + pkg.quantityVideo, requiredVideos);
+        dp[nextP][nextV] = Math.min(dp[nextP][nextV], dp[p][v] + pkg.price);
       }
     }
   }
 
-  // Se la cella finale ha ancora il valore Infinity, significa che non esiste una combinazione valida
-  return dp[requiredPhotos][requiredVideos] === Infinity
-    ? -1
-    : dp[requiredPhotos][requiredVideos];
-}
+  bestPrice = dp[requiredPhotos][requiredVideos];
 
-/**
- * Calcola il miglior prezzo e il miglior prezzo scontato per una selezione di pacchetti
- *
- * @param {*} packages - Lista pacchetti [{ quantityPhoto, quantityVideo, price, discount }]
- * @param {*} requiredPhotos - Numero di foto richieste
- * @param {*} requiredVideos - Numero di video richiesti
- * @returns {{ bestPrice: number, bestDiscountedPrice: number } | -1}
- */
-export function calculatePriceWithDiscount(
-  packages,
-  requiredPhotos,
-  requiredVideos
-) {
-  const filteredPackages = packages.filter((pkg) => pkg.quantityPhoto !== -1);
+  // === 2. Valutazione pacchetti speciali ===
+  for (const pkg of packages) {
+    const { quantityPhoto, quantityVideo, price } = pkg;
 
-  const dp = Array.from({ length: requiredPhotos + 1 }, () =>
-    Array(requiredVideos + 1).fill(Infinity)
-  );
-  const dpDiscounted = Array.from({ length: requiredPhotos + 1 }, () =>
-    Array(requiredVideos + 1).fill(Infinity)
-  );
+    const coversPhotos =
+      hasAllPhotos(pkg) || quantityPhoto >= requiredPhotos;
+    const coversVideos =
+      hasAllVideos(pkg) || quantityVideo >= requiredVideos;
 
-  dp[0][0] = 0;
-  dpDiscounted[0][0] = 0;
+    // Copre tutto
+    if (coversPhotos && coversVideos) {
+      bestPrice = Math.min(bestPrice, price);
+    }
 
-  for (const pkg of filteredPackages) {
-    const { quantityPhoto, quantityVideo, price, discount = 0 } = pkg;
-    const discountedPrice = Math.max(price - discount, 0);
+    // Copre tutte le foto, ma non tutti i video
+    if (hasAllPhotos(pkg) && quantityVideo >= 0 && quantityVideo < requiredVideos) {
+      const remainingVideos = requiredVideos - quantityVideo;
 
-    for (let photos = requiredPhotos; photos >= 0; photos--) {
-      for (let videos = requiredVideos; videos >= 0; videos--) {
-        const prevPhotos = photos - quantityPhoto;
-        const prevVideos = videos - quantityVideo;
+      const videoDP = Array(remainingVideos + 1).fill(Infinity);
+      videoDP[0] = 0;
 
-        if (prevPhotos >= 0 && prevVideos >= 0) {
-          const newPrice = dp[prevPhotos][prevVideos] + price;
-          const newDiscounted =
-            dpDiscounted[prevPhotos][prevVideos] + discountedPrice;
-
-          dp[photos][videos] = Math.min(dp[photos][videos], newPrice);
-          dpDiscounted[photos][videos] = Math.min(
-            dpDiscounted[photos][videos],
-            newDiscounted
-          );
+      for (let v = 0; v <= remainingVideos; v++) {
+        if (videoDP[v] === Infinity) continue;
+        for (const subPkg of finitePackages.filter(p => p.quantityPhoto === 0 && p.quantityVideo > 0)) {
+          const nextV = Math.min(v + subPkg.quantityVideo, remainingVideos);
+          videoDP[nextV] = Math.min(videoDP[nextV], videoDP[v] + subPkg.price);
         }
+      }
+
+      if (videoDP[remainingVideos] !== Infinity) {
+        bestPrice = Math.min(bestPrice, price + videoDP[remainingVideos]);
+      }
+    }
+
+    // Copre tutti i video, ma non tutte le foto
+    if (hasAllVideos(pkg) && quantityPhoto >= 0 && quantityPhoto < requiredPhotos) {
+      const remainingPhotos = requiredPhotos - quantityPhoto;
+
+      const photoDP = Array(remainingPhotos + 1).fill(Infinity);
+      photoDP[0] = 0;
+
+      for (let p = 0; p <= remainingPhotos; p++) {
+        if (photoDP[p] === Infinity) continue;
+        for (const subPkg of finitePackages.filter(p => p.quantityVideo === 0 && p.quantityPhoto > 0)) {
+          const nextP = Math.min(p + subPkg.quantityPhoto, remainingPhotos);
+          photoDP[nextP] = Math.min(photoDP[nextP], photoDP[p] + subPkg.price);
+        }
+      }
+
+      if (photoDP[remainingPhotos] !== Infinity) {
+        bestPrice = Math.min(bestPrice, price + photoDP[remainingPhotos]);
       }
     }
   }
 
-  const bestPrice = dp[requiredPhotos][requiredVideos];
-  const bestDiscountedPrice = dpDiscounted[requiredPhotos][requiredVideos];
-
-  return bestPrice === Infinity
-    ? -1
-    : {
-        bestPrice,
-        bestDiscountedPrice,
-      };
+  return bestPrice === Infinity ? -1 : bestPrice;
 }

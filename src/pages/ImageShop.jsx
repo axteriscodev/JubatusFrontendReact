@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
 import CustomLightbox from "../components/CustomLightbox";
 import { Link } from "react-router-dom";
+import DOMPurify from 'dompurify';
 
 export default function ImageShop() {
   const dispatch = useDispatch();
@@ -94,17 +95,14 @@ export default function ImageShop() {
         </div>
         {hasPhoto && !hasVideo && (
           <div className="my-md text-start">
-            <h2>
-              Ci siamo!
-            </h2>
+            <h2>Ci siamo!</h2>
             <p>Ecco le tue foto</p>
           </div>
         )}
         {!hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md">
             <h2>
-              Ciao, il <strong>tuo</strong> video è in
-              preparazione:
+              Ciao, il <strong>tuo</strong> video è in preparazione:
             </h2>
             <p>
               riceverai una mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥
@@ -113,9 +111,7 @@ export default function ImageShop() {
         )}
         {!hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
-            <h2>
-              Ci siamo!
-            </h2>
+            <h2>Ci siamo!</h2>
             <p>
               Il tuo video è pronto! Sbloccalo in HD e senza filigrana
               completando il pagamento
@@ -124,9 +120,7 @@ export default function ImageShop() {
         )}
         {hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md text-start">
-            <h2>
-              Ci siamo!
-            </h2>
+            <h2>Ci siamo!</h2>
             <p>Ecco le tue foto</p>
             <h4>
               il <strong>tuo</strong> video è in preparazione: riceverai una
@@ -136,9 +130,7 @@ export default function ImageShop() {
         )}
         {hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
-            <h2>
-              Ci siamo!
-            </h2>
+            <h2>Ci siamo!</h2>
             <p>Ecco le tue foto e il tuo video</p>
           </div>
         )}
@@ -177,38 +169,14 @@ export default function ImageShop() {
 }
 
 function getPriceListEntry(pricePack) {
-  if (pricePack.quantityPhoto === -1 && pricePack.quantityVideo !== 0)
-    return (
-      <>
-        <strong>Pacchetto completo</strong> - {pricePack.price}€
-      </>
-    );
+  const safeHTML = DOMPurify.sanitize(pricePack.itemsLanguages[0].title);
 
-  if (pricePack.quantityPhoto === -1)
-    return (
-      <>
-        <strong>Tutte</strong> le foto - {pricePack.price}€
-      </>
-    );
-
-  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo === 0)
-    return (
-      <>
-        {pricePack.quantityPhoto} Foto - {pricePack.price}€
-      </>
-    );
-  if (pricePack.quantityPhoto === 0 && pricePack.quantityVideo > 0)
-    return (
-      <>
-        Il <strong>tuo</strong> video - {pricePack.price}€
-      </>
-    );
-  if (pricePack.quantityPhoto > 0 && pricePack.quantityVideo > 0)
-    return (
-      <>
-        Il <strong>tuo</strong> video e {pricePack.quantityPhoto} foto -{" "}
-        {pricePack.price}€
-      </>
-    );
-  return "";
+  return (
+    <>
+      <span
+        dangerouslySetInnerHTML={{ __html: safeHTML }}
+      />
+      - {pricePack.price}€
+    </>
+  );
 }
