@@ -48,7 +48,8 @@ export default function CheckoutOutcome() {
           if (eventPreset.preOrder)
             navigate("/pre-order-purchased");
           else
-            navigate("/processing-photos");
+            //navigate("/processing-photos");
+              navigate("/mail-confirmation");
         }
 
         // il pagamento risulta ancora in sospeso, ritorno al checkout
