@@ -8,42 +8,37 @@
  * @returns
  */
 export function calculatePrice(packages, requiredPhotos, requiredVideos) {
-  // Funzione helper: indica se il pacchetto include tutte le foto
-  const hasAllPhotos = (pkg) => pkg.quantityPhoto === -1;
-  // Funzione helper: indica se il pacchetto include tutti i video
+   const hasAllPhotos = (pkg) => pkg.quantityPhoto === -1;
   const hasAllVideos = (pkg) => pkg.quantityVideo === -1;
 
   let bestPrice = Infinity;
 
-  // Pacchetti con quantità finite (>= 0 per entrambi)
+  // Pacchetti con quantità finite
   const finitePackages = packages.filter(
     (pkg) => pkg.quantityPhoto >= 0 && pkg.quantityVideo >= 0
   );
 
-  // === 1. Calcolo base: solo pacchetti normali combinati via programmazione dinamica ===
+  // === 1. Programmazione dinamica in avanti (permette più copie dello stesso pacchetto) ===
   const dp = Array.from({ length: requiredPhotos + 1 }, () =>
     Array(requiredVideos + 1).fill(Infinity)
   );
-  dp[0][0] = 0; // prezzo base: 0 foto, 0 video = 0€
+  dp[0][0] = 0;
 
-  for (const pkg of finitePackages) {
-    const { quantityPhoto, quantityVideo, price } = pkg;
+  for (let p = 0; p <= requiredPhotos; p++) {
+    for (let v = 0; v <= requiredVideos; v++) {
+      if (dp[p][v] === Infinity) continue;
 
-    // Calcolo combinazioni valide partendo dall'alto verso il basso (evita sovrascritture premature)
-    for (let p = requiredPhotos; p >= quantityPhoto; p--) {
-      for (let v = requiredVideos; v >= quantityVideo; v--) {
-        const prev = dp[p - quantityPhoto][v - quantityVideo];
-        if (prev !== Infinity) {
-          dp[p][v] = Math.min(dp[p][v], prev + price);
-        }
+      for (const pkg of finitePackages) {
+        const nextP = Math.min(p + pkg.quantityPhoto, requiredPhotos);
+        const nextV = Math.min(v + pkg.quantityVideo, requiredVideos);
+        dp[nextP][nextV] = Math.min(dp[nextP][nextV], dp[p][v] + pkg.price);
       }
     }
   }
 
-  // Salvo il prezzo più basso ottenuto solo da pacchetti normali
   bestPrice = dp[requiredPhotos][requiredVideos];
 
-  // === 2. Valuto i pacchetti speciali (illimitati o combinati) ===
+  // === 2. Valutazione pacchetti speciali ===
   for (const pkg of packages) {
     const { quantityPhoto, quantityVideo, price } = pkg;
 
@@ -52,25 +47,23 @@ export function calculatePrice(packages, requiredPhotos, requiredVideos) {
     const coversVideos =
       hasAllVideos(pkg) || quantityVideo >= requiredVideos;
 
-    // Se copre tutte le foto e tutti i video: può sostituire tutto
+    // Copre tutto
     if (coversPhotos && coversVideos) {
       bestPrice = Math.min(bestPrice, price);
     }
 
-    // Caso: pacchetto copre tutte le foto, ma solo una parte dei video
+    // Copre tutte le foto, ma non tutti i video
     if (hasAllPhotos(pkg) && quantityVideo >= 0 && quantityVideo < requiredVideos) {
       const remainingVideos = requiredVideos - quantityVideo;
 
-      // Trova il miglior modo per coprire i video rimanenti con pacchetti normali (solo video)
       const videoDP = Array(remainingVideos + 1).fill(Infinity);
       videoDP[0] = 0;
 
-      for (const subPkg of finitePackages.filter(p => p.quantityPhoto === 0 && p.quantityVideo > 0)) {
-        for (let v = remainingVideos; v >= subPkg.quantityVideo; v--) {
-          const prev = videoDP[v - subPkg.quantityVideo];
-          if (prev !== Infinity) {
-            videoDP[v] = Math.min(videoDP[v], prev + subPkg.price);
-          }
+      for (let v = 0; v <= remainingVideos; v++) {
+        if (videoDP[v] === Infinity) continue;
+        for (const subPkg of finitePackages.filter(p => p.quantityPhoto === 0 && p.quantityVideo > 0)) {
+          const nextV = Math.min(v + subPkg.quantityVideo, remainingVideos);
+          videoDP[nextV] = Math.min(videoDP[nextV], videoDP[v] + subPkg.price);
         }
       }
 
@@ -79,20 +72,18 @@ export function calculatePrice(packages, requiredPhotos, requiredVideos) {
       }
     }
 
-    // Caso: pacchetto copre tutti i video, ma solo una parte delle foto
+    // Copre tutti i video, ma non tutte le foto
     if (hasAllVideos(pkg) && quantityPhoto >= 0 && quantityPhoto < requiredPhotos) {
       const remainingPhotos = requiredPhotos - quantityPhoto;
 
-      // Trova il miglior modo per coprire le foto rimanenti con pacchetti normali (solo foto)
       const photoDP = Array(remainingPhotos + 1).fill(Infinity);
       photoDP[0] = 0;
 
-      for (const subPkg of finitePackages.filter(p => p.quantityVideo === 0 && p.quantityPhoto > 0)) {
-        for (let p = remainingPhotos; p >= subPkg.quantityPhoto; p--) {
-          const prev = photoDP[p - subPkg.quantityPhoto];
-          if (prev !== Infinity) {
-            photoDP[p] = Math.min(photoDP[p], prev + subPkg.price);
-          }
+      for (let p = 0; p <= remainingPhotos; p++) {
+        if (photoDP[p] === Infinity) continue;
+        for (const subPkg of finitePackages.filter(p => p.quantityVideo === 0 && p.quantityPhoto > 0)) {
+          const nextP = Math.min(p + subPkg.quantityPhoto, remainingPhotos);
+          photoDP[nextP] = Math.min(photoDP[nextP], photoDP[p] + subPkg.price);
         }
       }
 
@@ -102,6 +93,5 @@ export function calculatePrice(packages, requiredPhotos, requiredVideos) {
     }
   }
 
-  // Se nessuna combinazione valida è stata trovata, ritorna -1
   return bestPrice === Infinity ? -1 : bestPrice;
 }
