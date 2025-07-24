@@ -213,6 +213,7 @@ const cartSlice = createSlice({
         state.allPhotos = totalPrice >= photoPackPrice && photoPackPrice > 0;
       }
 
+      //se precedentemente sono state acquistate tutte le foto
       if (state.previousAllPhotosPurchase) {
         totalPrice = packageCalculator(state.items, state.prices, state.previousAllPhotosPurchase);
       }
@@ -271,6 +272,7 @@ const cartSlice = createSlice({
         state.allPhotos = totalPrice >= photoPackPrice && photoPackPrice > 0;
       }
 
+      //se precedentemente sono state acquistate tutte le foto
       if (state.previousAllPhotosPurchase) {
        totalPrice = packageCalculator(state.items, state.prices, state.previousAllPhotosPurchase);
       }
@@ -479,7 +481,7 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   // Calcolo base
   let basePrice = calculatePrice(formattedPrices, photosCount, videosCount);
 
-  // Applica logica custom se presenti video e flag attivo
+  // Applica logica custom se presenti solo dei video e le foto sono gia state tutte acquistate
   if (videosCount > 0 && previousAllPhotosPurchase && photosCount === 0) {
     const discountFromCompletePack = completePackPrice - photoPackPrice;
 
