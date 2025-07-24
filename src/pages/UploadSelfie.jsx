@@ -34,7 +34,6 @@ export default function UploadSelfie() {
     setHeaderData(eventData.data);
   }, []);
 
-
   //se l'utente ha già fatto una ricerca precedente ed aspetta solo il video
   //lo mando subito alla fase successiva
   useEffect(() => {
@@ -102,7 +101,11 @@ export default function UploadSelfie() {
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
       />
-      <MailForm submitHandle={handleSubmit} onErrors={formErrors} />
+      <MailForm
+        submitHandle={handleSubmit}
+        defaultEmail={""}
+        onErrors={formErrors}
+      />
     </div>
   );
 }

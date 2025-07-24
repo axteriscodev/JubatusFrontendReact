@@ -74,6 +74,7 @@ export default function Login() {
       <h1 className="mb-md">Accedi ai tuoi contenuti!</h1>
       <MailForm
         submitHandle={handleSubmit}
+        defaultEmail={""}
         showPrivacy={false}
         onErrors={formErrors}
       />
