@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../services/api-services";
 
@@ -7,6 +7,7 @@ export default function ThankYou() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [cooldown, setCooldown] = useState(0); // timer in secondi
   const userEmail = useSelector((state) => state.cart.userEmail);
   const orderId = useSelector((state) => state.cart.id);
 
@@ -29,6 +30,7 @@ export default function ThankYou() {
 
       if (response.ok) {
         setMessage("Un nuovo link è stato inviato alla tua email.");
+        setCooldown(60); // blocco per 60 secondi
       } else {
         setMessage("Errore nell'invio dell'email. Riprova più tardi.");
       }
@@ -39,29 +41,54 @@ export default function ThankYou() {
     }
   };
 
+  // Decrementa cooldown ogni secondo
+  useEffect(() => {
+    if (cooldown <= 0) return;
+
+    const timer = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  // Cancella il messaggio alla fine del timer
+  useEffect(() => {
+    if (cooldown === 0) {
+      setMessage("");
+    }
+  }, [cooldown]);
+
   return (
-    <div className="form-sm text-center">
-      <h2>Grazie per il tuo acquisto!</h2>
-      <p>
-        L'ordine è stato completato con successo. Ti abbiamo inviato un'email
-        all'indirizzo {userEmail} con il link di accesso alla tua area
-        personale, dove potrai scaricare tutti i contenuti in alta definizione.
+    <div className="form-sm mx-2">
+      <h2 className="text-center">Grazie per il tuo acquisto!</h2>
+      <p className="">
+        L'ordine è stato completato con successo. <br />
+        Ti abbiamo inviato un'email all'indirizzo <strong>
+          {userEmail}
+        </strong>{" "}
+        con il link di accesso alla tua area personale, dove potrai scaricare
+        tutti i contenuti in alta definizione.
       </p>
-      <button
+      {/* <button
         className="my-button w-100 mt-sm"
         onClick={(event) => submitHandle(event)}
       >
         Vai all'area riservata
-      </button>
+      </button> */}
 
       <div className="mt-md">
         <p>Non hai ricevuto l'email?</p>
         <button
-          className="my-button-outline w-100"
+          className="my-button w-100"
           onClick={handleResend}
-          disabled={loading}
+          disabled={loading || cooldown > 0}
         >
-          {loading ? "Invio in corso..." : "Rigenera link"}
+          {loading
+            ? "Invio in corso..."
+            : cooldown > 0
+            ? `Attendi ${cooldown}s`
+            : "Rigenera link"}
         </button>
         {message && <p className="mt-sm">{message}</p>}
       </div>
