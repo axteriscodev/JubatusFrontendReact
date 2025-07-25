@@ -60,9 +60,9 @@ export default function ThankYou() {
   }, [cooldown]);
 
   return (
-    <div className="form-sm mx-2">
+    <div className="form-sm">
       <h2 className="text-center">Grazie per il tuo acquisto!</h2>
-      <p className="">
+      <p className="max-4">
         L'ordine è stato completato con successo. <br />
         Ti abbiamo inviato un'email all'indirizzo <strong>
           {userEmail}
@@ -77,7 +77,7 @@ export default function ThankYou() {
         Vai all'area riservata
       </button> */}
 
-      <div className="mt-md">
+      <div className="mt-md max-4">
         <p>Non hai ricevuto l'email?</p>
         <button
           className="my-button w-100"
