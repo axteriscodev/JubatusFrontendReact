@@ -74,6 +74,7 @@ export default function ProcessingSelfie() {
               dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
               dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
               dispatch(cartActions.updateUserId(jsonData.userId));
+              dispatch(cartActions.updateUserEmail(jsonData.userEmail));
               dispatch(cartActions.updatePreviousAllPhotosPurchase(jsonData.previousAllPhotosPurchase ?? false));
 
               if (jsonData.contents.length > 0 || jsonData.hasVideo) {
