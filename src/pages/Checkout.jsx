@@ -67,7 +67,7 @@ export default function Checkout() {
         return res.json();
       })
       .then((data) => {
-        dispatch(cartActions.updateOrderId(data.data.oderId));
+        dispatch(cartActions.updateOrderId(data.data.orderId));
         return data.data.clientSecret;
       });
   }, []);
