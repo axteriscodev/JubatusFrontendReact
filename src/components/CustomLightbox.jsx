@@ -78,7 +78,7 @@ export default function CustomLightbox({
   //const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
 
   return (
-    <Lightbox
+  <Lightbox
       styles={{ container: { backgroundColor: "var(--overlay)" } }}
       open={open}
       close={onClose}
@@ -160,7 +160,7 @@ export default function CustomLightbox({
               <div className="shopBadge">🎉 Acquistato!</div>
             )}
             {actions && (
-              <div className="text-50 d-flex gap-3 justify-content-between position-absolute top-0 start-50 translate-middle-x">
+              <div className="rounded-4 text-50 d-flex gap-3 justify-content-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3 bg-black">
                 <a onClick={handleFavouriteClick} aria-label="Favourite image">
                   <i className={`bi ${currentImage.favorite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
                 </a>
