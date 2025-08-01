@@ -11,12 +11,11 @@ export default function ImageGallery({
   photoItems = null,
   personalSlice = false
 }) {
-
   return (
     <>
       <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 pb-lg ${styles.gallery}`}>
         {images.map((image, i) => (
-          <div key={image.keyPreview || image.keyThumbnail || image.keyOriginal || i}>
+          <div key={`gallery_${Date.now()}_${image.keyPreview || image.keyThumbnail || image.keyOriginal || i}_${i}`}>
             <div className="ratio ratio-1-1">
               <div>
                 <div className={`${styles.picture} ${
@@ -24,17 +23,19 @@ export default function ImageGallery({
                   } ${
                     image.urlCover && "video"
                   }`}
-                  style={{
-                    backgroundImage: `url(
-                    ${
+                >
+                  <img
+                    src={
                       !image.fileTypeId || image.fileTypeId == 1
                       ? 
                       image.urlPreview || image.urlThumbnail || image.url
                       : 
                       image.urlCover || "/images/play-icon.webp"
-                    })`
-                  }}
-                >
+                    }
+                    alt={`Immagine ${i + 1}`}
+                    loading="lazy"
+                    className={styles.galleryImage}
+                  />
                 </div>
                 <div className={styles.zoom}
                   onClick={() => onOpenLightbox?.(images, i, select, actions, personalSlice) }>

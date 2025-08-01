@@ -133,6 +133,7 @@ export default function CustomLightbox({
               src={slide.src || "/images/play-icon.webp"}
               alt=""
               className={styles.thunbnail}
+              loading="lazy"
             />
           </div>
         ),
