@@ -43,8 +43,11 @@ export default function MailConfirmation() {
         body: body,
       });
       if (response.ok) {
+        const json = await response.json();
         console.log("risposta ok");
-        dispatch(cartActions.updateUserEmail(email));
+        if(json.data.emailModified){
+          dispatch(cartActions.updateUserEmail(email));
+        }
         navigate("/thank-you");
       }
     } catch (err) {
