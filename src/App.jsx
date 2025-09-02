@@ -30,6 +30,7 @@ import EmailSent from "./pages/EmailSent";
 import ContentError from "./pages/ContentError";
 import MailConfirmation from "./pages/MailConfirmation";
 import ThankYou from "./pages/ThankYou";
+import { LanguageProvider } from "./features/LanguageContext";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -112,7 +113,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <LanguageProvider>
+      <RouterProvider router={router} />
+    </LanguageProvider>
+  );
 }
 
 export default App;
