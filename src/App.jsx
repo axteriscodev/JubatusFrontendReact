@@ -31,6 +31,7 @@ import ContentError from "./pages/ContentError";
 import MailConfirmation from "./pages/MailConfirmation";
 import ThankYou from "./pages/ThankYou";
 import { LanguageProvider } from "./features/LanguageContext";
+import { TranslationProvider } from "./features/TranslationProvider";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -40,7 +41,6 @@ const getRedirectRoute = () => {
 };
 
 const router = createBrowserRouter([
-
   {
     path: "/",
     element: isAuthenticated() ? (
@@ -84,15 +84,15 @@ const router = createBrowserRouter([
     element: <CheckoutOutcome />,
     errorElement: <ErrorPage />,
   },
-    //Conferma dell email post acquisto
+  //Conferma dell email post acquisto
   {
     path: "/mail-confirmation",
     element: <MailConfirmation />,
   },
   //pagina di ringraziamenti
   {
-    path:"/thank-you",
-    element: <ThankYou />
+    path: "/thank-you",
+    element: <ThankYou />,
   },
   {
     path: "/purchased",
@@ -115,7 +115,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <LanguageProvider>
-      <RouterProvider router={router} />
+      <TranslationProvider>
+        <RouterProvider router={router} />
+      </TranslationProvider>
     </LanguageProvider>
   );
 }

@@ -1,6 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useApi } from "../../services/useApi";
-import { apiFactory } from "../../services/apiFactory";
 
 // Lingua di default
 const defaultLanguage = {
@@ -11,7 +9,7 @@ const defaultLanguage = {
 
 const LanguageContext = createContext({
   currentLanguage: defaultLanguage,
-  setLanguage: () => { },
+  setLanguage: () => {},
   availableLanguages: [],
   loadingLanguages: false,
 });
@@ -21,46 +19,52 @@ export function LanguageProvider({ children }) {
   const [availableLanguages, setAvailableLanguages] = useState([]);
   const [loadingLanguages, setLoadingLanguages] = useState(true);
 
-  // creo il servizio
-  const apiService = apiFactory(import.meta.env.VITE_API_URL + "/api/language");
-
-  // importo stati e funzioni che servono
-  const { listState, getAll } = useApi(apiService);
-
   useEffect(() => {
-    getAll();
-  }, []);
+    const fetchLanguages = async () => {
+      setLoadingLanguages(true);
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/translation/language`
+        );
 
-  // Aggiorna stato con risultato fetch
-  useEffect(() => {
-    if (listState.data?.length) {
-      setAvailableLanguages(listState.data);
-
-      const saved = localStorage.getItem("preferred_lang");
-      let preferredLang;
-
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          preferredLang = listState.data.find(l => l.languageCode === parsed.languageCode);
-        } catch {
-          console.warn("Invalid preferred_lang in localStorage:", saved);
-          localStorage.removeItem("preferred_lang");
+        if (!response.ok) {
+          throw new Error(`Errore HTTP: ${response.status}`);
         }
-      }
 
-      if (!preferredLang) {
-        preferredLang = listState.data.find(l => l.languageCode === "it") || listState.data[0];
-      }
+        const data = await response.json();
+        setAvailableLanguages(data.data);
 
-      if (preferredLang) {
-        setCurrentLanguage(preferredLang);
-        localStorage.setItem("preferred_lang", JSON.stringify(preferredLang));
-      }
+        const saved = localStorage.getItem("preferred_lang");
+        let preferredLang;
 
-      setLoadingLanguages(false);
-    }
-  }, [listState.data]);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            preferredLang = data.data.find(l => l.acronym === parsed.languageCode);
+          } catch {
+            console.warn("Invalid preferred_lang in localStorage:", saved);
+            localStorage.removeItem("preferred_lang");
+          }
+        }
+
+        if (!preferredLang) {
+          preferredLang = data.data.find(l => l.acronym === "it") || data.data[0];
+        }
+
+        if (preferredLang) {
+          setCurrentLanguage(preferredLang);
+          localStorage.setItem("preferred_lang", JSON.stringify(preferredLang));
+        }
+      } catch (error) {
+        console.error("Errore durante il fetch delle lingue:", error);
+        setAvailableLanguages([]);
+      } finally {
+        setLoadingLanguages(false);
+      }
+    };
+
+    fetchLanguages();
+  }, []);
 
   const setLanguage = (lang) => {
     setCurrentLanguage(lang);
@@ -68,12 +72,14 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{
-      currentLanguage: currentLanguage ?? defaultLanguage,
-      setLanguage,
-      availableLanguages,
-      loadingLanguages
-    }}>
+    <LanguageContext.Provider
+      value={{
+        currentLanguage: currentLanguage ?? defaultLanguage,
+        setLanguage,
+        availableLanguages,
+        loadingLanguages,
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );

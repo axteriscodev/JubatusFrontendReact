@@ -6,6 +6,7 @@ import validator from "validator";
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { resetHeaderData } from "../utils/graphics";
+import { useTranslations } from "../features/TranslationProvider";
 
 /**
  * Pagina di login
@@ -16,6 +17,9 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState(new FormErrors());
+
+  // Testi in lingua
+    const { t } = useTranslations();
 
   useEffect(() => {
     document.documentElement.style.setProperty("--bg-event-color", "");
@@ -71,7 +75,7 @@ export default function Login() {
 
   return (
     <div className="form form-sm">
-      <h1 className="mb-md">Accedi ai tuoi contenuti!</h1>
+      <h1 className="mb-md">{t('EMAIL_ACCESS')}</h1>
       <MailForm
         submitHandle={handleSubmit}
         defaultEmail={""}

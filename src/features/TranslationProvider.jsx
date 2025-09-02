@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLanguage } from './LanguageContext';
-import { useApi } from "../../services/useApi";
-import { apiFactory } from "../../services/apiFactory";
 
 export const TranslationContext = createContext({
   translations: {},
@@ -12,32 +10,41 @@ export const TranslationContext = createContext({
 export function TranslationProvider({ children }) {
   const { currentLanguage } = useLanguage();
   const langCode = currentLanguage.languageCode;
+
   const [translations, setTranslations] = useState({});
   const [loadingTranslations, setLoadingTranslations] = useState(true);
 
   const t = (key) => translations[key] ?? "";
 
-  // creo il servizio
-  const apiService = apiFactory(import.meta.env.VITE_API_URL + "/api/language");
-
-  // importo stati e funzioni che servono
-  const { listState, getAll } = useApi(apiService);
-
-  useEffect(() => {
-    getAll({ id: langCode, action: "translations" });
-  }, [langCode]);
-
   const toDictionary = (array) =>
     Object.fromEntries(array.map(item => [item.key, item.value]));
 
   useEffect(() => {
-    if (listState.data) {
-      setTranslations(toDictionary(listState.data));
-    } else {
-      setTranslations({});
+    const fetchTranslations = async () => {
+      setLoadingTranslations(true);
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/translation/fetch/${langCode}/`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Errore HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setTranslations(toDictionary(data.data));
+      } catch (error) {
+        console.error("Errore durante il fetch delle traduzioni:", error);
+        setTranslations({});
+      } finally {
+        setLoadingTranslations(false);
+      }
+    };
+
+    if (langCode) {
+      fetchTranslations();
     }
-    setLoadingTranslations(listState.loading);
-  }, [listState.data, listState.loading]);
+  }, [langCode]);
 
   return (
     <TranslationContext.Provider value={{ translations, t, loadingTranslations }}>
