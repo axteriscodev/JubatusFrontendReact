@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../services/api-services";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function ThankYou() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function ThankYou() {
   const [cooldown, setCooldown] = useState(0); // timer in secondi
   const userEmail = useSelector((state) => state.cart.userEmail);
   const orderId = useSelector((state) => state.cart.id);
+  const { t } = useTranslations();
 
   const submitHandle = (event) => {
     navigate("/");
@@ -61,9 +63,9 @@ export default function ThankYou() {
 
   return (
     <div className="form-sm">
-      <h2 className="text-center">Grazie per il tuo acquisto!</h2>
+      <h2 className="text-center">{t('PURCHASE_TITLE')}</h2>
       <p className="max-4">
-        L'ordine è stato completato con successo. <br />
+        {t('PURCHASE_TITLE')} <br />
         Ti abbiamo inviato un'email all'indirizzo <strong>
           {userEmail}
         </strong>{" "}
@@ -78,7 +80,7 @@ export default function ThankYou() {
       </button> */}
 
       <div className="mt-md max-4">
-        <p>Non hai ricevuto l'email?</p>
+        <p>{t('PURCHASE_EMAIL')}</p>
         <button
           className="my-button w-100"
           onClick={handleResend}

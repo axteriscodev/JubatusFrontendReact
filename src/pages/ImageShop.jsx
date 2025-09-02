@@ -8,6 +8,7 @@ import { setUiPreset } from "../utils/graphics";
 import CustomLightbox from "../components/CustomLightbox";
 import { Link } from "react-router-dom";
 import DOMPurify from 'dompurify';
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function ImageShop() {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ export default function ImageShop() {
   const hasVideo = useSelector((state) => state.cart.hasVideo);
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
+  const { t } = useTranslations();
 
   //const numPhoto = imagesList?.filter(item => item.fileTypeId === 1).length;
   const numVideo = imagesList?.filter((item) => item.fileTypeId === 2).length;
@@ -95,8 +97,8 @@ export default function ImageShop() {
         </div>
         {hasPhoto && !hasVideo && (
           <div className="my-md text-start">
-            <h2>Ci siamo!</h2>
-            <p>Ecco le tue foto</p>
+            <h2>{t("RESULT_TITLE")}</h2>
+            <p>{t("RESULT_PHOTO")}</p>
           </div>
         )}
         {!hasPhoto && hasVideo && numVideo == 0 && (
@@ -111,7 +113,7 @@ export default function ImageShop() {
         )}
         {!hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
-            <h2>Ci siamo!</h2>
+            <h2>{t("RESULT_TITLE")}</h2>
             <p>
               Il tuo video è pronto! Sbloccalo in HD e senza filigrana
               completando il pagamento
@@ -120,7 +122,7 @@ export default function ImageShop() {
         )}
         {hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md text-start">
-            <h2>Ci siamo!</h2>
+            <h2>{t("RESULT_TITLE")}</h2>
             <p>Ecco le tue foto</p>
             <h4>
               il <strong>tuo</strong> video è in preparazione: riceverai una
@@ -130,7 +132,7 @@ export default function ImageShop() {
         )}
         {hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
-            <h2>Ci siamo!</h2>
+            <h2>{t("RESULT_TITLE")}</h2>
             <p>Ecco le tue foto e il tuo video</p>
           </div>
         )}

@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useNavigate } from "react-router-dom";
 import { isPhotoFullPackEligible } from "../utils/offers";
+import { useTranslations } from "../features/TranslationProvider";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -19,6 +20,7 @@ export default function Checkout() {
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const buttonHandle = (event) => {
     if (eventPreset.preOrder) navigate("/pre-order");
@@ -80,7 +82,7 @@ export default function Checkout() {
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
       <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
-        Torna allo store
+        {t('CHECKOUT_BACK')}
       </button>
     </>
   );

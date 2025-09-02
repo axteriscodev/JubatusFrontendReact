@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { useTranslations } from "../features/TranslationProvider";
 
 const PAYMENT_COMPLETE = "complete";
 const PAYMENT_OPEN = "open";
@@ -12,6 +13,7 @@ export default function CheckoutOutcome() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslations();
 
   // fetch dell'esito
   useEffect(() => {
@@ -65,7 +67,7 @@ export default function CheckoutOutcome() {
   if (status === PAYMENT_COMPLETE) {
     return (
       <>
-        <h3>Pagamento completato</h3>
+        <h3>{t('PAYMENT_COMPLETED')}</h3>
       </>
     );
   }
@@ -73,7 +75,7 @@ export default function CheckoutOutcome() {
   if (status === PAYMENT_OPEN) {
     return (
       <>
-        <h3>Qualcosa è andato storto</h3>
+        <h3>{t('ERROR')}</h3>
       </>
     );
   }

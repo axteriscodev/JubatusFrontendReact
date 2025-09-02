@@ -1,10 +1,12 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function ContentError() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const buttonHandle = (event) => {
     navigate("/event/" + eventPreset.slug);
@@ -34,7 +36,7 @@ export default function ContentError() {
       Caricamento */}
 
       <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
-        Torna indietro
+        {t('WAITING_BACK')}
       </button>
     </div>
   );
