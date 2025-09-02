@@ -7,6 +7,7 @@ import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
+import LanguageSelect from "../components/LanguageSelect";
 
 /**
  * Pagina di login
@@ -82,6 +83,7 @@ export default function Login() {
         showPrivacy={false}
         onErrors={formErrors}
       />
+      <LanguageSelect />
     </div>
   );
 }

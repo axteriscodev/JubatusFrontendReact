@@ -2,9 +2,9 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 // Lingua di default
 const defaultLanguage = {
-  languageId: "",
-  languageCode: "it",
-  languageName: "Italiano",
+  id: "",
+  acronym: "it",
+  language: "Italiano",
 };
 
 const LanguageContext = createContext({
@@ -40,7 +40,7 @@ export function LanguageProvider({ children }) {
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
-            preferredLang = data.data.find(l => l.acronym === parsed.languageCode);
+            preferredLang = data.data.find(l => l.acronym === parsed.acronym);
           } catch {
             console.warn("Invalid preferred_lang in localStorage:", saved);
             localStorage.removeItem("preferred_lang");

@@ -9,7 +9,7 @@ export const TranslationContext = createContext({
 
 export function TranslationProvider({ children }) {
   const { currentLanguage } = useLanguage();
-  const langCode = currentLanguage.languageCode;
+  const langCode = currentLanguage.acronym;
 
   const [translations, setTranslations] = useState({});
   const [loadingTranslations, setLoadingTranslations] = useState(true);
