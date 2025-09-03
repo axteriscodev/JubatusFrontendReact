@@ -2,6 +2,8 @@ import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 export default function MailForm({
   defaultEmail,
@@ -17,6 +19,7 @@ export default function MailForm({
     setShow(true);
     event.preventDefault();
   };
+  const { t } = useTranslations();
 
   const handlePrivacyChange = (event) => {
     const newValue = event.target.checked;
@@ -31,7 +34,7 @@ export default function MailForm({
         name="email"
         value={emailValue}
         onChange={(e) => setEmailValue(e.target.value)}
-        placeholder="Inserisci la tua e-mail"
+        placeholder={t("EMAIL_ENTER")}
       />
       {onErrors.emailError && (
         <p className="on-error">Inserisci una mail valida</p>
@@ -67,21 +70,16 @@ export default function MailForm({
               <Modal.Header closeButton>
                 <Modal.Title>
                   <font className="text-black">
-                    Informativa sul trattamento dei dati personali
+                    {t("PRIVACY_TITLE")}
                   </font>
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <p className="text-black">
-                  Ai sensi del Regolamento UE 2016/679, i dati personali
-                  raccolti tramite questo form saranno trattati da Jubatus
-                  S.r.l. per rispondere alla tua richiesta e per l’erogazione
-                  dei servizi richiesti. I dati potranno essere usati per
-                  finalità contrattuali, amministrative e, previo consenso, per
-                  comunicazioni promozionali.
+                 {t("PRIVACY_CONTENT")}
                 </p>
                 <p className="text-black">
-                  Per maggiori dettagli consulta l’
+                  {t("PRIVACY_DETAILS")}
                   <a
                     href="https://www.jubatus.it/utility/privacy-policy"
                     target="_blank"
@@ -94,7 +92,7 @@ export default function MailForm({
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="dark" onClick={handleClose}>
-                  Chiudi
+                  {t("PRIVACY_CLOSE")}
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -113,7 +111,7 @@ export default function MailForm({
           })
         }
       >
-        Avanti &gt;
+       {parse(t("SELFIE_NEXT"))}
       </button>
     </div>
   );
