@@ -59,7 +59,7 @@ export default function Personal() {
       <div className="container">
         <div className="d-flex justify-content-end my-sm">
           <Button onClick={handleLogout} variant="outline-danger">
-            <i class="bi bi-box-arrow-right"></i> Logout
+            <i className="bi bi-box-arrow-right"></i> Logout
           </Button>
         </div>
         {purchasedItems?.length > 0 ? (
@@ -69,7 +69,7 @@ export default function Personal() {
               <Carousel>
                 {purchasedItems.map((image, i) => (
                   <Carousel.Item
-                    key={image.keyPreview || image.keyThumbnail || i}
+                    key={`carousel_${Date.now()}_${image.keyPreview || image.keyThumbnail || i}_${i}`}
                   >
                     <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
                       onClick={() =>
@@ -84,6 +84,7 @@ export default function Personal() {
                             : image.urlCover || "/images/play-icon.webp"
                         }
                         className="img-fluid"
+                        loading="lazy"
                         alt="..."
                       />
                     </div>

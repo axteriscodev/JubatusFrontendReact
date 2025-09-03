@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import { useSelector, useDispatch } from "react-redux";
@@ -43,8 +43,11 @@ export default function MailConfirmation() {
         body: body,
       });
       if (response.ok) {
+        const json = await response.json();
         console.log("risposta ok");
-        dispatch(cartActions.updateUserEmail(email));
+        if(json.data.emailModified){
+          dispatch(cartActions.updateUserEmail(email));
+        }
         navigate("/thank-you");
       }
     } catch (err) {

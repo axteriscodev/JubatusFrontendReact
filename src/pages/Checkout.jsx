@@ -21,10 +21,8 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const buttonHandle = (event) => {
-    if (eventPreset.preOrder)
-      navigate("/pre-order");
-    else
-      navigate("/image-shop/");
+    if (eventPreset.preOrder) navigate("/pre-order");
+    else navigate("/image-shop/");
   };
 
   const fetchClientSecret = useCallback(() => {
@@ -44,7 +42,16 @@ export default function Checkout() {
             allPhotos: cart.allPhotos,
             video: cart.video,
             amount: cart.totalPrice,
-            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices) ? cart.products.filter((item) => item.purchased !== true) : cart.items,
+            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
+              ? [
+                  ...cart.products.filter(
+                    (item) => item.fileTypeId === 1 && item.purchased !== true
+                  ),
+                  ...cart.items.filter(
+                    (item) => item.fileTypeId === 2 && item.purchased !== true
+                  ),
+                ]
+              : cart.items,
           },
           clientUrl: import.meta.env.VITE_APP_DOMAIN,
         }),
@@ -60,7 +67,7 @@ export default function Checkout() {
         return res.json();
       })
       .then((data) => {
-        dispatch(cartActions.updateOrderId(data.data.oderId));
+        dispatch(cartActions.updateOrderId(data.data.orderId));
         return data.data.clientSecret;
       });
   }, []);
