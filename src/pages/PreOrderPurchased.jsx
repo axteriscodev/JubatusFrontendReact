@@ -24,7 +24,7 @@ export default function PreOrderPurchased() {
                     />
                 </Link>
                 <h2 className="mt-md">{parse(t('PURCHASE_TITLE'))}</h2>
-                <p>Riceverai una comunicazione per e-mail appena i tuoi contenuti saranno disponibili.</p>
+                <p>{t("PREORDER_EMAIL")}</p>
             </div>
         </>
     );

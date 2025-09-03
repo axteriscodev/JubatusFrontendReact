@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 export default function ContentError() {
   const eventPreset = useSelector((state) => state.competition);
@@ -19,9 +20,7 @@ export default function ContentError() {
         size="logo-sm"
         css="mb-sm"
       />
-      <h2>C'è stato un errore imprevisto,</h2>
-      <h2>ma non ti preoccupare,</h2>
-      <h2>i tuoi acquisti saranno presto disponibili!</h2>
+      {parse(t('ERROR_UNEXPECTED'))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       {/* <div
         className="progress mt-md"

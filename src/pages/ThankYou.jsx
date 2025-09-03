@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../services/api-services";
 import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 export default function ThankYou() {
   const navigate = useNavigate();
@@ -66,11 +67,7 @@ export default function ThankYou() {
       <h2 className="text-center">{t('PURCHASE_TITLE')}</h2>
       <p className="max-4">
         {t('PURCHASE_TITLE')} <br />
-        Ti abbiamo inviato un'email all'indirizzo <strong>
-          {userEmail}
-        </strong>{" "}
-        con il link di accesso alla tua area personale, dove potrai scaricare
-        tutti i contenuti in alta definizione.
+        {parse(t('PURCHASE_ACCESS').replace('$email', userEmail))}
       </p>
       {/* <button
         className="my-button w-100 mt-sm"

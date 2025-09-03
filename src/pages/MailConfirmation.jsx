@@ -65,8 +65,7 @@ export default function MailConfirmation() {
             <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
             <h4 className="">{t('EMAIL_ENTER')}</h4>
             <p>
-              Per accedere alla tua area personale è necessario un indirizzo
-              email valido.
+             {t('EMAIL_AREA')}
             </p>
           </>
         ) : (
@@ -76,7 +75,7 @@ export default function MailConfirmation() {
             // TODO - sostituire il campo mail
             }
             <p>
-              {t('PAYMENT_ACCESS')} <br />
+              {t('PAYMENT_ACCESS').replace("$email", userEmail)} <br />
               {t('PAYMENT_CORRECT')}
             </p>
           </>

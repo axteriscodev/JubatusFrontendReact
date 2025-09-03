@@ -82,7 +82,7 @@ export default function Checkout() {
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
       <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
-        {t('CHECKOUT_BACK')}
+        {t("CHECKOUT_BACK")}
       </button>
     </>
   );

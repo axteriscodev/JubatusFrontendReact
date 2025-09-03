@@ -9,6 +9,7 @@ import CustomLightbox from "../components/CustomLightbox";
 import { Link } from "react-router-dom";
 import DOMPurify from 'dompurify';
 import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 export default function ImageShop() {
   const dispatch = useDispatch();
@@ -74,10 +75,10 @@ export default function ImageShop() {
     <>
       {alertPack && (
         <div className="shopNotify shadow text-black">
-          Metti nel carrello un'altra foto per ottenere il pacchetto completo
+          {t("CART_ADD")}
         </div>
       )}
-      <div className="container">
+      <div className="container"> 
         <div className="d-flex justify-content-between">
           <div className="text-start">
             <Link to={"/event/" + eventPreset.slug}>
@@ -103,27 +104,21 @@ export default function ImageShop() {
         )}
         {!hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md">
-            <h2>
-              Ciao, il <strong>tuo</strong> video è in preparazione:
-            </h2>
-            <p>
-              riceverai una mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥
-            </p>
+            {parse(t("RESULT_VIDEO"))}
           </div>
         )}
         {!hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
             <h2>{t("RESULT_TITLE")}</h2>
             <p>
-              Il tuo video è pronto! Sbloccalo in HD e senza filigrana
-              completando il pagamento
+              {t("CART_VIDEO")}
             </p>
           </div>
         )}
         {hasPhoto && hasVideo && numVideo == 0 && (
           <div className="my-md text-start">
             <h2>{t("RESULT_TITLE")}</h2>
-            <p>Ecco le tue foto</p>
+            <p>{t("RESULT_PHOTO")}</p>
             <h4>
               il <strong>tuo</strong> video è in preparazione: riceverai una
               mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥
@@ -133,7 +128,7 @@ export default function ImageShop() {
         {hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
             <h2>{t("RESULT_TITLE")}</h2>
-            <p>Ecco le tue foto e il tuo video</p>
+            <p>{t("CART_PHOTOVIDEO")}</p>
           </div>
         )}
 

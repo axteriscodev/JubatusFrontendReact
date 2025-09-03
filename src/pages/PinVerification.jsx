@@ -4,12 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { setAuthToken, setLevel } from "../utils/auth";
 import PinForm from "../components/PinForm";
 import FormErrors from "../models/form-errors";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function PinVerification() {
   const navigate = useNavigate();
   const emailValue = useSelector((state) => state.user.email);
   //const [formErrors, setFormErrors] = useState(new FormErrors());
   const userPin = useParams();
+  const {t} = useTranslations();
 
   useEffect(() => {
     async function verifyPin() {
@@ -92,7 +94,7 @@ export default function PinVerification() {
   return (
     <div className="form form-sm">
       {/* <h1 className="mb-md">Accedi ai tuoi contenuti!</h1> */}
-      <h1 className="mb-md">Verifica del pin in corso...</h1>
+      <h1 className="mb-md">{t("PERSONAL_PIN")}</h1>
       {/* <PinForm submitHandle={handleSubmit} onErrors={formErrors} /> */}
     </div>
   );

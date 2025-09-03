@@ -8,6 +8,8 @@ import { setUiPreset } from "../utils/graphics";
 import { fetchPriceList } from "../repositories/cart/cart-actions";
 import ProgressBar from "../components/ProgressBar";
 import { errorToast } from "../utils/toast-manager";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 /**
  * Pagina di elaborazione selfie
@@ -20,6 +22,7 @@ export default function ProcessingSelfie() {
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   //upload della foto
   useEffect(() => {
@@ -119,16 +122,10 @@ export default function ProcessingSelfie() {
         size="logo-sm"
         css="mb-sm"
       />
-      <h2>
-        Ciao!
-      </h2>
-      <h2>aspetta qualche secondo...</h2>
-      <h2>
-        ti stiamo cercando in mezzo alla folla
-      </h2>
+      {parse(t("WAITING_SEARCH"))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       <ProgressBar />
-      Caricamento
+      {t("PROCESSING_LOADING")}
     </div>
   );
 }
