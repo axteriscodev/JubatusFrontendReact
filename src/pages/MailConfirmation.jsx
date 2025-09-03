@@ -4,9 +4,11 @@ import validator from "validator";
 import { useSelector, useDispatch } from "react-redux";
 import { apiRequest } from "../services/api-services";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { useTranslations } from "../features/TranslationProvider";
 
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
+import { useLanguage } from "../features/LanguageContext";
 
 export default function MailConfirmation() {
   const dispatch = useDispatch();
@@ -14,7 +16,9 @@ export default function MailConfirmation() {
   const userId = useSelector((state) => state.cart.userId);
   const orderId = useSelector((state) => state.cart.id);
   const userEmail = useSelector((state) => state.cart.userEmail);
+  const { currentLanguage } = useLanguage();
   const [formErrors, setFormErrors] = useState(new FormErrors());
+  const { t } = useTranslations();
 
   const isEmailEmpty = !userEmail || userEmail.trim() === "";
 
@@ -35,7 +39,7 @@ export default function MailConfirmation() {
         return;
       }
 
-      let body = JSON.stringify({ userId, orderId, email });
+      let body = JSON.stringify({ userId, orderId, email, lang: currentLanguage.acronym });
       console.log(`body: ${body}`);
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/confirm-email",
@@ -60,20 +64,21 @@ export default function MailConfirmation() {
       <div className="my-md text-start">
         {isEmailEmpty ? (
           <>
-            <h2 className="mb-sm">Acquisto completato!</h2>
-            <h4 className="">Inserisci la tua email</h4>
+            <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
+            <h4 className="">{t('EMAIL_ENTER')}</h4>
             <p>
-              Per accedere alla tua area personale è necessario un indirizzo
-              email valido.
+             {t('EMAIL_AREA')}
             </p>
           </>
         ) : (
           <>
-            <h2 className="mb-sm">Acquisto completato!</h2>
+            <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
+            {
+            // TODO - sostituire il campo mail
+            }
             <p>
-              Con l’email <strong>{userEmail}</strong> potrai accedere alla tua
-              area personale. <br />
-              Se è sbagliata, puoi correggerla ora.
+              {t('PAYMENT_ACCESS').replace("$email", userEmail)} <br />
+              {t('PAYMENT_CORRECT')}
             </p>
           </>
         )}

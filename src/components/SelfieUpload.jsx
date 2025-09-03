@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
+import { useTranslations } from "../features/TranslationProvider";
 
 import styles from "./SelfieUpload.module.css";
 
 export default function SelfieUpload({ onDataChange, onError = false }) {
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const { t } = useTranslations();
 
   const handleImageClick = () => {
     if (imageUrl) return false;
@@ -23,8 +25,8 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
 
   return (
     <div>
-      <h3>Carica il tuo selfie</h3>
-      <p className="my-sm text-secondary">Carica il selfie e inserisci la tua e-mail per visualizzare i tuoi contenuti</p>    
+      <h3>{t('SELFIE_TITLE')}</h3>
+      <p className="my-sm text-secondary">{t('SELFIE_UPLOAD')}</p>
       <div
         className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
@@ -45,7 +47,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           style={{ cursor: "pointer" }}
         />
       )}
-      {onError && <p className="on-error">Inserisci un tuo selfie</p>}
+      {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
       <input
         type="file"
         ref={fileInputRef}

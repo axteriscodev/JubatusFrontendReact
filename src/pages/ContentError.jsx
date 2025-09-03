@@ -1,10 +1,13 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 export default function ContentError() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const buttonHandle = (event) => {
     navigate("/event/" + eventPreset.slug);
@@ -17,9 +20,7 @@ export default function ContentError() {
         size="logo-sm"
         css="mb-sm"
       />
-      <h2>C'è stato un errore imprevisto,</h2>
-      <h2>ma non ti preoccupare,</h2>
-      <h2>i tuoi acquisti saranno presto disponibili!</h2>
+      {parse(t('ERROR_UNEXPECTED'))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       {/* <div
         className="progress mt-md"
@@ -34,7 +35,7 @@ export default function ContentError() {
       Caricamento */}
 
       <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
-        Torna indietro
+        {t('WAITING_BACK')}
       </button>
     </div>
   );

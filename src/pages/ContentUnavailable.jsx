@@ -1,10 +1,14 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
+
 
 export default function ContentUnavailable() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
+  const { t } = useTranslations();
 
   const buttonHandle = (event) => {
     navigate("/event/" + eventPreset.slug);
@@ -17,8 +21,7 @@ export default function ContentUnavailable() {
         size="logo-sm"
         css="mb-sm"
       />
-      <h2>Peccato, foto e video non ancora disponibili.</h2>
-      <h2>Tieni d'occhio la mail: ti scriveremo appena pronte!</h2>
+      {parse(t('WAITING_NOTHING'))}
       <h2>{eventPreset.emoji ?? "📷 ⌛ 📧"}</h2>
       {/* <div
         className="progress mt-md"
@@ -33,7 +36,7 @@ export default function ContentUnavailable() {
       Caricamento */}
 
       <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
-        Torna indietro
+        {t('WAITING_BACK')}
       </button>
     </div>
   );
