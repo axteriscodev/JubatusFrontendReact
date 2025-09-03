@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { apiRequest } from "../services/api-services";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from 'html-react-parser';
+import { useLanguage } from "../features/LanguageContext";
 
 export default function ThankYou() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export default function ThankYou() {
   const [cooldown, setCooldown] = useState(0); // timer in secondi
   const userEmail = useSelector((state) => state.cart.userEmail);
   const orderId = useSelector((state) => state.cart.id);
+  const { currentLanguage } = useLanguage();
   const { t } = useTranslations();
 
   const submitHandle = (event) => {
@@ -24,7 +26,7 @@ export default function ThankYou() {
     setMessage("");
 
     try {
-      const body = JSON.stringify({ userEmail: userEmail, orderId: orderId });
+      const body = JSON.stringify({ userEmail: userEmail, orderId: orderId, lang: currentLanguage.acronym });
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/resend-link",
         method: "POST",

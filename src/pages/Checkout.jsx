@@ -9,6 +9,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { useNavigate } from "react-router-dom";
 import { isPhotoFullPackEligible } from "../utils/offers";
 import { useTranslations } from "../features/TranslationProvider";
+import { useLanguage } from "../features/LanguageContext";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -20,6 +21,7 @@ export default function Checkout() {
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { currentLanguage } = useLanguage();
   const { t } = useTranslations();
 
   const buttonHandle = (event) => {
@@ -56,6 +58,7 @@ export default function Checkout() {
               : cart.items,
           },
           clientUrl: import.meta.env.VITE_APP_DOMAIN,
+          lang: currentLanguage.acronym
         }),
       }
     )

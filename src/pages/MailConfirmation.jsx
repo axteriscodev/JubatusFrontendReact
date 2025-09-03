@@ -8,6 +8,7 @@ import { useTranslations } from "../features/TranslationProvider";
 
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
+import { useLanguage } from "../features/LanguageContext";
 
 export default function MailConfirmation() {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ export default function MailConfirmation() {
   const userId = useSelector((state) => state.cart.userId);
   const orderId = useSelector((state) => state.cart.id);
   const userEmail = useSelector((state) => state.cart.userEmail);
+  const { currentLanguage } = useLanguage();
   const [formErrors, setFormErrors] = useState(new FormErrors());
   const { t } = useTranslations();
 
@@ -37,7 +39,7 @@ export default function MailConfirmation() {
         return;
       }
 
-      let body = JSON.stringify({ userId, orderId, email });
+      let body = JSON.stringify({ userId, orderId, email, lang: currentLanguage.acronym });
       console.log(`body: ${body}`);
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/confirm-email",

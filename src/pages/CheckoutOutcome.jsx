@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
+import { useLanguage } from "../features/LanguageContext";
 
 const PAYMENT_COMPLETE = "complete";
 const PAYMENT_OPEN = "open";
@@ -13,6 +14,7 @@ export default function CheckoutOutcome() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { currentLanguage } = useLanguage();
   const { t } = useTranslations();
 
   // fetch dell'esito
@@ -26,7 +28,7 @@ export default function CheckoutOutcome() {
 
     fetch(
       import.meta.env.VITE_API_URL +
-        `/shop/session-status?session_id=${sessionId}&order_id=${orderId}`
+        `/shop/session-status?session_id=${sessionId}&order_id=${orderId}&lang=${currentLanguage.acronym}`
     )
       .then((res) => {
         if (!res.ok) {
