@@ -1,10 +1,11 @@
 import { useLanguage } from "../features/LanguageContext";
+import Form from "react-bootstrap/Form";
 
 export default function LanguageSelect({ onChange }) {
   const { currentLanguage, setLanguage, availableLanguages, loadingLanguages } = useLanguage();
-
+  
   if (loadingLanguages) return null;
-
+  
   const handleChange = (event) => {
     const lang = availableLanguages.find(l => l.acronym === event.target.value);
     if (lang) {
@@ -12,18 +13,17 @@ export default function LanguageSelect({ onChange }) {
       onChange?.(lang.acronym);
     }
   };
-
+  
   return (
-    <select
+    <Form.Select
       value={currentLanguage.acronym}
       onChange={handleChange}
-      className="p-2 rounded-md border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
       {availableLanguages.map(lang => (
         <option key={lang.acronym} value={lang.acronym}>
           {lang.language}
         </option>
       ))}
-    </select>
+    </Form.Select>
   );
 }
