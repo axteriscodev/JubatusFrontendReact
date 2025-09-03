@@ -37,11 +37,11 @@ export default function MailForm({
         placeholder={t("EMAIL_ENTER")}
       />
       {onErrors.emailError && (
-        <p className="on-error">Inserisci una mail valida</p>
+        <p className="on-error">{t("EMAIL_VALID")}</p>
       )}
       {onErrors.emailNotPresent && (
         <p className="on-error">
-          La mail inserita non è presente. Effettua il tuo primo acquisto.
+          {t("EMAIL_NOTHING")}
         </p>
       )}
       <div className="my-xs">
@@ -63,7 +63,7 @@ export default function MailForm({
                 Accettare
               </label>{" "}
               <a href="#" className="text-10" onClick={handleShow}>
-                Termini e Policy
+                {t("SELFIE_PRIVACY")}
               </a>
             </div>
             <Modal show={show} onHide={handleClose} animation={false}>
@@ -85,7 +85,7 @@ export default function MailForm({
                     target="_blank"
                     className="text-primary"
                   >
-                    Informativa Privacy
+                    {t("EMAIL_PRIVACY")}
                   </a>
                   .
                 </p>
@@ -99,7 +99,7 @@ export default function MailForm({
           </>
         )}
         {onErrors.privacyError && (
-          <p className="on-error">Devi accettare la privacy policy</p>
+          <p className="on-error">{t("EMAIL_ACCEPT")}</p>
         )}
       </div>
       <button

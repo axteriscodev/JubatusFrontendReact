@@ -8,7 +8,7 @@ import FormErrors from "../models/form-errors";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 import LanguageSelect from "../components/LanguageSelect";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 
 /**
  * Pagina di login
@@ -63,7 +63,7 @@ export default function Login() {
       dispatch(userActions.updateEmail(data.email));
       navigate("/email-sent");
     } else {
-      if(response.status === 401) {
+      if (response.status === 401) {
         formErrors.emailNotPresent = true;
         setFormErrors(formErrors);
         return;
@@ -77,14 +77,16 @@ export default function Login() {
 
   return (
     <div className="form form-sm">
-      <h1 className="mb-md">{parse(t('EMAIL_ACCESS'))}</h1>
+      <h1 className="mb-md">{parse(t("EMAIL_ACCESS"))}</h1>
       <MailForm
         submitHandle={handleSubmit}
         defaultEmail={""}
         showPrivacy={false}
         onErrors={formErrors}
       />
-      <LanguageSelect />
+      <div className="mt-3">
+        <LanguageSelect />
+      </div>
     </div>
   );
 }

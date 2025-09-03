@@ -47,7 +47,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           style={{ cursor: "pointer" }}
         />
       )}
-      {onError && <p className="on-error">Inserisci un tuo selfie</p>}
+      {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
       <input
         type="file"
         ref={fileInputRef}
