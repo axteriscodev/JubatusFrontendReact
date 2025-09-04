@@ -60,10 +60,10 @@ export default function MailForm({
                 className="form-check-label text-10"
                 htmlFor="flexSwitchCheckDefault"
               >
-                Accettare
+                {t("SELFIE_PRIVACY")}
               </label>{" "}
               <a href="#" className="text-10" onClick={handleShow}>
-                {t("SELFIE_PRIVACY")}
+                {t("SELFIE_PRIVACY2")}
               </a>
             </div>
             <Modal show={show} onHide={handleClose} animation={false}>

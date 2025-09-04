@@ -9,6 +9,7 @@ import { useTranslations } from "../features/TranslationProvider";
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { useLanguage } from "../features/LanguageContext";
+import parse from 'html-react-parser';
 
 export default function MailConfirmation() {
   const dispatch = useDispatch();
@@ -73,11 +74,8 @@ export default function MailConfirmation() {
         ) : (
           <>
             <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
-            {
-            // TODO - sostituire il campo mail
-            }
             <p>
-              {t('PAYMENT_ACCESS').replace("$email", userEmail)} <br />
+              {parse(t('PAYMENT_ACCESS').replace("$email", userEmail))} <br />
               {t('PAYMENT_CORRECT')}
             </p>
           </>
