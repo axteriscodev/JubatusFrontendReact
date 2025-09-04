@@ -5,6 +5,7 @@ export const TranslationContext = createContext({
   translations: {},
   t: (key) => key,
   loadingTranslations: true,
+   currentLanguage: null,
 });
 
 export function TranslationProvider({ children }) {
@@ -47,7 +48,7 @@ export function TranslationProvider({ children }) {
   }, [langCode]);
 
   return (
-    <TranslationContext.Provider value={{ translations, t, loadingTranslations }}>
+    <TranslationContext.Provider value={{ translations, t, loadingTranslations, currentLanguage }}>
       {children}
     </TranslationContext.Provider>
   );
