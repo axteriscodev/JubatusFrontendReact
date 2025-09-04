@@ -66,9 +66,9 @@ export default function ThankYou() {
 
   return (
     <div className="form-sm">
-      <h2 className="text-center">{t('PURCHASE_TITLE')}</h2>
+      <h2 className="text-center">{parse(t('PURCHASE_TITLE'))}</h2>
       <p className="max-4">
-        {t('PURCHASE_TITLE')} <br />
+        {parse(t('PURCHASE_TITLE'))} <br />
         {parse(t('PURCHASE_ACCESS').replace('$email', userEmail))}
       </p>
       {/* <button
@@ -79,17 +79,17 @@ export default function ThankYou() {
       </button> */}
 
       <div className="mt-md max-4">
-        <p>{t('PURCHASE_EMAIL')}</p>
+        <p>{parse(t('PURCHASE_EMAIL'))}</p>
         <button
           className="my-button w-100"
           onClick={handleResend}
           disabled={loading || cooldown > 0}
         >
           {loading
-            ? "Invio in corso..."
+            ? t('WAITING_SEND')
             : cooldown > 0
-            ? `Attendi ${cooldown}s`
-            : "Rigenera link"}
+            ? `${t('WAITING_WAIT')} ${cooldown}s`
+            : t('PURCHASE_LINK')}
         </button>
         {message && <p className="mt-sm">{message}</p>}
       </div>
