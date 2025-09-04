@@ -76,16 +76,18 @@ export default function Login() {
   }
 
   return (
-    <div className="form form-sm">
-      <h1 className="mb-md">{parse(t("EMAIL_ACCESS"))}</h1>
-      <MailForm
-        submitHandle={handleSubmit}
-        defaultEmail={""}
-        showPrivacy={false}
-        onErrors={formErrors}
-      />
-      <div className="mt-3">
+    <div className="form-sm">
+      <div className="d-flex justify-content-end">
         <LanguageSelect />
+      </div>
+      <div className="form">
+        <h1 className="mb-md">{parse(t("EMAIL_ACCESS"))}</h1>
+        <MailForm
+          submitHandle={handleSubmit}
+          defaultEmail={""}
+          showPrivacy={false}
+          onErrors={formErrors}
+        />
       </div>
     </div>
   );
