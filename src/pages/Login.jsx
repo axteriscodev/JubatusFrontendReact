@@ -21,7 +21,7 @@ export default function Login() {
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
   // Testi in lingua
-  const { t } = useTranslations();
+  const { t, currentLanguage} = useTranslations();
 
   useEffect(() => {
     document.documentElement.style.setProperty("--bg-event-color", "");
@@ -55,6 +55,7 @@ export default function Login() {
         },
         body: JSON.stringify({
           email: data.email,
+          lang : currentLanguage?.acronym ?? ""
         }),
       }
     );
