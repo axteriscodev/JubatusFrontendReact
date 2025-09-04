@@ -22,7 +22,7 @@ export default function ProcessingSelfie() {
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { t } = useTranslations();
+  const { t, currentLanguage } = useTranslations();
 
   //upload della foto
   useEffect(() => {
@@ -48,6 +48,7 @@ export default function ProcessingSelfie() {
         formData.append("eventId", receivedData.eventId);
         formData.append("email", receivedData.email);
         formData.append("image", receivedData.image);
+        formData.append("lang",currentLanguage?.acronym ?? "");
 
         //caricamento selfie
         response = await apiRequest({
