@@ -13,6 +13,7 @@ import { logOut } from "../utils/auth";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { personalActions } from "../repositories/personal/personal-slice";
 import { resetHeaderData } from "../utils/graphics";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function Personal() {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ export default function Personal() {
   const [personalSlice, setPersonalSlice] = useState(false);
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
+  const { t } = useTranslations();
 
   // recuper dei contenuti
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function Personal() {
         </div>
         {purchasedItems?.length > 0 ? (
           <>
-            <h2 className="my-sm">Ecco i tuoi acquisti!</h2>
+            <h2 className="my-sm">{t('PERSONAL_PURCHASE')}</h2>
             <div className="px-lg">
               <Carousel>
                 {purchasedItems.map((image, i) => (
@@ -95,7 +97,7 @@ export default function Personal() {
           </>
         ) : (
           <>
-            <h2 className="my-sm">Non hai effettuato acquisti</h2>
+            <h2 className="my-sm">{t("PERSONAL_NOTHING")}</h2>
           </>
         )}
         {purchasedItems?.length > 0 && (

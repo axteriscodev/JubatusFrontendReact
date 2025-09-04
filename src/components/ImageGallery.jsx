@@ -1,4 +1,5 @@
 import styles from "./ImageGallery.module.css";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function ImageGallery({
   images,
@@ -11,6 +12,10 @@ export default function ImageGallery({
   photoItems = null,
   personalSlice = false
 }) {
+
+
+  const { t } = useTranslations();
+
   return (
     <>
       <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 pb-lg ${styles.gallery}`}>
@@ -49,7 +54,7 @@ export default function ImageGallery({
                 }
                 {highLightPurchased && image.purchased &&
                 <div className={styles.purchased}>
-                  Acquistata
+                  {t("GALLERY_PURCHASE")}
                 </div>
                 }
                 {highLightFavourite && image.favorite &&

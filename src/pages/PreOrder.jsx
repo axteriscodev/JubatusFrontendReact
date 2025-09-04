@@ -7,6 +7,8 @@ import { setUiPreset } from "../utils/graphics";
 import { Link } from "react-router-dom";
 import styles from "./PreOrder.module.css";
 import { cartActions } from "../repositories/cart/cart-slice";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 export default function PreOrder() {
     const dispatch = useDispatch();
@@ -14,6 +16,7 @@ export default function PreOrder() {
     const eventPreset = useSelector((state) => state.competition);
     const pricelist = useSelector((state) => state.cart.prices);
     const selectedPreorder = useSelector((state) => state.cart.selectedPreorder);
+    const { t } = useTranslations();
 
     const [presaleMedia, setPresaleMedia] = useState([]);
     const [loadingGallery, setLoadingGallery] = useState(true);
@@ -105,8 +108,7 @@ export default function PreOrder() {
                 <h2 className="text-30">Sarai <strong>Protagonista</strong>!</h2>
                 <div className="row row-cols-lg-2">
                     <div className="text-start">
-                        <p className="mt-md">Stai per correre uno degli eventi più belli d’Italia<br />
-                            Noi saremo lì, al tuo fianco, per catturare <strong className="text-lowercase">ogni passo dall'adrenalina prima della partenza alla gioia del tuo traguardo</strong></p>
+                        {parse(t('PREORDER_TITLE'))}
                         <h2 className="mt-md text-center text-30">🎥 Il tuo momento va reso immortale:</h2>
                         <div className="ms-4 mt-md">
                             <p>

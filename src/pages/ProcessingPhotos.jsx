@@ -7,6 +7,8 @@ import { setUiPreset } from "../utils/graphics";
 import { listenSSE } from "../services/api-services";
 import { personalActions } from "../repositories/personal/personal-slice";
 import ProgressBar from "../components/ProgressBar";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 /**
  * Pagina di attesa durante l'elaborazione delle foto acquistate
@@ -17,6 +19,7 @@ export default function ProcessingPhotos() {
   const orderId = useSelector((state) => state.cart.id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslations(); 
 
   useEffect(() => {
     //impostazioni evento
@@ -63,16 +66,15 @@ export default function ProcessingPhotos() {
         css="mb-sm"
       />
       <h2>
-        Ci siamo <span>campione</span> !
+        {parse(t("PROCESSING_TITLE"))}
       </h2>
       <h4 className="mt-sm mb-md">
-        Stiamo elaborando
-        <br />i tuoi contenuti in <span>MASSIMA</span> risoluzione
+        {parse(t("PROCESSING_CONTENT"))}
         <br />
         {eventPreset.emoji ?? "🚴 📸 🏃"}
       </h4>
       <ProgressBar />
-      Caricamento
+      {t("PROCESSING_LOADING")}
     </div>
   );
 }

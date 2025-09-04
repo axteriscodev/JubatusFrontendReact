@@ -1,8 +1,11 @@
 import { useRef } from "react";
 import Form from "react-bootstrap/Form";
+import { useTranslations } from "../features/TranslationProvider";
+
 
 export default function PinForm({ submitHandle, onErrors }) {
   const pin = useRef();
+  const { t } = useTranslations();
 
   return (
     <div className="text-start">
@@ -11,9 +14,9 @@ export default function PinForm({ submitHandle, onErrors }) {
         ref={pin}
         type="text"
         name="pin"
-        placeholder="PIN ricevuto per e-mail"
+        placeholder="PIN"
       />
-      {onErrors.pinError && <p className="on-error">Pin non valido</p>}
+      {onErrors.pinError && <p className="on-error">{t("PERSONAL_PIN_INVALID")}</p>}
 
       <button
         className="my-button w-100 mt-sm"

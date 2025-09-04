@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../services/api-services";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
+import { useLanguage } from "../features/LanguageContext";
 
 export default function ThankYou() {
   const navigate = useNavigate();
@@ -10,6 +13,8 @@ export default function ThankYou() {
   const [cooldown, setCooldown] = useState(0); // timer in secondi
   const userEmail = useSelector((state) => state.cart.userEmail);
   const orderId = useSelector((state) => state.cart.id);
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslations();
 
   const submitHandle = (event) => {
     navigate("/");
@@ -21,7 +26,7 @@ export default function ThankYou() {
     setMessage("");
 
     try {
-      const body = JSON.stringify({ userEmail: userEmail, orderId: orderId });
+      const body = JSON.stringify({ userEmail: userEmail, orderId: orderId, lang: currentLanguage.acronym });
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/resend-link",
         method: "POST",
@@ -61,14 +66,10 @@ export default function ThankYou() {
 
   return (
     <div className="form-sm">
-      <h2 className="text-center">Grazie per il tuo acquisto!</h2>
+      <h2 className="text-center">{parse(t('PURCHASE_TITLE'))}</h2>
       <p className="max-4">
-        L'ordine è stato completato con successo. <br />
-        Ti abbiamo inviato un'email all'indirizzo <strong>
-          {userEmail}
-        </strong>{" "}
-        con il link di accesso alla tua area personale, dove potrai scaricare
-        tutti i contenuti in alta definizione.
+        {parse(t('PURCHASE_TITLE'))} <br />
+        {parse(t('PURCHASE_ACCESS').replace('$email', userEmail))}
       </p>
       {/* <button
         className="my-button w-100 mt-sm"
@@ -78,17 +79,17 @@ export default function ThankYou() {
       </button> */}
 
       <div className="mt-md max-4">
-        <p>Non hai ricevuto l'email?</p>
+        <p>{parse(t('PURCHASE_EMAIL'))}</p>
         <button
           className="my-button w-100"
           onClick={handleResend}
           disabled={loading || cooldown > 0}
         >
           {loading
-            ? "Invio in corso..."
+            ? t('WAITING_SEND')
             : cooldown > 0
-            ? `Attendi ${cooldown}s`
-            : "Rigenera link"}
+            ? `${t('WAITING_WAIT')} ${cooldown}s`
+            : t('PURCHASE_LINK')}
         </button>
         {message && <p className="mt-sm">{message}</p>}
       </div>
