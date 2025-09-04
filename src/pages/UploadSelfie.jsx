@@ -11,6 +11,8 @@ import Logo from "../components/Logo";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
 import { setUiPreset, setHeaderData } from "../utils/graphics";
+import LanguageSelect from "../components/LanguageSelect";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
@@ -93,6 +95,10 @@ export default function UploadSelfie() {
 
   return (
     <div className="form-sm">
+
+      <div className="mb-3 d-flex justify-content-end">
+        <LanguageSelect />
+      </div>
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
         css="mb-sm"
@@ -106,6 +112,7 @@ export default function UploadSelfie() {
         defaultEmail={""}
         onErrors={formErrors}
       />
+
     </div>
   );
 }
@@ -121,8 +128,10 @@ export async function loader({ request, params }) {
   const eventName = params.eventSlug;
   const userHash = params.userHash;
 
+  const currentLanguage = JSON.parse(localStorage.getItem('preferred_lang')) || { acronym: 'it' };
+
   const response = await fetch(
-    import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}`
+    import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}/${currentLanguage.acronym}`
   );
 
   if (!response.ok) {

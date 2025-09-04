@@ -4,6 +4,7 @@ import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Video from "yet-another-react-lightbox/plugins/video";
 import styles from "./CustomLightbox.module.css";
+import { useTranslations } from "../features/TranslationProvider";
 
 export default function CustomLightbox({
   open,
@@ -21,6 +22,8 @@ export default function CustomLightbox({
   //const dispatch = useDispatch();
 
   //const currentImage = slides[index] ?? 0;
+
+  const { t } = useTranslations();
 
   const effectiveSlides = slides && slides.length > 0
     ? slides
@@ -111,7 +114,7 @@ export default function CustomLightbox({
                 style={{ maxWidth: "100%", maxHeight: "100%", margin: "0 auto" }}
               >
                 <source src={slide.urlOriginal} type="video/mp4" />
-                Il tuo browser non supporta il tag video.
+                {t("LIGHTBOX_SUPPORT")}
               </video>
             );
           }
@@ -153,12 +156,12 @@ export default function CustomLightbox({
                   onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyThumbnail)}
                   className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
                 >
-                  {isSelected ? (<><i className="bi bi-trash-fill"></i> Rimuovi</>) : (<><i className="bi bi-cart"></i> Seleziona</>)}
+                  {isSelected ? (<><i className="bi bi-trash-fill"></i> {t("LIGHTBOX_REMOVE")}</>) : (<><i className="bi bi-cart"></i> {t("LIGHTBOX_SELECT")}</>)}
                 </button>
               </div>
             )}
             {currentImage.purchased && (
-              <div className="shopBadge">🎉 Acquistato!</div>
+              <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
             )}
             {actions && (
               <div className=" text-50 d-flex gap-3 justify-content-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">

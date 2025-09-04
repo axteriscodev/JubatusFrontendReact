@@ -6,6 +6,9 @@ import validator from "validator";
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { resetHeaderData } from "../utils/graphics";
+import { useTranslations } from "../features/TranslationProvider";
+import LanguageSelect from "../components/LanguageSelect";
+import parse from "html-react-parser";
 
 /**
  * Pagina di login
@@ -16,6 +19,9 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formErrors, setFormErrors] = useState(new FormErrors());
+
+  // Testi in lingua
+  const { t } = useTranslations();
 
   useEffect(() => {
     document.documentElement.style.setProperty("--bg-event-color", "");
@@ -57,7 +63,7 @@ export default function Login() {
       dispatch(userActions.updateEmail(data.email));
       navigate("/email-sent");
     } else {
-      if(response.status === 401) {
+      if (response.status === 401) {
         formErrors.emailNotPresent = true;
         setFormErrors(formErrors);
         return;
@@ -70,14 +76,19 @@ export default function Login() {
   }
 
   return (
-    <div className="form form-sm">
-      <h1 className="mb-md">Accedi ai tuoi contenuti!</h1>
-      <MailForm
-        submitHandle={handleSubmit}
-        defaultEmail={""}
-        showPrivacy={false}
-        onErrors={formErrors}
-      />
+    <div className="form-sm">
+      <div className="d-flex justify-content-end">
+        <LanguageSelect />
+      </div>
+      <div className="form">
+        <h1 className="mb-md">{parse(t("EMAIL_ACCESS"))}</h1>
+        <MailForm
+          submitHandle={handleSubmit}
+          defaultEmail={""}
+          showPrivacy={false}
+          onErrors={formErrors}
+        />
+      </div>
     </div>
   );
 }

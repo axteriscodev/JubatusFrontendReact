@@ -9,6 +9,8 @@ import CustomLightbox from "../components/CustomLightbox";
 
 import { cartActions } from "../repositories/cart/cart-slice";
 import { personalActions } from "../repositories/personal/personal-slice";
+import { useTranslations } from "../features/TranslationProvider";
+import parse from 'html-react-parser';
 
 /**
  * Pagina contenente le foto appena acquistate (slider) e galleria con tutte le foto
@@ -34,6 +36,7 @@ export default function Purchased() {
   const [personalSlice, setPersonalSlice] = useState(false);
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
+  const { t } = useTranslations();
 
   const openLightbox = (images, startIndex = 0, select, actions, personalSlice) => {
     setIndex(startIndex);
@@ -60,37 +63,34 @@ export default function Purchased() {
         {hasPhoto && !hasVideo &&
         <div className="my-md text-start">
           <h2>
-            Ecco le <strong>tue</strong> Foto!
+            {parse(t("PURCHASED_PHOTO"))}
           </h2>
         </div>
         }
         {!hasPhoto && hasVideo && numVideo == 0 &&
         <div className="my-md">
-          <h2>
-            Il <strong>tuo</strong> video è in preparazione.
-          </h2>
-          <p>riceverai una mail per avvisarti appena pronto</p>
+          {parse(t("PURCHASED_PREPARE"))}
         </div>
         }
         {!hasPhoto && hasVideo && numVideo > 0 &&
         <div className="my-md text-start">
           <h2>
-            Ecco il <strong>tuo</strong> Video!
+            {parse(t("PURCHASED_VIDEO"))}
           </h2>
         </div>
         }
         {hasPhoto && hasVideo && numVideo == 0 &&
         <div className="my-md text-start">
           <h2>
-            Ecco le <strong>tue</strong> foto!
+           {parse(t("PURCHASED_PHOTO"))}
           </h2>
-          <h4>Il <strong>tuo</strong> video è in preparazione, riceverai una mail per avvisarti appena pronto</h4>
+          <h4>{parse(t("PURCHASED_PREPARE2"))}</h4>
         </div>
         }
         {hasPhoto && hasVideo && numVideo > 0 &&
         <div className="my-md text-start">
           <h2>
-            Ecco le <strong>tue</strong> foto e il <strong>tuo</strong> video acquistati!
+            {parse(t("PURCHASED_PHOTOVIDEO"))}
           </h2>
         </div>
         }
@@ -124,7 +124,7 @@ export default function Purchased() {
         :
         <>
         { !hasPhoto && !hasVideo && currentPurchasedItems?.length == 0 && 
-          <h2 className="my-sm">Non hai effettuato acquisti</h2>
+          <h2 className="my-sm">{t("PERSONAL_NOTHING")}</h2>
         }
         </>
         }

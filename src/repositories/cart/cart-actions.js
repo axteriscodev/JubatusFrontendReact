@@ -24,8 +24,10 @@ export const fetchContents = (receivedData) => {
     if (response.ok) {
       const json = await response.json();
 
+      const currentLanguage = JSON.parse(localStorage.getItem('preferred_lang')) || { acronym: 'it' };
+
       const response = await fetch(
-        import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
+        import.meta.env.VITE_API_URL + `/contents/event-list/${eventId}/${currentLanguage.acronym}`
       );
 
       if (response.ok) {
@@ -68,8 +70,11 @@ export const fetchContents = (receivedData) => {
  */
 export const fetchPriceList = (eventId) => {
   return async (dispatch) => {
+
+    const currentLanguage = JSON.parse(localStorage.getItem('preferred_lang')) || { acronym: 'it' };
+
     const response = await fetch(
-      import.meta.env.VITE_API_URL + "/contents/event-list/" + eventId
+      import.meta.env.VITE_API_URL + `/contents/event-list/${eventId}/${currentLanguage.acronym}`
     );
 
     if (response.ok) {
