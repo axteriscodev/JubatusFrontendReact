@@ -30,7 +30,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       <div
         className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
-        style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: "cover" } : {}}
+        style={imageUrl ? { backgroundImage: `url(${imageUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
       ></div>
       {imageUrl && (
         <img
