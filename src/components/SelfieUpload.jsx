@@ -37,7 +37,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           src="/images/trash-fill.svg"
           className={styles.trash}
           onClick={() => {
-            const confirmDelete = window.confirm("Sei sicuro di voler rimuovere il selfie?");
+            const confirmDelete = window.confirm(t("SELFIE_REMOVE"));
             if (confirmDelete) {
               setImageUrl(null);
               fileInputRef.current.value = ""; // reset del file input
