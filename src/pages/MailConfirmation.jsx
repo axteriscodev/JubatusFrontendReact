@@ -16,7 +16,7 @@ export default function MailConfirmation() {
   const userId = useSelector((state) => state.cart.userId);
   const orderId = useSelector((state) => state.cart.id);
   const userEmail = useSelector((state) => state.cart.userEmail);
-  const fullName = useSelector((state) => state.cart.userName);
+  const fullName = useSelector((state) => state.cart.fullName);
   //const userSurname = useSelector((state) => state.cart.userSurname);
   const { currentLanguage } = useLanguage();
   const [formErrors, setFormErrors] = useState(new FormErrors());

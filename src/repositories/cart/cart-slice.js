@@ -7,8 +7,7 @@ import { calculatePrice } from "../../utils/best-price-calculator";
 const initialState = {
   id: 0,
   userEmail: "",
-  userName: "",
-  userSurname: "",
+  fullName: "",
   userId: 0,
   eventId: 0,
   searchId: 0,
@@ -80,19 +79,7 @@ const cartSlice = createSlice({
     updateUserName(state, action) {
       const newName = action.payload;
 
-      state.userName = newName;
-    },
-
-    /**
-     * Update del cognome utente
-     *
-     * @param {*} state
-     * @param {*} action
-     */
-    updateUserSurname(state, action) {
-      const newSurname = action.payload;
-
-      state.userSurname = newSurname;
+      state.fullName = newName;
     },
 
     /**
@@ -330,8 +317,7 @@ const cartSlice = createSlice({
     resetStore(state, action) {
       state.id = initialState.id;
       state.userEmail = initialState.userEmail;
-      state.userName = initialState.userName;
-      state.userSurname = initialState.userSurname;
+      state.fullName = initialState.fullName;
       state.userId = initialState.userId;
       state.searchId = initialState.searchId;
       state.products = initialState.products;
