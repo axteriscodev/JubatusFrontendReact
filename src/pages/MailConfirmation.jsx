@@ -60,7 +60,7 @@ export default function MailConfirmation() {
         userId, 
         orderId, 
         email, 
-        fullName: name.trim(),
+        fullname: name.trim(),
         //surname: surname.trim(),
         lang: currentLanguage.acronym 
       });
