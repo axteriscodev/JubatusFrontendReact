@@ -39,6 +39,7 @@ export default function CheckoutOutcome() {
       })
       .then((data) => {
         setStatus(data.data.status);
+        dispatch(cartActions.updateUserName(data.data.fullname));
         //setCustomerEmail(data.customer_email);
       });
   }, []);
