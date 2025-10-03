@@ -16,19 +16,19 @@ export default function MailConfirmation() {
   const userId = useSelector((state) => state.cart.userId);
   const orderId = useSelector((state) => state.cart.id);
   const userEmail = useSelector((state) => state.cart.userEmail);
-  const userName = useSelector((state) => state.cart.userName);
-  const userSurname = useSelector((state) => state.cart.userSurname);
+  const fullName = useSelector((state) => state.cart.userName);
+  //const userSurname = useSelector((state) => state.cart.userSurname);
   const { currentLanguage } = useLanguage();
   const [formErrors, setFormErrors] = useState(new FormErrors());
-  const [name, setName] = useState(userName ?? "");
-  const [surname, setSurname] = useState(userSurname ?? "");
+  const [name, setName] = useState(fullName ?? "");
+  //const [surname, setSurname] = useState(userSurname ?? "");
   const [nameError, setNameError] = useState(false);
-  const [surnameError, setSurnameError] = useState(false);
+  //const [surnameError, setSurnameError] = useState(false);
   const { t } = useTranslations();
   
   const isEmailEmpty = !userEmail || userEmail.trim() === "";
-  const isNameEmpty = !userName || userName.trim() === "";
-  const isSurnameEmpty = !userSurname || userSurname.trim() === "";
+  const isNameEmpty = !fullName || fullName.trim() === "";
+  //const isSurnameEmpty = !userSurname || userSurname.trim() === "";
 
   //TODO - recupero nome e cognome da risposta Stripe
 
@@ -40,18 +40,18 @@ export default function MailConfirmation() {
       
       console.log(data.email);
       console.log(name);
-      console.log(surname);
+      //console.log(surname);
       console.log(data.privacy);
       
       // Validazione
       formErrors.emailError = !validator.isEmail(data.email);
       const isNameValid = name && name.trim() !== "";
-      const isSurnameValid = surname && surname.trim() !== "";
+      //const isSurnameValid = surname && surname.trim() !== "";
       
       setNameError(!isNameValid);
-      setSurnameError(!isSurnameValid);
+      //setSurnameError(!isSurnameValid);
       
-      if (formErrors.emailError || !isNameValid || !isSurnameValid) {
+      if (formErrors.emailError || !isNameValid ) {
         setFormErrors(formErrors);
         return;
       }
@@ -60,8 +60,8 @@ export default function MailConfirmation() {
         userId, 
         orderId, 
         email, 
-        name: name.trim(),
-        surname: surname.trim(),
+        fullName: name.trim(),
+        //surname: surname.trim(),
         lang: currentLanguage.acronym 
       });
       
@@ -83,9 +83,9 @@ export default function MailConfirmation() {
         if (json.data.nameModified) {
           dispatch(cartActions.updateUserName(name.trim()));
         }
-        if (json.data.surnameModified) {
-          dispatch(cartActions.updateUserSurname(surname.trim()));
-        }
+        // if (json.data.surnameModified) {
+        //   dispatch(cartActions.updateUserSurname(surname.trim()));
+        // }
         
         navigate("/thank-you");
       }
@@ -97,7 +97,7 @@ export default function MailConfirmation() {
   return (
     <div className="form-sm">
       <div className="my-md text-start">
-        {isEmailEmpty || isNameEmpty || isSurnameEmpty ? (
+        {isEmailEmpty || isNameEmpty ? (
           <>
             <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
             <h4 className="">{t('EMAIL_ENTER')}</h4>
@@ -138,7 +138,7 @@ export default function MailConfirmation() {
         )}
       </div>
 
-      <div className="mb-3">
+      {/* <div className="mb-3">
         <label htmlFor="surname" className="form-label">
           {t('SURNAME_CONFIRM_LABEL')}
         </label>
@@ -158,7 +158,7 @@ export default function MailConfirmation() {
             {t('SURNAME_REQUIRED')}
           </div>
         )}
-      </div>
+      </div> */}
 
       <MailForm
         submitHandle={handleSubmit}
