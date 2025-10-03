@@ -39,7 +39,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           src="/images/trash-fill.svg"
           className={styles.trash}
           onClick={() => {
-            const confirmDelete = window.confirm(`SELFIE_REMOVE_${tagId}`);
+            const confirmDelete = window.confirm(t(`SELFIE_REMOVE_${tagId}`));
             if (confirmDelete) {
               setImageUrl(null);
               fileInputRef.current.value = ""; // reset del file input
