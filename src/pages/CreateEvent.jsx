@@ -24,6 +24,7 @@ export default function CreateEvent() {
   const receivedComp = useLocation().state;
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [tagList, setTagList] = useState([]);
   const [formData, setFormData] = useState({
     slug: "",
     pathS3: "",
@@ -40,7 +41,30 @@ export default function CreateEvent() {
     title: "",
     location: "",
     description: "",
+    tag: "",
   });
+
+  // Carica i tag tipo selfie
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/contents/tag`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setTagList(data.data);
+        } else {
+          errorToast("Errore nel caricamento dei tipi di selfie");
+        }
+      } catch (error) {
+        console.error("Errore nel caricamento dei tag:", error);
+        errorToast("Errore nel caricamento dei tipi di selfie");
+      }
+    };
+
+    fetchTags();
+  }, []);
 
   //Listini
   const [priceLists, setPriceLists] = useState([
@@ -172,6 +196,7 @@ export default function CreateEvent() {
         title: receivedComp.languages[0].title,
         location: receivedComp.languages[0].location,
         description: receivedComp.languages[0].description,
+        tag: receivedComp.tag || 0,
       });
 
       setPriceLists(receivedComp.lists);
@@ -283,6 +308,23 @@ export default function CreateEvent() {
               onChange={handleInputChange}
               placeholder="Path S3"
             />
+          </Col>
+          <Col sm={6} className="mb-3">
+            <Form.Group>
+              <Form.Label>Tipo di selfie</Form.Label>
+              <Form.Select
+                name="tag"
+                value={formData.tag}
+                onChange={handleInputChange}
+              >
+                <option value="">Seleziona un tipo</option>
+                {Array.isArray(tagList) && tagList.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.tag}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
           </Col>
           <Col sm={6} className="mb-3">
             <Form.Label>Emote attesa</Form.Label>
@@ -540,7 +582,6 @@ export default function CreateEvent() {
                             <Form.Check
                               type="checkbox"
                               checked={row.bestOffer}
-                              
                               onChange={(e) =>
                                 handleRowChange(
                                   formIndex,
