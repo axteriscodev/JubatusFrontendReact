@@ -116,7 +116,7 @@ export default function MailConfirmation() {
         )}
       </div>
       
-      <div className="mb-3">
+      <div className="mb-3 text-start">
         <label htmlFor="name" className="form-label">
           {t('NAME_CONFIRM_LABEL')}
         </label>
