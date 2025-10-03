@@ -53,7 +53,7 @@ export default function CreateEvent() {
         );
         if (response.ok) {
           const data = await response.json();
-          setTagList(data);
+          setTagList(data.data);
         } else {
           errorToast("Errore nel caricamento dei tipi di selfie");
         }
@@ -318,7 +318,7 @@ export default function CreateEvent() {
                 onChange={handleInputChange}
               >
                 <option value="">Seleziona un tipo</option>
-                {tagList.map((tag) => (
+                {Array.isArray(tagList) && tagList.map((tag) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.tag}
                   </option>
