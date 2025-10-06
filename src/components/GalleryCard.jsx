@@ -2,7 +2,7 @@
 import { Row, Col, Card, Image } from 'react-bootstrap';
 
 
-const GalleryCard = ({ title, logo, images, totalImages }) => {
+export default function GalleryCard({ title, logo, images, totalImages, eventId, onPhotoClick }) {
   const displayImages = images.slice(0, 5);
   const remainingCount = totalImages - displayImages.length;
   
@@ -35,6 +35,7 @@ const GalleryCard = ({ title, logo, images, totalImages }) => {
                   aspectRatio: '1/1',
                   cursor: 'pointer'
                 }}
+                onClick={() => onPhotoClick(eventId)}
               >
                 <Card.Img
                   src={image.src}

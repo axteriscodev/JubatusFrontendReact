@@ -19,6 +19,8 @@ export default function PersonalArea() {
     navigate("/", { replace: true });
   };
 
+  const navigateToDetail = (eventId) => {}
+
   return (
     <div className="container">
       <div className="d-flex justify-content-end my-sm">
@@ -36,17 +38,12 @@ export default function PersonalArea() {
               logo={gallery.logo}
               images={gallery.images}
               totalImages={gallery.totalImages}
+              eventId={gallery.id}
+              onPhotoClick={navigateToDetail}
             />
           ))}
         </Col>
       </Row>
     </div>
   );
-}
-
-export function loader() {
-  if (!isAuthenticated()) {
-    return redirect("/");
-  }
-  return null;
 }
