@@ -105,16 +105,16 @@ export default function PreOrder() {
                         </Link>
                     </div>
                 </div>
-                <h2 className="text-30">Sarai <strong>Protagonista</strong>!</h2>
+                <h2 className="text-30">{parse(t('PREORDER_STAR'))}</h2>
                 <div className="row row-cols-lg-2">
                     <div className="text-start">
                         {parse(t('PREORDER_TITLE'))}
-                        <h2 className="mt-md text-center text-30">🎥 Il tuo momento va reso immortale:</h2>
+                        <h2 className="mt-md text-center text-30">🎥 {t('PREORDER_CONTENT')}:</h2>
                         <div className="ms-4 mt-md">
                             <p>
-                                <i className="bi bi-check-square-fill text-success me-2"></i> droni professionali<br />
-                                <i className="bi bi-check-square-fill text-success me-2"></i> i migliori fotografi sportivi<br />
-                                <i className="bi bi-check-square-fill text-success me-2"></i> un team di videomakers al tuo servizio
+                                <i className="bi bi-check-square-fill text-success me-2"></i> {t('PREORDER_BULLET1')}<br />
+                                <i className="bi bi-check-square-fill text-success me-2"></i> {t('PREORDER_BULLET2')}<br />
+                                <i className="bi bi-check-square-fill text-success me-2"></i> {t('PREORDER_BULLET3')}
                             </p>
                         </div>
                     </div>
@@ -167,12 +167,12 @@ export default function PreOrder() {
                     </div>
                 </div>
                 <div className="text-start">
-                    <h2 className="text-center text-30">⏱️ Pronto in <strong>24 ore</strong></h2>
-                    <p className="mt-md"><strong>Basta attese</strong>: i tuoi contenuti migliori immediatamente disponibili in qualità originale dopo l'evento.</p>
-                    <p className="mt-md">&#128576; Sapevi che prenotando prima della gara spendi il 20% in meno?</p>
+                    <h2 className="text-center text-30">⏱️ {parse(t('PREORDER_READY'))}</h2>
+                    <p className="mt-md">{parse(t('PREORDER_ORIGINAL'))}</p>
+                    <p className="mt-md">&#128576; {t('PREORDER_DISCOUNT')}</p>
                 </div>
                 <div className="text-start mt-md">
-                    <h3 className="text-24">Scegli tra:</h3>
+                    <h3 className="text-24">{t('PREORDER_CHOOSE')}:</h3>
                     {
                         pricelist.map((list, i) => (
                             <div key={i} onClick={(event) => handleSelection(event, list)}
