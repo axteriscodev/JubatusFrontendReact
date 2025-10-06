@@ -6,7 +6,6 @@ import {
 
 import Login from "./pages/Login";
 import PinVerification from "./pages/PinVerification";
-import Personal from "./pages/Personal";
 import UploadSelfie, {
   loader as updateSelfieLoader,
 } from "./pages/UploadSelfie";
@@ -15,15 +14,14 @@ import PreOrder from "./pages/PreOrder";
 import PreOrderPurchased from "./pages/PreOrderPurchased";
 import ImageShop from "./pages/ImageShop";
 import Purchased from "./pages/Purchased";
-import AdminPanel from "./pages/AdminPanel";
 import Checkout from "./pages/Checkout";
 import CheckoutOutcome from "./pages/CheckoutOutcome";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
 import { isAuthenticated, isAdmin } from "./utils/auth";
-import { loader as personalLoader } from "./pages/Personal";
-import { loader as adminLoader } from "./pages/AdminPanel";
+import { loader as personalLoader, PersonalArea } from "./pages/PersonalArea";
+import { loader as adminLoader, AdminPanel } from "./pages/AdminPanel";
 import CreateEvent, { loader as createEventLoader } from "./pages/CreateEvent";
 import EmailSent from "./pages/EmailSent";
 import ContentError from "./pages/ContentError";
@@ -56,7 +54,7 @@ const router = createBrowserRouter([
   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
   {
     path: "/personal",
-    element: <Personal />,
+    element: <PersonalArea />,
     loader: personalLoader,
   },
   {

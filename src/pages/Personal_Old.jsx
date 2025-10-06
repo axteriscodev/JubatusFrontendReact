@@ -15,7 +15,7 @@ import { personalActions } from "../repositories/personal/personal-slice";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 
-export default function Personal() {
+export default function PersonalOld() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const purchasedItems = useSelector((state) => state.personal.purchased) ?? [];
