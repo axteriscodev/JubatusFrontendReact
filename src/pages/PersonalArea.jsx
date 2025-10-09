@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getPersonalEventGalleries } from "../utils/contents-utils";
+import { EventStatus, getPersonalEventGalleries } from "../utils/contents-utils";
 import { Row, Col, Spinner, Alert, Button } from "react-bootstrap";
 import GalleryCard from "../components/GalleryCard";
 import { logOut } from "../utils/auth";
@@ -126,11 +126,11 @@ export default function PersonalArea() {
     if (event) {
       // Naviga verso route diverse in base allo stato dell'evento
       switch (event.status) {
-        case "onlyPurchased": // Solo contenuti acquistati
-        case "mixed":          // Mix di contenuti acquistati e non
+        case EventStatus.ONLY_PURCHASED: // Solo contenuti acquistati
+        case EventStatus.MIXED:          // Mix di contenuti acquistati e non
           navigate(`/personal/${event.slug}`);
           break;
-        case "onlySearched":   // Solo contenuti cercati/preview
+        case EventStatus.ONLY_SEARCHED:   // Solo contenuti cercati/preview
           navigate(`/event/${event.slug}/${event.hashId}`);
           break;
         default:

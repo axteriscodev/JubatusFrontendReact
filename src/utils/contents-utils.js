@@ -7,6 +7,15 @@ export const FileType = {
 };
 
 /**
+ * Costanti per identificare lo stato dell evento per l utente (se ha acquistato o meno)
+ */
+export const EventStatus ={
+    ONLY_PURCHASED : "onlyPurchased",
+    MIXED : "mixed",
+    ONLY_SEARCHED : "onlySearched"
+}
+
+/**
  * Formatta i dati degli eventi personali in una struttura di gallerie
  *
  * @param {Array} data - Array di oggetti evento ricevuti dal backend
