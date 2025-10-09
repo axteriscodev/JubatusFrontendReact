@@ -62,9 +62,8 @@ const router = createBrowserRouter([
     element: <PersonalArea />,
     loader: personalLoader,
     children : [{
-      path: "/:slug",
-      element: <PersonalOld />,
-      loader: personalLoader,
+      path: ":slug",
+      element: <PersonalOld />
     }]
   },
   {
