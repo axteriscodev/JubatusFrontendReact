@@ -4,9 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Carousel from "react-bootstrap/Carousel";
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
-import { fetchPurchased } from "../repositories/personal/personal-actions";
-import { isAuthenticated } from "../utils/auth";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { logOut } from "../utils/auth";
 
@@ -14,13 +12,14 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { personalActions } from "../repositories/personal/personal-slice";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
+import { apiRequest } from "../services/api-services";
 
-export default function PersonalOld() {
+export default function PersonalEventDetail() {
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const purchasedItems = useSelector((state) => state.personal.purchased) ?? [];
-
-  //console.log(JSON.stringify(purchasedItems));
+  const { slug } = useParams();
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
@@ -30,10 +29,39 @@ export default function PersonalOld() {
   const [slides, setSlides] = useState([]);
   const { t } = useTranslations();
 
+  useEffect(() => {
+      const loadEvents = async () => {
+        try {
+          //setLoading(true);
+          const response = await apiRequest({
+            api: import.meta.env.VITE_API_URL + `/library/fetch/${slug}`,
+            method: "GET",
+            needAuth: true,
+          });
+  
+          if (!response.ok) {
+            throw new Error("Errore nel caricamento degli eventi");
+          }
+  
+          const eventsData = await response.json();
+          console.log("Dati ricevuti:", eventsData); // Debug
+          //setError(null);
+          dispatch(personalActions.updatePurchased(eventsData.data[0].items || []));
+        } catch (err) {
+          console.error("Errore nel caricamento:", err);
+          //setError(err.message);
+        } finally {
+          //setLoading(false);
+        }
+      };
+  
+      loadEvents();
+    }, []);
+
   // recuper dei contenuti
   useEffect(() => {
     resetHeaderData();
-    dispatch(fetchPurchased());
+    //dispatch(fetchPurchased());
   }, []);
 
   const handleLogout = () => {
@@ -125,6 +153,7 @@ export default function PersonalOld() {
           setIndex={setIndex}
           select={select}
           actions={actions}
+          addToCart={false}
           onClose={() => setOpen(false)}
           onUpdateSlide={(i, updatedSlide) => {
             // Aggiorna Redux
@@ -144,11 +173,4 @@ export default function PersonalOld() {
       )}
     </>
   );
-}
-
-export function loader() {
-  if (!isAuthenticated()) {
-    return redirect("/");
-  }
-  return null;
 }

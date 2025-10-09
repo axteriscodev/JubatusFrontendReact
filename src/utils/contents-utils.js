@@ -8,7 +8,7 @@ export const FileType = {
 
 /**
  * Formatta i dati degli eventi personali in una struttura di gallerie
- * 
+ *
  * @param {Array} data - Array di oggetti evento ricevuti dal backend
  * @returns {Array} Array di oggetti galleria formattati con le seguenti proprietà:
  *   - id: ID univoco dell'evento
@@ -19,7 +19,7 @@ export const FileType = {
  *   - status: Stato dell'evento
  *   - images: Array di contenuti multimediali (immagini/video)
  *   - totalImages: Numero totale di elementi nella galleria
- * 
+ *
  * @example
  * const galleries = getPersonalEventGalleries(eventsData);
  * // Returns: [{ id: 1, slug: 'event-name', images: [...], ... }]
@@ -47,12 +47,12 @@ export const getPersonalEventGalleries = (data) => {
 /**
  * Estrae e formatta i contenuti multimediali di un evento
  * Gestisce la logica di visualizzazione in base allo stato di acquisto
- * 
+ *
  * @param {Array} data - Array di oggetti contenuto (immagini/video)
  * @returns {Array} Array di oggetti con le seguenti proprietà:
  *   - src: URL dell'immagine/video da visualizzare
  *   - isVideo: Boolean che indica se il contenuto è un video
- * 
+ *
  * @example
  * const contents = getPersonalEventContents(eventItems);
  * // Returns: [{ src: 'url/to/image.jpg', isVideo: false }, ...]
@@ -69,16 +69,31 @@ export const getPersonalEventContents = (data) => {
     // Determina quale URL utilizzare in base allo stato di acquisto:
     // - Se acquistato: usa la versione tiny o thumbnail
     // - Se non acquistato: usa la versione preview (con watermark/blur)
-    const src = item.isPurchased
-      ? item.tiny || item.urlThumbnail
-      : item.urlPreviewTiny || item.urlPreview;
+    const isVideo = item.fileTypeId === FileType.VIDEO;
+
+    let src;
+
+    if (isVideo) {
+      src = item.urlCover || "/images/play-icon.webp";
+    } else {
+      src = item.isPurchased
+        ? item.urlTiny || item.urlThumbnail
+        : item.urlPreviewTiny || item.urlPreview;
+    }
+
+    const key = item.isPurchased
+      ? item.keyTiny || item.keyThumbnail
+      : item.keyPreviewTiny || item.keyPreview;
 
     return {
+      id: item.id,
       src,
-      isVideo: item.fileTypeId === FileType.VIDEO, // Identifica se il contenuto è un video
+      key,
+      favourite: item.isFavourite ?? false, //se il contenuto è tra i preferiti
+      isVideo: isVideo, // Identifica se il contenuto è un video
       isPurchased: item.isPurchased, //se il contenuto è già stato acquistato
     };
   });
-  
+
   return result;
 };

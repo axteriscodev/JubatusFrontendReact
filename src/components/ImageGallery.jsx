@@ -1,6 +1,26 @@
 import styles from "./ImageGallery.module.css";
 import { useTranslations } from "../features/TranslationProvider";
+import { getPersonalEventContents } from "../utils/contents-utils";
 
+/**
+ * Componente ImageGallery
+ * 
+ * Visualizza una galleria di immagini responsive con funzionalità opzionali come:
+ * - Selezione delle immagini
+ * - Evidenziazione di immagini acquistate/preferite
+ * - Lightbox per visualizzazione ingrandita
+ * - Azioni personalizzate sulle immagini
+ * 
+ * @param {Array} images - Array di oggetti immagine da visualizzare
+ * @param {boolean} select - Abilita la selezione delle immagini (default: true)
+ * @param {boolean} actions - Abilita azioni aggiuntive sulle immagini (default: false)
+ * @param {boolean} highLightPurchased - Evidenzia le immagini acquistate (default: false)
+ * @param {boolean} highLightFavourite - Evidenzia le immagini preferite (default: false)
+ * @param {Function} onOpenLightbox - Callback per aprire il lightbox
+ * @param {Function} onImageClick - Callback per il click sull'immagine
+ * @param {Array} photoItems - Array di foto selezionate per evidenziare la selezione
+ * @param {boolean} personalSlice - Flag per gestione slice personale (default: false)
+ */
 export default function ImageGallery({
   images,
   select = true,
@@ -12,53 +32,70 @@ export default function ImageGallery({
   photoItems = null,
   personalSlice = false
 }) {
-
-
+  // Recupera i contenuti degli eventi personali dalle immagini
+  const data = getPersonalEventContents(images);
+  
+  // Recupera le foto attualmente selezionate per evidenziarle nella galleria
+  const currentPhotoItems = getPersonalEventContents(photoItems || []);
+  
+  // Hook per le traduzioni
   const { t } = useTranslations();
-
+  
   return (
     <>
+      {/* Griglia responsive della galleria: 3 colonne su mobile, 4 su tablet, 5 su desktop */}
       <div className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 pb-lg ${styles.gallery}`}>
-        {images.map((image, i) => (
-          <div key={`gallery_${Date.now()}_${image.keyPreview || image.keyThumbnail || image.keyOriginal || i}_${i}`}>
+        {data.map((image, i) => (
+          // Contenitore singola immagine con chiave unica
+          <div key={`gallery_${Date.now()}_${image.key || i}_${i}`}>
+            {/* Ratio 1:1 per mantenere le immagini quadrate */}
             <div className="ratio ratio-1-1">
               <div>
+                {/* Contenitore immagine con classi condizionali per selezione e tipo video */}
                 <div className={`${styles.picture} ${
-                    photoItems?.some((el) => el.keyPreview === image.keyPreview) ? styles.selected : ""
+                    // Evidenzia l'immagine se è presente nei photoItems selezionati
+                    currentPhotoItems?.some((el) => el.key === image.key) ? styles.selected : ""
                   } ${
-                    image.urlCover && "video"
+                    // Aggiunge classe "video" se l'immagine ha src (logica da verificare)
+                    (image.isVideo && image.src) && "video"
                   }`}
                 >
+                  {/* Immagine con lazy loading per ottimizzare le performance */}
                   <img
-                    src={
-                      !image.fileTypeId || image.fileTypeId == 1
-                      ? 
-                      image.urlPreview || image.urlThumbnail || image.url
-                      : 
-                      image.urlCover || "/images/play-icon.webp"
-                    }
+                    src={image.src}
                     alt={`Immagine ${i + 1}`}
                     loading="lazy"
                     className={styles.galleryImage}
                   />
                 </div>
+                
+                {/* Icona zoom per aprire il lightbox */}
                 <div className={styles.zoom}
                   onClick={() => onOpenLightbox?.(images, i, select, actions, personalSlice) }>
                     <i className="bi bi-search"></i>
                 </div>
-                {select && highLightPurchased && !image.purchased &&
+                
+                {/* Cerchio di selezione: visibile solo se select è true, 
+                    highLightPurchased è true e l'immagine non è stata acquistata */}
+                {select && highLightPurchased && !image.isPurchased &&
                 <div className={styles.circle}
-                  onClick={() => onImageClick?.(image.keyPreview || image.keyThumbnail || image.keyOriginal) }>
+                  onClick={() => onImageClick?.(image.key) }>
                     <i className="bi bi-check"></i>
                 </div>
                 }
-                {highLightPurchased && image.purchased &&
+                
+                {/* Badge "Acquistato": visibile solo se l'immagine è stata acquistata */}
+                {highLightPurchased && image.isPurchased &&
                 <div className={styles.purchased}>
                   {t("GALLERY_PURCHASE")}
                 </div>
                 }
-                {highLightFavourite && image.favorite &&
-                <div className={styles.favorite}><i className="bi bi-heart-fill text-danger"></i></div>
+                
+                {/* Icona cuore: visibile solo se l'immagine è tra i preferiti */}
+                {highLightFavourite && image.favourite &&
+                <div className={styles.favorite}>
+                  <i className="bi bi-heart-fill text-danger"></i>
+                </div>
                 }
               </div>
             </div>

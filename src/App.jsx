@@ -33,7 +33,7 @@ import MailConfirmation from "./pages/MailConfirmation";
 import ThankYou from "./pages/ThankYou";
 import { LanguageProvider } from "./features/LanguageContext";
 import { TranslationProvider } from "./features/TranslationProvider";
-import PersonalOld from "./pages/Personal_Old";
+import PersonalEventDetail from "./pages/PersonalEventDetail";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -61,10 +61,11 @@ const router = createBrowserRouter([
     path: "/personal",
     element: <PersonalArea />,
     loader: personalLoader,
-    children : [{
-      path: ":slug",
-      element: <PersonalOld />
-    }]
+  },
+  {
+    path: "/personal/:slug",
+    element: <PersonalEventDetail />,
+    loader: personalLoader,
   },
   {
     path: "/event/:eventSlug",

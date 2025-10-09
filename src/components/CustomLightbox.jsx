@@ -14,6 +14,7 @@ export default function CustomLightbox({
   setIndex = null,
   select = false,
   actions = false,
+  addToCart = true,
   onClose,
   onUpdateSlide = null,
   onImageClick = null,
@@ -142,7 +143,7 @@ export default function CustomLightbox({
         ),
         slideHeader: () => (
           <>
-            {select && !currentImage.purchased && (
+            {(addToCart && select && !currentImage.purchased) && (
               <div
                 style={{
                   position: "absolute",
