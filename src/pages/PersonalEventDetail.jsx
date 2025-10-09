@@ -153,6 +153,7 @@ export default function PersonalEventDetail() {
           setIndex={setIndex}
           select={select}
           actions={actions}
+          addToCart={false}
           onClose={() => setOpen(false)}
           onUpdateSlide={(i, updatedSlide) => {
             // Aggiorna Redux
