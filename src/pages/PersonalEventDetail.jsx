@@ -27,6 +27,7 @@ export default function PersonalEventDetail() {
   const [personalSlice, setPersonalSlice] = useState(false);
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
+  const [eventsData, setEventsData] = useState(null);
   const { t } = useTranslations();
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export default function PersonalEventDetail() {
           const eventsData = await response.json();
           console.log("Dati ricevuti:", eventsData); // Debug
           //setError(null);
+          setEventsData(eventsData);
           dispatch(personalActions.updatePurchased(eventsData.data[0].items || []));
         } catch (err) {
           console.error("Errore nel caricamento:", err);
