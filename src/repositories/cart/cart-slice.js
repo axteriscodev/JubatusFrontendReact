@@ -1,6 +1,5 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice} from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
-import { calculateDiscount } from "../../utils/offers";
 
 /**
  * Stato iniziale del carrello
@@ -8,6 +7,7 @@ import { calculateDiscount } from "../../utils/offers";
 const initialState = {
   id: 0,
   userEmail: "",
+  fullName: "",
   userId: 0,
   eventId: 0,
   searchId: 0,
@@ -68,6 +68,18 @@ const cartSlice = createSlice({
       const newEmail = action.payload;
 
       state.userEmail = newEmail;
+    },
+
+    /**
+     * Update del nome utente
+     *
+     * @param {*} state
+     * @param {*} action
+     */
+    updateUserName(state, action) {
+      const newName = action.payload;
+
+      state.fullName = newName;
     },
 
     /**
@@ -215,7 +227,11 @@ const cartSlice = createSlice({
 
       //se precedentemente sono state acquistate tutte le foto
       if (state.previousAllPhotosPurchase) {
-        totalPrice = packageCalculator(state.items, state.prices, state.previousAllPhotosPurchase);
+        totalPrice = packageCalculator(
+          state.items,
+          state.prices,
+          state.previousAllPhotosPurchase
+        );
       }
 
       state.totalPrice = totalPrice;
@@ -274,11 +290,14 @@ const cartSlice = createSlice({
 
       //se precedentemente sono state acquistate tutte le foto
       if (state.previousAllPhotosPurchase) {
-       totalPrice = packageCalculator(state.items, state.prices, state.previousAllPhotosPurchase);
+        totalPrice = packageCalculator(
+          state.items,
+          state.prices,
+          state.previousAllPhotosPurchase
+        );
       }
 
       state.totalPrice = totalPrice;
-
     },
 
     /**
@@ -298,6 +317,7 @@ const cartSlice = createSlice({
     resetStore(state, action) {
       state.id = initialState.id;
       state.userEmail = initialState.userEmail;
+      state.fullName = initialState.fullName;
       state.userId = initialState.userId;
       state.searchId = initialState.searchId;
       state.products = initialState.products;
@@ -458,8 +478,12 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
     purchased: product.purchased ?? false,
   }));
 
-  const photosCount = formattedItems.filter((item) => item.fileTypeId === 1).length;
-  const videosCount = formattedItems.filter((item) => item.fileTypeId === 2).length;
+  const photosCount = formattedItems.filter(
+    (item) => item.fileTypeId === 1
+  ).length;
+  const videosCount = formattedItems.filter(
+    (item) => item.fileTypeId === 2
+  ).length;
 
   const formattedPrices = prices.map(
     ({ id, quantityPhoto, quantityVideo, price, discount, bestOffer }) => ({
@@ -473,10 +497,12 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   );
 
   const photoPackPrice =
-    prices.find((item) => item.quantityPhoto === -1 && item.quantityVideo === 0)?.price ?? 0;
+    prices.find((item) => item.quantityPhoto === -1 && item.quantityVideo === 0)
+      ?.price ?? 0;
 
   const completePackPrice =
-    prices.find((item) => item.quantityPhoto === -1 && item.quantityVideo === 1)?.price ?? 0;
+    prices.find((item) => item.quantityPhoto === -1 && item.quantityVideo === 1)
+      ?.price ?? 0;
 
   // Calcolo base
   let basePrice = calculatePrice(formattedPrices, photosCount, videosCount);
@@ -487,7 +513,10 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
 
     // Se c'è **solo un video**, il prezzo è la differenza tra pacchetto completo e foto
     if (videosCount === 1) {
-      result = basePrice - getSingleVideoPrice(formattedPrices) + discountFromCompletePack;
+      result =
+        basePrice -
+        getSingleVideoPrice(formattedPrices) +
+        discountFromCompletePack;
     } else {
       // Se ci sono più video: rimuovi il prezzo di uno, e aggiungi il pacchetto differenziale
       const singleVideoPrice = getSingleVideoPrice(formattedPrices);
@@ -502,7 +531,8 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
 // Funzione di supporto: trova il prezzo del video singolo
 function getSingleVideoPrice(prices) {
   return (
-    prices.find((item) => item.quantityPhoto === 0 && item.quantityVideo === 1)?.price ?? 0
+    prices.find((item) => item.quantityPhoto === 0 && item.quantityVideo === 1)
+      ?.price ?? 0
   );
 }
 

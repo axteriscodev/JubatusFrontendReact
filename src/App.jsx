@@ -6,32 +6,34 @@ import {
 
 import Login from "./pages/Login";
 import PinVerification from "./pages/PinVerification";
-import Personal from "./pages/Personal";
-import UploadSelfie, {
+import UploadSelfie from "./pages/UploadSelfie";
+import {
   loader as updateSelfieLoader,
-} from "./pages/UploadSelfie";
+} from "./pages/UploadSelfie.loader";
 import ProcessingSelfie from "./pages/ProcessingSelfie";
 import PreOrder from "./pages/PreOrder";
 import PreOrderPurchased from "./pages/PreOrderPurchased";
 import ImageShop from "./pages/ImageShop";
 import Purchased from "./pages/Purchased";
-import AdminPanel from "./pages/AdminPanel";
 import Checkout from "./pages/Checkout";
 import CheckoutOutcome from "./pages/CheckoutOutcome";
-import CreateEvent from "./pages/CreateEvent";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import ErrorPage from "./pages/ErrorPage";
 import ContentUnavailable from "./pages/ContentUnavailable";
 import { isAuthenticated, isAdmin } from "./utils/auth";
-import { loader as personalLoader } from "./pages/Personal";
-import { loader as adminLoader } from "./pages/AdminPanel";
-import { loader as createEventLoader } from "./pages/CreateEvent";
+import  PersonalArea from "./pages/PersonalArea";
+import { loader as personalLoader} from "./pages/PersonalArea.loader";
+import  AdminPanel  from "./pages/AdminPanel";
+import { loader as adminLoader } from "./pages/AdminPanel.loader";
+import CreateEvent from "./pages/CreateEvent";
+import { loader as createEventLoader } from "./pages/CreateEvent/CreateEvent.loader";
 import EmailSent from "./pages/EmailSent";
 import ContentError from "./pages/ContentError";
 import MailConfirmation from "./pages/MailConfirmation";
 import ThankYou from "./pages/ThankYou";
 import { LanguageProvider } from "./features/LanguageContext";
 import { TranslationProvider } from "./features/TranslationProvider";
+import PersonalEventDetail from "./pages/PersonalEventDetail";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -57,7 +59,12 @@ const router = createBrowserRouter([
   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
   {
     path: "/personal",
-    element: <Personal />,
+    element: <PersonalArea />,
+    loader: personalLoader,
+  },
+  {
+    path: "/personal/:slug",
+    element: <PersonalEventDetail />,
     loader: personalLoader,
   },
   {

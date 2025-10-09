@@ -134,10 +134,3 @@ export default function AdminPanel() {
   );
 }
 
-
-export function loader() {
-  if (!isAdmin()) {
-    return redirect("/");
-  }
-  return null;
-}

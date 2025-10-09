@@ -110,7 +110,7 @@ export default function ProcessingSelfie() {
     const timeOut = setInterval(() => {
       errorToast("Si è verificato un errore");
       navigate("/event/" + eventPreset.slug, { replace: true });
-    }, 60000);
+    }, 6000000);
 
     // cleanup function
     return () => clearInterval(timeOut);
