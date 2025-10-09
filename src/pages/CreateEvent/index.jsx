@@ -122,12 +122,3 @@ export default function CreateEvent() {
   );
 }
 
-/**
- * Loader per verificare i permessi admin
- */
-export function loader() {
-  if (!isAdmin()) {
-    return redirect("/");
-  }
-  return null;
-}
