@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Carousel from "react-bootstrap/Carousel";
@@ -15,7 +15,6 @@ import { useTranslations } from "../features/TranslationProvider";
 import { apiRequest } from "../services/api-services";
 
 export default function PersonalEventDetail() {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const purchasedItems = useSelector((state) => state.personal.purchased) ?? [];
@@ -31,40 +30,54 @@ export default function PersonalEventDetail() {
   const { t } = useTranslations();
 
   useEffect(() => {
-      const loadEvents = async () => {
-        try {
-          //setLoading(true);
-          const response = await apiRequest({
-            api: import.meta.env.VITE_API_URL + `/library/fetch/${slug}`,
-            method: "GET",
-            needAuth: true,
-          });
-  
-          if (!response.ok) {
-            throw new Error("Errore nel caricamento degli eventi");
-          }
-  
-          const eventsData = await response.json();
-          console.log("Dati ricevuti:", eventsData); // Debug
-          //setError(null);
-          setEventsData(eventsData);
-          dispatch(personalActions.updatePurchased(eventsData.data[0].items || []));
-        } catch (err) {
-          console.error("Errore nel caricamento:", err);
-          //setError(err.message);
-        } finally {
-          //setLoading(false);
+    const loadEvents = async () => {
+      try {
+        //setLoading(true);
+        const response = await apiRequest({
+          api: import.meta.env.VITE_API_URL + `/library/fetch/${slug}`,
+          method: "GET",
+          needAuth: true,
+        });
+
+        if (!response.ok) {
+          throw new Error("Errore nel caricamento degli eventi");
         }
-      };
-  
-      loadEvents();
-    }, []);
+
+        const eventData = await response.json();
+        console.log("Dati ricevuti:", eventData); // Debug
+        //setError(null);
+        setEventsData(eventData);
+        dispatch(
+          personalActions.updatePurchased(eventData.data[0].items.filter((item) => item.isPurchased) || [])
+        );
+      } catch (err) {
+        console.error("Errore nel caricamento:", err);
+        //setError(err.message);
+      } finally {
+        //setLoading(false);
+      }
+    };
+
+    loadEvents();
+  }, []);
 
   // recuper dei contenuti
   useEffect(() => {
     resetHeaderData();
     //dispatch(fetchPurchased());
   }, []);
+
+  // Calcola gli item non acquistati solo quando eventsData cambia
+  const unpurchasedItems = useMemo(() => {
+    if (!eventsData || eventsData.status === "onlyPurchased") {
+      return [];
+    }
+
+    return (
+      eventsData.data?.[0]?.items?.filter((item) => item.isPurchased === false) ||
+      []
+    );
+  }, [eventsData]);
 
   const handleLogout = () => {
     logOut();
@@ -96,22 +109,28 @@ export default function PersonalEventDetail() {
         </div>
         {purchasedItems?.length > 0 ? (
           <>
-            <h2 className="my-sm">{t('PERSONAL_PURCHASE')}</h2>
+            <h2 className="my-sm">{t("PERSONAL_PURCHASE")}</h2>
             <div className="px-lg">
               <Carousel>
                 {purchasedItems.map((image, i) => (
                   <Carousel.Item
-                    key={`carousel_${Date.now()}_${image.keyPreview || image.keyThumbnail || i}_${i}`}
+                    key={`carousel_${Date.now()}_${
+                      image.keyPreview || image.keyThumbnail || i
+                    }_${i}`}
                   >
-                    <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
+                    <div
+                      className={`carousel-square d-flex justify-content-center align-items-center ${
+                        image.fileTypeId == 2 && image.urlCover ? "video" : ""
+                      }`}
                       onClick={() =>
                         openLightbox(purchasedItems, i, false, true, true)
-                      }>
+                      }
+                    >
                       <img
                         src={
                           !image.fileTypeId || image.fileTypeId == 1
                             ? image.urlPreview ||
-                              image.urlThumbnail ||                              
+                              image.urlThumbnail ||
                               image.url
                             : image.urlCover || "/images/play-icon.webp"
                         }
@@ -140,6 +159,25 @@ export default function PersonalEventDetail() {
                 highLightFavourite={true}
                 highLightPurchased={true}
                 personalSlice={true}
+                onOpenLightbox={openLightbox}
+              />
+            </div>
+          </>
+        )}
+
+        {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
+        {unpurchasedItems.length > 0 && (
+          <>
+            {/* <h2 className="my-sm mt-lg">{t("AVAILABLE_FOR_PURCHASE")}</h2> */}
+            <h2 className="my-sm mt-lg">Contenuti acquistabili</h2>
+            <div className="mt-md">
+              <ImageGallery
+                images={unpurchasedItems}
+                select={false}
+                actions={true}
+                highLightFavourite={false}
+                highLightPurchased={false}
+                personalSlice={false}
                 onOpenLightbox={openLightbox}
               />
             </div>
