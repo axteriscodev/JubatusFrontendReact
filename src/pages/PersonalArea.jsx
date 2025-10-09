@@ -1,94 +1,137 @@
 import { useState, useEffect } from "react";
-import { redirect, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useTranslations } from "../features/TranslationProvider";
-import { isAuthenticated } from "../utils/auth";
-import { Row, Col, Spinner, Alert } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { getPersonalEventGalleries } from "../utils/contents-utils";
+import { Row, Col, Spinner, Alert, Button } from "react-bootstrap";
 import GalleryCard from "../components/GalleryCard";
 import { logOut } from "../utils/auth";
-import { Button } from "react-bootstrap";
 import { apiRequest } from "../services/api-services";
 
+/**
+ * Componente LogoutButton
+ * 
+ * Pulsante riutilizzabile per il logout dell'utente
+ * Evita duplicazione del codice tra diversi stati del componente
+ * 
+ * @param {Function} onLogout - Callback da eseguire al click
+ */
+const LogoutButton = ({ onLogout }) => (
+  <div className="d-flex justify-content-end my-sm">
+    <Button onClick={onLogout} variant="outline-danger">
+      <i className="bi bi-box-arrow-right"></i> Logout
+    </Button>
+  </div>
+);
+
+/**
+ * Componente PersonalArea
+ * 
+ * Visualizza l'area personale dell'utente autenticato con la lista degli eventi
+ * della sua libreria. Gestisce il caricamento, gli errori e la navigazione verso
+ * i dettagli degli eventi in base al loro stato.
+ * 
+ * Stati gestiti:
+ * - Loading: Mostra uno spinner durante il caricamento
+ * - Error: Mostra un messaggio di errore con possibilità di retry
+ * - Empty: Nessun evento trovato
+ * - Success: Lista di eventi con gallerie
+ */
 export default function PersonalArea() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { t } = useTranslations();
-  const [galleries, setGalleries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  
+  // Stati del componente
+  const [galleries, setGalleries] = useState([]); // Array di gallerie eventi
+  const [loading, setLoading] = useState(true); // Stato di caricamento
+  const [error, setError] = useState(null); // Messaggio di errore
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await apiRequest({
-          api: import.meta.env.VITE_API_URL + "/library/fetch",
-          method: "GET",
-          needAuth: true,
-        });
+  /**
+   * Carica gli eventi dalla libreria personale dell'utente
+   * Effettua una chiamata API autenticata e formatta i dati ricevuti
+   */
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null); // Reset dell'errore precedente
+      
+      // Chiamata API autenticata per recuperare gli eventi
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/library/fetch",
+        method: "GET",
+        needAuth: true, // Richiede autenticazione
+      });
 
-        if (!response.ok) {
-          throw new Error("Errore nel caricamento degli eventi");
-        }
-
-        const eventsData = await response.json();
-        console.log("Dati ricevuti:", eventsData); // Debug
-        prepareContent(eventsData.data);
-        setError(null);
-      } catch (err) {
-        console.error("Errore nel caricamento:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      // Verifica la risposta della richiesta
+      if (!response.ok) {
+        throw new Error("Errore nel caricamento degli eventi");
       }
-    };
 
+      const eventsData = await response.json();
+      
+      // Formatta e salva i dati nello stato
+      prepareContent(eventsData.data);
+    } catch (err) {
+      console.error("Errore nel caricamento:", err);
+      setError(err.message); // Salva il messaggio di errore
+    } finally {
+      setLoading(false); // Fine del caricamento in ogni caso
+    }
+  };
+
+  /**
+   * Effect per caricare gli eventi all'mount del componente
+   */
+  useEffect(() => {
     loadEvents();
-  }, []);
+  }, []); // Dependency array vuoto = esegue solo al mount
 
+  /**
+   * Prepara e formatta i dati degli eventi ricevuti dall'API
+   * Valida che i dati siano un array e li trasforma nel formato corretto
+   * 
+   * @param {Array} data - Dati grezzi degli eventi dall'API
+   */
   const prepareContent = (data) => {
-    // Verifica che data sia un array
+    // Validazione del formato dati
     if (!Array.isArray(data)) {
       console.error("I dati non sono un array:", data);
       setError("Formato dati non valido");
       return;
     }
 
-    // Mappa i dati assicurandoti che ogni gallery abbia le proprietà necessarie
-    const formattedGalleries = data.map((event) => ({
-      id: event.id || event.eventId,
-      slug: event.slug,
-      hasId: event.hashId,
-      title: event.title || "",
-      logo: event.logo || "",
-      status: event.status,
-      images:
-        event.items.map((item) => ({
-          src: item.isPurchased ? item.urlThumbnail : item.urlPreview,
-          isVideo: item.fileTypeId === 2,
-        })) || [],
-      totalImages: event.totalItems || 0,
-    }));
-
-    console.log("Galleries formattate:", formattedGalleries); // Debug
+    // Trasforma i dati usando la utility function
+    const formattedGalleries = getPersonalEventGalleries(data);
     setGalleries(formattedGalleries);
   };
 
+  /**
+   * Gestisce il logout dell'utente
+   * Effettua il logout e reindirizza alla pagina di login
+   */
   const handleLogout = () => {
-    logOut();
-    navigate("/", { replace: true });
+    logOut(); // Rimuove i dati di autenticazione
+    navigate("/", { replace: true }); // Reindirizza senza salvare nella history
   };
 
+  /**
+   * Gestisce la navigazione verso i dettagli di un evento
+   * La route di destinazione dipende dallo stato dell'evento:
+   * - "onlyPurchased" / "mixed": Route personale con contenuti acquistati
+   * - "onlySearched": Route pubblica dell'evento
+   * 
+   * @param {number} eventId - ID dell'evento da visualizzare
+   */
   const navigateToDetail = (eventId) => {
-    const event = galleries.find((item) => item.id == eventId);
+    // Trova l'evento selezionato (usando === per strict equality)
+    const event = galleries.find((item) => item.id === eventId);
+    
     if (event) {
+      // Naviga verso route diverse in base allo stato dell'evento
       switch (event.status) {
-        case "onlyPurchased":
-        case "mixed":
+        case "onlyPurchased": // Solo contenuti acquistati
+        case "mixed":          // Mix di contenuti acquistati e non
           navigate(`/personal/${event.slug}`);
           break;
-        case "onlySearched":
-          navigate(`/event/${event.slug}/${event.hasId}`);
+        case "onlySearched":   // Solo contenuti cercati/preview
+          navigate(`/event/${event.slug}/${event.hashId}`);
           break;
         default:
           break;
@@ -96,7 +139,14 @@ export default function PersonalArea() {
     }
   };
 
-  // Stato di loading
+  // ============================================
+  // RENDERING CONDIZIONALE (Multiple Returns)
+  // ============================================
+
+  /**
+   * STATO DI LOADING
+   * Mostra uno spinner centrato mentre i dati vengono caricati
+   */
   if (loading) {
     return (
       <div className="container text-center mt-5">
@@ -106,7 +156,10 @@ export default function PersonalArea() {
     );
   }
 
-  // Stato di errore
+  /**
+   * STATO DI ERRORE
+   * Mostra un alert con il messaggio di errore e un pulsante per riprovare
+   */
   if (error) {
     return (
       <div className="container mt-5">
@@ -115,7 +168,7 @@ export default function PersonalArea() {
           <p>{error}</p>
           <Button
             variant="outline-danger"
-            onClick={() => window.location.reload()}
+            onClick={loadEvents} // Riprova la chiamata API senza ricaricare la pagina
           >
             Riprova
           </Button>
@@ -124,15 +177,14 @@ export default function PersonalArea() {
     );
   }
 
-  // Nessun evento
+  /**
+   * STATO EMPTY
+   * Nessun evento trovato nella libreria dell'utente
+   */
   if (galleries.length === 0) {
     return (
       <div className="container">
-        <div className="d-flex justify-content-end my-sm">
-          <Button onClick={handleLogout} variant="outline-danger">
-            <i className="bi bi-box-arrow-right"></i> Logout
-          </Button>
-        </div>
+        <LogoutButton onLogout={handleLogout} />
         <div className="text-center mt-5">
           <p className="text-white">Nessun evento trovato nella tua libreria</p>
         </div>
@@ -140,14 +192,16 @@ export default function PersonalArea() {
     );
   }
 
+  /**
+   * RENDERING PRINCIPALE
+   * Mostra la griglia di gallerie eventi
+   */
   return (
     <div className="container">
-      <div className="d-flex justify-content-end my-sm">
-        <Button onClick={handleLogout} variant="outline-danger">
-          <i className="bi bi-box-arrow-right"></i> Logout
-        </Button>
-      </div>
+      {/* Header con pulsante logout */}
+      <LogoutButton onLogout={handleLogout} />
 
+      {/* Griglia di gallerie eventi */}
       <Row>
         <Col lg={8} xl={6} className="mx-auto">
           {galleries.map((gallery) => (
@@ -158,7 +212,7 @@ export default function PersonalArea() {
               images={gallery.images}
               totalImages={gallery.totalImages}
               eventId={gallery.id}
-              onPhotoClick={navigateToDetail}
+              onPhotoClick={navigateToDetail} // Callback per la navigazione
             />
           ))}
         </Col>
