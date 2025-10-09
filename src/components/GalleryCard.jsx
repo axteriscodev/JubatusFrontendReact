@@ -1,7 +1,11 @@
-import { Row, Col, Card, Image } from 'react-bootstrap';
+import { Card, Image, Button } from 'react-bootstrap';
 import { Play } from 'lucide-react';
+import { useTranslations } from "../features/TranslationProvider";
 
-export default function GalleryCard({ title, logo, images = [], totalImages, eventId, onPhotoClick }) {
+
+export default function GalleryCard({ title, logo, images = [], totalImages, eventId, onPhotoClick, onNewSearchClick }) {
+  
+  const { t } = useTranslations();
   // Controllo se images esiste
   if (!images || images.length === 0) {
     return null;
@@ -21,7 +25,7 @@ export default function GalleryCard({ title, logo, images = [], totalImages, eve
           height={64}
           style={{ objectFit: 'cover' }}
         />
-        <h2 className="text-white fs-3 fw-bold mb-0">{title}</h2>
+        <h2 className="text-white fs-3 mb-0">{title}</h2>
       </div>
       
       <div className="d-flex gap-1">
@@ -44,6 +48,17 @@ export default function GalleryCard({ title, logo, images = [], totalImages, eve
                 objectFit: 'cover' 
               }}
             />
+            
+            {/* Filtro rosso se non acquistata */}
+            {displayImages[0]?.isPurchased === false && (
+              <div 
+                className="position-absolute top-0 start-0 w-100 h-100"
+                style={{ 
+                  backgroundColor: 'rgba(255, 0, 0, 0.4)',
+                  mixBlendMode: 'multiply'
+                }}
+              />
+            )}
             
             {displayImages[0]?.isVideo && (
               <div 
@@ -94,12 +109,23 @@ export default function GalleryCard({ title, logo, images = [], totalImages, eve
                   }}
                 />
                 
+                {/* Filtro rosso se non acquistata */}
+                {image.isPurchased === false && (
+                  <div 
+                    className="position-absolute top-0 start-0 w-100 h-100"
+                    style={{ 
+                      backgroundColor: 'rgba(255, 0, 0, 0.4)',
+                      mixBlendMode: 'multiply'
+                    }}
+                  />
+                )}
+                
                 {isLast && (
                   <div 
                     className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
                     style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
                   >
-                    <span className="text-white fw-bold" style={{ fontSize: '2rem' }}>
+                    <span className="text-white" style={{ fontSize: '2rem' }}>
                       +{remainingCount}
                     </span>
                   </div>
@@ -108,6 +134,13 @@ export default function GalleryCard({ title, logo, images = [], totalImages, eve
             );
           })}
         </div>
+      </div>
+      {/* Bottone Nuova Ricerca */}
+      <div className="mt-4">
+        <Button variant="link" className="text-white text-decoration-none p-0" onClick={()=>onNewSearchClick(eventId)}>
+          <i class="bi bi-search me-2"></i>
+          {t("PERSONAL_NEW_RESEARCH")}
+        </Button>
       </div>
     </div>
   );

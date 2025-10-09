@@ -84,6 +84,10 @@ export default function PersonalEventDetail() {
     navigate("/", { replace: true });
   };
 
+  const handleBack =()=>{
+    navigate("/personal");
+  };
+
   const openLightbox = (
     images,
     startIndex = 0,
@@ -102,7 +106,11 @@ export default function PersonalEventDetail() {
   return (
     <>
       <div className="container">
-        <div className="d-flex justify-content-end my-sm">
+        
+        <div className="d-flex justify-content-between my-sm">
+          <Button onClick={handleBack} variant="outline-light" size="sm">
+            <i className="bi bi-arrow-left"></i> 
+          </Button>
           <Button onClick={handleLogout} variant="outline-danger">
             <i className="bi bi-box-arrow-right"></i> Logout
           </Button>
@@ -168,8 +176,7 @@ export default function PersonalEventDetail() {
         {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
         {unpurchasedItems.length > 0 && (
           <>
-            {/* <h2 className="my-sm mt-lg">{t("AVAILABLE_FOR_PURCHASE")}</h2> */}
-            <h2 className="my-sm mt-lg">Contenuti acquistabili</h2>
+            <h2 className="my-sm mt-lg">{t("PERSONAL_AVAILABLE")}</h2>
             <div className="mt-md">
               <ImageGallery
                 images={unpurchasedItems}
@@ -179,6 +186,7 @@ export default function PersonalEventDetail() {
                 highLightPurchased={false}
                 personalSlice={false}
                 onOpenLightbox={openLightbox}
+                applyRedFilter={true}
               />
             </div>
           </>

@@ -16,6 +16,7 @@ import { getPersonalEventContents } from "../utils/contents-utils";
  * @param {boolean} actions - Abilita azioni aggiuntive sulle immagini (default: false)
  * @param {boolean} highLightPurchased - Evidenzia le immagini acquistate (default: false)
  * @param {boolean} highLightFavourite - Evidenzia le immagini preferite (default: false)
+ * @param {boolean} applyRedFilter - Applica filtro rosso alle immagini non acquistate (default: false)
  * @param {Function} onOpenLightbox - Callback per aprire il lightbox
  * @param {Function} onImageClick - Callback per il click sull'immagine
  * @param {Array} photoItems - Array di foto selezionate per evidenziare la selezione
@@ -27,6 +28,7 @@ export default function ImageGallery({
   actions = false,
   highLightPurchased = false,
   highLightFavourite = false,
+  applyRedFilter = false,
   onOpenLightbox = null,
   onImageClick = null,
   photoItems = null,
@@ -59,6 +61,7 @@ export default function ImageGallery({
                     // Aggiunge classe "video" se l'immagine ha src (logica da verificare)
                     (image.isVideo && image.src) && "video"
                   }`}
+                  style={{ position: 'relative' }}
                 >
                   {/* Immagine con lazy loading per ottimizzare le performance */}
                   <img
@@ -67,6 +70,22 @@ export default function ImageGallery({
                     loading="lazy"
                     className={styles.galleryImage}
                   />
+                  
+                  {/* Filtro rosso se applyRedFilter è true e l'immagine non è acquistata */}
+                  {applyRedFilter && image.isPurchased === false && (
+                    <div 
+                      style={{ 
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 0, 0, 0.4)',
+                        mixBlendMode: 'multiply',
+                        pointerEvents: 'none'
+                      }}
+                    />
+                  )}
                 </div>
                 
                 {/* Icona zoom per aprire il lightbox */}
