@@ -18,7 +18,7 @@ export default function GalleryCard({ title, logo, images = [], totalImages, eve
     <div className="border-bottom border-secondary pb-4 mb-5">
       <div className="d-flex align-items-center gap-3 mb-4">
         <Image 
-          src={logo} 
+          src={import.meta.env.VITE_API_URL + "/" + logo} 
           alt={title} 
           roundedCircle 
           width={64} 
