@@ -9,11 +9,11 @@ export const FileType = {
 /**
  * Costanti per identificare lo stato dell evento per l utente (se ha acquistato o meno)
  */
-export const EventStatus ={
-    ONLY_PURCHASED : "onlyPurchased",
-    MIXED : "mixed",
-    ONLY_SEARCHED : "onlySearched"
-}
+export const EventStatus = {
+  ONLY_PURCHASED: "onlyPurchased",
+  MIXED: "mixed",
+  ONLY_SEARCHED: "onlySearched",
+};
 
 /**
  * Formatta i dati degli eventi personali in una struttura di gallerie
@@ -48,7 +48,7 @@ export const getPersonalEventGalleries = (data) => {
     title: event.title || "", // Fornisce stringa vuota come fallback
     logo: event.logo || "",
     status: event.status,
-    images: getPersonalEventContents(event.items || []), // Estrae e formatta i contenuti multimediali
+    images: getEventContents(event.items || []), // Estrae e formatta i contenuti multimediali
     totalImages: event.totalItems || 0,
   }));
 };
@@ -63,10 +63,10 @@ export const getPersonalEventGalleries = (data) => {
  *   - isVideo: Boolean che indica se il contenuto è un video
  *
  * @example
- * const contents = getPersonalEventContents(eventItems);
+ * const contents = getEventContents(eventItems);
  * // Returns: [{ src: 'url/to/image.jpg', isVideo: false }, ...]
  */
-export const getPersonalEventContents = (data) => {
+export const getEventContents = (data) => {
   // Verifica che i dati ricevuti siano un array valido
   if (!Array.isArray(data)) {
     console.error("Expected array but received:", typeof data, data);
@@ -74,35 +74,35 @@ export const getPersonalEventContents = (data) => {
   }
 
   // Trasforma ogni item in un oggetto contenuto con src e tipo
-  const result = data.map((item) => {
-    // Determina quale URL utilizzare in base allo stato di acquisto:
-    // - Se acquistato: usa la versione tiny o thumbnail
-    // - Se non acquistato: usa la versione preview (con watermark/blur)
-    const isVideo = item.fileTypeId === FileType.VIDEO;
-
-    let src;
-
-    if (isVideo) {
-      src = item.urlCover || "/images/play-icon.webp";
-    } else {
-      src = item.isPurchased
-        ? item.urlTiny || item.urlThumbnail
-        : item.urlPreviewTiny || item.urlPreview;
-    }
-
-    const key = item.keyOriginal;
-    const favourite = item.isFavourite ?? false;
-    const isPurchased = item.isPurchased;
-    
-    return {
-      id: item.id,
-      src,
-      key,
-      favourite , //se il contenuto è tra i preferiti
-      isVideo, // Identifica se il contenuto è un video
-      isPurchased //se il contenuto è già stato acquistato
-    };
-  });
+  const result = data.map(NormalizeContent);
 
   return result;
+};
+
+export const NormalizeContent = (item) => {
+  // Determina quale URL utilizzare in base allo stato di acquisto:
+  // - Se acquistato: usa la versione tiny o thumbnail
+  // - Se non acquistato: usa la versione preview (con watermark/blur)
+  const isVideo = item.fileTypeId === FileType.VIDEO;
+  let src;
+
+  if (isVideo) {
+    src = item.urlCover || "/images/play-icon.webp";
+  } else {
+    src = item.isPurchased
+      ? item.urlTiny || item.urlThumbnail
+      : item.urlPreviewTiny || item.urlPreview;
+  }
+  const key = item.keyOriginal;
+  const favourite = item.isFavourite ?? false;
+  const isPurchased = item.isPurchased;
+
+  return {
+    id: item.id,
+    src,
+    key,
+    favourite, //se il contenuto è tra i preferiti
+    isVideo, // Identifica se il contenuto è un video
+    isPurchased, //se il contenuto è già stato acquistato
+  };
 };
