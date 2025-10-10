@@ -90,17 +90,17 @@ export const getPersonalEventContents = (data) => {
         : item.urlPreviewTiny || item.urlPreview;
     }
 
-    const key = item.isPurchased
-      ? item.keyTiny || item.keyThumbnail
-      : item.keyPreviewTiny || item.keyPreview;
-
+    const key = item.keyOriginal;
+    const favourite = item.isFavourite ?? false;
+    const isPurchased = item.isPurchased;
+    
     return {
       id: item.id,
       src,
       key,
-      favourite: item.isFavourite ?? false, //se il contenuto è tra i preferiti
-      isVideo: isVideo, // Identifica se il contenuto è un video
-      isPurchased: item.isPurchased, //se il contenuto è già stato acquistato
+      favourite , //se il contenuto è tra i preferiti
+      isVideo, // Identifica se il contenuto è un video
+      isPurchased //se il contenuto è già stato acquistato
     };
   });
 
