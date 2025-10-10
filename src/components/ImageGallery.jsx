@@ -1,6 +1,6 @@
 import styles from "./ImageGallery.module.css";
 import { useTranslations } from "../features/TranslationProvider";
-import { getPersonalEventContents } from "../utils/contents-utils";
+import { getEventContents } from "../utils/contents-utils";
 
 /**
  * Componente ImageGallery
@@ -35,10 +35,10 @@ export default function ImageGallery({
   personalSlice = false
 }) {
   // Recupera i contenuti degli eventi personali dalle immagini
-  const data = getPersonalEventContents(images);
+  const data = getEventContents(images);
   
   // Recupera le foto attualmente selezionate per evidenziarle nella galleria
-  const currentPhotoItems = getPersonalEventContents(photoItems || []);
+  const currentPhotoItems = getEventContents(photoItems || []);
   
   // Hook per le traduzioni
   const { t } = useTranslations();

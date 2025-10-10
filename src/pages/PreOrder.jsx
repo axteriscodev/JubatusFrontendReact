@@ -87,9 +87,9 @@ export default function PreOrder() {
     const [open, setOpen] = useState(false);
     const [slide, setSlide] = useState();
 
-    const openLightbox = (slide) => {
+    const openLightbox = (content) => {
         setOpen(true);
-        setSlide(slide)
+        setSlide(content)
     };
 
     return (
