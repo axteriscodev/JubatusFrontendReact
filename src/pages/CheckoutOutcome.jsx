@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
 import { useLanguage } from "../features/LanguageContext";
+import ProgressBar from "../components/ProgressBar";
 
 const PAYMENT_COMPLETE = "complete";
 const PAYMENT_OPEN = "open";
@@ -84,6 +85,8 @@ export default function CheckoutOutcome() {
   }
 
   if (!status) {
-    return <></>;
+    return <>
+      <ProgressBar />
+    </>;
   }
 }
