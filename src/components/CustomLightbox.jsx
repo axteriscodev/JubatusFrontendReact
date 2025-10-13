@@ -57,8 +57,9 @@ export default function CustomLightbox({
 
     // Aggiorna lo slide corrente via callback
     if (onUpdateSlide) {
+      const originalSlide = effectiveSlides[index];
       const updatedSlide = {
-        ...currentImage,
+        ...originalSlide,
         //favorite: !currentImage.favorite
         favorite: data.data,
       };

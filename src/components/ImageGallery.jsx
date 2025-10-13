@@ -111,7 +111,7 @@ export default function ImageGallery({
                 }
                 
                 {/* Icona cuore: visibile solo se l'immagine è tra i preferiti */}
-                {highLightFavourite && image.favourite &&
+                {highLightFavourite && image.favorite &&
                 <div className={styles.favorite}>
                   <i className="bi bi-heart-fill text-danger"></i>
                 </div>

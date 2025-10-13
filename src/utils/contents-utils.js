@@ -100,7 +100,7 @@ export const NormalizeContent = (item) => {
     }
   }
   const key = item.keyOriginal;
-  const favourite = item.isFavourite ?? false;
+  const favorite = item.favorite ?? false;
   const isPurchased = item.isPurchased;
 
   return {
@@ -108,7 +108,7 @@ export const NormalizeContent = (item) => {
     src,
     srcTiny,
     key,
-    favourite, //se il contenuto è tra i preferiti
+    favorite, //se il contenuto è tra i preferiti
     isVideo, // Identifica se il contenuto è un video
     isPurchased, //se il contenuto è già stato acquistato
     urlOriginal: item.urlOriginal
