@@ -54,8 +54,8 @@ export function EventBasicInfo({
         <Form.Group>
           <Form.Label>Tipo di selfie</Form.Label>
           <Form.Select
-            name="tag"
-            value={formData.tag}
+            name="tagId"
+            value={formData.tagId}
             onChange={onInputChange}
           >
             <option value="">Seleziona un tipo</option>

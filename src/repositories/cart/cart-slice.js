@@ -175,7 +175,7 @@ const cartSlice = createSlice({
     addItemToCart(state, action) {
       //console.log(action.payload);
       const product = state.products.find(
-        (item) => item.keyPreview === action.payload
+        (item) => item.keyOriginal === action.payload
       );
 
       state.totalQuantity++;
@@ -251,7 +251,7 @@ const cartSlice = createSlice({
       //state.totalPrice = state.totalPrice - 9;
 
       state.items = state.items.filter(
-        (item) => item.keyPreview !== itemToRemove
+        (item) => item.keyOriginal !== itemToRemove
       );
 
       let totalPrice = packageCalculator(state.items, state.prices);

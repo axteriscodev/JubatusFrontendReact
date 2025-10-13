@@ -22,6 +22,7 @@ export const getDefaultFormData = () => ({
   location: "",
   description: "",
   tag: "",
+  tagId: 0,
 });
 
 /**
@@ -48,6 +49,7 @@ export const getInitialFormData = (receivedComp) => {
     location: receivedComp.languages?.[0]?.location || "",
     description: receivedComp.languages?.[0]?.description || "",
     tag: receivedComp.tag || "",
+    tagId: receivedComp.tagId || 0,
   };
 };
 
