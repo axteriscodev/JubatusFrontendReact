@@ -149,6 +149,12 @@ export default function PersonalArea() {
     navigate(`/event/${event.slug}`);
   };
 
+  const navigateToShop = (eventId) => {
+    // Trova l'evento selezionato (usando === per strict equality)
+    const event = galleries.find((item) => item.id === eventId);
+    navigate(`/event/${event.slug}/${event.hashId}`);
+  };
+
   // ============================================
   // RENDERING CONDIZIONALE (Multiple Returns)
   // ============================================
@@ -228,8 +234,10 @@ export default function PersonalArea() {
               images={gallery.images}
               totalImages={gallery.totalImages}
               eventId={gallery.id}
+              eventStatus={gallery.status}
               onPhotoClick={navigateToDetail} // Callback per la navigazione
               onNewSearchClick={navigateToNewSearch}
+              onGoToShop={navigateToShop}
             />
           ))}
         </Col>
