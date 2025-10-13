@@ -42,7 +42,7 @@ export default function ImageShop() {
     if (!imageKey || !photoItems) return;
 
     const isInCart = photoItems.some(
-      (element) => element?.keyPreview === imageKey
+      (element) => element?.keyOriginal === imageKey
     );
 
     if (isInCart) {
