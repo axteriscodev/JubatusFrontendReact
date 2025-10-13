@@ -20,6 +20,7 @@ export default function CustomLightbox({
   onUpdateSlide = null,
   onImageClick = null,
   photoItems = null,
+  shopMode = false,
 }) {
   //const dispatch = useDispatch();
 
@@ -101,12 +102,7 @@ export default function CustomLightbox({
           setIndex?.(newIndex);
         },
       }}
-      slides={normalizedSlides.map((slide) => ({
-        src: slide.srcTiny,
-        id: slide.keyOriginal,
-        fileTypeId: slide.fileTypeId,
-        urlOriginal: slide.urlOriginal,
-      }))}
+      slides={normalizedSlides}
       plugins={normalizedSlides.length > 1 ? [Thumbnails, Video] : [Video]}
       render={{
         slide: ({ slide }) => {
@@ -136,8 +132,9 @@ export default function CustomLightbox({
             />
           );
         },
-        thumbnail: ({ slide, rect }) => (
-          <div
+        thumbnail: ({ slide, rect }) => 
+          {  
+            return <div
             style={{
               width: rect.width,
               height: rect.height,
@@ -148,13 +145,13 @@ export default function CustomLightbox({
             className={slide.isVideo ? "video" : ""}
           >
             <img
-              src={slide.srcTiny || "/images/play-icon.webp"}
+              src={slide.src || "/images/play-icon.webp"}
               alt=""
               className={styles.thunbnail}
               loading="lazy"
             />
-          </div>
-        ),
+          </div>}
+        ,
         slideHeader: () => (
           <>
             {addToCart && select && !currentImage.isPurchased && (
@@ -188,7 +185,7 @@ export default function CustomLightbox({
                 </button>
               </div>
             )}
-            {currentImage.isPurchased && (
+            {(shopMode && currentImage.isPurchased) && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
             )}
             {actions && (

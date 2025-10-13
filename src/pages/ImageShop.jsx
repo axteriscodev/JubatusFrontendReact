@@ -159,6 +159,7 @@ export default function ImageShop() {
           onClose={() => setOpen(false)}
           onImageClick={handleImageClick}
           photoItems={photoItems}
+          shopMode={true}
         />
       )}
     </>
