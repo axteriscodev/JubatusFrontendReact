@@ -85,13 +85,19 @@ export const NormalizeContent = (item) => {
   // - Se non acquistato: usa la versione preview (con watermark/blur)
   const isVideo = item.fileTypeId === FileType.VIDEO;
   let src;
+  let srcTiny;
 
   if (isVideo) {
-    src = item.urlCover || "/images/play-icon.webp";
+    src = item.urlOriginal || item.urlPreview;
+    srcTiny = item.urlCover || "/images/play-icon.webp";
   } else {
-    src = item.isPurchased
-      ? item.urlTiny || item.urlThumbnail
-      : item.urlPreviewTiny || item.urlPreview;
+    if (item.isPurchased) {
+      src = item.urlThumbnail || item.urlPreview;
+      srcTiny = item.urlTiny || item.urlPreviewTiny || src;
+    } else {
+      src = item.urlPreview;
+      srcTiny = item.urlPreviewTiny || src;
+    }
   }
   const key = item.keyOriginal;
   const favourite = item.isFavourite ?? false;
@@ -100,6 +106,7 @@ export const NormalizeContent = (item) => {
   return {
     id: item.id,
     src,
+    srcTiny,
     key,
     favourite, //se il contenuto è tra i preferiti
     isVideo, // Identifica se il contenuto è un video
