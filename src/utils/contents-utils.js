@@ -111,5 +111,6 @@ export const NormalizeContent = (item) => {
     favourite, //se il contenuto è tra i preferiti
     isVideo, // Identifica se il contenuto è un video
     isPurchased, //se il contenuto è già stato acquistato
+    urlOriginal: item.urlOriginal
   };
 };

@@ -39,7 +39,7 @@ export default function CustomLightbox({
   const currentImage = normalizedSlides[index] ?? normalizedSlides[0] ?? {};
 
   const isSelected = photoItems?.some(
-    (el) => el.keyOriginal === currentImage.keyOriginal
+    (el) => el.keyOriginal === currentImage.key
   );
 
   const handleFavouriteClick = async () => {
@@ -110,7 +110,7 @@ export default function CustomLightbox({
       plugins={normalizedSlides.length > 1 ? [Thumbnails, Video] : [Video]}
       render={{
         slide: ({ slide }) => {
-          if (slide.fileTypeId === 2) {
+          if (slide.isVideo) {
             // Video
             return (
               <video
@@ -122,7 +122,7 @@ export default function CustomLightbox({
                   margin: "0 auto",
                 }}
               >
-                <source src={slide.urlOriginal} type="video/mp4" />
+                <source src={slide.src} type="video/mp4" />
                 {t("LIGHTBOX_SUPPORT")}
               </video>
             );
@@ -145,10 +145,10 @@ export default function CustomLightbox({
               overflow: "hidden",
               borderRadius: "4px",
             }}
-            className={slide.fileTypeId === 2 && slide.src ? "video" : ""}
+            className={slide.isVideo ? "video" : ""}
           >
             <img
-              src={slide.src || "/images/play-icon.webp"}
+              src={slide.srcTiny || "/images/play-icon.webp"}
               alt=""
               className={styles.thunbnail}
               loading="lazy"
@@ -170,7 +170,7 @@ export default function CustomLightbox({
                 <button
                   onClick={() =>
                     onImageClick?.(
-                      currentImage.key || currentImage.keyThumbnail
+                      currentImage.key
                     )
                   }
                   className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
@@ -188,7 +188,7 @@ export default function CustomLightbox({
                 </button>
               </div>
             )}
-            {currentImage.purchased && (
+            {currentImage.isPurchased && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
             )}
             {actions && (
