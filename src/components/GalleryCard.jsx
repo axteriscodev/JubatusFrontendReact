@@ -128,7 +128,7 @@ export default function GalleryCard({
                 onClick={() => onPhotoClick(eventId)}
               >
                 <Card.Img
-                  src={image.src}
+                  src={image.srcTiny}
                   alt={`Gallery image ${actualIndex + 1}`}
                   style={{
                     height: "100%",
