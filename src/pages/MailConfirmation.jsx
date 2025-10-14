@@ -76,6 +76,13 @@ export default function MailConfirmation() {
       if (response.ok) {
         const json = await response.json();
         console.log("risposta ok");
+
+        // Email già esistente
+        if(json.data.emailDuplicated){
+          formErrors.emailDuplicated = true;
+          setFormErrors(formErrors);
+          return;
+        }
         
         if (json.data.emailModified) {
           dispatch(cartActions.updateUserEmail(email));
