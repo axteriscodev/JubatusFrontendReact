@@ -9,10 +9,10 @@ export default function GalleryCard({
   images = [],
   totalImages,
   eventId,
-  eventStatus,
+  //eventStatus,
   onPhotoClick,
   onNewSearchClick,
-  onGoToShop,
+  //onGoToShop,
 }) {
   const { t } = useTranslations();
   // Controllo se images esiste
@@ -36,7 +36,7 @@ export default function GalleryCard({
         />
         <h2 className="text-white fs-3 mb-0">{title}</h2>
 
-        {eventStatus !== EventStatus.ONLY_PURCHASED && (
+        {/* {eventStatus !== EventStatus.ONLY_PURCHASED && (
           <Button
             variant="link"
             className="text-white text-decoration-none p-0 ms-auto"
@@ -45,7 +45,7 @@ export default function GalleryCard({
             <i className="bi bi-cart me-2 fs-3"></i>
              {t("PERSONAL_SHOP")}
           </Button>
-        )}
+        )} */}
       </div>
 
       <div className="d-flex gap-1">
