@@ -5,6 +5,7 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Video from "yet-another-react-lightbox/plugins/video";
 import styles from "./CustomLightbox.module.css";
 import { useTranslations } from "../features/TranslationProvider";
+import { getEventContents } from "../utils/contents-utils";
 
 export default function CustomLightbox({
   open,
@@ -19,6 +20,7 @@ export default function CustomLightbox({
   onUpdateSlide = null,
   onImageClick = null,
   photoItems = null,
+  shopMode = false,
 }) {
   //const dispatch = useDispatch();
 
@@ -26,16 +28,19 @@ export default function CustomLightbox({
 
   const { t } = useTranslations();
 
-  const effectiveSlides = slides && slides.length > 0
-    ? slides
-    : slide
+  const effectiveSlides =
+    slides && slides.length > 0
+      ? slides
+      : slide
       ? [{ url: slide, keyOriginal: slide, fileTypeId: 2, urlOriginal: slide }]
       : [];
 
-  const currentImage = effectiveSlides[index] ?? effectiveSlides[0] ?? {};
+  const normalizedSlides = getEventContents(effectiveSlides);
+
+  const currentImage = normalizedSlides[index] ?? normalizedSlides[0] ?? {};
 
   const isSelected = photoItems?.some(
-    (el) => el.keyPreview === (currentImage.keyPreview || currentImage.keyThumbnail || currentImage.keyOriginal)
+    (el) => el.keyOriginal === currentImage.key
   );
 
   const handleFavouriteClick = async () => {
@@ -52,8 +57,9 @@ export default function CustomLightbox({
 
     // Aggiorna lo slide corrente via callback
     if (onUpdateSlide) {
+      const originalSlide = effectiveSlides[index];
       const updatedSlide = {
-        ...currentImage,
+        ...originalSlide,
         //favorite: !currentImage.favorite
         favorite: data.data,
       };
@@ -66,11 +72,11 @@ export default function CustomLightbox({
     const response = await fetch(url);
     const blob = await response.blob();
 
-    const urlParts = url.split('/');
-    const filename = urlParts[urlParts.length - 1]?.split('?')[0] || `image`;
+    const urlParts = url.split("/");
+    const filename = urlParts[urlParts.length - 1]?.split("?")[0] || `image`;
 
     const blobUrl = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = blobUrl;
     a.download = filename;
     document.body.appendChild(a);
@@ -82,7 +88,7 @@ export default function CustomLightbox({
   //const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
 
   return (
-  <Lightbox
+    <Lightbox
       styles={{ container: { backgroundColor: "var(--overlay)" } }}
       open={open}
       close={onClose}
@@ -97,33 +103,39 @@ export default function CustomLightbox({
           setIndex?.(newIndex);
         },
       }}
-      slides={effectiveSlides.map((slide) => ({
-        src: slide.urlPreview || slide.urlThumbnail || slide.urlCover || slide.url,
-        id: slide.keyPreview || slide.keyThumbnail || slide.keyOriginal,
-        fileTypeId: slide.fileTypeId,
-        urlOriginal: slide.urlPreview || slide.urlThumbnail || slide.urlOriginal || slide.url,
-      }))}
-      plugins={effectiveSlides.length > 1 ? [Thumbnails, Video] : [Video]}
+      slides={normalizedSlides}
+      plugins={normalizedSlides.length > 1 ? [Thumbnails, Video] : [Video]}
       render={{
         slide: ({ slide }) => {
-          if (slide.fileTypeId === 2) {
+          if (slide.isVideo) {
             // Video
             return (
               <video
                 controls
                 controlsList="nodownload"
-                style={{ maxWidth: "100%", maxHeight: "100%", margin: "0 auto" }}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  margin: "0 auto",
+                }}
               >
-                <source src={slide.urlOriginal} type="video/mp4" />
+                <source src={slide.src} type="video/mp4" />
                 {t("LIGHTBOX_SUPPORT")}
               </video>
             );
           }
           // Immagine normale (fallback)
-          return <img src={slide.src} alt="" style={{ maxWidth: "100%", maxHeight: "100%" }} />;
+          return (
+            <img
+              src={slide.src}
+              alt=""
+              style={{ maxWidth: "100%", maxHeight: "100%" }}
+            />
+          );
         },
-        thumbnail: ({ slide, rect }) => (
-          <div
+        thumbnail: ({ slide, rect }) => 
+          {  
+            return <div
             style={{
               width: rect.width,
               height: rect.height,
@@ -131,7 +143,7 @@ export default function CustomLightbox({
               overflow: "hidden",
               borderRadius: "4px",
             }}
-            className={slide.fileTypeId === 2 && slide.src ? "video" : ""}
+            className={slide.isVideo ? "video" : ""}
           >
             <img
               src={slide.src || "/images/play-icon.webp"}
@@ -139,11 +151,11 @@ export default function CustomLightbox({
               className={styles.thunbnail}
               loading="lazy"
             />
-          </div>
-        ),
+          </div>}
+        ,
         slideHeader: () => (
           <>
-            {(addToCart && select && !currentImage.purchased) && (
+            {addToCart && select && !currentImage.isPurchased && (
               <div
                 style={{
                   position: "absolute",
@@ -154,20 +166,39 @@ export default function CustomLightbox({
                 }}
               >
                 <button
-                  onClick={() => onImageClick?.(currentImage.keyPreview || currentImage.keyThumbnail)}
+                  onClick={() =>
+                    onImageClick?.(
+                      currentImage.key
+                    )
+                  }
                   className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
                 >
-                  {isSelected ? (<><i className="bi bi-trash-fill"></i> {t("LIGHTBOX_REMOVE")}</>) : (<><i className="bi bi-cart"></i> {t("LIGHTBOX_SELECT")}</>)}
+                  {isSelected ? (
+                    <>
+                      <i className="bi bi-trash-fill"></i>{" "}
+                      {t("LIGHTBOX_REMOVE")}
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-cart"></i> {t("LIGHTBOX_SELECT")}
+                    </>
+                  )}
                 </button>
               </div>
             )}
-            {currentImage.purchased && (
+            {(shopMode && currentImage.isPurchased) && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
             )}
             {actions && (
               <div className=" text-50 d-flex gap-3 justify-content-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">
                 <a onClick={handleFavouriteClick} aria-label="Favourite image">
-                  <i className={`bi ${currentImage.favorite ? "bi-heart-fill text-danger" : "bi-heart text-white"}`}></i>
+                  <i
+                    className={`bi ${
+                      currentImage.favorite
+                        ? "bi-heart-fill text-danger"
+                        : "bi-heart text-white"
+                    }`}
+                  ></i>
                 </a>
                 <a
                   onClick={handleDownload}
@@ -182,8 +213,7 @@ export default function CustomLightbox({
               </div>
             )}
           </>
-        )
-        ,
+        ),
       }}
     />
   );
