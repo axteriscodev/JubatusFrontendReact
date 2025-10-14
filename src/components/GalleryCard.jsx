@@ -36,7 +36,7 @@ export default function GalleryCard({
         />
         <h2 className="text-white fs-3 mb-0">{title}</h2>
 
-        {eventStatus === EventStatus.MIXED && (
+        {eventStatus !== EventStatus.ONLY_PURCHASED && (
           <Button
             variant="link"
             className="text-white text-decoration-none p-0 ms-auto"
