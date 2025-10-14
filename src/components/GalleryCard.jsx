@@ -43,6 +43,7 @@ export default function GalleryCard({
             onClick={() => onGoToShop(eventId)}
           >
             <i className="bi bi-cart me-2 fs-3"></i>
+             {t("PERSONAL_SHOP")}
           </Button>
         )}
       </div>
@@ -68,14 +69,14 @@ export default function GalleryCard({
               }}
             />
 
-            {/* Filtro rosso se non acquistata */}
+            {/* Filtro gray se non acquistata */}
             {displayImages[0]?.isPurchased === false && (
               <div
                 className="position-absolute top-0 start-0 w-100 h-100"
-                style={{
-                  backgroundColor: "rgba(255, 0, 0, 0.4)",
-                  mixBlendMode: "multiply",
-                }}
+                    style={{
+                      backdropFilter: "grayscale(100%)",
+                      WebkitBackdropFilter: "grayscale(100%)",
+                    }}
               />
             )}
 
@@ -136,7 +137,7 @@ export default function GalleryCard({
                   }}
                 />
 
-                {/* Filtro rosso se non acquistata */}
+                {/* Filtro gray se non acquistata */}
                 {image.isPurchased === false && (
                   <div
                     className="position-absolute top-0 start-0 w-100 h-100"
