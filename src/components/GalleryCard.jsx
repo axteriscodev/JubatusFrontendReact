@@ -43,6 +43,7 @@ export default function GalleryCard({
             onClick={() => onGoToShop(eventId)}
           >
             <i className="bi bi-cart me-2 fs-3"></i>
+             {t("PERSONAL_SHOP")}
           </Button>
         )}
       </div>
