@@ -185,15 +185,20 @@ export default function PersonalEventDetail() {
         {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
         {unpurchasedItems.length > 0 && (
           <>
-<div className="d-flex justify-content-center mb-4">
-  <div className="d-flex align-items-center gap-3">
+<div className="d-flex justify-content-center mb-1">
+  <div className="d-flex align-items-center">
     <h2 className="my-sm mt-lg">{t("PERSONAL_AVAILABLE")}</h2>
-    <Button
+  </div>
+</div>
+<div className="d-flex justify-content-center">
+  <div className="d-flex align-items-center gap-3">
+        <Button
       variant="link"
       className="text-white text-decoration-none p-0 ms-auto"
       onClick={() => handleGoToShop()}
     >
       <i className="bi bi-cart me-2 fs-3"></i>
+      {t("PERSONAL_SHOP")}
     </Button>
   </div>
 </div>
