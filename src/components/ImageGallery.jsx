@@ -65,7 +65,7 @@ export default function ImageGallery({
                 >
                   {/* Immagine con lazy loading per ottimizzare le performance */}
                   <img
-                    src={image.src}
+                    src={image.srcTiny}
                     alt={`Immagine ${i + 1}`}
                     loading="lazy"
                     className={styles.galleryImage}
