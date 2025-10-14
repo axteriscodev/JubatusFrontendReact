@@ -26,11 +26,11 @@ export default function GalleryCard({
   return (
     <div className="border-bottom border-secondary pb-4 mb-5">
       <div className="d-flex align-items-center gap-3 mb-4">
-        <Image 
-          src={import.meta.env.VITE_API_URL + "/" + logo} 
-          alt={title} 
-          roundedCircle 
-          width={64} 
+        <Image
+          src={import.meta.env.VITE_API_URL + "/" + logo}
+          alt={title}
+          roundedCircle
+          width={64}
           height={64}
           style={{ objectFit: "cover" }}
         />
@@ -141,8 +141,8 @@ export default function GalleryCard({
                   <div
                     className="position-absolute top-0 start-0 w-100 h-100"
                     style={{
-                      backgroundColor: "rgba(255, 0, 0, 0.4)",
-                      mixBlendMode: "multiply",
+                      backdropFilter: "grayscale(100%)",
+                      WebkitBackdropFilter: "grayscale(100%)",
                     }}
                   />
                 )}

@@ -44,6 +44,11 @@ export default function MailForm({
           {t("EMAIL_NOTHING")}
         </p>
       )}
+      {onErrors.emailDuplicated && (
+        <p className="on-error">
+          {t("EMAIL_DUPLICATED")}
+        </p>
+      )}
       <div className="my-xs">
         {showPrivacy && (
           <>
