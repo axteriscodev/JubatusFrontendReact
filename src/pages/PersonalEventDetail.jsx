@@ -26,7 +26,7 @@ export default function PersonalEventDetail() {
   const [personalSlice, setPersonalSlice] = useState(false);
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState([]);
-  const [eventsData, setEventsData] = useState(null);
+  const [eventData, setEventData] = useState(null);
   const { t } = useTranslations();
 
   useEffect(() => {
@@ -43,13 +43,18 @@ export default function PersonalEventDetail() {
           throw new Error("Errore nel caricamento degli eventi");
         }
 
-        const eventData = await response.json();
-        console.log("Dati ricevuti:", eventData); // Debug
+        const eventsData = await response.json();
+        console.log("Dati ricevuti:", eventsData); // Debug
+        if(eventsData.data.length > 0){
+          const event = eventsData.data[0];
         //setError(null);
-        setEventsData(eventData);
+        setEventData(event);
         dispatch(
-          personalActions.updatePurchased(eventData.data[0].items.filter((item) => item.isPurchased) || [])
+          personalActions.updatePurchased(
+            event.items.filter((item) => item.isPurchased) || []
+          )
         );
+        }
       } catch (err) {
         console.error("Errore nel caricamento:", err);
         //setError(err.message);
@@ -69,23 +74,30 @@ export default function PersonalEventDetail() {
 
   // Calcola gli item non acquistati solo quando eventsData cambia
   const unpurchasedItems = useMemo(() => {
-    if (!eventsData || eventsData.status === "onlyPurchased") {
+    if (!eventData || eventData.status === "onlyPurchased") {
       return [];
     }
 
     return (
-      eventsData.data?.[0]?.items?.filter((item) => item.isPurchased === false) ||
-      []
+      eventData.items.filter(
+        (item) => item.isPurchased === false
+      ) || []
     );
-  }, [eventsData]);
+  }, [eventData]);
 
   const handleLogout = () => {
     logOut();
     navigate("/", { replace: true });
   };
 
-  const handleBack =()=>{
+  const handleBack = () => {
     navigate("/personal");
+  };
+
+  const handleGoToShop = () => {
+    const slug = eventData.slug;
+    const hashId = eventData.hashId;
+    navigate(`/event/${slug}/${hashId}`);
   };
 
   const openLightbox = (
@@ -106,10 +118,9 @@ export default function PersonalEventDetail() {
   return (
     <>
       <div className="container">
-        
         <div className="d-flex justify-content-between my-sm">
           <Button onClick={handleBack} variant="outline-light" size="sm">
-            <i className="bi bi-arrow-left"></i> 
+            <i className="bi bi-arrow-left"></i>
           </Button>
           <Button onClick={handleLogout} variant="outline-danger">
             <i className="bi bi-box-arrow-right"></i> Logout
@@ -137,9 +148,7 @@ export default function PersonalEventDetail() {
                       <img
                         src={
                           !image.fileTypeId || image.fileTypeId == 1
-                            ? image.urlTiny||
-                              image.urlThumbnail ||
-                              image.url
+                            ? image.urlTiny || image.urlThumbnail || image.url
                             : image.urlCover || "/images/play-icon.webp"
                         }
                         className="img-fluid"
@@ -176,7 +185,18 @@ export default function PersonalEventDetail() {
         {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
         {unpurchasedItems.length > 0 && (
           <>
-            <h2 className="my-sm mt-lg">{t("PERSONAL_AVAILABLE")}</h2>
+<div className="d-flex justify-content-center mb-4">
+  <div className="d-flex align-items-center gap-3">
+    <h2 className="my-sm mt-lg">{t("PERSONAL_AVAILABLE")}</h2>
+    <Button
+      variant="link"
+      className="text-white text-decoration-none p-0 ms-auto"
+      onClick={() => handleGoToShop()}
+    >
+      <i className="bi bi-cart me-2 fs-3"></i>
+    </Button>
+  </div>
+</div>
             <div className="mt-md">
               <ImageGallery
                 images={unpurchasedItems}
