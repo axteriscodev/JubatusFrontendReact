@@ -13,6 +13,7 @@ export function TranslationProvider({ children }) {
   const { currentLanguage } = useLanguage();
   const langCode = currentLanguage.acronym;
   const tagId = useSelector((state) => state.competition?.tagId);
+  console.log(`tag: ${tagId}`);
 
   const [translations, setTranslations] = useState({});
   const [loadingTranslations, setLoadingTranslations] = useState(true);
