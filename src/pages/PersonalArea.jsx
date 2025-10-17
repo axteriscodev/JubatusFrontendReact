@@ -169,7 +169,7 @@ export default function PersonalArea() {
         <div className="container text-center mt-5">
           <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
           <Spinner animation="border" variant="light" />
-          <p className="text-white mt-3">Caricamento eventi...</p>
+          {/* <p className="text-white mt-3">Caricamento eventi...</p> */}
         </div>
       </>
     );

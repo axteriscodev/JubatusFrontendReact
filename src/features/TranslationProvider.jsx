@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLanguage } from './LanguageContext';
+import { useSelector } from 'react-redux';
 
 export const TranslationContext = createContext({
   translations: {},
@@ -11,11 +12,26 @@ export const TranslationContext = createContext({
 export function TranslationProvider({ children }) {
   const { currentLanguage } = useLanguage();
   const langCode = currentLanguage.acronym;
+  const tagId = useSelector((state) => state.competition?.tagId);
 
   const [translations, setTranslations] = useState({});
   const [loadingTranslations, setLoadingTranslations] = useState(true);
 
-  const t = (key) => translations[key] ?? "";
+  const t = (key) => {
+    if (!key) return "";
+
+    //se ho il tag, provo a cercare la traduzione col tag
+    if (tagId && tagId !== 0 && translations[`${key}_${tagId}`]) {
+      return translations[`${key}_${tagId}`];
+    }
+
+    //se non ho il tag o non ho trovato la traduzione col tag, cerco la traduzione neutra
+    if (translations[key]) {
+      return translations[key];
+    }
+
+    return "";
+  };
 
   const toDictionary = (array) =>
     Object.fromEntries(array.map(item => [item.key, item.value]));

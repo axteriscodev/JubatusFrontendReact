@@ -1,13 +1,11 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "../features/TranslationProvider";
-import { useSelector } from "react-redux";
 
 import styles from "./SelfieUpload.module.css";
 
 export default function SelfieUpload({ onDataChange, onError = false }) {
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
-  const tagId = useSelector((state) => state.competition.tagId);
   const { t } = useTranslations();
 
   const handleImageClick = () => {
@@ -27,8 +25,8 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
 
   return (
     <div>
-      <h3>{t(`SELFIE_TITLE_${tagId}`)}</h3>
-      <p className="my-sm text-secondary">{t(`SELFIE_UPLOAD_${tagId}`)}</p>
+      <h3>{t("SELFIE_TITLE")}</h3>
+      <p className="my-sm text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
         className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
@@ -39,7 +37,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           src="/images/trash-fill.svg"
           className={styles.trash}
           onClick={() => {
-            const confirmDelete = window.confirm(t(`SELFIE_REMOVE_${tagId}`));
+            const confirmDelete = window.confirm(t("SELFIE_REMOVE"));
             if (confirmDelete) {
               setImageUrl(null);
               fileInputRef.current.value = ""; // reset del file input
@@ -49,7 +47,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           style={{ cursor: "pointer" }}
         />
       )}
-      {onError && <p className="on-error">{t(`SELFIE_INSERT_${tagId}`)}</p>}
+      {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
       <input
         type="file"
         ref={fileInputRef}
