@@ -52,7 +52,7 @@ export function EventBasicInfo({
 
       <Col sm={6} className="mb-3">
         <Form.Group>
-          <Form.Label>Tipo di selfie</Form.Label>
+          <Form.Label>Tipologia evento</Form.Label>
           <Form.Select
             name="tagId"
             value={formData.tagId}
