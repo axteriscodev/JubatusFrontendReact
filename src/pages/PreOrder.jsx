@@ -95,7 +95,7 @@ export default function PreOrder() {
     return (
         <>
             <div className="container">
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-center">
                     <div className="text-start">
                         <Link to={'/event/' + eventPreset.slug}>
                             <Logo
