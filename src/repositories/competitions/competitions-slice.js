@@ -8,6 +8,7 @@ const competitionsSlice = createSlice({
     initialState: {
         id: 0,
         slug: "",
+        tagId: 0,
         backgroundColor: "",
         primaryColor: "",
         secondaryColor: "",
@@ -24,6 +25,7 @@ const competitionsSlice = createSlice({
         setCompetitionPreset(state, action) {
             state.id = action.payload.id,
             state.slug = action.payload.slug,
+            state.tagId = action.payload.tagId;
             state.backgroundColor = action.payload.backgroundColor;
             state.primaryColor = action.payload.primaryColor;
             state.secondaryColor = action.payload.secondaryColor;

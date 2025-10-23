@@ -25,8 +25,8 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
 
   return (
     <div>
-      <h3>{t('SELFIE_TITLE')}</h3>
-      <p className="my-sm text-secondary">{t('SELFIE_UPLOAD')}</p>
+      <h3>{t("SELFIE_TITLE")}</h3>
+      <p className="my-sm text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
         className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
         onClick={handleImageClick}
@@ -37,7 +37,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           src="/images/trash-fill.svg"
           className={styles.trash}
           onClick={() => {
-            const confirmDelete = window.confirm("Sei sicuro di voler rimuovere il selfie?");
+            const confirmDelete = window.confirm(t("SELFIE_REMOVE"));
             if (confirmDelete) {
               setImageUrl(null);
               fileInputRef.current.value = ""; // reset del file input
