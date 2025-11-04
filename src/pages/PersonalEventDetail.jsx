@@ -134,7 +134,7 @@ export default function PersonalEventDetail() {
                 {purchasedItems.map((image, i) => (
                   <Carousel.Item
                     key={`carousel_${Date.now()}_${
-                      image.KeyTiny || image.keyThumbnail || i
+                      image.keyThumbnail || i
                     }_${i}`}
                   >
                     <div
@@ -148,7 +148,7 @@ export default function PersonalEventDetail() {
                       <img
                         src={
                           !image.fileTypeId || image.fileTypeId == 1
-                            ? image.urlTiny || image.urlThumbnail || image.url
+                            ? image.urlThumbnail || image.url
                             : image.urlCover || "/images/play-icon.webp"
                         }
                         className="img-fluid"
