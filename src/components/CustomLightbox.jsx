@@ -146,7 +146,7 @@ export default function CustomLightbox({
             className={slide.isVideo ? "video" : ""}
           >
             <img
-              src={slide.src || "/images/play-icon.webp"}
+              src={slide.srcTiny || "/images/play-icon.webp"}
               alt=""
               className={styles.thunbnail}
               loading="lazy"
