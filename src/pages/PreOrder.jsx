@@ -184,7 +184,7 @@ export default function PreOrder() {
                                     </div>
                                     <div className="text-end lh-1">
                                         <div className="text-decoration-line-through">{list.price} €</div>
-                                        <strong className="text-30">{getFinalPrice(list.price, list.discount)} €</strong>
+                                        <div className="text-30 fw-bold">{getFinalPrice(list.price, list.discount)} €</div>
                                     </div>
                                 </div>
                             </div>
