@@ -11,7 +11,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   const { t } = useTranslations();
 
   const handleImageClick = () => {
-    if (imageUrl) return false;
+    if (imageUrl || loading) return false;
     fileInputRef.current.click();
   };
 
@@ -64,7 +64,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       <h3>{t("SELFIE_TITLE")}</h3>
       <p className="my-sm text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
-        className={`${styles.avatar} ${!imageUrl ? styles.add : ""}`}
+        className={`${styles.avatar} ${!imageUrl && !loading ? styles.add : ""}`}
         onClick={handleImageClick}
         style={
           imageUrl
@@ -75,7 +75,13 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
               }
             : {}
         }
-      ></div>
+      >
+        {loading && (
+          <div className={styles.loadingOverlay}>
+            <div className={styles.spinner}></div>
+          </div>
+        )}
+      </div>
       {imageUrl && !loading && (
         <img
           src="/images/trash-fill.svg"
