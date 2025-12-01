@@ -12,7 +12,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
 import { setUiPreset, setHeaderData } from "../utils/graphics";
 import LanguageSelect from "../components/LanguageSelect";
-import { useTranslations } from "../features/TranslationProvider";
+
 
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
