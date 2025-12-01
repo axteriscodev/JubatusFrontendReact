@@ -23,7 +23,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
     let processedFile = file;
 
     try {
-      if (isHeic(file)) {
+      if (await isHeic(file)) {
         // convertiamo HEIC in JPEG
         const convertedBlob = await heicTo({
           blob: file,
