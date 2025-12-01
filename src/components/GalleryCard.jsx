@@ -170,7 +170,7 @@ export default function GalleryCard({
           className="text-white text-decoration-none p-0"
           onClick={() => onNewSearchClick(eventId)}
         >
-          <i class="bi bi-search me-2"></i>
+          <i className="bi bi-search me-2"></i>
           {t("PERSONAL_NEW_RESEARCH")}
         </Button>
       </div>
