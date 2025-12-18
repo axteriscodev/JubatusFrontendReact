@@ -4,6 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from 'html-react-parser';
+import PrivacyPolicyModal from "./PrivacyPolicyModal";
 
 export default function MailForm({
   defaultEmail,
@@ -14,11 +15,20 @@ export default function MailForm({
   const [isChecked, setIsChecked] = useState(false);
   const [emailValue, setEmailValue] = useState(defaultEmail || "");
   const [show, setShow] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  
   const handleClose = () => setShow(false);
   const handleShow = (event) => {
     setShow(true);
     event.preventDefault();
   };
+  
+  const handlePrivacyPolicyClose = () => setShowPrivacyPolicy(false);
+  const handlePrivacyPolicyShow = (event) => {
+    setShowPrivacyPolicy(true);
+    event.preventDefault();
+  };
+  
   const { t } = useTranslations();
 
   const handlePrivacyChange = (event) => {
@@ -71,6 +81,8 @@ export default function MailForm({
                 {t("SELFIE_PRIVACY2")}
               </a>
             </div>
+            
+            {/* Modal breve con info privacy */}
             <Modal show={show} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
                 <Modal.Title>
@@ -86,9 +98,9 @@ export default function MailForm({
                 <p className="text-black">
                   {t("PRIVACY_DETAILS")}
                   <a
-                    href="https://www.jubatus.it/utility/privacy-policy"
-                    target="_blank"
-                    className="text-primary"
+                    href="#"
+                    onClick={handlePrivacyPolicyShow}
+                    className="text-black"
                   >
                     {t("EMAIL_PRIVACY")}
                   </a>
@@ -101,6 +113,12 @@ export default function MailForm({
                 </Button>
               </Modal.Footer>
             </Modal>
+            
+            {/* Modal completo Privacy Policy */}
+            <PrivacyPolicyModal 
+              show={showPrivacyPolicy} 
+              onHide={handlePrivacyPolicyClose} 
+            />
           </>
         )}
         {onErrors.privacyError && (
