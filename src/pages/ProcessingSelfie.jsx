@@ -9,7 +9,7 @@ import { fetchPriceList } from "../repositories/cart/cart-actions";
 import ProgressBar from "../components/ProgressBar";
 import { errorToast } from "../utils/toast-manager";
 import { useTranslations } from "../features/TranslationProvider";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 
 /**
  * Pagina di elaborazione selfie
@@ -48,7 +48,7 @@ export default function ProcessingSelfie() {
         formData.append("eventId", receivedData.eventId);
         formData.append("email", receivedData.email);
         formData.append("image", receivedData.image);
-        formData.append("lang",currentLanguage?.acronym ?? "");
+        formData.append("lang", currentLanguage?.acronym ?? "");
 
         //caricamento selfie
         response = await apiRequest({
@@ -68,7 +68,6 @@ export default function ProcessingSelfie() {
         if (eventPreset.preOrder) {
           navigate("/pre-order", { replace: true });
         } else {
-
           //sezione elaborazione selfie e attesa risposte dal server S3
           listenSSE(
             import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
@@ -79,7 +78,11 @@ export default function ProcessingSelfie() {
               dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
               dispatch(cartActions.updateUserId(jsonData.userId));
               dispatch(cartActions.updateUserEmail(jsonData.userEmail));
-              dispatch(cartActions.updatePreviousAllPhotosPurchase(jsonData.previousAllPhotosPurchase ?? false));
+              dispatch(
+                cartActions.updatePreviousAllPhotosPurchase(
+                  jsonData.previousAllPhotosPurchase ?? false,
+                ),
+              );
 
               if (jsonData.contents.length > 0 || jsonData.hasVideo) {
                 navigate("/image-shop", { replace: true });
@@ -91,12 +94,18 @@ export default function ProcessingSelfie() {
               errorToast("Si è verificato un errore");
               console.log(`Errore per la ricerca ${json.data}`);
               navigate("/event/" + eventPreset.slug, { replace: true });
-            }
+            },
           );
         }
+      } else if (response.status === 401) {
+        errorToast(t("INVALID_MAIL_FOR_EVENT"), 10000);
+        navigate("/event/" + eventPreset.slug, { replace: true });
       } else {
         throw Response(
-          JSON.stringify({ status: response.status, message: response.message })
+          JSON.stringify({
+            status: response.status,
+            message: response.message,
+          }),
         );
       }
     }

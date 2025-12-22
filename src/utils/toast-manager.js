@@ -1,9 +1,9 @@
 import { toast, Bounce } from "react-toastify";
 
-export function successToast(message) {
+export function successToast(message, autoClose = 3000) {
   toast.success(message, {
     position: "top-right",
-    autoClose: 3000,
+    autoClose: autoClose ?? 3000,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: true,
@@ -14,10 +14,10 @@ export function successToast(message) {
   });
 }
 
-export function errorToast(message) {
+export function errorToast(message, autoClose = 3000) {
   toast.error(message, {
     position: "top-right",
-    autoClose: 3000,
+    autoClose: autoClose ?? 3000,
     hideProgressBar: false,
     closeOnClick: false,
     pauseOnHover: true,
