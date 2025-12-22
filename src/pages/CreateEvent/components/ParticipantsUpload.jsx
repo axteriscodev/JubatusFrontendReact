@@ -70,9 +70,10 @@ export function ParticipantsUpload({ eventId }) {
         needAuth: true,
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Errore durante il caricamento');
+        throw new Error(responseData.message || 'Errore durante il caricamento');
       }
 
       setUploadStatus('success');
@@ -98,7 +99,7 @@ export function ParticipantsUpload({ eventId }) {
         </Col>
       </Row>
 
-      <Row className="mt-3">
+      <Row className="mt-3 align-items-end">
         <Col sm={8}>
           <Form.Group controlId="excelFile">
             <Form.Label>File Excel</Form.Label>
@@ -116,11 +117,12 @@ export function ParticipantsUpload({ eventId }) {
           </Form.Group>
         </Col>
 
-        <Col sm={4} className="d-flex align-items-end">
+        <Col sm={4}>
           <Button
             variant="primary"
             onClick={handleUpload}
             disabled={!selectedFile || uploading}
+            className="w-100"
           >
             {uploading ? (
               <>
@@ -141,16 +143,25 @@ export function ParticipantsUpload({ eventId }) {
         </Col>
       </Row>
 
+      {/* Messaggi di stato separati per non influenzare il layout */}
       {uploadStatus === 'success' && (
-        <Alert variant="success" dismissible onClose={() => setUploadStatus(null)} className="mt-3">
-          File caricato con successo!
-        </Alert>
+        <Row className="mt-3">
+          <Col sm={12}>
+            <Alert variant="success" dismissible onClose={() => setUploadStatus(null)}>
+              File caricato con successo!
+            </Alert>
+          </Col>
+        </Row>
       )}
 
       {uploadStatus === 'error' && (
-        <Alert variant="danger" dismissible onClose={() => setUploadStatus(null)} className="mt-3">
-          Errore durante il caricamento: {errorMessage}
-        </Alert>
+        <Row className="mt-3">
+          <Col sm={12}>
+            <Alert variant="danger" dismissible onClose={() => setUploadStatus(null)}>
+              Errore durante il caricamento: {errorMessage}
+            </Alert>
+          </Col>
+        </Row>
       )}
     </Container>
   );
