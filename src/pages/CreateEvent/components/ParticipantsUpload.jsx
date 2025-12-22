@@ -99,7 +99,7 @@ export function ParticipantsUpload({ eventId }) {
         </Col>
       </Row>
 
-      <Row className="mt-3 align-items-end">
+      <Row className="mt-3">
         <Col sm={8}>
           <Form.Group controlId="excelFile">
             <Form.Label>File Excel</Form.Label>
@@ -109,15 +109,19 @@ export function ParticipantsUpload({ eventId }) {
               onChange={handleFileSelect}
               disabled={uploading}
             />
-            {selectedFile && (
-              <Form.Text className="text-success d-block mt-2">
-                File selezionato: {selectedFile.name}
-              </Form.Text>
-            )}
+            {/* Spazio riservato per il messaggio - sempre presente per evitare shift del layout */}
+            <div style={{ minHeight: '28px' }} className="mt-2">
+              {selectedFile && (
+                <Form.Text className="text-success d-block">
+                  File selezionato: {selectedFile.name}
+                </Form.Text>
+              )}
+            </div>
           </Form.Group>
         </Col>
 
         <Col sm={4}>
+          <Form.Label className="d-block">&nbsp;</Form.Label>
           <Button
             variant="primary"
             onClick={handleUpload}
