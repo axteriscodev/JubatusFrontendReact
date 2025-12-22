@@ -90,6 +90,25 @@ export function EventBasicInfo({
           rows={3}
         />
       </Col>
+
+      <Col sm={12} className="mb-3">
+        <Form.Check
+          type="checkbox"
+          id="verifiedAttendanceEvent"
+          name="verifiedAttendanceEvent"
+          label="Evento con partecipanti verificati (numero chiuso)"
+          checked={formData.verifiedAttendanceEvent}
+          onChange={(e) => onInputChange({
+            target: {
+              name: 'verifiedAttendanceEvent',
+              value: e.target.checked
+            }
+          })}
+        />
+        <Form.Text className="text-muted">
+          Abilita la gestione dei partecipanti con caricamento Excel
+        </Form.Text>
+      </Col>
     </Row>
   );
 }

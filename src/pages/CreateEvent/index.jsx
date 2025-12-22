@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Form } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Form, Tabs, Tab } from "react-bootstrap";
 import { useNavigate, useLocation, redirect } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -21,6 +21,7 @@ import { EventColors } from "./components/EventColors";
 import { EventLogo } from "./components/EventLogo";
 import { PriceListSection } from "./components/PriceListSection";
 import { FormActions } from "./components/FormActions";
+import { ParticipantsUpload } from "./components/ParticipantsUpload";
 
 // Utilities
 import { prepareSubmitData, getDefaultPriceLists } from "./utils/eventFormHelpers";
@@ -33,12 +34,16 @@ export default function CreateEvent() {
   const dispatch = useDispatch();
   const receivedComp = useLocation().state;
 
+  // State per gestire le tab
+  const [activeTab, setActiveTab] = useState("info");
+
   // Custom hooks per gestire lo stato
   const {
     formData,
     handleInputChange,
     handleTitleChange,
     handleFileChange,
+    updateField,
   } = useEventForm(receivedComp);
 
   const priceListHandlers = usePriceLists(
@@ -61,16 +66,22 @@ export default function CreateEvent() {
   const handleSubmit = async () => {
     const submitData = prepareSubmitData(formData, priceListHandlers.priceLists);
 
-    let outcome = false;
+    let result;
     if (submitData.id) {
-      outcome = await dispatch(editCompetition(submitData));
+      result = await dispatch(editCompetition(submitData));
     } else {
-      outcome = await dispatch(addCompetition(submitData));
+      result = await dispatch(addCompetition(submitData));
     }
 
-    if (outcome) {
+    if (result.success) {
       successToast("Evento salvato con successo!");
-      navigate("/admin");
+
+      // Se è un nuovo evento, aggiornare formData con l'ID
+      if (!submitData.id && result.data?.id) {
+        updateField('id', result.data.id);
+      }
+
+      // Rimaniamo sulla pagina - NON navighiamo verso /admin
     } else {
       errorToast("Si è verificato un errore durante il salvataggio");
     }
@@ -86,36 +97,53 @@ export default function CreateEvent() {
   return (
     <div className="container text-start">
       <h1>Gestione evento</h1>
-      
+
       <Form>
-        {/* Informazioni base */}
-        <EventBasicInfo
-          formData={formData}
-          onInputChange={handleInputChange}
-          onTitleChange={handleTitleChange}
-          tagList={tagList}
-        />
+        <Tabs
+          activeKey={activeTab}
+          onSelect={(k) => setActiveTab(k)}
+          className="mb-3"
+        >
+          {/* Tab 1: Info evento */}
+          <Tab eventKey="info" title="Info evento">
+            <div className="mt-3">
+              <EventBasicInfo
+                formData={formData}
+                onInputChange={handleInputChange}
+                onTitleChange={handleTitleChange}
+                tagList={tagList}
+              />
+              <EventDates formData={formData} onInputChange={handleInputChange} />
+              <EventColors formData={formData} onInputChange={handleInputChange} />
+              <EventLogo
+                formData={formData}
+                receivedComp={receivedComp}
+                onFileChange={handleFileChange}
+              />
+            </div>
+          </Tab>
 
-        {/* Date */}
-        <EventDates formData={formData} onInputChange={handleInputChange} />
+          {/* Tab 2: Listini prezzi */}
+          <Tab eventKey="priceLists" title="Listini prezzi">
+            <div className="mt-3">
+              <PriceListSection
+                priceLists={priceListHandlers.priceLists}
+                handlers={priceListHandlers}
+              />
+            </div>
+          </Tab>
 
-        {/* Colori */}
-        <EventColors formData={formData} onInputChange={handleInputChange} />
+          {/* Tab 3: Partecipanti (condizionale) */}
+          {formData.id && formData.verifiedAttendanceEvent && (
+            <Tab eventKey="participants" title="Partecipanti">
+              <div className="mt-3">
+                <ParticipantsUpload eventId={formData.id} />
+              </div>
+            </Tab>
+          )}
+        </Tabs>
 
-        {/* Logo */}
-        <EventLogo
-          formData={formData}
-          receivedComp={receivedComp}
-          onFileChange={handleFileChange}
-        />
-
-        {/* Listini prezzi */}
-        <PriceListSection
-          priceLists={priceListHandlers.priceLists}
-          handlers={priceListHandlers}
-        />
-
-        {/* Azioni */}
+        {/* Azioni sempre visibili fuori dalle tab */}
         <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
       </Form>
     </div>
