@@ -21,6 +21,7 @@ import { EventLogo } from "./components/EventLogo";
 import { PriceListSection } from "./components/PriceListSection";
 import { FormActions } from "./components/FormActions";
 import { ParticipantsUpload } from "./components/ParticipantsUpload";
+import { PartecipantsTable } from "./components/PartecipantsTable";
 
 // Utilities
 import { prepareSubmitData, getDefaultPriceLists } from "./utils/eventFormHelpers";
@@ -137,6 +138,10 @@ export default function CreateEvent() {
             <Tab eventKey="participants" title="Partecipanti">
               <div className="mt-3">
                 <ParticipantsUpload eventId={formData.id} />
+
+                <hr className="my-4" />
+
+                <PartecipantsTable eventId={formData.id} />
               </div>
             </Tab>
           )}
