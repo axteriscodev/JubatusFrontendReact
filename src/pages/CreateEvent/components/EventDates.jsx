@@ -1,90 +1,148 @@
-import { Form, Row, Col, InputGroup } from "react-bootstrap";
+import { Form, Row, Col, Card, InputGroup } from "react-bootstrap";
 
 /**
- * Componente per la gestione delle date dell'evento
+ * Componente per la gestione delle date dell'evento - VERSIONE MIGLIORATA
  */
 export function EventDates({ formData, onInputChange }) {
   return (
-    <Row>
-      <Col sm={4} className="mb-3">
-        <Form.Label>Data evento</Form.Label>
-        <InputGroup>
-          <InputGroup.Text id="basic-addon-data-e">
-            <i className="bi bi-calendar"></i>
-          </InputGroup.Text>
-          <Form.Control
-            name="dateEvent"
-            value={formData.dateEvent}
-            onChange={onInputChange}
-            placeholder="Data evento"
-            type="date"
-          />
-        </InputGroup>
-      </Col>
+    <Card className="shadow-sm border-0 mb-4">
+      <Card.Body className="p-4">
+        <div className="d-flex align-items-center mb-4">
+          <div className="bg-success bg-opacity-10 rounded-3 p-3 me-3">
+            <i className="bi bi-calendar-event-fill text-success fs-4"></i>
+          </div>
+          <div>
+            <h5 className="mb-1 fw-bold">Date e Scadenze</h5>
+            <p className="text-muted mb-0 small">Gestisci le date importanti dell'evento</p>
+          </div>
+        </div>
 
-      <Col sm={4} className="mb-3">
-        <Form.Label>Data pubblicazione</Form.Label>
-        <InputGroup>
-          <InputGroup.Text id="basic-addon-data-p">
-            <i className="bi bi-calendar"></i>
-          </InputGroup.Text>
-          <Form.Control
-            name="dateStart"
-            value={formData.dateStart}
-            onChange={onInputChange}
-            placeholder="Data pubblicazione"
-            type="date"
-          />
-        </InputGroup>
-      </Col>
+        <Row className="g-3">
+          {/* Date principali */}
+          <Col xs={12}>
+            <div className="border-start border-4 border-primary ps-3 mb-3">
+              <h6 className="text-primary fw-semibold mb-0">Date Principali</h6>
+            </div>
+          </Col>
 
-      <Col sm={4} className="mb-3">
-        <Form.Label>Data scadenza</Form.Label>
-        <InputGroup>
-          <InputGroup.Text id="basic-addon-data-s">
-            <i className="bi bi-calendar"></i>
-          </InputGroup.Text>
-          <Form.Control
-            name="dateExpiry"
-            value={formData.dateExpiry}
-            onChange={onInputChange}
-            placeholder="Data scadenza"
-            type="date"
-          />
-        </InputGroup>
-      </Col>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-calendar-check-fill me-2"></i>Data evento
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <InputGroup.Text className="bg-white border-2 border-end-0">
+                  <i className="bi bi-calendar3 text-primary"></i>
+                </InputGroup.Text>
+                <Form.Control
+                  name="dateEvent"
+                  value={formData.dateEvent}
+                  onChange={onInputChange}
+                  placeholder="Data evento"
+                  type="date"
+                  className="border-2 border-start-0"
+                  style={{ fontSize: '0.95rem' }}
+                />
+              </InputGroup>
+            </Form.Group>
+          </Col>
 
-      <Col sm={6} className="mb-3">
-        <Form.Label>Data inizio preordini</Form.Label>
-        <InputGroup>
-          <InputGroup.Text id="basic-addon-preorder-start">
-            <i className="bi bi-calendar"></i>
-          </InputGroup.Text>
-          <Form.Control
-            name="datePreorderStart"
-            value={formData.datePreorderStart}
-            onChange={onInputChange}
-            placeholder="Data inizio preordini"
-            type="date"
-          />
-        </InputGroup>
-      </Col>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-calendar-plus-fill me-2"></i>Data pubblicazione
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <InputGroup.Text className="bg-white border-2 border-end-0">
+                  <i className="bi bi-calendar3 text-success"></i>
+                </InputGroup.Text>
+                <Form.Control
+                  name="dateStart"
+                  value={formData.dateStart}
+                  onChange={onInputChange}
+                  placeholder="Data pubblicazione"
+                  type="date"
+                  className="border-2 border-start-0"
+                  style={{ fontSize: '0.95rem' }}
+                />
+              </InputGroup>
+            </Form.Group>
+          </Col>
 
-      <Col sm={6} className="mb-3">
-        <Form.Label>Data fine preordini</Form.Label>
-        <InputGroup>
-          <InputGroup.Text id="basic-addon-preorder-expiry">
-            <i className="bi bi-calendar"></i>
-          </InputGroup.Text>
-          <Form.Control
-            name="datePreorderExpiry"
-            value={formData.datePreorderExpiry}
-            onChange={onInputChange}
-            placeholder="Data fine preordini"
-            type="date"
-          />
-        </InputGroup>
-      </Col>
-    </Row>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-calendar-x-fill me-2"></i>Data scadenza
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <InputGroup.Text className="bg-white border-2 border-end-0">
+                  <i className="bi bi-calendar3 text-danger"></i>
+                </InputGroup.Text>
+                <Form.Control
+                  name="dateExpiry"
+                  value={formData.dateExpiry}
+                  onChange={onInputChange}
+                  placeholder="Data scadenza"
+                  type="date"
+                  className="border-2 border-start-0"
+                  style={{ fontSize: '0.95rem' }}
+                />
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          {/* Preordini */}
+          <Col xs={12} className="mt-4">
+            <div className="border-start border-4 border-warning ps-3 mb-3">
+              <h6 className="text-warning fw-semibold mb-0">Periodo Preordini</h6>
+            </div>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-hourglass-split me-2"></i>Inizio preordini
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <InputGroup.Text className="bg-white border-2 border-end-0">
+                  <i className="bi bi-calendar3 text-warning"></i>
+                </InputGroup.Text>
+                <Form.Control
+                  name="datePreorderStart"
+                  value={formData.datePreorderStart}
+                  onChange={onInputChange}
+                  placeholder="Data inizio preordini"
+                  type="date"
+                  className="border-2 border-start-0"
+                  style={{ fontSize: '0.95rem' }}
+                />
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-hourglass-bottom me-2"></i>Fine preordini
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <InputGroup.Text className="bg-white border-2 border-end-0">
+                  <i className="bi bi-calendar3 text-warning"></i>
+                </InputGroup.Text>
+                <Form.Control
+                  name="datePreorderExpiry"
+                  value={formData.datePreorderExpiry}
+                  onChange={onInputChange}
+                  placeholder="Data fine preordini"
+                  type="date"
+                  className="border-2 border-start-0"
+                  style={{ fontSize: '0.95rem' }}
+                />
+              </InputGroup>
+            </Form.Group>
+          </Col>
+        </Row>
+      </Card.Body>
+    </Card>
   );
 }

@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { Form, Tabs, Tab } from "react-bootstrap";
-import { useNavigate, useLocation, redirect } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   addCompetition,
   editCompetition,
 } from "../../repositories/admin-competitions/admin-competitions-actions";
-import { isAdmin } from "../../utils/auth";
 import { errorToast, successToast } from "../../utils/toast-manager";
 
 // Hooks personalizzati

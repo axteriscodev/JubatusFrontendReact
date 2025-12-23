@@ -1,7 +1,7 @@
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col, Button, Card, InputGroup } from "react-bootstrap";
 
 /**
- * Componente per un singolo item (pacchetto) all'interno di un listino
+ * Componente per un singolo item (pacchetto) all'interno di un listino - VERSIONE MIGLIORATA
  */
 export function PriceListItem({
   item,
@@ -13,115 +13,221 @@ export function PriceListItem({
   canRemove,
 }) {
   return (
-    <Col md={12}>
-      <Row>
-        <Col md={4}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-title`}>
-            <Form.Label>Titolo</Form.Label>
-            <Form.Control
-              value={item.itemsLanguages?.[0]?.title ?? ""}
-              onChange={(e) =>
-                onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
-              }
-              placeholder="Titolo"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={4}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-subTitle`}>
-            <Form.Label>Sottotitolo</Form.Label>
-            <Form.Control
-              value={item.itemsLanguages?.[0]?.subTitle ?? ""}
-              onChange={(e) =>
-                onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
-              }
-              placeholder="Sottotitolo"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={4}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-bestOffer`}>
-            <Form.Label>Miglior offerta</Form.Label>
-            <Form.Check
-              type="checkbox"
-              checked={item.bestOffer}
-              onChange={(e) =>
-                onUpdate(formIndex, rowIndex, "bestOffer", e.target.checked)
-              }
-            />
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row className="mb-3 align-items-end">
-        <Col md={2}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}>
-            <Form.Label>Quantità foto</Form.Label>
-            <Form.Control
-              type="number"
-              value={item.quantityPhoto}
-              onChange={(e) =>
-                onUpdate(formIndex, rowIndex, "quantityPhoto", e.target.value)
-              }
-              placeholder="Numero"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={2}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}>
-            <Form.Label>Quantità video</Form.Label>
-            <Form.Control
-              type="number"
-              value={item.quantityVideo}
-              onChange={(e) =>
-                onUpdate(formIndex, rowIndex, "quantityVideo", e.target.value)
-              }
-              placeholder="Numero"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={2}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-price`}>
-            <Form.Label>Prezzo</Form.Label>
-            <Form.Control
-              type="number"
-              value={item.price}
-              onChange={(e) =>
-                onUpdate(formIndex, rowIndex, "price", e.target.value)
-              }
-              placeholder="Prezzo"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={2}>
-          <Form.Group controlId={`f${formIndex}-r${rowIndex}-discount`}>
-            <Form.Label>Sconto</Form.Label>
-            <Form.Control
-              type="number"
-              value={item.discount}
-              onChange={(e) =>
-                onUpdate(formIndex, rowIndex, "discount", e.target.value)
-              }
-              placeholder="Sconto"
-            />
-          </Form.Group>
-        </Col>
-
-        <Col md={2}>
+    <Card className="border-2 border-primary border-opacity-25">
+      <Card.Body className="p-3">
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <div className="d-flex align-items-center gap-2">
+            <span className="badge bg-info bg-opacity-10 text-primary px-3 py-2">
+              Pacchetto #{rowIndex + 1}
+            </span>
+            {item.bestOffer && (
+              <span className="badge bg-success">
+                <i className="bi bi-star-fill me-1"></i>
+                Migliore Offerta
+              </span>
+            )}
+          </div>
           <Button
-            variant="danger"
+            variant="outline-danger"
+            size="sm"
             onClick={() => onRemove(formIndex, rowIndex)}
             disabled={!canRemove}
+            className="shadow-sm"
           >
             <i className="bi bi-trash"></i>
           </Button>
-        </Col>
-      </Row>
-    </Col>
+        </div>
+
+        <Row className="g-3">
+          {/* Informazioni principali */}
+          <Col md={4}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-title`}>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-type me-2"></i>Titolo
+              </Form.Label>
+              <Form.Control
+                value={item.itemsLanguages?.[0]?.title ?? ""}
+                onChange={(e) =>
+                  onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
+                }
+                placeholder="Es: Pacchetto Basic"
+                className="border-2"
+                style={{ fontSize: '0.95rem' }}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-subTitle`}>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-text-left me-2"></i>Sottotitolo
+              </Form.Label>
+              <Form.Control
+                value={item.itemsLanguages?.[0]?.subTitle ?? ""}
+                onChange={(e) =>
+                  onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
+                }
+                placeholder="Es: Ideale per eventi piccoli"
+                className="border-2"
+                style={{ fontSize: '0.95rem' }}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col md={4}>
+            <Form.Label className="fw-semibold text-secondary small mb-2">
+              <i className="bi bi-star-fill me-2"></i>Opzioni
+            </Form.Label>
+            <Card className="bg-light border-0 p-2">
+              <Form.Check
+                type="checkbox"
+                id={`f${formIndex}-r${rowIndex}-bestOffer`}
+                label={<span className="fw-semibold small">Migliore offerta</span>}
+                checked={item.bestOffer}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "bestOffer", e.target.checked)
+                }
+              />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Divisore */}
+        <hr className="my-3" />
+
+        {/* Quantità e prezzi */}
+        <Row className="g-3">
+          <Col xs={12}>
+            <small className="text-muted fw-semibold">
+              <i className="bi bi-box me-2"></i>QUANTITÀ E PREZZI
+            </small>
+          </Col>
+
+          <Col md={3} sm={6}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-camera-fill me-2"></i>Foto
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <Form.Control
+                  type="number"
+                  value={item.quantityPhoto}
+                  onChange={(e) =>
+                    onUpdate(formIndex, rowIndex, "quantityPhoto", e.target.value)
+                  }
+                  placeholder="0"
+                  className="border-2"
+                  style={{ fontSize: '0.95rem' }}
+                />
+                <InputGroup.Text className="bg-white border-2 border-start-0">
+                  <i className="bi bi-image text-primary"></i>
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          <Col md={3} sm={6}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-film me-2"></i>Video
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <Form.Control
+                  type="number"
+                  value={item.quantityVideo}
+                  onChange={(e) =>
+                    onUpdate(formIndex, rowIndex, "quantityVideo", e.target.value)
+                  }
+                  placeholder="0"
+                  className="border-2"
+                  style={{ fontSize: '0.95rem' }}
+                />
+                <InputGroup.Text className="bg-white border-2 border-start-0">
+                  <i className="bi bi-play-circle text-danger"></i>
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          <Col md={3} sm={6}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-price`}>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-currency-euro me-2"></i>Prezzo
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <InputGroup.Text className="bg-white border-2 border-end-0">
+                  €
+                </InputGroup.Text>
+                <Form.Control
+                  type="number"
+                  value={item.price}
+                  onChange={(e) =>
+                    onUpdate(formIndex, rowIndex, "price", e.target.value)
+                  }
+                  placeholder="0.00"
+                  className="border-2 border-start-0"
+                  style={{ fontSize: '0.95rem' }}
+                  step="0.01"
+                />
+              </InputGroup>
+            </Form.Group>
+          </Col>
+
+          <Col md={3} sm={6}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-discount`}>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-percent me-2"></i>Sconto
+              </Form.Label>
+              <InputGroup className="shadow-sm">
+                <Form.Control
+                  type="number"
+                  value={item.discount}
+                  onChange={(e) =>
+                    onUpdate(formIndex, rowIndex, "discount", e.target.value)
+                  }
+                  placeholder="0"
+                  className="border-2"
+                  style={{ fontSize: '0.95rem' }}
+                  min="0"
+                  max="100"
+                />
+                <InputGroup.Text className="bg-white border-2 border-start-0">
+                  <i className="bi bi-tag text-success"></i>
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        {/* Riepilogo prezzo finale */}
+        {item.price > 0 && (
+          <div className="mt-3 p-3 bg-success bg-opacity-10 rounded-3">
+            <div className="d-flex justify-content-between align-items-center">
+              <span className="text-secondary fw-semibold">
+                <i className="bi bi-calculator me-2"></i>
+                Prezzo finale:
+              </span>
+              <div className="text-end">
+                {item.discount > 0 && (
+                  <div>
+                    <small className="text-muted text-decoration-line-through">
+                      €{parseFloat(item.price).toFixed(2)}
+                    </small>
+                  </div>
+                )}
+                <span className="fs-5 fw-bold text-success">
+                  €{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
+                </span>
+                {item.discount > 0 && (
+                  <small className="text-success ms-2">
+                    (-{item.discount}%)
+                  </small>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
