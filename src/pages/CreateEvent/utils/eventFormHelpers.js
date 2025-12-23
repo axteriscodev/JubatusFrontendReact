@@ -23,6 +23,7 @@ export const getDefaultFormData = () => ({
   description: "",
   tag: "",
   tagId: 0,
+  verifiedAttendanceEvent: false,
 });
 
 /**
@@ -50,6 +51,7 @@ export const getInitialFormData = (receivedComp) => {
     description: receivedComp.languages?.[0]?.description || "",
     tag: receivedComp.tag || "",
     tagId: receivedComp.tagId || 0,
+    verifiedAttendanceEvent: receivedComp.verifiedAttendanceEvent || false,
   };
 };
 
@@ -103,4 +105,5 @@ export const prepareSubmitData = (formData, priceLists) => ({
   ...formData,
   languages: [buildLanguageObject(formData)],
   lists: priceLists,
+  verifiedAttendanceEvent: formData.verifiedAttendanceEvent,
 });

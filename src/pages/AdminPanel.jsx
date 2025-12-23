@@ -1,10 +1,10 @@
 import { Button, ButtonGroup, Table } from "react-bootstrap";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
-import { isAdmin, logOut } from "../utils/auth";
+import { logOut } from "../utils/auth";
 
 import {
   fetchCompetitions,
@@ -84,7 +84,7 @@ export default function AdminPanel() {
           </tr>
         </thead>
         <tbody>
-          {competitions.map((competition, i) => (
+          {competitions.map((competition) => (
             <tr key={competition.id}>
               <td>{competition.id}</td>
               <td>{competition.languages[0].title}</td>
