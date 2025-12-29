@@ -51,15 +51,18 @@ export const addCompetition = (competition) => {
       if (!response.ok) {
         throw new Error("Errore di comunicazione col server");
       }
+
+      const data = await response.json();
+      return data;
     };
 
     try {
-      await sendRequest();
-      dispatch(adminCompetitionsActions.addCompetition(competition));
-      return Promise.resolve(true);
+      const responseData = await sendRequest();
+      dispatch(adminCompetitionsActions.addCompetition(responseData.event || responseData));
+      return { success: true, data: responseData.event || responseData };
     } catch (error) {
       console.log("Qualcosa è andato storto");
-      return Promise.resolve(false);
+      return { success: false, data: null };
     }
   };
 };
@@ -86,10 +89,10 @@ export const editCompetition = (competition) => {
     try {
       await sendRequest();
       dispatch(adminCompetitionsActions.editCompetition(competition));
-      return Promise.resolve(true);
+      return { success: true, data: competition };
     } catch (error) {
       console.log("Qualcosa è andato storto");
-      return Promise.resolve(false);
+      return { success: false, data: null };
     }
   };
 };
