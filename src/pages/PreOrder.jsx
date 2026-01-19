@@ -194,6 +194,7 @@ export default function PreOrder() {
               key={i}
               onClick={(event) => handleSelection(event, list)}
               className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}
+              style={list.bestOffer ? { "--best-offer-label": `'${t("BEST_OFFER")}'` } : undefined}
             >
               <div className="d-flex justify-content-between align-items-center">
                 <div>
