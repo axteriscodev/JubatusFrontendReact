@@ -14,7 +14,15 @@ const competitionsSlice = createSlice({
         secondaryColor: "",
         logo: "",
         emoji: "",
-        preOrder: false
+        preOrder: false,
+        dateEvent: "",
+        currencyId: 0,
+        title: "",
+        location: "",
+        description: "",
+        tag: "",
+        currency: "",
+        currencySymbol: ""
     },
     reducers: {
         /**
@@ -23,8 +31,8 @@ const competitionsSlice = createSlice({
          * @param {*} action 
          */
         setCompetitionPreset(state, action) {
-            state.id = action.payload.id,
-            state.slug = action.payload.slug,
+            state.id = action.payload.id;
+            state.slug = action.payload.slug;
             state.tagId = action.payload.tagId;
             state.backgroundColor = action.payload.backgroundColor;
             state.primaryColor = action.payload.primaryColor;
@@ -32,6 +40,14 @@ const competitionsSlice = createSlice({
             state.logo = action.payload.logo;
             state.emoji = action.payload.languages[0].emoji;
             state.preOrder = action.payload.preOrder ?? false;
+            state.dateEvent = action.payload.dateEvent;
+            state.currencyId = action.payload.currencyId;
+            state.title = action.payload.languages[0].title;
+            state.location = action.payload.languages[0].location;
+            state.description = action.payload.languages[0].description;
+            state.tag = action.payload.tag.tag;
+            state.currency = action.payload.currency.currency;
+            state.currencySymbol = action.payload.currency.symbol;
         }
     }
 });

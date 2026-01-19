@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { setUiPreset } from "../utils/graphics";
 import CustomLightbox from "../components/CustomLightbox";
 import { Link } from "react-router-dom";
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 import { useTranslations } from "../features/TranslationProvider";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 
 export default function ImageShop() {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ export default function ImageShop() {
     if (!imageKey || !photoItems) return;
 
     const isInCart = photoItems.some(
-      (element) => element?.keyOriginal === imageKey
+      (element) => element?.keyOriginal === imageKey,
     );
 
     if (isInCart) {
@@ -74,11 +74,9 @@ export default function ImageShop() {
   return (
     <>
       {alertPack && (
-        <div className="shopNotify shadow text-black">
-          {t("CART_ADD")}
-        </div>
+        <div className="shopNotify shadow text-black">{t("CART_ADD")}</div>
       )}
-      <div className="container"> 
+      <div className="container">
         <div className="d-flex justify-content-between">
           <div className="text-start">
             <Link to={"/event/" + eventPreset.slug}>
@@ -91,7 +89,7 @@ export default function ImageShop() {
           <div>
             <div className="price-list-container">
               {pricesList.map((pricePack, i) => (
-                <div key={i}>{getPriceListEntry(pricePack)}</div>
+                <div key={i}>{getPriceListEntry(pricePack, eventPreset)}</div>
               ))}
             </div>
           </div>
@@ -103,16 +101,12 @@ export default function ImageShop() {
           </div>
         )}
         {!hasPhoto && hasVideo && numVideo == 0 && (
-          <div className="my-md">
-            {parse(t("RESULT_VIDEO"))}
-          </div>
+          <div className="my-md">{parse(t("RESULT_VIDEO"))}</div>
         )}
         {!hasPhoto && hasVideo && numVideo > 0 && (
           <div className="my-md text-start">
             <h2>{t("RESULT_TITLE")}</h2>
-            <p>
-              {t("CART_VIDEO")}
-            </p>
+            <p>{t("CART_VIDEO")}</p>
           </div>
         )}
         {hasPhoto && hasVideo && numVideo == 0 && (
@@ -166,15 +160,15 @@ export default function ImageShop() {
   );
 }
 
-function getPriceListEntry(pricePack) {
+function getPriceListEntry(pricePack, eventPreset) {
   const safeHTML = DOMPurify.sanitize(pricePack.itemsLanguages[0].title);
 
   return (
     <>
-      <span
-        dangerouslySetInnerHTML={{ __html: safeHTML }}
-      />
-      - {pricePack.price}€
+      <span dangerouslySetInnerHTML={{ __html: safeHTML }} />
+      {eventPreset.currency === "EUR"
+        ? ` - ${pricePack.price}${eventPreset.currencySymbol}`
+        : ` - ${eventPreset.currencySymbol}${pricePack.price}`}
     </>
   );
 }
