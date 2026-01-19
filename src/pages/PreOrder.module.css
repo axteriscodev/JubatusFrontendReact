@@ -15,7 +15,7 @@
     border-color: var(--secondary-event-color, --secondary-color);
 }
 .pack.bestOffer::after{
-    content: 'Offerta migliore';
+    content: 'Best deal';
     position: absolute;
     top: 0;
     right: 1rem;
