@@ -167,7 +167,7 @@ export function EventBasicInfo({
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col xs={12}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
                 <i className="bi bi-emoji-smile-fill me-2"></i>Emoji attesa
