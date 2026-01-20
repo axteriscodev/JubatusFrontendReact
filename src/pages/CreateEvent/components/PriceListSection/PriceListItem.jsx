@@ -8,10 +8,10 @@ export function PriceListItem({
   formIndex,
   rowIndex,
   onUpdate,
-  onUpdateWithLanguage,
   onRemove,
   canRemove,
   currencySymbol = "€",
+  labelList = [],
 }) {
   return (
     <Card className="border-2 border-primary border-opacity-25">
@@ -41,37 +41,26 @@ export function PriceListItem({
 
         <Row className="g-3">
           {/* Informazioni principali */}
-          <Col md={4}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-title`}>
+          <Col md={8}>
+            <Form.Group controlId={`f${formIndex}-r${rowIndex}-labelId`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-type me-2"></i>Titolo
+                <i className="bi bi-tag me-2"></i>Label Pacchetto
               </Form.Label>
-              <Form.Control
-                value={item.itemsLanguages?.[0]?.title ?? ""}
+              <Form.Select
+                value={item.labelId ?? ""}
                 onChange={(e) =>
-                  onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
+                  onUpdate(formIndex, rowIndex, "labelId", e.target.value ? parseInt(e.target.value) : null)
                 }
-                placeholder="Es: Pacchetto Basic"
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
-              />
-            </Form.Group>
-          </Col>
-
-          <Col md={4}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-subTitle`}>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-text-left me-2"></i>Sottotitolo
-              </Form.Label>
-              <Form.Control
-                value={item.itemsLanguages?.[0]?.subTitle ?? ""}
-                onChange={(e) =>
-                  onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
-                }
-                placeholder="Es: Ideale per eventi piccoli"
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-              />
+              >
+                <option value="">Seleziona una label...</option>
+                {labelList.map((label) => (
+                  <option key={label.id} value={label.id}>
+                    {label.label}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Col>
 

@@ -13,6 +13,7 @@ import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
 import { useCurrencies } from "./hooks/useCurrencies";
+import { useListItemLabels } from "./hooks/useListItemLabels";
 import { useFormValidation } from "./hooks/useFormValidation";
 
 // Componenti
@@ -54,6 +55,7 @@ export default function CreateEvent() {
 
   const { tagList, loading: tagsLoading } = useTags();
   const { currencyList, loading: currenciesLoading } = useCurrencies();
+  const { labelList, loading: labelsLoading } = useListItemLabels();
   const { errors, validateForm, clearFieldError } = useFormValidation();
 
   // Effetto per aggiungere/rimuovere classe admin al body
@@ -144,6 +146,7 @@ export default function CreateEvent() {
                 priceLists={priceListHandlers.priceLists}
                 handlers={priceListHandlers}
                 currencySymbol={currencyList.find(c => c.id === Number(formData.currencyId))?.symbol || "€"}
+                labelList={labelList}
               />
             </div>
           </Tab>

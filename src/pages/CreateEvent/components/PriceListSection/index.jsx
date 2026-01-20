@@ -4,7 +4,7 @@ import { PriceListCard } from "./PriceListCard";
 /**
  * Componente principale per la sezione listini prezzi - VERSIONE MIGLIORATA
  */
-export function PriceListSection({ priceLists, handlers, currencySymbol = "€" }) {
+export function PriceListSection({ priceLists, handlers, currencySymbol = "€", labelList = [] }) {
   return (
     <Col xs={12}>
       <div className="d-flex align-items-center justify-content-between mb-4">
@@ -44,6 +44,7 @@ export function PriceListSection({ priceLists, handlers, currencySymbol = "€" 
               handlers={handlers}
               totalLists={priceLists.length}
               currencySymbol={currencySymbol}
+              labelList={labelList}
             />
           ))}
         </div>

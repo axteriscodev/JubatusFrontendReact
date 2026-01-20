@@ -61,19 +61,12 @@ export const getInitialFormData = (receivedComp) => {
  * Crea un oggetto item vuoto per i listini
  */
 export const createEmptyPriceItem = () => ({
-  title: "",
-  subTitle: "",
+  labelId: null,
   bestOffer: false,
   quantityPhoto: "",
   quantityVideo: "",
   price: "",
   discount: "",
-  itemsLanguages: [
-    {
-      title: "",
-      subTitle: "",
-    },
-  ],
 });
 
 /**
