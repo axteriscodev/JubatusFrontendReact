@@ -143,6 +143,7 @@ export default function CreateEvent() {
               <PriceListSection
                 priceLists={priceListHandlers.priceLists}
                 handlers={priceListHandlers}
+                currencySymbol={currencyList.find(c => c.id === Number(formData.currencyId))?.symbol || "€"}
               />
             </div>
           </Tab>

@@ -4,13 +4,12 @@ import { PriceListCard } from "./PriceListCard";
 /**
  * Componente principale per la sezione listini prezzi - VERSIONE MIGLIORATA
  */
-export function PriceListSection({ priceLists, handlers }) {
+export function PriceListSection({ priceLists, handlers, currencySymbol = "€" }) {
   return (
     <Col xs={12}>
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div>
           <h4 className="mb-1 fw-bold">
-            <i class="bi bi-currency-euro"></i>
             Gestione Listini Prezzi
           </h4>
           <p className="text-muted mb-0 small">
@@ -44,6 +43,7 @@ export function PriceListSection({ priceLists, handlers }) {
               index={index}
               handlers={handlers}
               totalLists={priceLists.length}
+              currencySymbol={currencySymbol}
             />
           ))}
         </div>

@@ -11,6 +11,7 @@ export function PriceListItem({
   onUpdateWithLanguage,
   onRemove,
   canRemove,
+  currencySymbol = "€",
 }) {
   return (
     <Card className="border-2 border-primary border-opacity-25">
@@ -152,11 +153,11 @@ export function PriceListItem({
           <Col md={3} sm={6}>
             <Form.Group controlId={`f${formIndex}-r${rowIndex}-price`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-currency-euro me-2"></i>Prezzo
+                <i className="bi bi-cash me-2"></i>Prezzo
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <InputGroup.Text className="bg-white border-2 border-end-0">
-                  €
+                  {currencySymbol}
                 </InputGroup.Text>
                 <Form.Control
                   type="number"
@@ -211,12 +212,12 @@ export function PriceListItem({
                 {item.discount > 0 && (
                   <div>
                     <small className="text-muted text-decoration-line-through">
-                      €{parseFloat(item.price).toFixed(2)}
+                      {currencySymbol}{parseFloat(item.price).toFixed(2)}
                     </small>
                   </div>
                 )}
                 <span className="fs-5 fw-bold text-success">
-                  €{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
+                  {currencySymbol}{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
                 </span>
                 {item.discount > 0 && (
                   <small className="text-success ms-2">
