@@ -3,7 +3,16 @@ import { Form, Row, Col, Card, InputGroup } from "react-bootstrap";
 /**
  * Componente per la gestione delle date dell'evento - VERSIONE MIGLIORATA
  */
-export function EventDates({ formData, onInputChange, errors = {} }) {
+export function EventDates({ formData, onInputChange, errors = {}, onClearError = () => {} }) {
+  // Handler per input con pulizia errore
+  const handleInputWithClear = (e) => {
+    const { name } = e.target;
+    if (errors[name]) {
+      onClearError(name);
+    }
+    onInputChange(e);
+  };
+
   return (
     <Card className="shadow-sm border-0 mb-4">
       <Card.Body className="p-4">
@@ -37,7 +46,7 @@ export function EventDates({ formData, onInputChange, errors = {} }) {
                 <Form.Control
                   name="dateEvent"
                   value={formData.dateEvent}
-                  onChange={onInputChange}
+                  onChange={handleInputWithClear}
                   placeholder="Data evento"
                   type="date"
                   className="border-2 border-start-0"
@@ -63,7 +72,7 @@ export function EventDates({ formData, onInputChange, errors = {} }) {
                 <Form.Control
                   name="dateStart"
                   value={formData.dateStart}
-                  onChange={onInputChange}
+                  onChange={handleInputWithClear}
                   placeholder="Data pubblicazione"
                   type="date"
                   className="border-2 border-start-0"
@@ -89,7 +98,7 @@ export function EventDates({ formData, onInputChange, errors = {} }) {
                 <Form.Control
                   name="dateExpiry"
                   value={formData.dateExpiry}
-                  onChange={onInputChange}
+                  onChange={handleInputWithClear}
                   placeholder="Data scadenza"
                   type="date"
                   className="border-2 border-start-0"

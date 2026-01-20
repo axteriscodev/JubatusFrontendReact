@@ -9,8 +9,25 @@ export function EventBasicInfo({
   onTitleChange,
   tagList,
   currencyList,
-  errors = {}
+  errors = {},
+  onClearError = () => {}
 }) {
+  // Handler per input con pulizia errore
+  const handleInputWithClear = (e) => {
+    const { name } = e.target;
+    if (errors[name]) {
+      onClearError(name);
+    }
+    onInputChange(e);
+  };
+
+  // Handler per titolo con pulizia errore
+  const handleTitleWithClear = (e) => {
+    if (errors.title) {
+      onClearError('title');
+    }
+    onTitleChange(e);
+  };
   return (
     <Card className="shadow-sm border-0 mb-4">
       <Card.Body className="p-4">
@@ -33,7 +50,7 @@ export function EventBasicInfo({
               <Form.Control
                 placeholder="Inserisci il titolo dell'evento"
                 value={formData.title}
-                onChange={onTitleChange}
+                onChange={handleTitleWithClear}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
                 isInvalid={!!errors.title}
@@ -84,7 +101,7 @@ export function EventBasicInfo({
               <Form.Control
                 name="pathS3"
                 value={formData.pathS3}
-                onChange={onInputChange}
+                onChange={handleInputWithClear}
                 placeholder="percorso/cartella/s3"
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
@@ -104,7 +121,7 @@ export function EventBasicInfo({
               <Form.Select
                 name="tagId"
                 value={formData.tagId}
-                onChange={onInputChange}
+                onChange={handleInputWithClear}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
                 isInvalid={!!errors.tagId}
@@ -131,7 +148,7 @@ export function EventBasicInfo({
               <Form.Select
                 name="currencyId"
                 value={formData.currencyId}
-                onChange={onInputChange}
+                onChange={handleInputWithClear}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
                 isInvalid={!!errors.currencyId}

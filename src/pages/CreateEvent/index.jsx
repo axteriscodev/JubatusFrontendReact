@@ -54,7 +54,7 @@ export default function CreateEvent() {
 
   const { tagList, loading: tagsLoading } = useTags();
   const { currencyList, loading: currenciesLoading } = useCurrencies();
-  const { errors, validateForm } = useFormValidation();
+  const { errors, validateForm, clearFieldError } = useFormValidation();
 
   // Effetto per aggiungere/rimuovere classe admin al body
   useEffect(() => {
@@ -125,8 +125,9 @@ export default function CreateEvent() {
                 tagList={tagList}
                 currencyList={currencyList}
                 errors={errors}
+                onClearError={clearFieldError}
               />
-              <EventDates formData={formData} onInputChange={handleInputChange} errors={errors} />
+              <EventDates formData={formData} onInputChange={handleInputChange} errors={errors} onClearError={clearFieldError} />
               <EventColors formData={formData} onInputChange={handleInputChange} />
               <EventLogo
                 formData={formData}
