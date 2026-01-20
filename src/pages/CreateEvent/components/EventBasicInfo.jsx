@@ -3,11 +3,13 @@ import { Form, Row, Col, Card } from "react-bootstrap";
 /**
  * Componente per le informazioni base dell'evento - VERSIONE MIGLIORATA
  */
-export function EventBasicInfo({ 
-  formData, 
-  onInputChange, 
-  onTitleChange, 
-  tagList 
+export function EventBasicInfo({
+  formData,
+  onInputChange,
+  onTitleChange,
+  tagList,
+  currencyList,
+  errors = {}
 }) {
   return (
     <Card className="shadow-sm border-0 mb-4">
@@ -34,7 +36,11 @@ export function EventBasicInfo({
                 onChange={onTitleChange}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.title}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.title}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
 
@@ -82,7 +88,11 @@ export function EventBasicInfo({
                 placeholder="percorso/cartella/s3"
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.pathS3}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.pathS3}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
 
@@ -97,6 +107,7 @@ export function EventBasicInfo({
                 onChange={onInputChange}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.tagId}
               >
                 <option value="">Seleziona una tipologia</option>
                 {Array.isArray(tagList) &&
@@ -106,6 +117,36 @@ export function EventBasicInfo({
                     </option>
                   ))}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.tagId}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+
+          <Col lg={6}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-currency-exchange me-2"></i>Valuta
+              </Form.Label>
+              <Form.Select
+                name="currencyId"
+                value={formData.currencyId}
+                onChange={onInputChange}
+                className="border-2"
+                style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.currencyId}
+              >
+                <option value="">Seleziona una valuta</option>
+                {Array.isArray(currencyList) &&
+                  currencyList.map((currency) => (
+                    <option key={currency.id} value={currency.id}>
+                      {currency.currency}
+                    </option>
+                  ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.currencyId}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
 

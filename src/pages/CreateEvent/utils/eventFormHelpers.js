@@ -23,6 +23,7 @@ export const getDefaultFormData = () => ({
   description: "",
   tag: "",
   tagId: 0,
+  currencyId: 0,
   verifiedAttendanceEvent: false,
 });
 
@@ -51,6 +52,7 @@ export const getInitialFormData = (receivedComp) => {
     description: receivedComp.languages?.[0]?.description || "",
     tag: receivedComp.tag || "",
     tagId: receivedComp.tagId || 0,
+    currencyId: receivedComp.currencyId || 0,
     verifiedAttendanceEvent: receivedComp.verifiedAttendanceEvent || false,
   };
 };

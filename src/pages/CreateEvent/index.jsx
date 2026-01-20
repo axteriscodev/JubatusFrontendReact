@@ -12,6 +12,8 @@ import { errorToast, successToast } from "../../utils/toast-manager";
 import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
+import { useCurrencies } from "./hooks/useCurrencies";
+import { useFormValidation } from "./hooks/useFormValidation";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -51,6 +53,8 @@ export default function CreateEvent() {
   );
 
   const { tagList, loading: tagsLoading } = useTags();
+  const { currencyList, loading: currenciesLoading } = useCurrencies();
+  const { errors, validateForm } = useFormValidation();
 
   // Effetto per aggiungere/rimuovere classe admin al body
   useEffect(() => {
@@ -64,6 +68,13 @@ export default function CreateEvent() {
    * Gestisce il submit del form
    */
   const handleSubmit = async () => {
+    // Validazione form
+    if (!validateForm(formData)) {
+      errorToast("Compila tutti i campi obbligatori");
+      setActiveTab("info"); // Torna alla tab info per mostrare gli errori
+      return;
+    }
+
     const submitData = prepareSubmitData(formData, priceListHandlers.priceLists);
 
     let result;
@@ -112,8 +123,10 @@ export default function CreateEvent() {
                 onInputChange={handleInputChange}
                 onTitleChange={handleTitleChange}
                 tagList={tagList}
+                currencyList={currencyList}
+                errors={errors}
               />
-              <EventDates formData={formData} onInputChange={handleInputChange} />
+              <EventDates formData={formData} onInputChange={handleInputChange} errors={errors} />
               <EventColors formData={formData} onInputChange={handleInputChange} />
               <EventLogo
                 formData={formData}
