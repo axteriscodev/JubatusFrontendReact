@@ -107,6 +107,7 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
               formIndex={index}
               rowIndex={itemIndex}
               onUpdate={handlers.updateItem}
+              onUpdateWithLanguage={handlers.updateItemWithLanguage}
               onRemove={handlers.removeItemFromList}
               canRemove={list.items.length > 1}
               currencySymbol={currencySymbol}

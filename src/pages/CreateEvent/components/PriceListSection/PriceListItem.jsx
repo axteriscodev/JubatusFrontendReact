@@ -9,6 +9,7 @@ export function PriceListItem({
   formIndex,
   rowIndex,
   onUpdate,
+  onUpdateWithLanguage,
   onRemove,
   canRemove,
   currencySymbol = "€",
@@ -17,6 +18,9 @@ export function PriceListItem({
   // Trova la label selezionata per mostrare le traduzioni
   const selectedLabel = labelList.find((label) => label.id === item.labelId);
   const [showTranslations, setShowTranslations] = useState(false);
+
+  // Verifica se l'item ha testi legacy (titolo/sottotitolo senza labelId)
+  const hasLegacyTexts = !item.labelId && (item.title || item.subTitle || item.itemsLanguages?.[0]?.title || item.itemsLanguages?.[0]?.subTitle);
 
   return (
     <Card className="border-2 border-primary border-opacity-25">
@@ -102,6 +106,54 @@ export function PriceListItem({
                     </div>
                   </div>
                 </Collapse>
+              </div>
+            )}
+
+            {/* Campi legacy per retrocompatibilità */}
+            {hasLegacyTexts && (
+              <div className="mt-2 p-2 bg-warning bg-opacity-10 rounded-2 border border-warning">
+                <small className="text-warning fw-semibold d-block mb-2">
+                  <i className="bi bi-exclamation-triangle me-1"></i>
+                  Testi esistenti (modalità legacy)
+                </small>
+                <Row className="g-2">
+                  <Col md={6}>
+                    <Form.Group controlId={`f${formIndex}-r${rowIndex}-title`}>
+                      <Form.Label className="fw-semibold text-secondary small mb-1">
+                        Titolo
+                      </Form.Label>
+                      <Form.Control
+                        size="sm"
+                        value={item.itemsLanguages?.[0]?.title ?? item.title ?? ""}
+                        onChange={(e) =>
+                          onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
+                        }
+                        placeholder="Titolo pacchetto"
+                        className="border"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group controlId={`f${formIndex}-r${rowIndex}-subTitle`}>
+                      <Form.Label className="fw-semibold text-secondary small mb-1">
+                        Sottotitolo
+                      </Form.Label>
+                      <Form.Control
+                        size="sm"
+                        value={item.itemsLanguages?.[0]?.subTitle ?? item.subTitle ?? ""}
+                        onChange={(e) =>
+                          onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
+                        }
+                        placeholder="Sottotitolo pacchetto"
+                        className="border"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <small className="text-muted d-block mt-2">
+                  <i className="bi bi-info-circle me-1"></i>
+                  Seleziona una label sopra per passare al nuovo sistema
+                </small>
               </div>
             )}
           </Col>
