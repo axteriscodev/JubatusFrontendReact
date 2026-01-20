@@ -1,4 +1,5 @@
-import { Form, Row, Col, Button, Card, InputGroup } from "react-bootstrap";
+import { useState } from "react";
+import { Form, Row, Col, Button, Card, InputGroup, Collapse } from "react-bootstrap";
 
 /**
  * Componente per un singolo item (pacchetto) all'interno di un listino - VERSIONE MIGLIORATA
@@ -13,6 +14,10 @@ export function PriceListItem({
   currencySymbol = "€",
   labelList = [],
 }) {
+  // Trova la label selezionata per mostrare le traduzioni
+  const selectedLabel = labelList.find((label) => label.id === item.labelId);
+  const [showTranslations, setShowTranslations] = useState(false);
+
   return (
     <Card className="border-2 border-primary border-opacity-25">
       <Card.Body className="p-3">
@@ -62,6 +67,43 @@ export function PriceListItem({
                 ))}
               </Form.Select>
             </Form.Group>
+
+            {/* Anteprima traduzioni della label selezionata */}
+            {selectedLabel && selectedLabel.labelsLanguages?.length > 0 && (
+              <div className="mt-2">
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => setShowTranslations(!showTranslations)}
+                  className="p-0 text-decoration-none"
+                  aria-expanded={showTranslations}
+                >
+                  <i className={`bi bi-chevron-${showTranslations ? 'up' : 'down'} me-1`}></i>
+                  <small className="fw-semibold">
+                    <i className="bi bi-translate me-1"></i>
+                    Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
+                  </small>
+                </Button>
+                <Collapse in={showTranslations}>
+                  <div className="mt-2 p-2 bg-light rounded-2 border">
+                    <div className="d-flex flex-column gap-2">
+                      {selectedLabel.labelsLanguages.map((lang, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-white rounded px-2 py-1 border"
+                          style={{ fontSize: '0.85rem' }}
+                        >
+                          <span className="fw-semibold text-primary">{lang.title}</span>
+                          {lang.subtitle && (
+                            <span className="text-muted"> - {lang.subtitle}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Collapse>
+              </div>
+            )}
           </Col>
 
           <Col md={4}>
