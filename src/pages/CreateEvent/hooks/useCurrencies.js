@@ -14,7 +14,7 @@ export function useCurrencies() {
       try {
         setLoading(true);
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/contents/currency`
+          `${import.meta.env.VITE_API_URL}/events/currency`,
         );
 
         if (response.ok) {
