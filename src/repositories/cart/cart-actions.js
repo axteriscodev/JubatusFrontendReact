@@ -2,6 +2,7 @@ import { cartActions } from "./cart-slice";
 import { store } from "../store";
 
 /**
+ * NON ANCORA UTILIZZATO
  * Actions per le operazioni di asincrone del carrello
  */
 
