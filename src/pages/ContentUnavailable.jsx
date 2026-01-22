@@ -2,15 +2,14 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { useTranslations } from "../features/TranslationProvider";
-import parse from 'html-react-parser';
-
+import parse from "html-react-parser";
 
 export default function ContentUnavailable() {
   const eventPreset = useSelector((state) => state.competition);
   const navigate = useNavigate();
   const { t } = useTranslations();
 
-  const buttonHandle = (event) => {
+  const buttonHandle = () => {
     navigate("/event/" + eventPreset.slug);
   };
 
@@ -21,7 +20,7 @@ export default function ContentUnavailable() {
         size="logo-sm"
         css="mb-sm"
       />
-      {parse(t('WAITING_NOTHING'))}
+      <div>{parse(t("WAITING_NOTHING"))}</div>
       <h2>{eventPreset.emoji ?? "📷 ⌛ 📧"}</h2>
       {/* <div
         className="progress mt-md"
@@ -36,7 +35,7 @@ export default function ContentUnavailable() {
       Caricamento */}
 
       <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
-        {t('WAITING_BACK')}
+        {t("WAITING_BACK")}
       </button>
     </div>
   );
