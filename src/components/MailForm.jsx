@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { useTranslations } from "../features/TranslationProvider";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 import PrivacyPolicyModal from "./PrivacyPolicyModal";
 
 export default function MailForm({
@@ -16,19 +16,19 @@ export default function MailForm({
   const [emailValue, setEmailValue] = useState(defaultEmail || "");
   const [show, setShow] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
-  
+
   const handleClose = () => setShow(false);
   const handleShow = (event) => {
     setShow(true);
     event.preventDefault();
   };
-  
+
   const handlePrivacyPolicyClose = () => setShowPrivacyPolicy(false);
   const handlePrivacyPolicyShow = (event) => {
     setShowPrivacyPolicy(true);
     event.preventDefault();
   };
-  
+
   const { t } = useTranslations();
 
   const handlePrivacyChange = (event) => {
@@ -38,7 +38,7 @@ export default function MailForm({
 
   return (
     <div className="text-start">
-      <Form.Label>E-mail</Form.Label>
+      <Form.Label>{t("EMAIL_EMAIL")}</Form.Label>
       <Form.Control
         type="email"
         name="email"
@@ -46,18 +46,12 @@ export default function MailForm({
         onChange={(e) => setEmailValue(e.target.value)}
         placeholder={t("EMAIL_ENTER")}
       />
-      {onErrors.emailError && (
-        <p className="on-error">{t("EMAIL_VALID")}</p>
-      )}
+      {onErrors.emailError && <p className="on-error">{t("EMAIL_VALID")}</p>}
       {onErrors.emailNotPresent && (
-        <p className="on-error">
-          {t("EMAIL_NOTHING")}
-        </p>
+        <p className="on-error">{t("EMAIL_NOTHING")}</p>
       )}
       {onErrors.emailDuplicated && (
-        <p className="on-error">
-          {t("EMAIL_DUPLICATED")}
-        </p>
+        <p className="on-error">{t("EMAIL_DUPLICATED")}</p>
       )}
       <div className="my-xs">
         {showPrivacy && (
@@ -81,20 +75,16 @@ export default function MailForm({
                 {t("SELFIE_PRIVACY2")}
               </a>
             </div>
-            
+
             {/* Modal breve con info privacy */}
             <Modal show={show} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
                 <Modal.Title>
-                  <font className="text-black">
-                    {t("PRIVACY_TITLE")}
-                  </font>
+                  <font className="text-black">{t("PRIVACY_TITLE")}</font>
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <p className="text-black">
-                 {t("PRIVACY_CONTENT")}
-                </p>
+                <p className="text-black">{t("PRIVACY_CONTENT")}</p>
                 <p className="text-black">
                   {t("PRIVACY_DETAILS")}
                   <a
@@ -113,11 +103,11 @@ export default function MailForm({
                 </Button>
               </Modal.Footer>
             </Modal>
-            
+
             {/* Modal completo Privacy Policy */}
-            <PrivacyPolicyModal 
-              show={showPrivacyPolicy} 
-              onHide={handlePrivacyPolicyClose} 
+            <PrivacyPolicyModal
+              show={showPrivacyPolicy}
+              onHide={handlePrivacyPolicyClose}
             />
           </>
         )}
@@ -134,7 +124,7 @@ export default function MailForm({
           })
         }
       >
-       {parse(t("SELFIE_NEXT"))}
+        {parse(t("SELFIE_NEXT"))}
       </button>
     </div>
   );
