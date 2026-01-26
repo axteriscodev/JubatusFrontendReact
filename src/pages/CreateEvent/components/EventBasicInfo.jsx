@@ -3,12 +3,31 @@ import { Form, Row, Col, Card } from "react-bootstrap";
 /**
  * Componente per le informazioni base dell'evento - VERSIONE MIGLIORATA
  */
-export function EventBasicInfo({ 
-  formData, 
-  onInputChange, 
-  onTitleChange, 
-  tagList 
+export function EventBasicInfo({
+  formData,
+  onInputChange,
+  onTitleChange,
+  tagList,
+  currencyList,
+  errors = {},
+  onClearError = () => {}
 }) {
+  // Handler per input con pulizia errore
+  const handleInputWithClear = (e) => {
+    const { name } = e.target;
+    if (errors[name]) {
+      onClearError(name);
+    }
+    onInputChange(e);
+  };
+
+  // Handler per titolo con pulizia errore
+  const handleTitleWithClear = (e) => {
+    if (errors.title) {
+      onClearError('title');
+    }
+    onTitleChange(e);
+  };
   return (
     <Card className="shadow-sm border-0 mb-4">
       <Card.Body className="p-4">
@@ -31,10 +50,14 @@ export function EventBasicInfo({
               <Form.Control
                 placeholder="Inserisci il titolo dell'evento"
                 value={formData.title}
-                onChange={onTitleChange}
+                onChange={handleTitleWithClear}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.title}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.title}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
 
@@ -78,11 +101,15 @@ export function EventBasicInfo({
               <Form.Control
                 name="pathS3"
                 value={formData.pathS3}
-                onChange={onInputChange}
+                onChange={handleInputWithClear}
                 placeholder="percorso/cartella/s3"
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.pathS3}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.pathS3}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
 
@@ -94,9 +121,10 @@ export function EventBasicInfo({
               <Form.Select
                 name="tagId"
                 value={formData.tagId}
-                onChange={onInputChange}
+                onChange={handleInputWithClear}
                 className="border-2"
                 style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.tagId}
               >
                 <option value="">Seleziona una tipologia</option>
                 {Array.isArray(tagList) &&
@@ -106,10 +134,40 @@ export function EventBasicInfo({
                     </option>
                   ))}
               </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.tagId}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
 
           <Col lg={6}>
+            <Form.Group>
+              <Form.Label className="fw-semibold text-secondary small mb-2">
+                <i className="bi bi-currency-exchange me-2"></i>Valuta
+              </Form.Label>
+              <Form.Select
+                name="currencyId"
+                value={formData.currencyId}
+                onChange={handleInputWithClear}
+                className="border-2"
+                style={{ fontSize: '0.95rem' }}
+                isInvalid={!!errors.currencyId}
+              >
+                <option value="">Seleziona una valuta</option>
+                {Array.isArray(currencyList) &&
+                  currencyList.map((currency) => (
+                    <option key={currency.id} value={currency.id}>
+                      {currency.currency}
+                    </option>
+                  ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.currencyId}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+
+          <Col xs={12}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
                 <i className="bi bi-emoji-smile-fill me-2"></i>Emoji attesa

@@ -3,7 +3,16 @@ import { Form, Row, Col, Card, InputGroup } from "react-bootstrap";
 /**
  * Componente per la gestione delle date dell'evento - VERSIONE MIGLIORATA
  */
-export function EventDates({ formData, onInputChange }) {
+export function EventDates({ formData, onInputChange, errors = {}, onClearError = () => {} }) {
+  // Handler per input con pulizia errore
+  const handleInputWithClear = (e) => {
+    const { name } = e.target;
+    if (errors[name]) {
+      onClearError(name);
+    }
+    onInputChange(e);
+  };
+
   return (
     <Card className="shadow-sm border-0 mb-4">
       <Card.Body className="p-4">
@@ -30,19 +39,23 @@ export function EventDates({ formData, onInputChange }) {
               <Form.Label className="fw-semibold text-secondary small mb-2">
                 <i className="bi bi-calendar-check-fill me-2"></i>Data evento
               </Form.Label>
-              <InputGroup className="shadow-sm">
+              <InputGroup className="shadow-sm" hasValidation>
                 <InputGroup.Text className="bg-white border-2 border-end-0">
                   <i className="bi bi-calendar3 text-primary"></i>
                 </InputGroup.Text>
                 <Form.Control
                   name="dateEvent"
                   value={formData.dateEvent}
-                  onChange={onInputChange}
+                  onChange={handleInputWithClear}
                   placeholder="Data evento"
                   type="date"
                   className="border-2 border-start-0"
                   style={{ fontSize: '0.95rem' }}
+                  isInvalid={!!errors.dateEvent}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.dateEvent}
+                </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
           </Col>
@@ -52,19 +65,23 @@ export function EventDates({ formData, onInputChange }) {
               <Form.Label className="fw-semibold text-secondary small mb-2">
                 <i className="bi bi-calendar-plus-fill me-2"></i>Data pubblicazione
               </Form.Label>
-              <InputGroup className="shadow-sm">
+              <InputGroup className="shadow-sm" hasValidation>
                 <InputGroup.Text className="bg-white border-2 border-end-0">
                   <i className="bi bi-calendar3 text-success"></i>
                 </InputGroup.Text>
                 <Form.Control
                   name="dateStart"
                   value={formData.dateStart}
-                  onChange={onInputChange}
+                  onChange={handleInputWithClear}
                   placeholder="Data pubblicazione"
                   type="date"
                   className="border-2 border-start-0"
                   style={{ fontSize: '0.95rem' }}
+                  isInvalid={!!errors.dateStart}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.dateStart}
+                </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
           </Col>
@@ -74,19 +91,23 @@ export function EventDates({ formData, onInputChange }) {
               <Form.Label className="fw-semibold text-secondary small mb-2">
                 <i className="bi bi-calendar-x-fill me-2"></i>Data scadenza
               </Form.Label>
-              <InputGroup className="shadow-sm">
+              <InputGroup className="shadow-sm" hasValidation>
                 <InputGroup.Text className="bg-white border-2 border-end-0">
                   <i className="bi bi-calendar3 text-danger"></i>
                 </InputGroup.Text>
                 <Form.Control
                   name="dateExpiry"
                   value={formData.dateExpiry}
-                  onChange={onInputChange}
+                  onChange={handleInputWithClear}
                   placeholder="Data scadenza"
                   type="date"
                   className="border-2 border-start-0"
                   style={{ fontSize: '0.95rem' }}
+                  isInvalid={!!errors.dateExpiry}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.dateExpiry}
+                </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
           </Col>
