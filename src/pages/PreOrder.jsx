@@ -9,6 +9,7 @@ import styles from "./PreOrder.module.css";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 
 export default function PreOrder() {
   const dispatch = useDispatch();
@@ -51,6 +52,16 @@ export default function PreOrder() {
     };
     fetchImages();
   }, []);
+
+  function getPriceListEntry(text) {
+    const safeHTML = DOMPurify.sanitize(text);
+
+    return (
+      <>
+        <span dangerouslySetInnerHTML={{ __html: safeHTML }} />
+      </>
+    );
+  }
 
   //console.log("presaleMedia", presaleMedia);
   //console.log("pricelist", JSON.stringify(pricelist));
@@ -194,15 +205,19 @@ export default function PreOrder() {
               key={i}
               onClick={(event) => handleSelection(event, list)}
               className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}
-              style={list.bestOffer ? { "--best-offer-label": `'${t("BEST_OFFER")}'` } : undefined}
+              style={
+                list.bestOffer
+                  ? { "--best-offer-label": `'${t("BEST_OFFER")}'` }
+                  : undefined
+              }
             >
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <div className="text-22">
-                    {list.itemsLanguages?.[0]?.title}
+                    {getPriceListEntry(list.itemsLanguages?.[0]?.title)}
                   </div>
                   <span className="text-13 opacity">
-                    {list.itemsLanguages?.[0]?.subTitle}
+                    {getPriceListEntry(list.itemsLanguages?.[0]?.subTitle)}
                   </span>
                 </div>
                 <div className="text-end lh-1">
