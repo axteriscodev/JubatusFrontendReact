@@ -34,7 +34,7 @@ const Input = React.forwardRef(
 
     const stateClasses = error
       ? "border-danger text-danger focus:border-danger"
-      : "border-gray-300 text-primary focus:border-secondary-event";
+      : "border-gray-300 focus:border-secondary-event";
 
     const inputClasses = `${baseClasses} ${stateClasses} ${className}`;
 
