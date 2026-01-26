@@ -52,12 +52,11 @@ export default function LanguageSelect({ onChange }) {
         width="20"
         height="20"
         viewBox="0 0 20 20"
-        fill="currentColor"
         /* Usa 'text-secondary-event' come base.
        Se vuoi che cambi quando passi il mouse sul bottone, 
        aggiungi group-hover:text-qualcosa
     */
-        className="ml-1 text-secondary-event transition-colors duration-150 group-hover:opacity-80"
+        className="ml-1 transition-colors duration-150 fill-secondary"
       >
         <path
           fillRule="evenodd"

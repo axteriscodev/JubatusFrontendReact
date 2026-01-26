@@ -94,13 +94,13 @@ export default function UploadSelfie() {
 
   return (
     <div className="form-sm">
-      <div className="mb-3 d-flex justify-content-end">
+      <div className="mb-3 flex justify-end">
         <LanguageSelect />
       </div>
       <div className="flex justify-center">
         <Logo
           src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
-          css="mb-sm"
+          css="mb-4"
         />
       </div>
       <SelfieUpload

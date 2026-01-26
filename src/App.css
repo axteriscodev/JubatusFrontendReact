@@ -69,6 +69,10 @@ a.no-hover:hover {
   text-decoration: none;
 }
 
+.fill-secondary {
+  fill: var(--secondary-event-color, --secondary-color) !important;
+}
+
 /*BOTTONI*/
 .my-button {
   margin: 0;
