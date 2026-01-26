@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import Carousel from "react-bootstrap/Carousel";
+import Carousel from "../shared/components/ui/Carousel.jsx";
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button } from "../shared/components/ui";
 import { logOut } from "../utils/auth";
 
 import { cartActions } from "../repositories/cart/cart-slice";

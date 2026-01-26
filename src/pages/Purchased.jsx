@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUiPreset } from "../utils/graphics";
 
 import Logo from "../components/Logo";
-import Carousel from "react-bootstrap/Carousel";
+import Carousel from "../shared/components/ui/Carousel";
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 

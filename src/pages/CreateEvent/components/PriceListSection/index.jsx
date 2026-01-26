@@ -1,4 +1,4 @@
-import { Col, Button } from "react-bootstrap";
+import Button from "../../../../shared/components/ui/Button";
 import { PriceListCard } from "./PriceListCard";
 
 /**
@@ -6,7 +6,7 @@ import { PriceListCard } from "./PriceListCard";
  */
 export function PriceListSection({ priceLists, handlers, currencySymbol = "€", labelList = [] }) {
   return (
-    <Col xs={12}>
+    <div className="w-full">
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div>
           <h4 className="mb-1 fw-bold">
@@ -49,6 +49,6 @@ export function PriceListSection({ priceLists, handlers, currencySymbol = "€",
           ))}
         </div>
       )}
-    </Col>
+    </div>
   );
 }

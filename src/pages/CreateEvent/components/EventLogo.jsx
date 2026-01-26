@@ -1,5 +1,5 @@
-import { Form, Row, Col } from "react-bootstrap";
 import Logo from "../../../components/Logo";
+import { FormLabel } from "../../../shared/components/ui/Form";
 
 /**
  * Componente per la gestione del logo dell'evento
@@ -12,30 +12,32 @@ export function EventLogo({ formData, receivedComp, onFileChange }) {
     if (formData.logo && formData.logo instanceof File) {
       return URL.createObjectURL(formData.logo);
     }
-    
+
     if (receivedComp?.logo) {
       return `${import.meta.env.VITE_API_URL}/${receivedComp.logo}`;
     }
-    
+
     return "/public/images/noimage.jpg";
   };
 
   return (
-    <Row>
-      <Col xs={6} className="my-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="my-4">
         <Logo src={getLogoSrc()} css="mb-sm" />
-      </Col>
+      </div>
 
-      <Col xs={6}>
-        <Form.Group controlId="formFile" className="mb-3">
-          <Form.Label>Logo</Form.Label>
-          <Form.Control
+      <div>
+        <div className="mb-4">
+          <FormLabel htmlFor="formFile">Logo</FormLabel>
+          <input
+            id="formFile"
             onChange={onFileChange}
             type="file"
             accept="image/*"
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-event/50 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
-        </Form.Group>
-      </Col>
-    </Row>
+        </div>
+      </div>
+    </div>
   );
 }

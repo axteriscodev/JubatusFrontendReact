@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Form, Row, Col, Button, Card, InputGroup, Collapse } from "react-bootstrap";
+import { Form, Row, Col, Button, Card, InputGroup, Collapse } from "../../../../shared/components/ui";
 
 /**
  * Componente per un singolo item (pacchetto) all'interno di un listino - VERSIONE MIGLIORATA

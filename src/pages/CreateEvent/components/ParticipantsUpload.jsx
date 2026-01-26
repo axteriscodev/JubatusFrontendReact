@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Row, Col, Form, Button, Alert, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, Spinner } from "../../../shared/components/ui";
 import { apiRequest } from "../../../services/api-services";
 
 /**

@@ -1,4 +1,4 @@
-import { Form, Row, Col, Button, Card, InputGroup, Badge } from "react-bootstrap";
+import { Form, Row, Col, Button, Card, InputGroup, Badge } from "../../../../shared/components/ui";
 import { PriceListItem } from "./PriceListItem";
 
 /**

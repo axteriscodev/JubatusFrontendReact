@@ -1,8 +1,10 @@
-import { Button, ButtonGroup, Table } from "react-bootstrap";
+import Button from "../shared/components/ui/Button";
+import ButtonGroup from "../shared/components/ui/ButtonGroup";
+import Table from "../shared/components/ui/Table";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
-import { Tooltip } from "bootstrap";
+// import { Tooltip } from "bootstrap"; // Rimosso - Bootstrap non più disponibile
 import { formatDate } from "../utils/data-formatter";
 import { logOut } from "../utils/auth";
 

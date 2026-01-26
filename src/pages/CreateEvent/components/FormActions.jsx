@@ -1,11 +1,11 @@
-import { Button } from "react-bootstrap";
+import Button from "../../../shared/components/ui/Button";
 
 /**
  * Componente per i pulsanti di azione del form
  */
 export function FormActions({ onSubmit, onCancel }) {
   return (
-    <div className="d-flex justify-content-between mt-sm">
+    <div className="flex justify-between mt-sm">
       <Button onClick={onSubmit} variant="success">
         Salva dati
       </Button>

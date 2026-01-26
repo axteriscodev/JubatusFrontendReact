@@ -9,7 +9,7 @@ import {
   Spinner,
   Form,
   InputGroup,
-} from "react-bootstrap";
+} from "../../../shared/components/ui";
 import { apiRequest } from "../../../services/api-services";
 
 /**

@@ -1,4 +1,5 @@
-import { Card, Image, Button } from "react-bootstrap";
+import Card from "../shared/components/ui/Card";
+import Button from "../shared/components/ui/Button";
 import { Play } from "lucide-react";
 import { useTranslations } from "../features/TranslationProvider";
 import { EventStatus } from "../utils/contents-utils";
@@ -9,13 +10,11 @@ export default function GalleryCard({
   images = [],
   totalImages,
   eventId,
-  //eventStatus,
   onPhotoClick,
   onNewSearchClick,
-  //onGoToShop,
 }) {
   const { t } = useTranslations();
-  // Controllo se images esiste
+
   if (!images || images.length === 0) {
     return null;
   }
@@ -24,123 +23,77 @@ export default function GalleryCard({
   const remainingCount = totalImages - displayImages.length;
 
   return (
-    <div className="border-bottom border-secondary pb-4 mb-5">
-      <div className="d-flex align-items-center gap-3 mb-4">
-        <Image
+    <div className="border-b border-secondary pb-4 mb-5">
+      <div className="flex items-center gap-3 mb-4">
+        <img
           src={import.meta.env.VITE_API_URL + "/" + logo}
           alt={title}
-          roundedCircle
-          width={64}
-          height={64}
-          style={{ objectFit: "cover" }}
+          className="rounded-full w-16 h-16 object-cover"
         />
-        <h2 className="text-white fs-3 mb-0">{title}</h2>
-
-        {/* {eventStatus !== EventStatus.ONLY_PURCHASED && (
-          <Button
-            variant="link"
-            className="text-white text-decoration-none p-0 ms-auto"
-            onClick={() => onGoToShop(eventId)}
-          >
-            <i className="bi bi-cart me-2 fs-3"></i>
-             {t("PERSONAL_SHOP")}
-          </Button>
-        )} */}
+        <h2 className="text-white text-3xl mb-0">{title}</h2>
       </div>
 
-      <div className="d-flex gap-1">
+      <div className="flex gap-1">
         {/* Prima immagine grande a sinistra */}
-        <div style={{ flex: "1" }}>
-          <Card
-            className="bg-dark border-0 p-0 overflow-hidden position-relative"
-            style={{
-              aspectRatio: "1/1",
-              cursor: "pointer",
-              height: "100%",
-            }}
+        <div className="flex-1">
+          <div
+            className="bg-gray-900 border-0 p-0 overflow-hidden relative cursor-pointer"
+            style={{ aspectRatio: "1/1", height: "100%" }}
             onClick={() => onPhotoClick(eventId)}
           >
-            <Card.Img
+            <img
               src={displayImages[0]?.srcThumbnail}
               alt="Gallery image 1"
-              style={{
-                height: "100%",
-                objectFit: "cover",
-              }}
+              className="h-full w-full object-cover"
             />
 
             {/* Filtro gray se non acquistata */}
             {displayImages[0]?.isPurchased === false && (
               <div
-                className="position-absolute top-0 start-0 w-100 h-100"
-                    style={{
-                      backdropFilter: "grayscale(100%)",
-                      WebkitBackdropFilter: "grayscale(100%)",
-                    }}
+                className="absolute top-0 left-0 w-full h-full"
+                style={{
+                  backdropFilter: "grayscale(100%)",
+                  WebkitBackdropFilter: "grayscale(100%)",
+                }}
               />
             )}
 
             {displayImages[0]?.isVideo && (
               <div
-                className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
                 style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
               >
-                <div
-                  className="bg-white rounded-circle d-flex align-items-center justify-content-center"
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    opacity: 0.9,
-                  }}
-                >
-                  <Play
-                    size={40}
-                    className="text-dark ms-1"
-                    fill="currentColor"
-                  />
+                <div className="bg-white rounded-full flex items-center justify-center w-20 h-20 opacity-90">
+                  <Play size={40} className="text-gray-900 ml-1" fill="currentColor" />
                 </div>
               </div>
             )}
-          </Card>
+          </div>
         </div>
 
         {/* Griglia 2x2 a destra */}
-        <div
-          style={{
-            flex: "1",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gridTemplateRows: "1fr 1fr",
-            gap: "4px",
-          }}
-        >
+        <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-1">
           {displayImages.slice(1, 5).map((image, index) => {
             const actualIndex = index + 1;
             const isLast = actualIndex === 4 && remainingCount > 0;
 
             return (
-              <Card
+              <div
                 key={actualIndex}
-                className="bg-dark border-0 p-0 overflow-hidden position-relative"
-                style={{
-                  cursor: "pointer",
-                  aspectRatio: "1/1",
-                }}
+                className="bg-gray-900 border-0 p-0 overflow-hidden relative cursor-pointer"
+                style={{ aspectRatio: "1/1" }}
                 onClick={() => onPhotoClick(eventId)}
               >
-                <Card.Img
+                <img
                   src={image.srcTiny}
                   alt={`Gallery image ${actualIndex + 1}`}
-                  style={{
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
+                  className="h-full w-full object-cover"
                 />
 
                 {/* Filtro gray se non acquistata */}
                 {image.isPurchased === false && (
                   <div
-                    className="position-absolute top-0 start-0 w-100 h-100"
+                    className="absolute top-0 left-0 w-full h-full"
                     style={{
                       backdropFilter: "grayscale(100%)",
                       WebkitBackdropFilter: "grayscale(100%)",
@@ -150,29 +103,26 @@ export default function GalleryCard({
 
                 {isLast && (
                   <div
-                    className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-                    style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
+                    className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/70"
                   >
-                    <span className="text-white" style={{ fontSize: "2rem" }}>
-                      +{remainingCount}
-                    </span>
+                    <span className="text-white text-4xl">+{remainingCount}</span>
                   </div>
                 )}
-              </Card>
+              </div>
             );
           })}
         </div>
       </div>
+
       {/* Bottone Nuova Ricerca */}
       <div className="mt-4">
-        <Button
-          variant="link"
-          className="text-white text-decoration-none p-0"
+        <button
+          className="text-white no-underline p-0 bg-transparent border-0 cursor-pointer hover:underline"
           onClick={() => onNewSearchClick(eventId)}
         >
-          <i className="bi bi-search me-2"></i>
+          <i className="bi bi-search mr-2"></i>
           {t("PERSONAL_NEW_RESEARCH")}
-        </Button>
+        </button>
       </div>
     </div>
   );

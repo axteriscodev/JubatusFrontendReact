@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Tabs, Tab } from "react-bootstrap";
+import Tabs, { Tab } from "../../shared/components/ui/Tabs";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -111,12 +111,11 @@ export default function CreateEvent() {
     <div className="container text-start">
       <h1>Gestione evento</h1>
 
-      <Form>
-        <Tabs
-          activeKey={activeTab}
-          onSelect={(k) => setActiveTab(k)}
-          className="mb-3"
-        >
+      <Tabs
+        activeKey={activeTab}
+        onSelect={(k) => setActiveTab(k)}
+        className="mb-3"
+      >
           {/* Tab 1: Info evento */}
           <Tab eventKey="info" title="Info evento">
             <div className="mt-3">
@@ -163,11 +162,10 @@ export default function CreateEvent() {
               </div>
             </Tab>
           )}
-        </Tabs>
+      </Tabs>
 
-        {/* Azioni sempre visibili fuori dalle tab */}
-        <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
-      </Form>
+      {/* Azioni sempre visibili fuori dalle tab */}
+      <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
     </div>
   );
 }

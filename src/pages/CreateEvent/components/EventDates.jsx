@@ -1,4 +1,4 @@
-import { Form, Row, Col, Card, InputGroup } from "react-bootstrap";
+import { Form, Row, Col, Card, InputGroup } from "../../../shared/components/ui";
 
 /**
  * Componente per la gestione delle date dell'evento - VERSIONE MIGLIORATA

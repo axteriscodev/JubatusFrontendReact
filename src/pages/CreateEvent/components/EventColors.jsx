@@ -1,4 +1,4 @@
-import { Form, Row, Col, Card } from "react-bootstrap";
+import { Form, Row, Col, Card } from "../../../shared/components/ui";
 
 /**
  * Componente per la selezione dei colori dell'evento - VERSIONE MIGLIORATA
