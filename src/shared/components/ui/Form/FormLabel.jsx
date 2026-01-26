@@ -1,14 +1,20 @@
-import React from 'react';
+import React from "react";
 
 /**
  * FormLabel component with Tailwind CSS styling
  * Replaces react-bootstrap Form.Label
  */
-const FormLabel = ({ children, htmlFor, required = false, className = '', ...props }) => {
+const FormLabel = ({
+  children,
+  htmlFor,
+  required = false,
+  className = "",
+  ...props
+}) => {
   return (
     <label
       htmlFor={htmlFor}
-      className={`block text-sm font-medium text-gray-700 mb-1 ${className}`}
+      className={`form-label block text-sm font-medium secondary-event-color mb-1 ${className}`}
       {...props}
     >
       {children}

@@ -74,14 +74,14 @@ export default function MailForm({
                   checked:before:translate-x-5"
               />
               <label
-                className="text-12 cursor-pointer"
+                className="text-base cursor-pointer"
                 htmlFor="flexSwitchCheckDefault"
               >
                 {t("SELFIE_PRIVACY")}
               </label>
               <a
                 href="#"
-                className="text-12 text-secondary-event hover:underline"
+                className="text-base text-secondary-event hover:underline"
                 onClick={handleShow}
               >
                 {t("SELFIE_PRIVACY2")}
