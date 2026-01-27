@@ -1,10 +1,10 @@
 import Button from "../shared/components/ui/Button";
 import ButtonGroup from "../shared/components/ui/ButtonGroup";
 import Table from "../shared/components/ui/Table";
+import Tooltip from "../shared/components/ui/Tooltip";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
-// import { Tooltip } from "bootstrap"; // Rimosso - Bootstrap non più disponibile
 import { formatDate } from "../utils/data-formatter";
 import { logOut } from "../utils/auth";
 
@@ -28,13 +28,6 @@ export default function AdminPanel() {
   );
 
   useEffect(() => {
-    const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
-    );
-    tooltipTriggerList.forEach((el) => {
-      new Tooltip(el);
-    });
-
     // aggiungo la classe admin per aggiornare le variabili CSS
     document.body.classList.add("admin");
     // rimuovo la classe admin al "destroy" del componente
@@ -96,33 +89,33 @@ export default function AdminPanel() {
               <td>{formatDate(competition.dateExpiry)}</td>
               <td>
                 <ButtonGroup aria-label="Azioni">
-                  <Button
-                    variant="secondary"
-                    onClick={() => handleEditCompetition(competition)}
-                    className="btn-sm"
-                    data-bs-toggle="tooltip"
-                    title="Modifica evento"
-                  >
-                    <i className="bi bi-pencil"></i>
-                  </Button>
+                  <Tooltip content="Modifica evento" placement="top">
+                    <Button
+                      variant="secondary"
+                      onClick={() => handleEditCompetition(competition)}
+                      className="btn-sm"
+                    >
+                      <i className="bi bi-pencil"></i>
+                    </Button>
+                  </Tooltip>
                   {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
               <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
-                  <Button
-                    variant="danger"
-                    onClick={() => {
-                      const confirmDelete = window.confirm(
-                        "Sei sicuro di voler rimuovere l'evento?"
-                      );
-                      if (confirmDelete) {
-                        handleDeleteCompetition(competition);
-                      }
-                    }}
-                    className="btn-sm"
-                    data-bs-toggle="tooltip"
-                    title="Elimina evento"
-                  >
-                    <i className="bi bi-trash"></i>
-                  </Button>
+                  <Tooltip content="Elimina evento" placement="top">
+                    <Button
+                      variant="danger"
+                      onClick={() => {
+                        const confirmDelete = window.confirm(
+                          "Sei sicuro di voler rimuovere l'evento?"
+                        );
+                        if (confirmDelete) {
+                          handleDeleteCompetition(competition);
+                        }
+                      }}
+                      className="btn-sm"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </Button>
+                  </Tooltip>
                 </ButtonGroup>
               </td>
             </tr>
