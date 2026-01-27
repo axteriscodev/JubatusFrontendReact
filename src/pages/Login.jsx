@@ -21,7 +21,7 @@ export default function Login() {
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
   // Testi in lingua
-  const { t, currentLanguage} = useTranslations();
+  const { t, currentLanguage } = useTranslations();
 
   useEffect(() => {
     document.documentElement.style.setProperty("--bg-event-color", "");
@@ -55,9 +55,9 @@ export default function Login() {
         },
         body: JSON.stringify({
           email: data.email,
-          lang : currentLanguage?.acronym ?? ""
+          lang: currentLanguage?.acronym ?? "",
         }),
-      }
+      },
     );
 
     if (response.ok) {
@@ -71,14 +71,14 @@ export default function Login() {
       }
 
       throw Response(
-        JSON.stringify({ status: response.status, message: response.message })
+        JSON.stringify({ status: response.status, message: response.message }),
       );
     }
   }
 
   return (
     <div className="form-sm">
-      <div className="d-flex justify-content-end">
+      <div className="flex justify-end">
         <LanguageSelect />
       </div>
       <div className="form">

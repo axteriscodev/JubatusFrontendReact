@@ -14,7 +14,7 @@ const FormLabel = ({
   return (
     <label
       htmlFor={htmlFor}
-      className={`form-label block text-md secondary-event-color  ${className}`}
+      className={`form-label block text-md secondary-event-color mb-1 ${className}`}
       {...props}
     >
       {children}

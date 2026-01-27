@@ -128,7 +128,7 @@ export default function MailForm({
         )}
       </div>
       <button
-        className="my-button w-100 mt-sm"
+        className="my-button w-full mt-sm"
         onClick={(event) =>
           submitHandle(event, {
             email: emailValue,
