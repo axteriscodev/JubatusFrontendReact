@@ -21,7 +21,7 @@ export default function TotalShopButton({ onButtonClick = null }) {
 
   return (
     <button
-      className="my-button w-75 fixed-bottom mx-auto mb-sm"
+      className="my-button container fixed-bottom mx-auto mb-sm"
       onClick={totalPrice === 0 ? onButtonClick : handleCheckout}
     >
       {totalPrice === 0 ? (
