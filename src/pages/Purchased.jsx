@@ -138,6 +138,7 @@ export default function Purchased() {
               highLightFavourite={true}
               personalSlice={true}
               onOpenLightbox={openLightbox}
+              aspectRatio={eventPreset.aspectRatio}
             />
           </div>
           </>

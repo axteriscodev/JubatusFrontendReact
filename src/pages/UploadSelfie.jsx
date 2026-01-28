@@ -13,7 +13,6 @@ import { competitionsActions } from "../repositories/competitions/competitions-s
 import { setUiPreset, setHeaderData } from "../utils/graphics";
 import LanguageSelect from "../components/LanguageSelect";
 
-
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
   const navigate = useNavigate();
@@ -95,14 +94,15 @@ export default function UploadSelfie() {
 
   return (
     <div className="form-sm">
-
       <div className="mb-3 d-flex justify-content-end">
         <LanguageSelect />
       </div>
-      <Logo
-        src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
-        css="mb-sm"
-      />
+      <div className="d-flex justify-content-center">
+        <Logo
+          src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
+          css="mb-sm"
+        />
+      </div>
       <SelfieUpload
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
@@ -112,8 +112,6 @@ export default function UploadSelfie() {
         defaultEmail={""}
         onErrors={formErrors}
       />
-
     </div>
   );
 }
-

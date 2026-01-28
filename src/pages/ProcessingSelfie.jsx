@@ -40,6 +40,7 @@ export default function ProcessingSelfie() {
           api: import.meta.env.VITE_API_URL + "/contents/fetch-hash",
           method: "POST",
           body: JSON.stringify({ hashId: receivedData.userHash }),
+          needAuth: true,
         });
       } else {
         //sezione upload email e selfie
@@ -55,6 +56,7 @@ export default function ProcessingSelfie() {
           api: import.meta.env.VITE_API_URL + "/contents/fetch",
           method: "POST",
           body: formData,
+          needAuth: true,
         });
       }
 

@@ -4,7 +4,7 @@ import { PriceListItem } from "./PriceListItem";
 /**
  * Componente per una singola card listino - VERSIONE MIGLIORATA
  */
-export function PriceListCard({ list, index, handlers, totalLists }) {
+export function PriceListCard({ list, index, handlers, totalLists, currencySymbol = "€", labelList = [] }) {
   return (
     <Card className="border-0 shadow-sm">
       <Card.Header className="bg-white border-bottom py-3">
@@ -110,6 +110,8 @@ export function PriceListCard({ list, index, handlers, totalLists }) {
               onUpdateWithLanguage={handlers.updateItemWithLanguage}
               onRemove={handlers.removeItemFromList}
               canRemove={list.items.length > 1}
+              currencySymbol={currencySymbol}
+              labelList={labelList}
             />
           ))}
         </div>

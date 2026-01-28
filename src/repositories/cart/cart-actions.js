@@ -1,7 +1,9 @@
 import { cartActions } from "./cart-slice";
 import { store } from "../store";
+import { getPreferredLanguage } from "../../utils/language-utils";
 
 /**
+ * NON ANCORA UTILIZZATO
  * Actions per le operazioni di asincrone del carrello
  */
 
@@ -24,7 +26,7 @@ export const fetchContents = (receivedData) => {
     if (response.ok) {
       const json = await response.json();
 
-      const currentLanguage = JSON.parse(localStorage.getItem('preferred_lang')) || { acronym: 'it' };
+      const currentLanguage = getPreferredLanguage();
 
       const response = await fetch(
         import.meta.env.VITE_API_URL + `/contents/event-list/${eventId}/${currentLanguage.acronym}`
@@ -71,7 +73,7 @@ export const fetchContents = (receivedData) => {
 export const fetchPriceList = (eventId) => {
   return async (dispatch) => {
 
-    const currentLanguage = JSON.parse(localStorage.getItem('preferred_lang')) || { acronym: 'it' };
+    const currentLanguage = getPreferredLanguage();
 
     const response = await fetch(
       import.meta.env.VITE_API_URL + `/contents/event-list/${eventId}/${currentLanguage.acronym}`

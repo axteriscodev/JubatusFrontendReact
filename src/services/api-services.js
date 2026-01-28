@@ -1,4 +1,5 @@
 import { getAuthToken } from "../utils/auth";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 /**
  * @deprecated - Metodo deprecato, usare apiRequest
@@ -48,11 +49,11 @@ export async function apiRequest({
   const headers = new Headers();
 
   if (!(body instanceof FormData)) {
-    headers.append('Content-Type', contentType);
+    headers.append("Content-Type", contentType);
   }
 
   if (needAuth) {
-    headers.append('Authorization', `Bearer ${token}`);
+    headers.append("Authorization", `Bearer ${token}`);
   }
 
   const response = await fetch(api, {
@@ -72,20 +73,29 @@ export async function apiRequest({
 /**
  * Metodo per ascolto di eventi SSE
  * @param {*} api - URL dell'API
- * @param {*} onmessage - funzione di callback per la ricezione dei messaggi
+ * @param {*} callbackMessage - funzione di callback per la ricezione dei messaggi
  * @param {*} onerror - funzione di callback per la gestione degli errori
  */
-export function listenSSE(api, onmessage, onerror) {
-  const sse = new EventSource(api);
+export async function listenSSE(api, callbackMessage, callbackError) {
+  // Nomi diversi per i parametri
+  const token = getAuthToken();
+  const headers = {
+    Accept: "text/event-stream",
+    Authorization: token ? `Bearer ${token}` : "",
+  };
 
-  sse.onmessage = (e) => {
-    console.log(e.data);
-    sse.close();
-    onmessage(e.data);
-  };
-  sse.onerror = (e) => {
-    console.log("Errore!");
-    sse.close();
-    onerror(e);
-  };
+  await fetchEventSource(api, {
+    headers: headers,
+    async onmessage(msg) {
+      if (msg.event === "message" || !msg.event) {
+        console.log("Dati ricevuti:", msg.data);
+        callbackMessage(msg.data); // Usa il nome corretto della callback
+      }
+    },
+    onerror(err) {
+      console.error("Errore SSE:", err);
+      callbackError(err);
+      throw err;
+    },
+  });
 }

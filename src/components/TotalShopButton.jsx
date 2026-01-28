@@ -7,11 +7,10 @@ import { useTranslations } from "../features/TranslationProvider";
  *
  * @returns {React.ReactElement}  TotalShopButton
  */
-export default function TotalShopButton({
-  onButtonClick = null
-}) {
+export default function TotalShopButton({ onButtonClick = null }) {
   const navigate = useNavigate();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const eventPreset = useSelector((state) => state.competition);
   const { t } = useTranslations();
 
   async function handleCheckout(event) {
@@ -25,7 +24,11 @@ export default function TotalShopButton({
       className="my-button w-75 fixed-bottom mx-auto mb-sm"
       onClick={totalPrice === 0 ? onButtonClick : handleCheckout}
     >
-      {totalPrice === 0 ?  <>{t("CHECKOUT_SELECT")}</> : `${t("CHECKOUT_TOTAL")}: €${totalPrice.toFixed(2)}`}
+      {totalPrice === 0 ? (
+        <>{t("CHECKOUT_SELECT")}</>
+      ) : (
+        `${t("CHECKOUT_TOTAL")}: ${eventPreset.currency === "EUR" ? `${totalPrice.toFixed(2)} ${eventPreset.currencySymbol}` : `${eventPreset.currencySymbol} ${totalPrice.toFixed(2)}`}`
+      )}
     </button>
   );
 }

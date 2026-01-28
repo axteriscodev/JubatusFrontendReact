@@ -1,4 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  getBrowserLanguages,
+  findBestLanguageMatch,
+  getFallbackLanguage
+} from '../utils/language-utils';
+
+// Versione corrente del formato localStorage
+const LANGUAGE_VERSION = 1;
 
 // Lingua di default
 const defaultLanguage = {
@@ -36,24 +44,43 @@ export function LanguageProvider({ children }) {
 
         const saved = localStorage.getItem("preferred_lang");
         let preferredLang;
+        let hasValidVersion = false;
 
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
-            preferredLang = data.data.find(l => l.acronym === parsed.acronym);
+            // Check if the saved preference has the version field
+            hasValidVersion = parsed.version === LANGUAGE_VERSION;
+
+            // Only use saved preference if it has the correct version
+            if (hasValidVersion) {
+              preferredLang = data.data.find(l => l.acronym === parsed.acronym);
+            }
           } catch {
             console.warn("Invalid preferred_lang in localStorage:", saved);
             localStorage.removeItem("preferred_lang");
           }
         }
 
+        // If no valid versioned preference, use browser detection
         if (!preferredLang) {
-          preferredLang = data.data.find(l => l.acronym === "it") || data.data[0];
+          // Try browser language detection
+          const browserLanguages = getBrowserLanguages();
+          preferredLang = findBestLanguageMatch(data.data, browserLanguages);
+
+          // Fallback to "en" or first available
+          if (!preferredLang) {
+            preferredLang = getFallbackLanguage(data.data);
+          }
         }
 
         if (preferredLang) {
           setCurrentLanguage(preferredLang);
-          localStorage.setItem("preferred_lang", JSON.stringify(preferredLang));
+          // Save with version field
+          localStorage.setItem("preferred_lang", JSON.stringify({
+            ...preferredLang,
+            version: LANGUAGE_VERSION
+          }));
         }
       } catch (error) {
         console.error("Errore durante il fetch delle lingue:", error);
@@ -68,7 +95,11 @@ export function LanguageProvider({ children }) {
 
   const setLanguage = (lang) => {
     setCurrentLanguage(lang);
-    localStorage.setItem("preferred_lang", JSON.stringify(lang));
+    // Save with version field
+    localStorage.setItem("preferred_lang", JSON.stringify({
+      ...lang,
+      version: LANGUAGE_VERSION
+    }));
   };
 
   return (

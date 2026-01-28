@@ -33,7 +33,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         processedFile = new File(
           [convertedBlob],
           file.name.replace(/\.heic$/i, ".jpg"),
-          { type: "image/jpeg" }
+          { type: "image/jpeg" },
         );
       }
 
@@ -83,12 +83,14 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         )}
       </div>
       {imageUrl && !loading && (
-        <img
-          src="/images/trash-fill.svg"
-          className={styles.trash}
-          onClick={handleRemoveImage}
-          style={{ cursor: "pointer" }}
-        />
+        <div class="d-flex justify-content-center mb-1">
+          <img
+            src="/images/trash-fill.svg"
+            className={styles.trash}
+            onClick={handleRemoveImage}
+            style={{ cursor: "pointer" }}
+          />
+        </div>
       )}
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
       <input
