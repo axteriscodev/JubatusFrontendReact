@@ -8,8 +8,8 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
   return (
     <Card className="border-0 shadow-sm">
       <Card.Header className="bg-white border-bottom py-3">
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center gap-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
             <div className="bg-info bg-opacity-10 rounded-3 p-2">
               <i className="bi bi-receipt text-primary fs-5"></i>
             </div>
@@ -27,7 +27,7 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
             disabled={totalLists === 1}
             className="shadow-sm"
           >
-            <i className="bi bi-trash me-2"></i>
+            <i className="bi bi-trash mr-2"></i>
             Elimina listino
           </Button>
         </div>
@@ -37,14 +37,14 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
         {/* Date del listino */}
         <div className="bg-light rounded-3 p-3 mb-4">
           <h6 className="fw-semibold mb-3 text-secondary">
-            <i className="bi bi-calendar-range me-2"></i>
+            <i className="bi bi-calendar-range mr-2"></i>
             Periodo di validità
           </h6>
-          <Row className="g-3">
+          <Row className="gap-3">
             <Col md={6}>
               <Form.Group controlId={`dateStart-${index}`}>
                 <Form.Label className="fw-semibold text-secondary small mb-2">
-                  <i className="bi bi-calendar-plus me-2"></i>Data Inizio
+                  <i className="bi bi-calendar-plus mr-2"></i>Data Inizio
                 </Form.Label>
                 <InputGroup className="shadow-sm">
                   <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -66,7 +66,7 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
             <Col md={6}>
               <Form.Group controlId={`dateExpiry-${index}`}>
                 <Form.Label className="fw-semibold text-secondary small mb-2">
-                  <i className="bi bi-calendar-x me-2"></i>Data Fine
+                  <i className="bi bi-calendar-x mr-2"></i>Data Fine
                 </Form.Label>
                 <InputGroup className="shadow-sm">
                   <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -88,9 +88,9 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
         </div>
 
         {/* Titolo sezione pacchetti */}
-        <div className="d-flex align-items-center justify-content-between mb-3">
+        <div className="flex items-center justify-between mb-3">
           <h6 className="fw-semibold mb-0 text-secondary">
-            <i className="bi bi-box-seam me-2"></i>
+            <i className="bi bi-box-seam mr-2"></i>
             Pacchetti disponibili
           </h6>
           <Badge bg="primary" className="px-3 py-2">
@@ -99,7 +99,7 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
         </div>
 
         {/* Items del listino */}
-        <div className="d-flex flex-column gap-3">
+        <div className="flex flex-column gap-3">
           {list.items.map((item, itemIndex) => (
             <PriceListItem
               key={itemIndex}
@@ -119,10 +119,10 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
         <Button
           variant="outline-primary"
           onClick={() => handlers.addItemToList(index)}
-          className="mt-3 w-100 shadow-sm"
+          className="mt-3 w-full shadow-sm"
           style={{ borderStyle: 'dashed', borderWidth: '2px' }}
         >
-          <i className="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle mr-2"></i>
           Aggiungi pacchetto
         </Button>
       </Card.Body>

@@ -20,7 +20,7 @@ export default function PinForm({ submitHandle, onErrors }) {
       {onErrors.pinError && <p className="on-error">{t("PERSONAL_PIN_INVALID")}</p>}
 
       <button
-        className="my-button w-100 mt-sm"
+        className="my-button w-full mt-10"
         onClick={(event) => submitHandle(event, { pin: pin.current.value?.trim() })}
       >
         Avanti

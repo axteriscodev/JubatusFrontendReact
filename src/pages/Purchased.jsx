@@ -54,33 +54,33 @@ export default function Purchased() {
   return (
     <>
       <div className="container">
-        <div className="text-start">
+        <div className="text-left">
           <Logo
             src={import.meta.env.VITE_API_URL + "/" + eventLogo}
             size="logo-xs"
           />
         </div>
         {hasPhoto && !hasVideo &&
-        <div className="my-md text-start">
+        <div className="my-20 text-left">
           <h2>
             {parse(t("PURCHASED_PHOTO"))}
           </h2>
         </div>
         }
         {!hasPhoto && hasVideo && numVideo == 0 &&
-        <div className="my-md">
+        <div className="my-20">
           {parse(t("PURCHASED_PREPARE"))}
         </div>
         }
         {!hasPhoto && hasVideo && numVideo > 0 &&
-        <div className="my-md text-start">
+        <div className="my-20 text-left">
           <h2>
             {parse(t("PURCHASED_VIDEO"))}
           </h2>
         </div>
         }
         {hasPhoto && hasVideo && numVideo == 0 &&
-        <div className="my-md text-start">
+        <div className="my-20 text-left">
           <h2>
            {parse(t("PURCHASED_PHOTO"))}
           </h2>
@@ -88,7 +88,7 @@ export default function Purchased() {
         </div>
         }
         {hasPhoto && hasVideo && numVideo > 0 &&
-        <div className="my-md text-start">
+        <div className="my-20 text-left">
           <h2>
             {parse(t("PURCHASED_PHOTOVIDEO"))}
           </h2>
@@ -96,11 +96,11 @@ export default function Purchased() {
         }
         { currentPurchasedItems?.length > 0 ? 
         <>
-          <div className="px-lg">
+          <div className="px-30">
             <Carousel>
               {currentPurchasedItems.map((image, i) => (
                 <Carousel.Item key={image.keyPreview || image.keyThumbnail || i}>
-                  <div className={`carousel-square d-flex justify-content-center align-items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
+                  <div className={`carousel-square flex justify-center items-center ${image.fileTypeId == 2 && image.urlCover ? "video" : ""}`}
                     onClick={() =>
                       openLightbox(currentPurchasedItems, i, false, true, false)
                     }>
@@ -124,13 +124,13 @@ export default function Purchased() {
         :
         <>
         { !hasPhoto && !hasVideo && currentPurchasedItems?.length == 0 && 
-          <h2 className="my-sm">{t("PERSONAL_NOTHING")}</h2>
+          <h2 className="my-10">{t("PERSONAL_NOTHING")}</h2>
         }
         </>
         }
         { allPurchasedItems?.length > 0 &&
         <>
-          <div className="mt-md">
+          <div className="mt-20">
             <ImageGallery
               images={allPurchasedItems}
               select={false}

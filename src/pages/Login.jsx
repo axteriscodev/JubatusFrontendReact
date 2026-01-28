@@ -82,7 +82,7 @@ export default function Login() {
         <LanguageSelect />
       </div>
       <div className="form">
-        <h1 className="mb-md">{parse(t("EMAIL_ACCESS"))}</h1>
+        <h1 className="mb-20">{parse(t("EMAIL_ACCESS"))}</h1>
         <MailForm
           submitHandle={handleSubmit}
           defaultEmail={""}

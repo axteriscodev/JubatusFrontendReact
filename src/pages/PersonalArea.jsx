@@ -21,7 +21,7 @@ import { useTranslations } from "../features/TranslationProvider";
  * @param {Function} onLogout - Callback da eseguire al click
  */
 const LogoutButton = ({ onLogout }) => (
-  <div className="d-flex justify-content-end my-sm">
+  <div className="flex justify-end my-10">
     <Button onClick={onLogout} variant="outline-danger" size="sm">
       <i className="bi bi-box-arrow-right"></i> Logout
     </Button>
@@ -168,8 +168,8 @@ export default function PersonalArea() {
   if (loading) {
     return (
       <>
-        <div className="container text-center mt-5">
-          <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+        <div className="text-center mt-5">
+          <h1>{t("PERSONAL_TITLE")}</h1>
           <Spinner animation="border" variant="light" />
           {/* <p className="text-white mt-3">Caricamento eventi...</p> */}
         </div>
@@ -183,8 +183,8 @@ export default function PersonalArea() {
    */
   if (error) {
     return (
-      <div className="container mt-5">
-        <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+      <div className="mt-5">
+        <h1>{t("PERSONAL_TITLE")}</h1>
         <Alert variant="danger">
           <Alert.Heading>Errore</Alert.Heading>
           <p>{error}</p>
@@ -206,7 +206,7 @@ export default function PersonalArea() {
   if (galleries.length === 0) {
     return (
       <div className="container">
-        <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+        <h1 className="my-10 mt-30">{t("PERSONAL_TITLE")}</h1>
         <LogoutButton onLogout={handleLogout} />
         <div className="text-center mt-5">
           <p className="text-white">Nessun evento trovato nella tua libreria</p>
@@ -223,7 +223,7 @@ export default function PersonalArea() {
     <div className="container">
       {/* Header con pulsante logout */}
       <LogoutButton onLogout={handleLogout} />
-      <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+      <h1 className="my-10 mt-30">{t("PERSONAL_TITLE")}</h1>
 
       {/* Griglia di gallerie eventi */}
       <div className="container">

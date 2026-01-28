@@ -108,7 +108,7 @@ export default function CreateEvent() {
   };
 
   return (
-    <div className="container text-start">
+    <div className="container text-left">
       <h1>Gestione evento</h1>
 
       <Tabs

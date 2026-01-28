@@ -59,7 +59,7 @@ export default function MailForm({
       {onErrors.emailDuplicated && (
         <p className="on-error">{t("EMAIL_DUPLICATED")}</p>
       )}
-      <div className="my-xs">
+      <div className="my-5">
         {showPrivacy && (
           <>
             <div className="flex items-center gap-2 mb-2">
@@ -128,7 +128,7 @@ export default function MailForm({
         )}
       </div>
       <button
-        className="my-button w-full mt-sm"
+        className="my-button w-full mt-10"
         onClick={(event) =>
           submitHandle(event, {
             email: emailValue,

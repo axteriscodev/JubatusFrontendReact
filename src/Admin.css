@@ -1,6 +1,43 @@
+@import "tailwindcss";
 body.admin {
-  --bg-color: #ffffff !important;
-  --bg-event-color: #ffffff !important;
-  --primary-color: #000000 !important;
-  --primary-event-color: #000000 !important;
+  --bg-color: #ffffff;
+  --bg-event-color: #ffffff;
+  --primary-color: #000000;
+  --primary-event-color: #000000;
+}
+table {
+    @apply min-w-full  text-gray-800 dark:text-gray-200;
+}
+table > thead:not(.sticky) {
+    @apply bg-gray-600 text-white dark:bg-gray-700 dark:text-gray-300;
+}
+table > thead.sticky {
+    @apply sticky top-0 z-10 bg-gray-900/60 backdrop-blur-sm backdrop-filter border-b border-gray-300 text-white;
+}
+table > thead > tr > th:first-child {
+    @apply py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-4;
+}
+table > thead > tr > th:not(:first-child):not(:last-child) {
+    @apply py-3.5 px-2 text-left text-sm font-semibold;
+}
+table > thead > tr > th:last-child:not(:first-child) {
+    @apply relative py-3.5 pr-4 pl-3 text-left text-sm font-semibold sm:pr-4;
+}
+table > tbody {
+    @apply divide-y divide-gray-200 dark:divide-gray-700 bg-white;
+}
+table:not(.no-striped) > tbody > tr {
+    @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 even:hover:bg-gray-100 even:dark:hover:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+table.no-striped > tbody > tr {
+    @apply bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+table > tbody > tr > td:first-child {
+    @apply py-2 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-4;
+}
+table > tbody > tr > td:not(:first-child):not(:last-child) {
+    @apply py-2 px-2 text-sm whitespace-nowrap text-gray-500;
+}
+table > tbody > tr > td:last-child:not(:first-child) {
+    @apply relative py-2 pr-4 pl-3 text-sm whitespace-nowrap sm:pr-4;
 }

@@ -25,14 +25,14 @@ export function PriceListItem({
   return (
     <Card className="border-2 border-primary border-opacity-25">
       <Card.Body className="p-3">
-        <div className="d-flex align-items-center justify-content-between mb-3">
-          <div className="d-flex align-items-center gap-2">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
             <span className="badge bg-info bg-opacity-10 text-primary px-3 py-2">
               Pacchetto #{rowIndex + 1}
             </span>
             {item.bestOffer && (
-              <span className="badge bg-success">
-                <i className="bi bi-star-fill me-1"></i>
+              <span className="badge bg-green-500">
+                <i className="bi bi-star-fill mr-1"></i>
                 Migliore Offerta
               </span>
             )}
@@ -48,12 +48,12 @@ export function PriceListItem({
           </Button>
         </div>
 
-        <Row className="g-3">
+        <Row className="gap-3">
           {/* Informazioni principali */}
           <Col md={8}>
             <Form.Group controlId={`f${formIndex}-r${rowIndex}-labelId`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-tag me-2"></i>Label Pacchetto
+                <i className="bi bi-tag mr-2"></i>Label Pacchetto
               </Form.Label>
               <Form.Select
                 value={item.labelId ?? ""}
@@ -82,15 +82,15 @@ export function PriceListItem({
                   className="p-0 text-decoration-none"
                   aria-expanded={showTranslations}
                 >
-                  <i className={`bi bi-chevron-${showTranslations ? 'up' : 'down'} me-1`}></i>
+                  <i className={`bi bi-chevron-${showTranslations ? 'up' : 'down'} mr-1`}></i>
                   <small className="fw-semibold">
-                    <i className="bi bi-translate me-1"></i>
+                    <i className="bi bi-translate mr-1"></i>
                     Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
                   </small>
                 </Button>
                 <Collapse in={showTranslations}>
                   <div className="mt-2 p-2 bg-light rounded-2 border">
-                    <div className="d-flex flex-column gap-2">
+                    <div className="flex flex-column gap-2">
                       {selectedLabel.labelsLanguages.map((lang, idx) => (
                         <div
                           key={idx}
@@ -113,10 +113,10 @@ export function PriceListItem({
             {hasLegacyTexts && (
               <div className="mt-2 p-2 bg-warning bg-opacity-10 rounded-2 border border-warning">
                 <small className="text-warning fw-semibold d-block mb-2">
-                  <i className="bi bi-exclamation-triangle me-1"></i>
+                  <i className="bi bi-exclamation-triangle mr-1"></i>
                   Testi esistenti (modalità legacy)
                 </small>
-                <Row className="g-2">
+                <Row className="gap-2">
                   <Col md={6}>
                     <Form.Group controlId={`f${formIndex}-r${rowIndex}-title`}>
                       <Form.Label className="fw-semibold text-secondary small mb-1">
@@ -151,7 +151,7 @@ export function PriceListItem({
                   </Col>
                 </Row>
                 <small className="text-muted d-block mt-2">
-                  <i className="bi bi-info-circle me-1"></i>
+                  <i className="bi bi-info-circle mr-1"></i>
                   Seleziona una label sopra per passare al nuovo sistema
                 </small>
               </div>
@@ -160,7 +160,7 @@ export function PriceListItem({
 
           <Col md={4}>
             <Form.Label className="fw-semibold text-secondary small mb-2">
-              <i className="bi bi-star-fill me-2"></i>Opzioni
+              <i className="bi bi-star-fill mr-2"></i>Opzioni
             </Form.Label>
             <Card className="bg-light border-0 p-2">
               <Form.Check
@@ -180,17 +180,17 @@ export function PriceListItem({
         <hr className="my-3" />
 
         {/* Quantità e prezzi */}
-        <Row className="g-3">
+        <Row className="gap-3">
           <Col xs={12}>
             <small className="text-muted fw-semibold">
-              <i className="bi bi-box me-2"></i>QUANTITÀ E PREZZI
+              <i className="bi bi-box mr-2"></i>QUANTITÀ E PREZZI
             </small>
           </Col>
 
           <Col md={3} sm={6}>
             <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-camera-fill me-2"></i>Foto
+                <i className="bi bi-camera-fill mr-2"></i>Foto
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <Form.Control
@@ -213,7 +213,7 @@ export function PriceListItem({
           <Col md={3} sm={6}>
             <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-film me-2"></i>Video
+                <i className="bi bi-film mr-2"></i>Video
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <Form.Control
@@ -236,7 +236,7 @@ export function PriceListItem({
           <Col md={3} sm={6}>
             <Form.Group controlId={`f${formIndex}-r${rowIndex}-price`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-cash me-2"></i>Prezzo
+                <i className="bi bi-cash mr-2"></i>Prezzo
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -260,7 +260,7 @@ export function PriceListItem({
           <Col md={3} sm={6}>
             <Form.Group controlId={`f${formIndex}-r${rowIndex}-discount`}>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-percent me-2"></i>Sconto
+                <i className="bi bi-percent mr-2"></i>Sconto
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <Form.Control
@@ -285,13 +285,13 @@ export function PriceListItem({
 
         {/* Riepilogo prezzo finale */}
         {item.price > 0 && (
-          <div className="mt-3 p-3 bg-success bg-opacity-10 rounded-3">
-            <div className="d-flex justify-content-between align-items-center">
+          <div className="mt-3 p-3 bg-green-500/10 rounded-3">
+            <div className="flex justify-between items-center">
               <span className="text-secondary fw-semibold">
-                <i className="bi bi-calculator me-2"></i>
+                <i className="bi bi-calculator mr-2"></i>
                 Prezzo finale:
               </span>
-              <div className="text-end">
+              <div className="text-right">
                 {item.discount > 0 && (
                   <div>
                     <small className="text-muted text-decoration-line-through">
@@ -303,7 +303,7 @@ export function PriceListItem({
                   {currencySymbol}{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
                 </span>
                 {item.discount > 0 && (
-                  <small className="text-success ms-2">
+                  <small className="text-success ml-2">
                     (-{item.discount}%)
                   </small>
                 )}

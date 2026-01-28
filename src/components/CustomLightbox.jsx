@@ -171,7 +171,7 @@ export default function CustomLightbox({
                       currentImage.key
                     )
                   }
-                  className={`my-button w-100 ${isSelected ? "remove" : "add"}`}
+                  className={`my-button w-full ${isSelected ? "remove" : "add"}`}
                 >
                   {isSelected ? (
                     <>
@@ -190,7 +190,7 @@ export default function CustomLightbox({
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
             )}
             {actions && (
-              <div className=" text-50 d-flex gap-3 justify-content-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">
+              <div className=" text-50 flex gap-3 justify-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">
                 <a onClick={handleFavouriteClick} aria-label="Favourite image">
                   <i
                     className={`bi ${

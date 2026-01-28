@@ -56,17 +56,17 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="container text-start">
-      <div className="d-flex justify-content-end my-sm">
+    <div className="container text-left">
+      <div className="flex justify-end my-10">
         <Button
           onClick={handleLogout}
-          variant="outline-danger"
+          variant="outline"
         >
           <i class="bi bi-box-arrow-right"></i> Logout
         </Button>
       </div>
       <h1>Elenco eventi</h1>
-      <Table striped bordered hover className="my-sm">
+      <Table striped bordered hover className="my-10 table-auto">
         <thead>
           <tr>
             <th>#</th>

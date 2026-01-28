@@ -7,7 +7,7 @@ import { PriceListCard } from "./PriceListCard";
 export function PriceListSection({ priceLists, handlers, currencySymbol = "€", labelList = [] }) {
   return (
     <div className="w-full">
-      <div className="d-flex align-items-center justify-content-between mb-4">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h4 className="mb-1 fw-bold">
             Gestione Listini Prezzi
@@ -22,7 +22,7 @@ export function PriceListSection({ priceLists, handlers, currencySymbol = "€",
           className="shadow-sm"
           style={{ minWidth: '150px' }}
         >
-          <i className="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle mr-2"></i>
           Nuovo listino
         </Button>
       </div>
@@ -35,7 +35,7 @@ export function PriceListSection({ priceLists, handlers, currencySymbol = "€",
           </p>
         </div>
       ) : (
-        <div className="d-flex flex-column gap-3">
+        <div className="flex flex-column gap-3">
           {priceLists.map((list, index) => (
             <PriceListCard
               key={index}

@@ -23,7 +23,7 @@ export function EventLogo({ formData, receivedComp, onFileChange }) {
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="my-4">
-        <Logo src={getLogoSrc()} css="mb-sm" />
+        <Logo src={getLogoSrc()} css="mb-10" />
       </div>
 
       <div>

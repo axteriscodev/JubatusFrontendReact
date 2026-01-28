@@ -126,7 +126,7 @@ export function ParticipantsUpload({ eventId }) {
             variant="primary"
             onClick={handleUpload}
             disabled={!selectedFile || uploading}
-            className="w-100"
+            className="w-full"
           >
             {uploading ? (
               <>
@@ -136,7 +136,7 @@ export function ParticipantsUpload({ eventId }) {
                   size="sm"
                   role="status"
                   aria-hidden="true"
-                  className="me-2"
+                  className="mr-2"
                 />
                 Caricamento...
               </>

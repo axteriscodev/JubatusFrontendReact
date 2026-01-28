@@ -62,7 +62,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   return (
     <div>
       <h3>{t("SELFIE_TITLE")}</h3>
-      <p className="my-sm text-secondary">{t("SELFIE_UPLOAD")}</p>
+      <p className="my-10 text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
         className={`${styles.avatar} ${!imageUrl && !loading ? styles.add : ""}`}
         onClick={handleImageClick}

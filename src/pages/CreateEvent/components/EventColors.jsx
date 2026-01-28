@@ -7,8 +7,8 @@ export function EventColors({ formData, onInputChange }) {
   return (
     <Card className="shadow-sm border-0 mb-4">
       <Card.Body className="p-4">
-        <div className="d-flex align-items-center mb-4">
-          <div className="bg-danger bg-opacity-10 rounded-3 p-3 me-3">
+        <div className="flex items-center mb-4">
+          <div className="bg-red-500/10 rounded-3 p-3 mr-3">
             <i className="bi bi-palette-fill text-danger fs-4"></i>
           </div>
           <div>
@@ -17,7 +17,7 @@ export function EventColors({ formData, onInputChange }) {
           </div>
         </div>
 
-        <Row className="g-4">
+        <Row className="gap-4">
           <Col md={4}>
             <Card className="border-2 h-100 transition-all" style={{ 
               borderColor: formData.backgroundColor,
@@ -25,7 +25,7 @@ export function EventColors({ formData, onInputChange }) {
             }}>
               <Card.Body className="text-center p-4">
                 <div 
-                  className="rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center"
+                  className="rounded-circle mx-auto mb-3 shadow-sm flex items-center justify-center"
                   style={{ 
                     width: '80px', 
                     height: '80px',
@@ -68,7 +68,7 @@ export function EventColors({ formData, onInputChange }) {
             }}>
               <Card.Body className="text-center p-4">
                 <div 
-                  className="rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center"
+                  className="rounded-circle mx-auto mb-3 shadow-sm flex items-center justify-center"
                   style={{ 
                     width: '80px', 
                     height: '80px',
@@ -111,7 +111,7 @@ export function EventColors({ formData, onInputChange }) {
             }}>
               <Card.Body className="text-center p-4">
                 <div 
-                  className="rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center"
+                  className="rounded-circle mx-auto mb-3 shadow-sm flex items-center justify-center"
                   style={{ 
                     width: '80px', 
                     height: '80px',
@@ -151,11 +151,11 @@ export function EventColors({ formData, onInputChange }) {
         {/* Anteprima palette */}
         <Card className="bg-light border-0 mt-4">
           <Card.Body className="p-3">
-            <div className="d-flex align-items-center justify-content-between">
+            <div className="flex items-center justify-between">
               <span className="text-muted small fw-semibold">
-                <i className="bi bi-eye-fill me-2"></i>Anteprima Palette
+                <i className="bi bi-eye-fill mr-2"></i>Anteprima Palette
               </span>
-              <div className="d-flex gap-2">
+              <div className="flex gap-2">
                 <div 
                   className="rounded shadow-sm"
                   style={{ 

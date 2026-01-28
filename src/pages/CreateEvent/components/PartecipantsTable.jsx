@@ -121,7 +121,7 @@ export function PartecipantsTable({ eventId }) {
       {/* Header Section */}
       <Row>
         <Col sm={12}>
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="flex justify-between items-center mb-3">
             <div>
               <h4>Lista partecipanti</h4>
               <p className="text-muted mb-0">
@@ -144,13 +144,13 @@ export function PartecipantsTable({ eventId }) {
                     size="sm"
                     role="status"
                     aria-hidden="true"
-                    className="me-2"
+                    className="mr-2"
                   />
                   Caricamento...
                 </>
               ) : (
                 <>
-                  <i className="bi bi-arrow-clockwise me-2"></i>
+                  <i className="bi bi-arrow-clockwise mr-2"></i>
                   Aggiorna
                 </>
               )}
@@ -183,7 +183,7 @@ export function PartecipantsTable({ eventId }) {
             )}
           </InputGroup>
         </Col>
-        <Col sm={12} md={6} className="text-end mt-2 mt-md-0">
+        <Col sm={12} md={6} className="text-right mt-2 mt-20-0">
           <small className="text-muted">
             Visualizzati {filteredEmails.length} di {emails.length}{" "}
             partecipanti

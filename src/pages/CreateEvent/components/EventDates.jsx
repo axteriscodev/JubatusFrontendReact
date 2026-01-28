@@ -16,8 +16,8 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
   return (
     <Card className="shadow-sm border-0 mb-4">
       <Card.Body className="p-4">
-        <div className="d-flex align-items-center mb-4">
-          <div className="bg-success bg-opacity-10 rounded-3 p-3 me-3">
+        <div className="flex items-center mb-4">
+          <div className="bg-green-500/10 rounded-3 p-3 mr-3">
             <i className="bi bi-calendar-event-fill text-success fs-4"></i>
           </div>
           <div>
@@ -26,7 +26,7 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
           </div>
         </div>
 
-        <Row className="g-3">
+        <Row className="gap-3">
           {/* Date principali */}
           <Col xs={12}>
             <div className="border-start border-4 border-primary ps-3 mb-3">
@@ -37,7 +37,7 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
           <Col md={4}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-calendar-check-fill me-2"></i>Data evento
+                <i className="bi bi-calendar-check-fill mr-2"></i>Data evento
               </Form.Label>
               <InputGroup className="shadow-sm" hasValidation>
                 <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -63,7 +63,7 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
           <Col md={4}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-calendar-plus-fill me-2"></i>Data pubblicazione
+                <i className="bi bi-calendar-plus-fill mr-2"></i>Data pubblicazione
               </Form.Label>
               <InputGroup className="shadow-sm" hasValidation>
                 <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -89,7 +89,7 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
           <Col md={4}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-calendar-x-fill me-2"></i>Data scadenza
+                <i className="bi bi-calendar-x-fill mr-2"></i>Data scadenza
               </Form.Label>
               <InputGroup className="shadow-sm" hasValidation>
                 <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -122,7 +122,7 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
           <Col md={6}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-hourglass-split me-2"></i>Inizio preordini
+                <i className="bi bi-hourglass-split mr-2"></i>Inizio preordini
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <InputGroup.Text className="bg-white border-2 border-end-0">
@@ -144,7 +144,7 @@ export function EventDates({ formData, onInputChange, errors = {}, onClearError 
           <Col md={6}>
             <Form.Group>
               <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-hourglass-bottom me-2"></i>Fine preordini
+                <i className="bi bi-hourglass-bottom mr-2"></i>Fine preordini
               </Form.Label>
               <InputGroup className="shadow-sm">
                 <InputGroup.Text className="bg-white border-2 border-end-0">

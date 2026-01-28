@@ -84,7 +84,7 @@ export default function Checkout() {
       <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
-      <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
+      <button className="my-button w-full mt-10" onClick={buttonHandle}>
         {t("CHECKOUT_BACK")}
       </button>
     </>

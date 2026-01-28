@@ -5,7 +5,7 @@ import Button from "../../../shared/components/ui/Button";
  */
 export function FormActions({ onSubmit, onCancel }) {
   return (
-    <div className="flex justify-between mt-sm">
+    <div className="flex justify-between mt-10">
       <Button onClick={onSubmit} variant="success">
         Salva dati
       </Button>
