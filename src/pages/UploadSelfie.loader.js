@@ -1,3 +1,5 @@
+import { getPreferredLanguage } from '../utils/language-utils';
+
 /**
  * Loader per caricare i dati dell'evento da visualizzare nella pagina
  *
@@ -9,7 +11,7 @@ export async function loader({ request, params }) {
   const eventName = params.eventSlug;
   const userHash = params.userHash;
 
-  const currentLanguage = JSON.parse(localStorage.getItem('preferred_lang')) || { acronym: 'it' };
+  const currentLanguage = getPreferredLanguage();
 
   const response = await fetch(
     import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}/${currentLanguage.acronym}`
