@@ -1,4 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  getBrowserLanguages,
+  findBestLanguageMatch,
+  getFallbackLanguage
+} from '../utils/language-utils';
 
 // Lingua di default
 const defaultLanguage = {
@@ -48,7 +53,14 @@ export function LanguageProvider({ children }) {
         }
 
         if (!preferredLang) {
-          preferredLang = data.data.find(l => l.acronym === "it") || data.data[0];
+          // Try browser language detection
+          const browserLanguages = getBrowserLanguages();
+          preferredLang = findBestLanguageMatch(data.data, browserLanguages);
+
+          // Fallback to "it" or first available
+          if (!preferredLang) {
+            preferredLang = getFallbackLanguage(data.data);
+          }
         }
 
         if (preferredLang) {
