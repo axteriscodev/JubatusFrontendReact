@@ -136,6 +136,7 @@ export default function ImageShop() {
               onOpenLightbox={openLightbox}
               onImageClick={handleImageClick}
               photoItems={photoItems}
+              aspectRatio={eventPreset.aspectRatio}
             />
             <TotalShopButton onButtonClick={handleButtonClick} />
           </>

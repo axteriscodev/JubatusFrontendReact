@@ -21,6 +21,7 @@ import { getEventContents } from "../utils/contents-utils";
  * @param {Function} onImageClick - Callback per il click sull'immagine
  * @param {Array} photoItems - Array di foto selezionate per evidenziare la selezione
  * @param {boolean} personalSlice - Flag per gestione slice personale (default: false)
+ * @param {string} aspectRatio - Aspect ratio delle immagini (es: "1:1", "3:2", "16:9"). Default: "1:1"
  */
 export default function ImageGallery({
   images,
@@ -33,6 +34,7 @@ export default function ImageGallery({
   onImageClick = null,
   photoItems = null,
   personalSlice = false,
+  aspectRatio = "1:1",
 }) {
   // Recupera i contenuti degli eventi personali dalle immagini
   const data = getEventContents(images);
@@ -43,17 +45,23 @@ export default function ImageGallery({
   // Hook per le traduzioni
   const { t } = useTranslations();
 
+  // Converte aspectRatio da formato "3:2" a classe CSS "ratio-3-2"
+  const getRatioClass = (ratio) => {
+    if (!ratio) return "ratio-1-1"; // Fallback di default
+    return `ratio-${ratio.replace(":", "-")}`;
+  };
+
   return (
     <>
       {/* Griglia responsive della galleria: 3 colonne su mobile, 4 su tablet, 5 su desktop */}
       <div
-        className={`row row-cols-3 row-cols-md-4 row-cols-lg-5 justify-content-center g-2 pb-lg ${styles.gallery}`}
+        className={`row row-cols-2 row-cols-md-3 row-cols-lg-4 justify-content-center g-2 pb-lg ${styles.gallery}`}
       >
         {data.map((image, i) => (
           // Contenitore singola immagine con chiave unica
           <div key={`gallery_${Date.now()}_${image.key || i}_${i}`}>
-            {/* Ratio 1:1 per mantenere le immagini quadrate */}
-            <div className="ratio ratio-1-1">
+            {/* Ratio dinamico dalle impostazioni evento */}
+            <div className={`ratio ${getRatioClass(aspectRatio)}`}>
               <div>
                 {/* Contenitore immagine con classi condizionali per selezione e tipo video */}
                 <div

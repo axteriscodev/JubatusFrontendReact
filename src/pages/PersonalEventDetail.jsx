@@ -177,6 +177,7 @@ export default function PersonalEventDetail() {
                 highLightPurchased={true}
                 personalSlice={true}
                 onOpenLightbox={openLightbox}
+                aspectRatio={eventData?.aspectRatio}
               />
             </div>
           </>
@@ -212,6 +213,7 @@ export default function PersonalEventDetail() {
                 personalSlice={false}
                 onOpenLightbox={openLightbox}
                 applyRedFilter={true}
+                aspectRatio={eventData?.aspectRatio}
               />
             </div>
           </>
