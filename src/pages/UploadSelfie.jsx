@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import validator from "validator";
 import FormErrors from "../models/form-errors";
 
@@ -19,8 +19,9 @@ export default function UploadSelfie() {
   const eventData = useLoaderData();
   const dispatch = useDispatch();
   const { eventSlug, userHash } = useParams();
+  const tagId = useSelector((state) => state.competition?.tagId);
 
-  const [selfie, setSelfie] = useState();
+  const [selfie, setSelfie] = useState({ image: null, licensePlate: "" });
 
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
@@ -66,7 +67,14 @@ export default function UploadSelfie() {
     console.log(data.privacy);
 
     formErrors.emailError = !validator.isEmail(data.email);
-    formErrors.imageError = !selfie ? true : false;
+
+    // For motorsport events (tagId === 1), image is optional if license plate is provided
+    if (tagId === 1 && selfie.licensePlate) {
+      formErrors.imageError = false;
+    } else {
+      formErrors.imageError = !selfie.image ? true : false;
+    }
+
     formErrors.privacyError = !data.privacy;
 
     if (
@@ -85,7 +93,8 @@ export default function UploadSelfie() {
       state: {
         eventId: eventData.data.id,
         email: data.email,
-        image: selfie,
+        image: selfie.image,
+        licensePlate: selfie.licensePlate || "",
         eventSlug: eventSlug,
         userHash: userHash,
       },
