@@ -43,14 +43,14 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
 
       setImageUrl(URL.createObjectURL(currentProcessedFile));
       setProcessedFile(currentProcessedFile);
-      onDataChange({ image: currentProcessedFile, licensePlate: bibNumber });
+      onDataChange({ image: currentProcessedFile, bibNumber: bibNumber });
       onError = false;
     } catch (err) {
       console.error("Errore nella conversione HEIC:", err);
       onError = true;
       setImageUrl(null);
       setProcessedFile(null);
-      onDataChange({ image: null, licensePlate: "" });
+      onDataChange({ image: null, bibNumber: "" });
     } finally {
       setLoading(false);
     }
@@ -62,14 +62,14 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       setImageUrl(null);
       setProcessedFile(null);
       fileInputRef.current.value = "";
-      onDataChange({ image: null, licensePlate: bibNumber });
+      onDataChange({ image: null, bibNumber: bibNumber });
     }
   };
 
   const handleBibNumberChange = (event) => {
     const value = event.target.value;
     setBibNumber(value);
-    onDataChange({ image: processedFile, licensePlate: value });
+    onDataChange({ image: processedFile, bibNumber: value });
   };
 
   return (
