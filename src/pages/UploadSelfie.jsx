@@ -69,7 +69,7 @@ export default function UploadSelfie() {
     formErrors.emailError = !validator.isEmail(data.email);
 
     // For motorsport events (tagId === 1), image is optional if license plate is provided
-    if (tagId === 1 && selfie.licensePlate) {
+    if (tagId === 2 && selfie.licensePlate) {
       formErrors.imageError = false;
     } else {
       formErrors.imageError = !selfie.image ? true : false;
