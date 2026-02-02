@@ -62,11 +62,11 @@ export default function AdminPanel() {
           onClick={handleLogout}
           variant="outline"
         >
-          <i class="bi bi-box-arrow-right"></i> Logout
+          <i className="bi bi-box-arrow-right"></i> Logout
         </Button>
       </div>
       <h1>Elenco eventi</h1>
-      <Table striped bordered hover className="my-10 table-auto">
+      <Table className="my-10 table-auto">
         <thead>
           <tr>
             <th>#</th>
@@ -87,35 +87,31 @@ export default function AdminPanel() {
               <td>{formatDate(competition.dateEvent)}</td>
               <td>{formatDate(competition.dateStart)}</td>
               <td>{formatDate(competition.dateExpiry)}</td>
-              <td>
-                <ButtonGroup aria-label="Azioni">
-                  <Tooltip content="Modifica evento" placement="top">
-                    <Button
-                      variant="secondary"
-                      onClick={() => handleEditCompetition(competition)}
-                      className="btn-sm"
-                    >
-                      <i className="bi bi-pencil"></i>
-                    </Button>
-                  </Tooltip>
+              <td className="text-right">
+                <ButtonGroup>
+                  <Button
+                    variant="secondary"
+                    onClick={() => handleEditCompetition(competition)}
+                    size="sm"
+                  >
+                    <i className="bi bi-pencil"></i>
+                  </Button>
                   {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
               <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
-                  <Tooltip content="Elimina evento" placement="top">
-                    <Button
-                      variant="danger"
-                      onClick={() => {
-                        const confirmDelete = window.confirm(
-                          "Sei sicuro di voler rimuovere l'evento?"
-                        );
-                        if (confirmDelete) {
-                          handleDeleteCompetition(competition);
-                        }
-                      }}
-                      className="btn-sm"
-                    >
-                      <i className="bi bi-trash"></i>
-                    </Button>
-                  </Tooltip>
+                  <Button
+                    variant="danger"
+                    onClick={() => {
+                      const confirmDelete = window.confirm(
+                        "Sei sicuro di voler rimuovere l'evento?"
+                      );
+                      if (confirmDelete) {
+                        handleDeleteCompetition(competition);
+                      }
+                    }}
+                    size="sm"
+                  >
+                    <i className="bi bi-trash"></i>
+                  </Button>
                 </ButtonGroup>
               </td>
             </tr>

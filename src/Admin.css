@@ -41,3 +41,22 @@ table > tbody > tr > td:not(:first-child):not(:last-child) {
 table > tbody > tr > td:last-child:not(:first-child) {
     @apply relative py-2 pr-4 pl-3 text-sm whitespace-nowrap sm:pr-4;
 }
+.button-group button {
+    @apply relative inline-flex items-center rounded-lg;
+}
+.button-group button:first-child:not(:last-child),
+.button-group *:first-child:not(:last-child) button {
+    @apply rounded-r-none;
+}
+.button-group button:last-child:not(:first-child),
+.button-group *:last-child:not(:first-child) button {
+    @apply rounded-l-none;
+}
+.button-group button:first-child:not(:last-child),
+.button-group *:first-child:not(:last-child) button {
+    @apply rounded-r-none;
+}
+.button-group button:not(:last-child):not(:first-child),
+.button-group *:not(:last-child):not(:first-child) button {
+    @apply rounded-l-none rounded-r-none;
+}

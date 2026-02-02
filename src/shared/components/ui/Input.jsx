@@ -33,7 +33,7 @@ const Input = React.forwardRef(
       "block w-full rounded-md bg-white text-base px-3 py-2 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-300 text-black";
 
     const stateClasses = error
-      ? "border-danger text-danger focus:border-danger"
+      ? "border-red-500 text-red-500 focus:border-red-500"
       : "border-gray-300 focus:border-secondary-event";
 
     const inputClasses = `${baseClasses} ${stateClasses} ${className}`;

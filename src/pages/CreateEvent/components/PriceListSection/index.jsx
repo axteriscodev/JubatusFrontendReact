@@ -1,41 +1,41 @@
-import Button from "../../../../shared/components/ui/Button";
 import { PriceListCard } from "./PriceListCard";
 
 /**
- * Componente principale per la sezione listini prezzi - VERSIONE MIGLIORATA
+ * Componente principale per la sezione listini prezzi - VERSIONE TAILWIND
  */
-export function PriceListSection({ priceLists, handlers, currencySymbol = "€", labelList = [] }) {
+export function PriceListSection({ priceLists, handlers }) {
   return (
-    <div className="w-full">
+    <div className="col-span-12">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="mb-1 fw-bold">
+          <h4 className="mb-1 font-bold text-xl">
+            <i className="bi bi-currency-euro mr-2"></i>
             Gestione Listini Prezzi
           </h4>
-          <p className="text-muted mb-0 small">
+          <p className="text-gray-500 mb-0 text-sm">
             Configura i pacchetti e i prezzi disponibili per questo evento
           </p>
         </div>
-        <Button 
-          variant="primary" 
-          onClick={handlers.addList} 
-          className="shadow-sm"
-          style={{ minWidth: '150px' }}
+        <button
+          type="button"
+          onClick={handlers.addList}
+          className="min-w-35 px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm
+                     hover:bg-blue-700 transition-colors font-medium"
         >
           <i className="bi bi-plus-circle mr-2"></i>
           Nuovo listino
-        </Button>
+        </button>
       </div>
 
       {priceLists.length === 0 ? (
-        <div className="text-center py-5 bg-light rounded-3">
-          <i className="bi bi-inbox text-muted" style={{ fontSize: '3rem' }}></i>
-          <p className="text-muted mt-3 mb-0">
+        <div className="text-center py-12 bg-gray-100 rounded-xl">
+          <i className="bi bi-inbox text-gray-400 text-5xl"></i>
+          <p className="text-gray-500 mt-3 mb-0">
             Nessun listino presente. Clicca su "Nuovo listino" per iniziare.
           </p>
         </div>
       ) : (
-        <div className="flex flex-column gap-3">
+        <div className="flex flex-col gap-3">
           {priceLists.map((list, index) => (
             <PriceListCard
               key={index}
@@ -43,8 +43,6 @@ export function PriceListSection({ priceLists, handlers, currencySymbol = "€",
               index={index}
               handlers={handlers}
               totalLists={priceLists.length}
-              currencySymbol={currencySymbol}
-              labelList={labelList}
             />
           ))}
         </div>

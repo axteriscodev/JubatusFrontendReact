@@ -1,8 +1,5 @@
-import { useState } from "react";
-import { Form, Row, Col, Button, Card, InputGroup, Collapse } from "../../../../shared/components/ui";
-
 /**
- * Componente per un singolo item (pacchetto) all'interno di un listino - VERSIONE MIGLIORATA
+ * Componente per un singolo item (pacchetto) all'interno di un listino - VERSIONE TAILWIND
  */
 export function PriceListItem({
   item,
@@ -12,298 +9,241 @@ export function PriceListItem({
   onUpdateWithLanguage,
   onRemove,
   canRemove,
-  currencySymbol = "€",
-  labelList = [],
 }) {
-  // Trova la label selezionata per mostrare le traduzioni
-  const selectedLabel = labelList.find((label) => label.id === item.labelId);
-  const [showTranslations, setShowTranslations] = useState(false);
-
-  // Verifica se l'item ha testi legacy (titolo/sottotitolo senza labelId)
-  const hasLegacyTexts = !item.labelId && (item.title || item.subTitle || item.itemsLanguages?.[0]?.title || item.itemsLanguages?.[0]?.subTitle);
-
   return (
-    <Card className="border-2 border-primary border-opacity-25">
-      <Card.Body className="p-3">
+    <div className="border-2 border-blue-500/25 rounded-lg bg-white">
+      <div className="p-3">
+        {/* Header con badge e bottone elimina */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="badge bg-info bg-opacity-10 text-primary px-3 py-2">
+            <span className="bg-cyan-500/10 text-blue-600 px-3 py-1.5 rounded-md text-sm font-medium">
               Pacchetto #{rowIndex + 1}
             </span>
             {item.bestOffer && (
-              <span className="badge bg-green-500">
+              <span className="bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium">
                 <i className="bi bi-star-fill mr-1"></i>
                 Migliore Offerta
               </span>
             )}
           </div>
-          <Button
-            variant="outline-danger"
-            size="sm"
+          <button
+            type="button"
             onClick={() => onRemove(formIndex, rowIndex)}
             disabled={!canRemove}
-            className="shadow-sm"
+            className="p-1.5 border border-red-500 text-red-500 rounded-md shadow-sm 
+                       hover:bg-red-500 hover:text-white transition-colors
+                       disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <i className="bi bi-trash"></i>
-          </Button>
+          </button>
         </div>
 
-        <Row className="gap-3">
-          {/* Informazioni principali */}
-          <Col md={8}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-labelId`}>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-tag mr-2"></i>Label Pacchetto
-              </Form.Label>
-              <Form.Select
-                value={item.labelId ?? ""}
-                onChange={(e) =>
-                  onUpdate(formIndex, rowIndex, "labelId", e.target.value ? parseInt(e.target.value) : null)
-                }
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-              >
-                <option value="">Seleziona una label...</option>
-                {labelList.map((label) => (
-                  <option key={label.id} value={label.id}>
-                    {label.label}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+        {/* Informazioni principali */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Titolo */}
+          <div>
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-title`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-type mr-2"></i>Titolo
+            </label>
+            <input
+              type="text"
+              id={`f${formIndex}-r${rowIndex}-title`}
+              value={item.itemsLanguages?.[0]?.title ?? ""}
+              onChange={(e) =>
+                onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
+              }
+              placeholder="Es: Pacchetto Basic"
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
 
-            {/* Anteprima traduzioni della label selezionata */}
-            {selectedLabel && selectedLabel.labelsLanguages?.length > 0 && (
-              <div className="mt-2">
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => setShowTranslations(!showTranslations)}
-                  className="p-0 text-decoration-none"
-                  aria-expanded={showTranslations}
-                >
-                  <i className={`bi bi-chevron-${showTranslations ? 'up' : 'down'} mr-1`}></i>
-                  <small className="fw-semibold">
-                    <i className="bi bi-translate mr-1"></i>
-                    Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
-                  </small>
-                </Button>
-                <Collapse in={showTranslations}>
-                  <div className="mt-2 p-2 bg-light rounded-2 border">
-                    <div className="flex flex-column gap-2">
-                      {selectedLabel.labelsLanguages.map((lang, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white rounded px-2 py-1 border"
-                          style={{ fontSize: '0.85rem' }}
-                        >
-                          <span className="fw-semibold text-primary">{lang.title}</span>
-                          {lang.subtitle && (
-                            <span className="text-muted"> - {lang.subtitle}</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </Collapse>
-              </div>
-            )}
+          {/* Sottotitolo */}
+          <div>
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-subTitle`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-text-left mr-2"></i>Sottotitolo
+            </label>
+            <input
+              type="text"
+              id={`f${formIndex}-r${rowIndex}-subTitle`}
+              value={item.itemsLanguages?.[0]?.subTitle ?? ""}
+              onChange={(e) =>
+                onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
+              }
+              placeholder="Es: Ideale per eventi piccoli"
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
 
-            {/* Campi legacy per retrocompatibilità */}
-            {hasLegacyTexts && (
-              <div className="mt-2 p-2 bg-warning bg-opacity-10 rounded-2 border border-warning">
-                <small className="text-warning fw-semibold d-block mb-2">
-                  <i className="bi bi-exclamation-triangle mr-1"></i>
-                  Testi esistenti (modalità legacy)
-                </small>
-                <Row className="gap-2">
-                  <Col md={6}>
-                    <Form.Group controlId={`f${formIndex}-r${rowIndex}-title`}>
-                      <Form.Label className="fw-semibold text-secondary small mb-1">
-                        Titolo
-                      </Form.Label>
-                      <Form.Control
-                        size="sm"
-                        value={item.itemsLanguages?.[0]?.title ?? item.title ?? ""}
-                        onChange={(e) =>
-                          onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
-                        }
-                        placeholder="Titolo pacchetto"
-                        className="border"
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group controlId={`f${formIndex}-r${rowIndex}-subTitle`}>
-                      <Form.Label className="fw-semibold text-secondary small mb-1">
-                        Sottotitolo
-                      </Form.Label>
-                      <Form.Control
-                        size="sm"
-                        value={item.itemsLanguages?.[0]?.subTitle ?? item.subTitle ?? ""}
-                        onChange={(e) =>
-                          onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
-                        }
-                        placeholder="Sottotitolo pacchetto"
-                        className="border"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <small className="text-muted d-block mt-2">
-                  <i className="bi bi-info-circle mr-1"></i>
-                  Seleziona una label sopra per passare al nuovo sistema
-                </small>
-              </div>
-            )}
-          </Col>
-
-          <Col md={4}>
-            <Form.Label className="fw-semibold text-secondary small mb-2">
+          {/* Opzioni */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
               <i className="bi bi-star-fill mr-2"></i>Opzioni
-            </Form.Label>
-            <Card className="bg-light border-0 p-2">
-              <Form.Check
-                type="checkbox"
-                id={`f${formIndex}-r${rowIndex}-bestOffer`}
-                label={<span className="fw-semibold small">Migliore offerta</span>}
-                checked={item.bestOffer}
-                onChange={(e) =>
-                  onUpdate(formIndex, rowIndex, "bestOffer", e.target.checked)
-                }
-              />
-            </Card>
-          </Col>
-        </Row>
+            </label>
+            <div className="bg-gray-100 border-0 rounded-md p-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  id={`f${formIndex}-r${rowIndex}-bestOffer`}
+                  checked={item.bestOffer}
+                  onChange={(e) =>
+                    onUpdate(formIndex, rowIndex, "bestOffer", e.target.checked)
+                  }
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                />
+                <span className="font-semibold text-sm">Migliore offerta</span>
+              </label>
+            </div>
+          </div>
+        </div>
 
         {/* Divisore */}
-        <hr className="my-3" />
+        <hr className="my-3 border-gray-200" />
 
         {/* Quantità e prezzi */}
-        <Row className="gap-3">
-          <Col xs={12}>
-            <small className="text-muted fw-semibold">
+        <div className="grid grid-cols-12 gap-3">
+          <div className="col-span-12">
+            <small className="text-gray-500 font-semibold">
               <i className="bi bi-box mr-2"></i>QUANTITÀ E PREZZI
             </small>
-          </Col>
+          </div>
 
-          <Col md={3} sm={6}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityPhoto`}>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-camera-fill mr-2"></i>Foto
-              </Form.Label>
-              <InputGroup className="shadow-sm">
-                <Form.Control
-                  type="number"
-                  value={item.quantityPhoto}
-                  onChange={(e) =>
-                    onUpdate(formIndex, rowIndex, "quantityPhoto", e.target.value)
-                  }
-                  placeholder="0"
-                  className="border-2"
-                  style={{ fontSize: '0.95rem' }}
-                />
-                <InputGroup.Text className="bg-white border-2 border-start-0">
-                  <i className="bi bi-image text-primary"></i>
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-          </Col>
+          {/* Foto */}
+          <div className="col-span-6 md:col-span-3">
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-quantityPhoto`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-camera-fill mr-2"></i>Foto
+            </label>
+            <div className="flex shadow-sm">
+              <input
+                type="number"
+                id={`f${formIndex}-r${rowIndex}-quantityPhoto`}
+                value={item.quantityPhoto}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "quantityPhoto", e.target.value)
+                }
+                placeholder="0"
+                className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              />
+              <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
+                <i className="bi bi-image text-blue-600"></i>
+              </span>
+            </div>
+          </div>
 
-          <Col md={3} sm={6}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-quantityVideo`}>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-film mr-2"></i>Video
-              </Form.Label>
-              <InputGroup className="shadow-sm">
-                <Form.Control
-                  type="number"
-                  value={item.quantityVideo}
-                  onChange={(e) =>
-                    onUpdate(formIndex, rowIndex, "quantityVideo", e.target.value)
-                  }
-                  placeholder="0"
-                  className="border-2"
-                  style={{ fontSize: '0.95rem' }}
-                />
-                <InputGroup.Text className="bg-white border-2 border-start-0">
-                  <i className="bi bi-play-circle text-danger"></i>
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-          </Col>
+          {/* Video */}
+          <div className="col-span-6 md:col-span-3">
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-quantityVideo`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-film mr-2"></i>Video
+            </label>
+            <div className="flex shadow-sm">
+              <input
+                type="number"
+                id={`f${formIndex}-r${rowIndex}-quantityVideo`}
+                value={item.quantityVideo}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "quantityVideo", e.target.value)
+                }
+                placeholder="0"
+                className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              />
+              <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
+                <i className="bi bi-play-circle text-red-500"></i>
+              </span>
+            </div>
+          </div>
 
-          <Col md={3} sm={6}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-price`}>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-cash mr-2"></i>Prezzo
-              </Form.Label>
-              <InputGroup className="shadow-sm">
-                <InputGroup.Text className="bg-white border-2 border-end-0">
-                  {currencySymbol}
-                </InputGroup.Text>
-                <Form.Control
-                  type="number"
-                  value={item.price}
-                  onChange={(e) =>
-                    onUpdate(formIndex, rowIndex, "price", e.target.value)
-                  }
-                  placeholder="0.00"
-                  className="border-2 border-start-0"
-                  style={{ fontSize: '0.95rem' }}
-                  step="0.01"
-                />
-              </InputGroup>
-            </Form.Group>
-          </Col>
+          {/* Prezzo */}
+          <div className="col-span-6 md:col-span-3">
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-price`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-currency-euro mr-2"></i>Prezzo
+            </label>
+            <div className="flex shadow-sm">
+              <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md font-medium">
+                €
+              </span>
+              <input
+                type="number"
+                id={`f${formIndex}-r${rowIndex}-price`}
+                value={item.price}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "price", e.target.value)
+                }
+                placeholder="0.00"
+                step="0.01"
+                className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 text-[0.95rem]
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
 
-          <Col md={3} sm={6}>
-            <Form.Group controlId={`f${formIndex}-r${rowIndex}-discount`}>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-percent mr-2"></i>Sconto
-              </Form.Label>
-              <InputGroup className="shadow-sm">
-                <Form.Control
-                  type="number"
-                  value={item.discount}
-                  onChange={(e) =>
-                    onUpdate(formIndex, rowIndex, "discount", e.target.value)
-                  }
-                  placeholder="0"
-                  className="border-2"
-                  style={{ fontSize: '0.95rem' }}
-                  min="0"
-                  max="100"
-                />
-                <InputGroup.Text className="bg-white border-2 border-start-0">
-                  <i className="bi bi-tag text-success"></i>
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-          </Col>
-        </Row>
+          {/* Sconto */}
+          <div className="col-span-6 md:col-span-3">
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-discount`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-percent mr-2"></i>Sconto
+            </label>
+            <div className="flex shadow-sm">
+              <input
+                type="number"
+                id={`f${formIndex}-r${rowIndex}-discount`}
+                value={item.discount}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "discount", e.target.value)
+                }
+                placeholder="0"
+                min="0"
+                max="100"
+                className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              />
+              <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
+                <i className="bi bi-tag text-green-500"></i>
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Riepilogo prezzo finale */}
         {item.price > 0 && (
-          <div className="mt-3 p-3 bg-green-500/10 rounded-3">
+          <div className="mt-3 p-3 bg-green-500/10 rounded-xl">
             <div className="flex justify-between items-center">
-              <span className="text-secondary fw-semibold">
+              <span className="text-gray-600 font-semibold">
                 <i className="bi bi-calculator mr-2"></i>
                 Prezzo finale:
               </span>
               <div className="text-right">
                 {item.discount > 0 && (
                   <div>
-                    <small className="text-muted text-decoration-line-through">
-                      {currencySymbol}{parseFloat(item.price).toFixed(2)}
+                    <small className="text-gray-500 line-through">
+                      €{parseFloat(item.price).toFixed(2)}
                     </small>
                   </div>
                 )}
-                <span className="fs-5 fw-bold text-success">
-                  {currencySymbol}{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
+                <span className="text-xl font-bold text-green-600">
+                  €{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
                 </span>
                 {item.discount > 0 && (
-                  <small className="text-success ml-2">
+                  <small className="text-green-600 ml-2">
                     (-{item.discount}%)
                   </small>
                 )}
@@ -311,7 +251,7 @@ export function PriceListItem({
             </div>
           </div>
         )}
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 }

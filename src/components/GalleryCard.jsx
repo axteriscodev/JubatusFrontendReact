@@ -1,8 +1,5 @@
-import Card from "../shared/components/ui/Card";
-import Button from "../shared/components/ui/Button";
 import { Play } from "lucide-react";
 import { useTranslations } from "../features/TranslationProvider";
-import { EventStatus } from "../utils/contents-utils";
 
 export default function GalleryCard({
   title,

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Tabs, { Tab } from "../../shared/components/ui/Tabs";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -12,9 +11,6 @@ import { errorToast, successToast } from "../../utils/toast-manager";
 import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
-import { useCurrencies } from "./hooks/useCurrencies";
-import { useListItemLabels } from "./hooks/useListItemLabels";
-import { useFormValidation } from "./hooks/useFormValidation";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -54,9 +50,6 @@ export default function CreateEvent() {
   );
 
   const { tagList, loading: tagsLoading } = useTags();
-  const { currencyList, loading: currenciesLoading } = useCurrencies();
-  const { labelList, loading: labelsLoading } = useListItemLabels();
-  const { errors, validateForm, clearFieldError } = useFormValidation();
 
   // Effetto per aggiungere/rimuovere classe admin al body
   useEffect(() => {
@@ -70,13 +63,6 @@ export default function CreateEvent() {
    * Gestisce il submit del form
    */
   const handleSubmit = async () => {
-    // Validazione form
-    if (!validateForm(formData)) {
-      errorToast("Compila tutti i campi obbligatori");
-      setActiveTab("info"); // Torna alla tab info per mostrare gli errori
-      return;
-    }
-
     const submitData = prepareSubmitData(formData, priceListHandlers.priceLists);
 
     let result;
@@ -91,7 +77,7 @@ export default function CreateEvent() {
 
       // Se è un nuovo evento, aggiornare formData con l'ID
       if (!submitData.id && result.data?.id) {
-        updateField('id', result.data.id);
+        updateField("id", result.data.id);
       }
 
       // Rimaniamo sulla pagina - NON navighiamo verso /admin
@@ -107,28 +93,56 @@ export default function CreateEvent() {
     navigate("/admin");
   };
 
-  return (
-    <div className="container text-left">
-      <h1>Gestione evento</h1>
+  // Definizione delle tab
+  const tabs = [
+    { key: "info", label: "Info evento" },
+    { key: "priceLists", label: "Listini prezzi" },
+    // Tab partecipanti condizionale
+    ...(formData.id && formData.verifiedAttendanceEvent
+      ? [{ key: "participants", label: "Partecipanti" }]
+      : []),
+  ];
 
-      <Tabs
-        activeKey={activeTab}
-        onSelect={(k) => setActiveTab(k)}
-        className="mb-3"
-      >
+  return (
+    <div className="container mx-auto px-4 text-left">
+      <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+
+      <form>
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 mb-3">
+          <nav className="flex gap-1" role="tablist">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 font-medium text-sm rounded-t-lg transition-colors
+                  ${
+                    activeTab === tab.key
+                      ? "bg-white border border-b-white border-gray-200 -mb-px text-blue-600"
+                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                  }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div className="mt-3">
           {/* Tab 1: Info evento */}
-          <Tab eventKey="info" title="Info evento">
-            <div className="mt-3">
+          {activeTab === "info" && (
+            <div>
               <EventBasicInfo
                 formData={formData}
                 onInputChange={handleInputChange}
                 onTitleChange={handleTitleChange}
                 tagList={tagList}
-                currencyList={currencyList}
-                errors={errors}
-                onClearError={clearFieldError}
               />
-              <EventDates formData={formData} onInputChange={handleInputChange} errors={errors} onClearError={clearFieldError} />
+              <EventDates formData={formData} onInputChange={handleInputChange} />
               <EventColors formData={formData} onInputChange={handleInputChange} />
               <EventLogo
                 formData={formData}
@@ -136,37 +150,35 @@ export default function CreateEvent() {
                 onFileChange={handleFileChange}
               />
             </div>
-          </Tab>
+          )}
 
           {/* Tab 2: Listini prezzi */}
-          <Tab eventKey="priceLists" title="Listini prezzi">
-            <div className="mt-3">
+          {activeTab === "priceLists" && (
+            <div>
               <PriceListSection
                 priceLists={priceListHandlers.priceLists}
                 handlers={priceListHandlers}
-                currencySymbol={currencyList.find(c => c.id === Number(formData.currencyId))?.symbol || "€"}
-                labelList={labelList}
               />
             </div>
-          </Tab>
+          )}
 
           {/* Tab 3: Partecipanti (condizionale) */}
-          {formData.id && formData.verifiedAttendanceEvent && (
-            <Tab eventKey="participants" title="Partecipanti">
-              <div className="mt-3">
+          {activeTab === "participants" &&
+            formData.id &&
+            formData.verifiedAttendanceEvent && (
+              <div>
                 <ParticipantsUpload eventId={formData.id} />
 
-                <hr className="my-4" />
+                <hr className="my-4 border-gray-200" />
 
                 <PartecipantsTable eventId={formData.id} />
               </div>
-            </Tab>
-          )}
-      </Tabs>
+            )}
+        </div>
 
-      {/* Azioni sempre visibili fuori dalle tab */}
-      <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
+        {/* Azioni sempre visibili fuori dalle tab */}
+        <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
+      </form>
     </div>
   );
 }
-

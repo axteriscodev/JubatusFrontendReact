@@ -30,8 +30,8 @@ const Button = ({
   const variantClasses = {
     primary: 'bg-primary text-bg text-white border-3 border-primary hover:bg-secondary-event hover:border-secondary-event rounded-full',
     secondary: 'bg-secondary text-white border-3 border-secondary hover:bg-secondary-event/90 rounded-full',
-    success: 'bg-green-500 text-white border-3 border-success hover:bg-green-500/90 rounded-full',
-    danger: 'bg-red-500 text-white border-3 border-danger hover:bg-red-500/90 rounded-full',
+    success: 'bg-green-500 text-white border-3 border-green-500 hover:bg-green-500/90 rounded-full',
+    danger: 'bg-red-500 text-white border-3 border-red-500 hover:bg-red-500/90 rounded-full',
     link: 'text-secondary-event hover:text-secondary-event/80 underline bg-transparent border-0',
     outline: 'bg-transparent text-primary border-2 border-primary hover:bg-red-500 hover:text-white rounded-full',
   };

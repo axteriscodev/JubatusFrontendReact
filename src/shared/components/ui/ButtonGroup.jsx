@@ -3,7 +3,7 @@
  */
 const ButtonGroup = ({ children, className = "", ...props }) => {
   return (
-    <div className={`inline-flex rounded-md shadow-sm ${className}`} role="group" {...props}>
+    <div className={`button-group isolate inline-flex ${className}`} {...props}>
       {children}
     </div>
   );

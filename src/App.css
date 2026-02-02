@@ -163,6 +163,9 @@ input:focus::placeholder {
 .bg-secondary {
   background-color: var(--secondary-event-color, --secondary-color) !important;
 }
+.border-secondary {
+  border-color: var(--secondary-event-color, --secondary-color) !important;
+}
 
 /*TESTI STANDARD*/
 .text-white {
