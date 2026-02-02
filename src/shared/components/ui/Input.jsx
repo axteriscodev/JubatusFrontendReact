@@ -30,7 +30,7 @@ const Input = React.forwardRef(
     ref,
   ) => {
     const baseClasses =
-      "block w-full rounded-md bg-white text-base px-3 py-2 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-300";
+      "block w-full rounded-md bg-white text-base px-3 py-2 outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-300 text-black";
 
     const stateClasses = error
       ? "border-danger text-danger focus:border-danger"
