@@ -48,7 +48,14 @@ export default function ProcessingSelfie() {
 
         formData.append("eventId", receivedData.eventId);
         formData.append("email", receivedData.email);
-        formData.append("image", receivedData.image);
+
+        // Image may be null when license plate is provided
+        if (receivedData.image) {
+          formData.append("image", receivedData.image);
+        }
+
+        // Add bib number field - backend will handle placeholder creation
+        formData.append("bibNumber", receivedData.bibNumber || "");
         formData.append("lang", currentLanguage?.acronym ?? "");
 
         //caricamento selfie
