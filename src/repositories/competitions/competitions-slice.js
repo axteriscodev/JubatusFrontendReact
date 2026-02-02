@@ -21,6 +21,7 @@ const competitionsSlice = createSlice({
     location: "",
     description: "",
     tag: "",
+    bibNumber: false,
     currency: "",
     currencySymbol: "",
     aspectRatio: "",
@@ -47,6 +48,7 @@ const competitionsSlice = createSlice({
       state.location = action.payload.languages[0].location;
       state.description = action.payload.languages[0].description;
       state.tag = action.payload.tag.tag;
+      state.bibNumber = action.payload.tag.bibNumber;
       state.currency = action.payload.currency.currency;
       state.currencySymbol = action.payload.currency.symbol;
       state.aspectRatio = action.payload.aspectRatio;

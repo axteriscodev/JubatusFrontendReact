@@ -19,9 +19,9 @@ export default function UploadSelfie() {
   const eventData = useLoaderData();
   const dispatch = useDispatch();
   const { eventSlug, userHash } = useParams();
-  const tagId = useSelector((state) => state.competition?.tagId);
+  const showBibNumber = useSelector((state) => state.competition?.bibNumber);
 
-  const [selfie, setSelfie] = useState({ image: null, licensePlate: "" });
+  const [selfie, setSelfie] = useState({ image: null, bibNumber: "" });
 
   const [formErrors, setFormErrors] = useState(new FormErrors());
 
@@ -69,7 +69,7 @@ export default function UploadSelfie() {
     formErrors.emailError = !validator.isEmail(data.email);
 
     // For motorsport events (tagId === 1), image is optional if license plate is provided
-    if (tagId === 2 && selfie.licensePlate) {
+    if (showBibNumber && selfie.bibNumber) {
       formErrors.imageError = false;
     } else {
       formErrors.imageError = !selfie.image ? true : false;
@@ -94,7 +94,7 @@ export default function UploadSelfie() {
         eventId: eventData.data.id,
         email: data.email,
         image: selfie.image,
-        licensePlate: selfie.licensePlate || "",
+        bibNumber: selfie.bibNumber || "",
         eventSlug: eventSlug,
         userHash: userHash,
       },
