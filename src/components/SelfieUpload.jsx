@@ -106,7 +106,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         </div>
       )}
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
-      {tagId === 1 && (
+      {tagId === 2 && (
         <div className="mt-3">
           <label htmlFor="licensePlate" className="form-label">
             {t("TARGA_TITLE")}

@@ -55,7 +55,7 @@ export default function ProcessingSelfie() {
         }
 
         // Add license plate field - backend will handle placeholder creation
-        formData.append("licensePlate", receivedData.licensePlate || "");
+        formData.append("bibNumber", receivedData.licensePlate || "");
         formData.append("lang", currentLanguage?.acronym ?? "");
 
         //caricamento selfie
