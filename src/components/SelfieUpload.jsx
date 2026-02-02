@@ -9,10 +9,10 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [licensePlate, setLicensePlate] = useState("");
+  const [bibNumber, setBibNumber] = useState("");
   const [processedFile, setProcessedFile] = useState(null);
   const { t } = useTranslations();
-  const tagId = useSelector((state) => state.competition?.tagId);
+  const showBibNumber = useSelector((state) => state.competition?.bibNumber);
 
   const handleImageClick = () => {
     if (imageUrl || loading) return false;
@@ -43,7 +43,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
 
       setImageUrl(URL.createObjectURL(currentProcessedFile));
       setProcessedFile(currentProcessedFile);
-      onDataChange({ image: currentProcessedFile, licensePlate });
+      onDataChange({ image: currentProcessedFile, licensePlate: bibNumber });
       onError = false;
     } catch (err) {
       console.error("Errore nella conversione HEIC:", err);
@@ -62,13 +62,13 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       setImageUrl(null);
       setProcessedFile(null);
       fileInputRef.current.value = "";
-      onDataChange({ image: null, licensePlate });
+      onDataChange({ image: null, licensePlate: bibNumber });
     }
   };
 
-  const handleLicensePlateChange = (event) => {
+  const handleBibNumberChange = (event) => {
     const value = event.target.value;
-    setLicensePlate(value);
+    setBibNumber(value);
     onDataChange({ image: processedFile, licensePlate: value });
   };
 
@@ -106,18 +106,18 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         </div>
       )}
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
-      {tagId === 2 && (
+      {showBibNumber && (
         <div className="mt-3">
-          <label htmlFor="licensePlate" className="form-label">
+          <label htmlFor="bibNumber" className="form-label">
             {t("TARGA_TITLE")}
           </label>
           <input
-            id="licensePlate"
+            id="bibNumber"
             type="text"
             className="form-control mb-5"
             placeholder={t("TARGA_PLACEHOLDER")}
-            value={licensePlate}
-            onChange={handleLicensePlateChange}
+            value={bibNumber}
+            onChange={handleBibNumberChange}
           />
           <small className="text-muted">{t("TARGA_HELP")}</small>
         </div>
