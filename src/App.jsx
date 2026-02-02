@@ -4,11 +4,24 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useMemo } from "react";
+import { isAuthenticated, isAdmin } from "./utils/auth";
+import { LanguageProvider } from "./features/LanguageContext";
+import RouterWrapper from "./components/RouterWrapper";
+import { TranslationProvider } from "./features/TranslationProvider";
+
 import Login from "./pages/Login";
+import WorkInProgress from "./pages/WorkInProgress";
+import EmailSent from "./pages/EmailSent";
 import PinVerification from "./pages/PinVerification";
+import PersonalArea from "./pages/PersonalArea";
+import { loader as personalLoader } from "./pages/PersonalArea.loader";
+import PersonalEventDetail from "./pages/PersonalEventDetail";
 import UploadSelfie from "./pages/UploadSelfie";
 import { loader as updateSelfieLoader } from "./pages/UploadSelfie.loader";
+import ErrorPage from "./pages/ErrorPage";
 import ProcessingSelfie from "./pages/ProcessingSelfie";
+import ContentUnavailable from "./pages/ContentUnavailable";
+
 import PreOrder from "./pages/PreOrder";
 import PreOrderPurchased from "./pages/PreOrderPurchased";
 import ImageShop from "./pages/ImageShop";
@@ -16,25 +29,13 @@ import Purchased from "./pages/Purchased";
 import Checkout from "./pages/Checkout";
 import CheckoutOutcome from "./pages/CheckoutOutcome";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
-import ErrorPage from "./pages/ErrorPage";
-import ContentUnavailable from "./pages/ContentUnavailable";
-import { isAuthenticated, isAdmin } from "./utils/auth";
-import PersonalArea from "./pages/PersonalArea";
-import { loader as personalLoader } from "./pages/PersonalArea.loader";
 import AdminPanel from "./pages/AdminPanel";
 import { loader as adminLoader } from "./pages/AdminPanel.loader";
 import CreateEvent from "./pages/CreateEvent";
 import { loader as createEventLoader } from "./pages/CreateEvent/CreateEvent.loader";
-import EmailSent from "./pages/EmailSent";
 import ContentError from "./pages/ContentError";
 import MailConfirmation from "./pages/MailConfirmation";
 import ThankYou from "./pages/ThankYou";
-import { LanguageProvider } from "./features/LanguageContext";
-import { TranslationProvider } from "./features/TranslationProvider";
-import PersonalEventDetail from "./pages/PersonalEventDetail";
-import RouterWrapper from "./components/RouterWrapper";
-import WorkInProgress from "./pages/WorkInProgress";
-
 
 function App() {
   const router = useMemo(() => {
@@ -62,7 +63,7 @@ function App() {
             element: <EmailSent />,
           },
           { path: "/pin-verification/:userPin", element: <PinVerification /> },
-          //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
+        //   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
           {
             path: "/personal",
             element: <PersonalArea />,
@@ -87,7 +88,7 @@ function App() {
           },
           { path: "/processing-selfie", element: <ProcessingSelfie /> },
           { path: "/content-unavailable", element: <ContentUnavailable /> },
-          //{ path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
+          { path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
           { path: "/pre-order", element: <PreOrder /> },
           { path: "/pre-order-purchased", element: <PreOrderPurchased /> },
           { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
@@ -130,11 +131,11 @@ function App() {
 
 
   return (
-    <LanguageProvider>
-      <TranslationProvider>
+     <LanguageProvider>
+       <TranslationProvider>
         <RouterProvider router={router} />
-      </TranslationProvider>
-    </LanguageProvider>
+       </TranslationProvider>
+     </LanguageProvider>
   );
 }
 

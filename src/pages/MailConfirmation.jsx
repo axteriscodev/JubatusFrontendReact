@@ -9,6 +9,8 @@ import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { useLanguage } from "../features/LanguageContext";
 import parse from 'html-react-parser';
+import { FormLabel } from "../shared/components/ui/Form";
+import Input from "../shared/components/ui/Input";
 
 export default function MailConfirmation() {
   const dispatch = useDispatch();
@@ -124,12 +126,12 @@ export default function MailConfirmation() {
       </div>
       
       <div className="mb-3 text-left">
-        <label htmlFor="name" className="form-label">
+        <FormLabel htmlFor="name">
           {t('NAME_CONFIRM_LABEL')}
-        </label>
-        <input
+        </FormLabel>
+        <Input
           type="text"
-          className={`form-control ${nameError ? 'is-invalid' : ''}`}
+          className={`${nameError ? 'is-invalid' : ''}`}
           id="name"
           value={name}
           onChange={(e) => {

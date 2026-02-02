@@ -39,10 +39,11 @@ export default function MailForm({
 
   return (
     <div className="text-left">
-      <FormLabel>{t("EMAIL_EMAIL")}</FormLabel>
+      <FormLabel htmlFor="email">{t("EMAIL_EMAIL")}</FormLabel>
       <Input
         type="email"
         name="email"
+        id="email"
         value={emailValue}
         onChange={(e) => setEmailValue(e.target.value)}
         placeholder={t("EMAIL_ENTER")}
