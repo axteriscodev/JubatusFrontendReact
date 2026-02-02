@@ -22,7 +22,7 @@ import { useTranslations } from "../features/TranslationProvider";
  */
 const LogoutButton = ({ onLogout }) => (
   <div className="flex justify-end my-10">
-    <Button onClick={onLogout} variant="outline-danger" size="sm">
+    <Button onClick={onLogout} variant="outline" size="sm">
       <i className="bi bi-box-arrow-right"></i> Logout
     </Button>
   </div>

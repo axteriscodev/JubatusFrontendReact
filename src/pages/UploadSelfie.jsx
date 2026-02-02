@@ -100,7 +100,7 @@ export default function UploadSelfie() {
       <div className="flex justify-center">
         <Logo
           src={import.meta.env.VITE_API_URL + "/" + eventData.data.logo}
-          css="mb-4"
+          css="mb-10"
         />
       </div>
       <SelfieUpload
