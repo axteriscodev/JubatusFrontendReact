@@ -194,19 +194,23 @@ export default function PreOrder() {
               key={i}
               onClick={(event) => handleSelection(event, list)}
               className={`mt-5 ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}
-              style={list.bestOffer ? { "--best-offer-label": `'${t("BEST_OFFER")}'` } : undefined}
+              style={
+                list.bestOffer
+                  ? { "--best-offer-label": `'${t("BEST_OFFER")}'` }
+                  : undefined
+              }
             >
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-22">
-                    {list.itemsLanguages?.[0]?.title}
+                    {parse(list.itemsLanguages?.[0]?.title)}
                   </div>
                   <span className="text-13 opacity">
-                    {list.itemsLanguages?.[0]?.subTitle}
+                    {parse(list.itemsLanguages?.[0]?.subTitle)}
                   </span>
                 </div>
                 <div className="text-right lh-1">
-                  <div className="text-decoration-line-through">
+                  <div className="line-through">
                     {eventPreset.currency === "EUR"
                       ? `${list.price} ${eventPreset.currencySymbol}`
                       : `${eventPreset.currencySymbol} ${list.price}`}
