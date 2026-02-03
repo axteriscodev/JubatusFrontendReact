@@ -108,9 +108,9 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
       {showBibNumber && (
         <div className="mt-3">
-          <label htmlFor="bibNumber" className="form-label">
+          {/* <label htmlFor="bibNumber" className="form-label">
             {t("TARGA_TITLE")}
-          </label>
+          </label> */}
           <input
             id="bibNumber"
             type="text"
