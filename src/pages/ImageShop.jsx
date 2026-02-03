@@ -113,10 +113,7 @@ export default function ImageShop() {
           <div className="my-md text-start">
             <h2>{t("RESULT_TITLE")}</h2>
             <p>{t("RESULT_PHOTO")}</p>
-            <h4>
-              il <strong>tuo</strong> video è in preparazione: riceverai una
-              mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥
-            </h4>
+            <h4>{t("RESULT_VIDEO2")}</h4>
           </div>
         )}
         {hasPhoto && hasVideo && numVideo > 0 && (
