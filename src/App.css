@@ -8,7 +8,7 @@
 
 @layer base {
   input {
-    @apply placeholder:text-secondary-event placeholder:font-bold focus:placeholder:opacity-40;
+    /* @apply placeholder:text-secondary-event placeholder:font-bold focus:placeholder:opacity-40; */
   }
 }
 
