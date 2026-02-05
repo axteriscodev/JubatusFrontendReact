@@ -5,9 +5,6 @@ import {
 } from "react-router-dom";
 import { useMemo } from "react";
 import { isAuthenticated, isAdmin } from "./utils/auth";
-import { LanguageProvider } from "./features/LanguageContext";
-import RouterWrapper from "./components/RouterWrapper";
-import { TranslationProvider } from "./features/TranslationProvider";
 
 import Login from "./pages/Login";
 import WorkInProgress from "./pages/WorkInProgress";
@@ -36,6 +33,10 @@ import { loader as createEventLoader } from "./pages/CreateEvent/CreateEvent.loa
 import ContentError from "./pages/ContentError";
 import MailConfirmation from "./pages/MailConfirmation";
 import ThankYou from "./pages/ThankYou";
+import { LanguageProvider } from "./features/LanguageContext";
+import { TranslationProvider } from "./features/TranslationProvider";
+import RouterWrapper from "./components/RouterWrapper";
+import ChoosePayment from "./pages/ChoosePayment";
 
 function App() {
   const router = useMemo(() => {
@@ -63,7 +64,7 @@ function App() {
             element: <EmailSent />,
           },
           { path: "/pin-verification/:userPin", element: <PinVerification /> },
-        //   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
+          //   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
           {
             path: "/personal",
             element: <PersonalArea />,
@@ -88,10 +89,19 @@ function App() {
           },
           { path: "/processing-selfie", element: <ProcessingSelfie /> },
           { path: "/content-unavailable", element: <ContentUnavailable /> },
-          { path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
+          {
+            path: "/pre-order",
+            element: <PreOrder />,
+            errorElement: <ErrorPage />,
+          },
           { path: "/pre-order", element: <PreOrder /> },
           { path: "/pre-order-purchased", element: <PreOrderPurchased /> },
-          { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
+          {
+            path: "/image-shop",
+            element: <ImageShop />,
+            errorElement: <ErrorPage />,
+          },
+          { path: "/choose-payment", element: <ChoosePayment /> },
           { path: "/checkout", element: <Checkout /> },
           {
             path: "/checkout-outcome",
@@ -129,13 +139,12 @@ function App() {
     ]);
   }, []);
 
-
   return (
-     <LanguageProvider>
-       <TranslationProvider>
+    <LanguageProvider>
+      <TranslationProvider>
         <RouterProvider router={router} />
-       </TranslationProvider>
-     </LanguageProvider>
+      </TranslationProvider>
+    </LanguageProvider>
   );
 }
 
