@@ -34,6 +34,7 @@ import { TranslationProvider } from "./features/TranslationProvider";
 import PersonalEventDetail from "./pages/PersonalEventDetail";
 import RouterWrapper from "./components/RouterWrapper";
 import WorkInProgress from "./pages/WorkInProgress";
+import ChoosePayment from "./pages/ChoosePayment";
 
 const getRedirectRoute = () => {
   if (isAdmin()) return "/admin";
@@ -88,7 +89,12 @@ const router = createBrowserRouter([
       //{ path: "/pre-order", element: <PreOrder />, errorElement: <ErrorPage /> },
       { path: "/pre-order", element: <PreOrder /> },
       { path: "/pre-order-purchased", element: <PreOrderPurchased /> },
-      { path: "/image-shop", element: <ImageShop />, errorElement: <ErrorPage /> },
+      {
+        path: "/image-shop",
+        element: <ImageShop />,
+        errorElement: <ErrorPage />,
+      },
+      { path: "/choose-payment", element: <ChoosePayment /> },
       { path: "/checkout", element: <Checkout /> },
       {
         path: "/checkout-outcome",
