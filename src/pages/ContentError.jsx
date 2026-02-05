@@ -18,12 +18,12 @@ export default function ContentError() {
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
-        css="mb-sm"
+        css="mb-10"
       />
       {parse(t('ERROR_UNEXPECTED'))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
       {/* <div
-        className="progress mt-md"
+        className="progress mt-20"
         role="progressbar"
         aria-label="Basic example"
         aria-valuenow="25"
@@ -34,7 +34,7 @@ export default function ContentError() {
       </div>
       Caricamento */}
 
-      <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
+      <button className="my-button w-full mt-10" onClick={buttonHandle}>
         {t('WAITING_BACK')}
       </button>
     </div>

@@ -75,7 +75,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   return (
     <div>
       <h3>{t("SELFIE_TITLE")}</h3>
-      <p className="my-sm text-secondary">{t("SELFIE_UPLOAD")}</p>
+      <p className="my-10 text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
         className={`${styles.avatar} ${!imageUrl && !loading ? styles.add : ""}`}
         onClick={handleImageClick}
@@ -96,7 +96,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         )}
       </div>
       {imageUrl && !loading && (
-        <div class="d-flex justify-content-center mb-1">
+        <div className="flex justify-center items-center">
           <img
             src="/images/trash-fill.svg"
             className={styles.trash}

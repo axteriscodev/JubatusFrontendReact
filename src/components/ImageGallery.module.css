@@ -1,3 +1,4 @@
+@import "tailwindcss";
 .gallery > div > div > div{
     border-radius: var(--border-radius);
 }

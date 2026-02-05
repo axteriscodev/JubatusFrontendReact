@@ -1,105 +1,113 @@
-import { Form, Row, Col, Button, Card, InputGroup, Badge } from "react-bootstrap";
 import { PriceListItem } from "./PriceListItem";
 
 /**
- * Componente per una singola card listino - VERSIONE MIGLIORATA
+ * Componente per una singola card listino - VERSIONE TAILWIND
  */
-export function PriceListCard({ list, index, handlers, totalLists, currencySymbol = "€", labelList = [] }) {
+export function PriceListCard({ list, index, handlers, totalLists }) {
   return (
-    <Card className="border-0 shadow-sm">
-      <Card.Header className="bg-white border-bottom py-3">
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex align-items-center gap-3">
-            <div className="bg-info bg-opacity-10 rounded-3 p-2">
-              <i className="bi bi-receipt text-primary fs-5"></i>
+    <div className="border-0 shadow-sm rounded-lg bg-white">
+      {/* Header */}
+      <div className="bg-white border-b px-4 py-3 rounded-t-lg">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="bg-cyan-500/10 rounded-xl p-2">
+              <i className="bi bi-receipt text-blue-600 text-xl"></i>
             </div>
             <div>
-              <h5 className="mb-0 fw-bold">Listino #{index + 1}</h5>
-              <small className="text-muted">
+              <h5 className="mb-0 font-bold text-lg">Listino #{index + 1}</h5>
+              <small className="text-gray-500">
                 {list.items.length} {list.items.length === 1 ? 'pacchetto' : 'pacchetti'}
               </small>
             </div>
           </div>
-          <Button
-            variant="outline-danger"
-            size="sm"
+          <button
+            type="button"
             onClick={() => handlers.removeList(index)}
             disabled={totalLists === 1}
-            className="shadow-sm"
+            className="px-3 py-1.5 text-sm border border-red-500 text-red-500 rounded-md shadow-sm 
+                       hover:bg-red-500 hover:text-white transition-colors
+                       disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <i className="bi bi-trash me-2"></i>
+            <i className="bi bi-trash mr-2"></i>
             Elimina listino
-          </Button>
+          </button>
         </div>
-      </Card.Header>
+      </div>
 
-      <Card.Body className="p-4">
+      {/* Body */}
+      <div className="p-4">
         {/* Date del listino */}
-        <div className="bg-light rounded-3 p-3 mb-4">
-          <h6 className="fw-semibold mb-3 text-secondary">
-            <i className="bi bi-calendar-range me-2"></i>
+        <div className="bg-gray-100 rounded-xl p-3 mb-4">
+          <h6 className="font-semibold mb-3 text-gray-600">
+            <i className="bi bi-calendar-range mr-2"></i>
             Periodo di validità
           </h6>
-          <Row className="g-3">
-            <Col md={6}>
-              <Form.Group controlId={`dateStart-${index}`}>
-                <Form.Label className="fw-semibold text-secondary small mb-2">
-                  <i className="bi bi-calendar-plus me-2"></i>Data Inizio
-                </Form.Label>
-                <InputGroup className="shadow-sm">
-                  <InputGroup.Text className="bg-white border-2 border-end-0">
-                    <i className="bi bi-calendar3 text-success"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="date"
-                    value={list.dateStart}
-                    onChange={(e) =>
-                      handlers.updateListDate(index, "dateStart", e.target.value)
-                    }
-                    className="border-2 border-start-0"
-                    style={{ fontSize: '0.95rem' }}
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Data Inizio */}
+            <div>
+              <label 
+                htmlFor={`dateStart-${index}`}
+                className="block font-semibold text-gray-600 text-sm mb-2"
+              >
+                <i className="bi bi-calendar-plus mr-2"></i>Data Inizio
+              </label>
+              <div className="flex shadow-sm">
+                <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+                  <i className="bi bi-calendar3 text-green-500"></i>
+                </span>
+                <input
+                  type="date"
+                  id={`dateStart-${index}`}
+                  value={list.dateStart}
+                  onChange={(e) =>
+                    handlers.updateListDate(index, "dateStart", e.target.value)
+                  }
+                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 
+                             text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
 
-            <Col md={6}>
-              <Form.Group controlId={`dateExpiry-${index}`}>
-                <Form.Label className="fw-semibold text-secondary small mb-2">
-                  <i className="bi bi-calendar-x me-2"></i>Data Fine
-                </Form.Label>
-                <InputGroup className="shadow-sm">
-                  <InputGroup.Text className="bg-white border-2 border-end-0">
-                    <i className="bi bi-calendar3 text-danger"></i>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="date"
-                    value={list.dateExpiry}
-                    onChange={(e) =>
-                      handlers.updateListDate(index, "dateExpiry", e.target.value)
-                    }
-                    className="border-2 border-start-0"
-                    style={{ fontSize: '0.95rem' }}
-                  />
-                </InputGroup>
-              </Form.Group>
-            </Col>
-          </Row>
+            {/* Data Fine */}
+            <div>
+              <label 
+                htmlFor={`dateExpiry-${index}`}
+                className="block font-semibold text-gray-600 text-sm mb-2"
+              >
+                <i className="bi bi-calendar-x mr-2"></i>Data Fine
+              </label>
+              <div className="flex shadow-sm">
+                <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+                  <i className="bi bi-calendar3 text-red-500"></i>
+                </span>
+                <input
+                  type="date"
+                  id={`dateExpiry-${index}`}
+                  value={list.dateExpiry}
+                  onChange={(e) =>
+                    handlers.updateListDate(index, "dateExpiry", e.target.value)
+                  }
+                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 
+                             text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Titolo sezione pacchetti */}
-        <div className="d-flex align-items-center justify-content-between mb-3">
-          <h6 className="fw-semibold mb-0 text-secondary">
-            <i className="bi bi-box-seam me-2"></i>
+        <div className="flex items-center justify-between mb-3">
+          <h6 className="font-semibold text-gray-600">
+            <i className="bi bi-box-seam mr-2"></i>
             Pacchetti disponibili
           </h6>
-          <Badge bg="primary" className="px-3 py-2">
+          <span className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium">
             {list.items.length}
-          </Badge>
+          </span>
         </div>
 
         {/* Items del listino */}
-        <div className="d-flex flex-column gap-3">
+        <div className="flex flex-col gap-3">
           {list.items.map((item, itemIndex) => (
             <PriceListItem
               key={itemIndex}
@@ -110,22 +118,20 @@ export function PriceListCard({ list, index, handlers, totalLists, currencySymbo
               onUpdateWithLanguage={handlers.updateItemWithLanguage}
               onRemove={handlers.removeItemFromList}
               canRemove={list.items.length > 1}
-              currencySymbol={currencySymbol}
-              labelList={labelList}
             />
           ))}
         </div>
 
-        <Button
-          variant="outline-primary"
+        <button
+          type="button"
           onClick={() => handlers.addItemToList(index)}
-          className="mt-3 w-100 shadow-sm"
-          style={{ borderStyle: 'dashed', borderWidth: '2px' }}
+          className="mt-3 w-full py-2 px-4 border-2 border-dashed border-blue-500 text-blue-600 
+                     rounded-md shadow-sm hover:bg-blue-50 transition-colors font-medium"
         >
-          <i className="bi bi-plus-circle me-2"></i>
+          <i className="bi bi-plus-circle mr-2"></i>
           Aggiungi pacchetto
-        </Button>
-      </Card.Body>
-    </Card>
+        </button>
+      </div>
+    </div>
   );
 }

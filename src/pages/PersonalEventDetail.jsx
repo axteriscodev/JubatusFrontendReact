@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import Carousel from "react-bootstrap/Carousel";
+import Carousel from "../shared/components/ui/Carousel.jsx";
 import ImageGallery from "../components/ImageGallery";
 import CustomLightbox from "../components/CustomLightbox";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button } from "../shared/components/ui";
 import { logOut } from "../utils/auth";
 
 import { cartActions } from "../repositories/cart/cart-slice";
@@ -118,7 +118,7 @@ export default function PersonalEventDetail() {
   return (
     <>
       <div className="container">
-        <div className="d-flex justify-content-between my-sm">
+        <div className="flex justify-between my-10">
           <Button onClick={handleBack} variant="outline-light" size="sm">
             <i className="bi bi-arrow-left"></i>
           </Button>
@@ -128,8 +128,8 @@ export default function PersonalEventDetail() {
         </div>
         {purchasedItems?.length > 0 ? (
           <>
-            <h2 className="my-sm">{t("PERSONAL_PURCHASE")}</h2>
-            <div className="px-lg">
+            <h2 className="my-10">{t("PERSONAL_PURCHASE")}</h2>
+            <div className="px-30">
               <Carousel>
                 {purchasedItems.map((image, i) => (
                   <Carousel.Item
@@ -138,7 +138,7 @@ export default function PersonalEventDetail() {
                     }_${i}`}
                   >
                     <div
-                      className={`carousel-square d-flex justify-content-center align-items-center ${
+                      className={`carousel-square flex justify-center items-center ${
                         image.fileTypeId == 2 && image.urlCover ? "video" : ""
                       }`}
                       onClick={() =>
@@ -163,12 +163,12 @@ export default function PersonalEventDetail() {
           </>
         ) : (
           <>
-            <h2 className="my-sm">{t("PERSONAL_NOTHING")}</h2>
+            <h2 className="my-10">{t("PERSONAL_NOTHING")}</h2>
           </>
         )}
         {purchasedItems?.length > 0 && (
           <>
-            <div className="mt-md">
+            <div className="mt-20">
               <ImageGallery
                 images={purchasedItems}
                 select={false}
@@ -186,24 +186,24 @@ export default function PersonalEventDetail() {
         {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
         {unpurchasedItems.length > 0 && (
           <>
-<div className="d-flex justify-content-center mb-1">
-  <div className="d-flex align-items-center">
-    <h2 className="my-sm mt-lg">{t("PERSONAL_AVAILABLE")}</h2>
+<div className="flex justify-center mb-1">
+  <div className="flex items-center">
+    <h2 className="my-10 mt-30">{t("PERSONAL_AVAILABLE")}</h2>
   </div>
 </div>
-<div className="d-flex justify-content-center">
-  <div className="d-flex align-items-center gap-3">
+<div className="flex justify-center">
+  <div className="flex items-center gap-3">
         <Button
       variant="link"
-      className="text-white text-decoration-none p-0 ms-auto"
+      className="text-white text-decoration-none p-0 ml-auto"
       onClick={() => handleGoToShop()}
     >
-      <i className="bi bi-cart me-2 fs-3"></i>
+      <i className="bi bi-cart mr-2 fs-3"></i>
       {t("PERSONAL_SHOP")}
     </Button>
   </div>
 </div>
-            <div className="mt-md">
+            <div className="mt-20">
               <ImageGallery
                 images={unpurchasedItems}
                 select={false}

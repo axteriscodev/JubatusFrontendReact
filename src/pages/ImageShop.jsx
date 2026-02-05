@@ -77,8 +77,8 @@ export default function ImageShop() {
         <div className="shopNotify shadow text-black">{t("CART_ADD")}</div>
       )}
       <div className="container">
-        <div className="d-flex justify-content-between">
-          <div className="text-start">
+        <div className="flex justify-between">
+          <div className="text-left">
             <Link to={"/event/" + eventPreset.slug}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
@@ -95,22 +95,22 @@ export default function ImageShop() {
           </div>
         </div>
         {hasPhoto && !hasVideo && (
-          <div className="my-md text-start">
+          <div className="my-20 text-left">
             <h2>{t("RESULT_TITLE")}</h2>
             <p>{t("RESULT_PHOTO")}</p>
           </div>
         )}
         {!hasPhoto && hasVideo && numVideo == 0 && (
-          <div className="my-md">{parse(t("RESULT_VIDEO"))}</div>
+          <div className="my-20">{parse(t("RESULT_VIDEO"))}</div>
         )}
         {!hasPhoto && hasVideo && numVideo > 0 && (
-          <div className="my-md text-start">
+          <div className="my-20 text-left">
             <h2>{t("RESULT_TITLE")}</h2>
             <p>{t("CART_VIDEO")}</p>
           </div>
         )}
         {hasPhoto && hasVideo && numVideo == 0 && (
-          <div className="my-md text-start">
+          <div className="my-20 text-left">
             <h2>{t("RESULT_TITLE")}</h2>
             <p>{t("RESULT_PHOTO")}</p>
             <h4>
@@ -120,7 +120,7 @@ export default function ImageShop() {
           </div>
         )}
         {hasPhoto && hasVideo && numVideo > 0 && (
-          <div className="my-md text-start">
+          <div className="my-20 text-left">
             <h2>{t("RESULT_TITLE")}</h2>
             <p>{t("CART_PHOTOVIDEO")}</p>
           </div>

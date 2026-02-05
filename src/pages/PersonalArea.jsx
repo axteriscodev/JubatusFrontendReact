@@ -4,7 +4,9 @@ import {
   EventStatus,
   getPersonalEventGalleries,
 } from "../utils/contents-utils";
-import { Row, Col, Spinner, Alert, Button } from "react-bootstrap";
+import Spinner from "../shared/components/ui/Spinner";
+import Alert from "../shared/components/ui/Alert";
+import Button from "../shared/components/ui/Button";
 import GalleryCard from "../components/GalleryCard";
 import { logOut } from "../utils/auth";
 import { apiRequest } from "../services/api-services";
@@ -19,8 +21,8 @@ import { useTranslations } from "../features/TranslationProvider";
  * @param {Function} onLogout - Callback da eseguire al click
  */
 const LogoutButton = ({ onLogout }) => (
-  <div className="d-flex justify-content-end my-sm">
-    <Button onClick={onLogout} variant="outline-danger" size="sm">
+  <div className="flex justify-end my-10">
+    <Button onClick={onLogout} variant="outline" size="sm">
       <i className="bi bi-box-arrow-right"></i> Logout
     </Button>
   </div>
@@ -166,8 +168,8 @@ export default function PersonalArea() {
   if (loading) {
     return (
       <>
-        <div className="container text-center mt-5">
-          <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+        <div className="text-center mt-5">
+          <h1>{t("PERSONAL_TITLE")}</h1>
           <Spinner animation="border" variant="light" />
           {/* <p className="text-white mt-3">Caricamento eventi...</p> */}
         </div>
@@ -181,8 +183,8 @@ export default function PersonalArea() {
    */
   if (error) {
     return (
-      <div className="container mt-5">
-        <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+      <div className="mt-5">
+        <h1>{t("PERSONAL_TITLE")}</h1>
         <Alert variant="danger">
           <Alert.Heading>Errore</Alert.Heading>
           <p>{error}</p>
@@ -204,7 +206,7 @@ export default function PersonalArea() {
   if (galleries.length === 0) {
     return (
       <div className="container">
-        <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+        <h1 className="my-10 mt-30">{t("PERSONAL_TITLE")}</h1>
         <LogoutButton onLogout={handleLogout} />
         <div className="text-center mt-5">
           <p className="text-white">Nessun evento trovato nella tua libreria</p>
@@ -221,11 +223,11 @@ export default function PersonalArea() {
     <div className="container">
       {/* Header con pulsante logout */}
       <LogoutButton onLogout={handleLogout} />
-      <h1 className="my-sm mt-lg">{t("PERSONAL_TITLE")}</h1>
+      <h1 className="my-10 mt-30">{t("PERSONAL_TITLE")}</h1>
 
       {/* Griglia di gallerie eventi */}
-      <Row>
-        <Col lg={8} xl={6} className="mx-auto">
+      <div className="container">
+        <div className="max-w-4xl mx-auto">
           {galleries.map((gallery) => (
             <GalleryCard
               key={gallery.id}
@@ -240,8 +242,8 @@ export default function PersonalArea() {
               //onGoToShop={navigateToShop}
             />
           ))}
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }

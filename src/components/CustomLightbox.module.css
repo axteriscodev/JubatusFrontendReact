@@ -1,31 +1,4 @@
+@import "tailwindcss";
 .thunbnail{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: "block";
+    @apply w-full h-full object-cover block;
 }
-/* .video::after{
-    content: "";
-    width: 0;
-    height: 0;
-    border-left: 30px solid white;
-    border-top: 18px solid transparent;
-    border-bottom: 18px solid transparent;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 20;
-}
-.video::before{
-    content: "";
-    width: 60px;
-    height: 60px;
-    border: 1px solid white;
-    border-radius: 50rem;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);   
-    z-index: 20;
-} */

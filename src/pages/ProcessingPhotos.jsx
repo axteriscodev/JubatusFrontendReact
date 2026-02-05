@@ -63,12 +63,12 @@ export default function ProcessingPhotos() {
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
-        css="mb-sm"
+        css="mb-10"
       />
       <h2>
         {parse(t("PROCESSING_TITLE"))}
       </h2>
-      <h4 className="mt-sm mb-md">
+      <h4 className="mt-10 mb-20">
         {parse(t("PROCESSING_CONTENT"))}
         <br />
         {eventPreset.emoji ?? "🚴 📸 🏃"}

@@ -72,16 +72,16 @@ export default function ThankYou() {
         {parse(t('PURCHASE_ACCESS').replace('$email', userEmail))}
       </p>
       {/* <button
-        className="my-button w-100 mt-sm"
+        className="my-button w-full mt-10"
         onClick={(event) => submitHandle(event)}
       >
         Vai all'area riservata
       </button> */}
 
-      <div className="mt-md max-4">
+      <div className="mt-20 max-4">
         <p>{parse(t('PURCHASE_EMAIL'))}</p>
         <button
-          className="my-button w-100"
+          className="my-button w-full"
           onClick={handleResend}
           disabled={loading || cooldown > 0}
         >
@@ -91,7 +91,7 @@ export default function ThankYou() {
             ? `${t('WAITING_WAIT')} ${cooldown}s`
             : t('PURCHASE_LINK')}
         </button>
-        {message && <p className="mt-sm">{message}</p>}
+        {message && <p className="mt-10">{message}</p>}
       </div>
     </div>
   );

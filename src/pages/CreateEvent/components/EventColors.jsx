@@ -1,193 +1,171 @@
-import { Form, Row, Col, Card } from "react-bootstrap";
-
 /**
- * Componente per la selezione dei colori dell'evento - VERSIONE MIGLIORATA
+ * Componente per la selezione dei colori dell'evento - VERSIONE TAILWIND
  */
 export function EventColors({ formData, onInputChange }) {
   return (
-    <Card className="shadow-sm border-0 mb-4">
-      <Card.Body className="p-4">
-        <div className="d-flex align-items-center mb-4">
-          <div className="bg-danger bg-opacity-10 rounded-3 p-3 me-3">
-            <i className="bi bi-palette-fill text-danger fs-4"></i>
+    <div className="shadow-sm rounded-lg bg-white mb-4">
+      <div className="p-4">
+        {/* Header */}
+        <div className="flex items-center mb-4">
+          <div className="bg-red-500/10 rounded-xl p-3 mr-3">
+            <i className="bi bi-palette-fill text-red-500 text-2xl"></i>
           </div>
           <div>
-            <h5 className="mb-1 fw-bold">Colori & Branding</h5>
-            <p className="text-muted mb-0 small">Personalizza la palette cromatica dell'evento</p>
+            <h5 className="mb-1 font-bold text-lg">Colori & Branding</h5>
+            <p className="text-gray-500 mb-0 text-sm">Personalizza la palette cromatica dell'evento</p>
           </div>
         </div>
 
-        <Row className="g-4">
-          <Col md={4}>
-            <Card className="border-2 h-100 transition-all" style={{ 
-              borderColor: formData.backgroundColor,
-              transition: 'all 0.3s ease'
-            }}>
-              <Card.Body className="text-center p-4">
-                <div 
-                  className="rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center"
-                  style={{ 
-                    width: '80px', 
-                    height: '80px',
-                    backgroundColor: formData.backgroundColor,
-                    border: '4px solid white',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  <i className="bi bi-paint-bucket text-white fs-3"></i>
-                </div>
-                <Form.Label className="fw-bold text-secondary mb-2 d-block">
-                  Colore Background
-                </Form.Label>
-                <Form.Control
-                  type="color"
-                  id="backgroundColor"
-                  title="Scegli il colore di sfondo"
-                  name="backgroundColor"
-                  value={formData.backgroundColor}
-                  onChange={onInputChange}
-                  className="form-control-color mx-auto shadow-sm"
-                  style={{ 
-                    width: '100%', 
-                    height: '50px',
-                    cursor: 'pointer',
-                    border: '3px solid #e9ecef'
-                  }}
-                />
-                <small className="text-muted mt-2 d-block font-monospace">
-                  {formData.backgroundColor}
-                </small>
-              </Card.Body>
-            </Card>
-          </Col>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Colore Background */}
+          <div 
+            className="border-2 rounded-lg h-full transition-all duration-300"
+            style={{ borderColor: formData.backgroundColor }}
+          >
+            <div className="text-center p-4">
+              <div 
+                className="rounded-full mx-auto mb-3 flex items-center justify-center"
+                style={{ 
+                  width: '80px', 
+                  height: '80px',
+                  backgroundColor: formData.backgroundColor,
+                  border: '4px solid white',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+              >
+                <i className="bi bi-paint-bucket text-white text-3xl"></i>
+              </div>
+              <label 
+                htmlFor="backgroundColor"
+                className="font-bold text-gray-600 mb-2 block"
+              >
+                Colore Background
+              </label>
+              <input
+                type="color"
+                id="backgroundColor"
+                title="Scegli il colore di sfondo"
+                name="backgroundColor"
+                value={formData.backgroundColor}
+                onChange={onInputChange}
+                className="w-full h-12 mx-auto shadow-sm cursor-pointer rounded-md"
+                style={{ border: '3px solid #e5e7eb' }}
+              />
+              <small className="text-gray-500 mt-2 block font-mono">
+                {formData.backgroundColor}
+              </small>
+            </div>
+          </div>
 
-          <Col md={4}>
-            <Card className="border-2 h-100 transition-all" style={{ 
-              borderColor: formData.primaryColor,
-              transition: 'all 0.3s ease'
-            }}>
-              <Card.Body className="text-center p-4">
-                <div 
-                  className="rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center"
-                  style={{ 
-                    width: '80px', 
-                    height: '80px',
-                    backgroundColor: formData.primaryColor,
-                    border: '4px solid white',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  <i className="bi bi-star-fill text-white fs-3"></i>
-                </div>
-                <Form.Label className="fw-bold text-secondary mb-2 d-block">
-                  Colore Primario
-                </Form.Label>
-                <Form.Control
-                  type="color"
-                  id="primaryColor"
-                  title="Scegli il colore primario"
-                  name="primaryColor"
-                  value={formData.primaryColor}
-                  onChange={onInputChange}
-                  className="form-control-color mx-auto shadow-sm"
-                  style={{ 
-                    width: '100%', 
-                    height: '50px',
-                    cursor: 'pointer',
-                    border: '3px solid #e9ecef'
-                  }}
-                />
-                <small className="text-muted mt-2 d-block font-monospace">
-                  {formData.primaryColor}
-                </small>
-              </Card.Body>
-            </Card>
-          </Col>
+          {/* Colore Primario */}
+          <div 
+            className="border-2 rounded-lg h-full transition-all duration-300"
+            style={{ borderColor: formData.primaryColor }}
+          >
+            <div className="text-center p-4">
+              <div 
+                className="rounded-full mx-auto mb-3 flex items-center justify-center"
+                style={{ 
+                  width: '80px', 
+                  height: '80px',
+                  backgroundColor: formData.primaryColor,
+                  border: '4px solid white',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+              >
+                <i className="bi bi-star-fill text-white text-3xl"></i>
+              </div>
+              <label 
+                htmlFor="primaryColor"
+                className="font-bold text-gray-600 mb-2 block"
+              >
+                Colore Primario
+              </label>
+              <input
+                type="color"
+                id="primaryColor"
+                title="Scegli il colore primario"
+                name="primaryColor"
+                value={formData.primaryColor}
+                onChange={onInputChange}
+                className="w-full h-12 mx-auto shadow-sm cursor-pointer rounded-md"
+                style={{ border: '3px solid #e5e7eb' }}
+              />
+              <small className="text-gray-500 mt-2 block font-mono">
+                {formData.primaryColor}
+              </small>
+            </div>
+          </div>
 
-          <Col md={4}>
-            <Card className="border-2 h-100 transition-all" style={{ 
-              borderColor: formData.secondaryColor,
-              transition: 'all 0.3s ease'
-            }}>
-              <Card.Body className="text-center p-4">
-                <div 
-                  className="rounded-circle mx-auto mb-3 shadow-sm d-flex align-items-center justify-content-center"
-                  style={{ 
-                    width: '80px', 
-                    height: '80px',
-                    backgroundColor: formData.secondaryColor,
-                    border: '4px solid white',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  <i className="bi bi-droplet-fill text-white fs-3"></i>
-                </div>
-                <Form.Label className="fw-bold text-secondary mb-2 d-block">
-                  Colore Secondario
-                </Form.Label>
-                <Form.Control
-                  type="color"
-                  id="secondaryColor"
-                  title="Scegli il colore secondario"
-                  name="secondaryColor"
-                  value={formData.secondaryColor}
-                  onChange={onInputChange}
-                  className="form-control-color mx-auto shadow-sm"
-                  style={{ 
-                    width: '100%', 
-                    height: '50px',
-                    cursor: 'pointer',
-                    border: '3px solid #e9ecef'
-                  }}
-                />
-                <small className="text-muted mt-2 d-block font-monospace">
-                  {formData.secondaryColor}
-                </small>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+          {/* Colore Secondario */}
+          <div 
+            className="border-2 rounded-lg h-full transition-all duration-300"
+            style={{ borderColor: formData.secondaryColor }}
+          >
+            <div className="text-center p-4">
+              <div 
+                className="rounded-full mx-auto mb-3 flex items-center justify-center"
+                style={{ 
+                  width: '80px', 
+                  height: '80px',
+                  backgroundColor: formData.secondaryColor,
+                  border: '4px solid white',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+              >
+                <i className="bi bi-droplet-fill text-white text-3xl"></i>
+              </div>
+              <label 
+                htmlFor="secondaryColor"
+                className="font-bold text-gray-600 mb-2 block"
+              >
+                Colore Secondario
+              </label>
+              <input
+                type="color"
+                id="secondaryColor"
+                title="Scegli il colore secondario"
+                name="secondaryColor"
+                value={formData.secondaryColor}
+                onChange={onInputChange}
+                className="w-full h-12 mx-auto shadow-sm cursor-pointer rounded-md"
+                style={{ border: '3px solid #e5e7eb' }}
+              />
+              <small className="text-gray-500 mt-2 block font-mono">
+                {formData.secondaryColor}
+              </small>
+            </div>
+          </div>
+        </div>
 
         {/* Anteprima palette */}
-        <Card className="bg-light border-0 mt-4">
-          <Card.Body className="p-3">
-            <div className="d-flex align-items-center justify-content-between">
-              <span className="text-muted small fw-semibold">
-                <i className="bi bi-eye-fill me-2"></i>Anteprima Palette
+        <div className="bg-gray-100 rounded-lg mt-4">
+          <div className="p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 text-sm font-semibold">
+                <i className="bi bi-eye-fill mr-2"></i>Anteprima Palette
               </span>
-              <div className="d-flex gap-2">
+              <div className="flex gap-2">
                 <div 
-                  className="rounded shadow-sm"
-                  style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    backgroundColor: formData.backgroundColor 
-                  }}
+                  className="rounded-md shadow-sm w-10 h-10"
+                  style={{ backgroundColor: formData.backgroundColor }}
                   title="Background"
                 ></div>
                 <div 
-                  className="rounded shadow-sm"
-                  style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    backgroundColor: formData.primaryColor 
-                  }}
+                  className="rounded-md shadow-sm w-10 h-10"
+                  style={{ backgroundColor: formData.primaryColor }}
                   title="Primario"
                 ></div>
                 <div 
-                  className="rounded shadow-sm"
-                  style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    backgroundColor: formData.secondaryColor 
-                  }}
+                  className="rounded-md shadow-sm w-10 h-10"
+                  style={{ backgroundColor: formData.secondaryColor }}
                   title="Secondario"
                 ></div>
               </div>
             </div>
-          </Card.Body>
-        </Card>
-      </Card.Body>
-    </Card>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

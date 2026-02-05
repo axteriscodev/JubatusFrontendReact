@@ -1,15 +1,4 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Table,
-  Button,
-  Alert,
-  Spinner,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
 import { apiRequest } from "../../../services/api-services";
 
 /**
@@ -117,178 +106,228 @@ export function PartecipantsTable({ eventId }) {
   }, [eventId]);
 
   return (
-    <Container>
+    <div className="container mx-auto px-4">
       {/* Header Section */}
-      <Row>
-        <Col sm={12}>
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <h4>Lista partecipanti</h4>
-              <p className="text-muted mb-0">
-                Elenco degli indirizzi email dei partecipanti verificati
-                caricati
-              </p>
-            </div>
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={handleRefresh}
-              disabled={loading}
-              className="shadow-sm"
-            >
-              {loading ? (
-                <>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className="me-2"
-                  />
-                  Caricamento...
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-arrow-clockwise me-2"></i>
-                  Aggiorna
-                </>
-              )}
-            </Button>
+      <div className="mb-3">
+        <div className="flex justify-between items-center">
+          <div>
+            <h4 className="text-xl font-bold">Lista partecipanti</h4>
+            <p className="text-gray-500 mb-0">
+              Elenco degli indirizzi email dei partecipanti verificati caricati
+            </p>
           </div>
-        </Col>
-      </Row>
+          <button
+            type="button"
+            onClick={handleRefresh}
+            disabled={loading}
+            className="px-3 py-1.5 text-sm border border-blue-600 text-blue-600 rounded-md shadow-sm
+                       hover:bg-blue-600 hover:text-white transition-colors
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin inline-block w-4 h-4 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Caricamento...
+              </>
+            ) : (
+              <>
+                <i className="bi bi-arrow-clockwise mr-2"></i>
+                Aggiorna
+              </>
+            )}
+          </button>
+        </div>
+      </div>
 
       {/* Search Section */}
-      <Row className="mb-3">
-        <Col sm={12} md={6}>
-          <InputGroup className="shadow-sm">
-            <InputGroup.Text className="bg-white border-2 border-end-0">
-              <i className="bi bi-search text-primary"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type="text"
-              placeholder="Cerca per email..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="border-2 border-start-0"
-            />
-            {searchTerm && (
-              <Button
-                variant="outline-secondary"
-                onClick={() => setSearchTerm("")}
-              >
-                <i className="bi bi-x-circle"></i>
-              </Button>
-            )}
-          </InputGroup>
-        </Col>
-        <Col sm={12} md={6} className="text-end mt-2 mt-md-0">
-          <small className="text-muted">
-            Visualizzati {filteredEmails.length} di {emails.length}{" "}
-            partecipanti
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+        <div className="flex shadow-sm">
+          <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+            <i className="bi bi-search text-blue-600"></i>
+          </span>
+          <input
+            type="text"
+            placeholder="Cerca per email..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="flex-1 border-2 border-l-0 border-gray-300 px-3 py-2
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                       rounded-r-md"
+          />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="px-3 border-2 border-l-0 border-gray-300 text-gray-600 
+                         hover:bg-gray-100 transition-colors rounded-r-md -ml-px"
+            >
+              <i className="bi bi-x-circle"></i>
+            </button>
+          )}
+        </div>
+        <div className="text-right mt-2 md:mt-0 flex items-center justify-end">
+          <small className="text-gray-500">
+            Visualizzati {filteredEmails.length} di {emails.length} partecipanti
           </small>
-        </Col>
-      </Row>
+        </div>
+      </div>
 
       {/* Error Alert */}
       {error && (
-        <Row className="mb-3">
-          <Col sm={12}>
-            <Alert variant="danger" dismissible onClose={() => setError(null)}>
-              {error}
-            </Alert>
-          </Col>
-        </Row>
+        <div className="mb-3">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative flex justify-between items-center">
+            <span>{error}</span>
+            <button
+              type="button"
+              onClick={() => setError(null)}
+              className="text-red-700 hover:text-red-900"
+            >
+              <i className="bi bi-x-lg"></i>
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Loading State */}
       {loading && !error && (
-        <Row>
-          <Col sm={12} className="text-center py-5">
-            <Spinner animation="border" variant="primary" />
-            <p className="text-muted mt-3">Caricamento partecipanti...</p>
-          </Col>
-        </Row>
+        <div className="text-center py-12">
+          <svg
+            className="animate-spin inline-block w-8 h-8 text-blue-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p className="text-gray-500 mt-3">Caricamento partecipanti...</p>
+        </div>
       )}
 
       {/* Empty State */}
       {!loading && !error && emails.length === 0 && (
-        <Row>
-          <Col sm={12} className="text-center py-5">
-            <div className="text-muted">
-              <i className="bi bi-inbox" style={{ fontSize: "3rem" }}></i>
-              <p className="mt-3">Nessun partecipante caricato</p>
-              <small>Carica un file Excel per visualizzare i partecipanti</small>
-            </div>
-          </Col>
-        </Row>
+        <div className="text-center py-12">
+          <div className="text-gray-500">
+            <i className="bi bi-inbox text-5xl"></i>
+            <p className="mt-3">Nessun partecipante caricato</p>
+            <small>Carica un file Excel per visualizzare i partecipanti</small>
+          </div>
+        </div>
       )}
 
       {/* No Results State (search with no matches) */}
-      {!loading &&
-        !error &&
-        emails.length > 0 &&
-        filteredEmails.length === 0 && (
-          <Row>
-            <Col sm={12} className="text-center py-5">
-              <div className="text-muted">
-                <i className="bi bi-search" style={{ fontSize: "3rem" }}></i>
-                <p className="mt-3">
-                  Nessun risultato trovato per &quot;{searchTerm}&quot;
-                </p>
-              </div>
-            </Col>
-          </Row>
-        )}
+      {!loading && !error && emails.length > 0 && filteredEmails.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-gray-500">
+            <i className="bi bi-search text-5xl"></i>
+            <p className="mt-3">
+              Nessun risultato trovato per &quot;{searchTerm}&quot;
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Table with Data */}
       {!loading && !error && filteredEmails.length > 0 && (
-        <Row>
-          <Col sm={12}>
-            <Table striped bordered hover responsive className="shadow-sm">
-              <thead className="table-light">
-                <tr>
-                  <th style={{ width: "60px" }}>#</th>
-                  <th>Email</th>
-                  {/* <th style={{ width: "100px" }} className="text-center">
-                    Azioni
-                  </th> */}
+        <div className="overflow-x-auto shadow-sm rounded-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="w-15 px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  #
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Email
+                </th>
+                {/* <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Azioni
+                </th> */}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredEmails.map((email, index) => (
+                <tr 
+                  key={email} 
+                  className="hover:bg-gray-50 transition-colors even:bg-gray-50"
+                >
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {index + 1}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {email}
+                  </td>
+                  {/* <td className="px-4 py-3 whitespace-nowrap text-center">
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteEmail(email)}
+                      disabled={deleteInProgress === email}
+                      title="Elimina partecipante"
+                      className="p-1.5 border border-red-500 text-red-500 rounded-md
+                                 hover:bg-red-500 hover:text-white transition-colors
+                                 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {deleteInProgress === email ? (
+                        <svg
+                          className="animate-spin w-4 h-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        <i className="bi bi-trash"></i>
+                      )}
+                    </button>
+                  </td> */}
                 </tr>
-              </thead>
-              <tbody>
-                {filteredEmails.map((email, index) => (
-                  <tr key={email}>
-                    <td>{index + 1}</td>
-                    <td>{email}</td>
-                    {/* <td className="text-center">
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={() => handleDeleteEmail(email)}
-                        disabled={deleteInProgress === email}
-                        title="Elimina partecipante"
-                      >
-                        {deleteInProgress === email ? (
-                          <Spinner
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <i className="bi bi-trash"></i>
-                        )}
-                      </Button> 
-                    </td> */}
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
-    </Container>
+    </div>
   );
 }
