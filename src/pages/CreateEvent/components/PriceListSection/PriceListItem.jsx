@@ -53,7 +53,12 @@ export function PriceListItem({
               id={`f${formIndex}-r${rowIndex}-title`}
               value={item.itemsLanguages?.[0]?.title ?? ""}
               onChange={(e) =>
-                onUpdateWithLanguage(formIndex, rowIndex, "title", e.target.value)
+                onUpdateWithLanguage(
+                  formIndex,
+                  rowIndex,
+                  "title",
+                  e.target.value,
+                )
               }
               placeholder="Es: Pacchetto Basic"
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
@@ -74,7 +79,12 @@ export function PriceListItem({
               id={`f${formIndex}-r${rowIndex}-subTitle`}
               value={item.itemsLanguages?.[0]?.subTitle ?? ""}
               onChange={(e) =>
-                onUpdateWithLanguage(formIndex, rowIndex, "subTitle", e.target.value)
+                onUpdateWithLanguage(
+                  formIndex,
+                  rowIndex,
+                  "subTitle",
+                  e.target.value,
+                )
               }
               placeholder="Es: Ideale per eventi piccoli"
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
@@ -137,6 +147,32 @@ export function PriceListItem({
               />
               <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
                 <i className="bi bi-image text-blue-600"></i>
+              </span>
+            </div>
+          </div>
+
+          {/* Clip */}
+          <div className="col-span-6 md:col-span-3">
+            <label
+              htmlFor={`f${formIndex}-r${rowIndex}-quantityClip`}
+              className="block font-semibold text-gray-600 text-sm mb-2"
+            >
+              <i className="bi bi-easel-fill mr-2"></i>Clip
+            </label>
+            <div className="flex shadow-sm">
+              <input
+                type="number"
+                id={`f${formIndex}-r${rowIndex}-quantityClip`}
+                value={item.quantityClip}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "quantityClip", e.target.value)
+                }
+                placeholder="0"
+                className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+              />
+              <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
+                <i className="bi bi-easel text-yellow-600"></i>
               </span>
             </div>
           </div>
@@ -240,7 +276,11 @@ export function PriceListItem({
                   </div>
                 )}
                 <span className="text-xl font-bold text-green-600">
-                  €{(parseFloat(item.price) * (1 - parseFloat(item.discount || 0) / 100)).toFixed(2)}
+                  €
+                  {(
+                    parseFloat(item.price) *
+                    (1 - parseFloat(item.discount || 0) / 100)
+                  ).toFixed(2)}
                 </span>
                 {item.discount > 0 && (
                   <small className="text-green-600 ml-2">
