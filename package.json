@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.6.1",

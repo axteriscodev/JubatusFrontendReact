@@ -9,6 +9,7 @@ import styles from "./PreOrder.module.css";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
+import DOMPurify from "dompurify";
 
 export default function PreOrder() {
   const dispatch = useDispatch();
@@ -51,6 +52,16 @@ export default function PreOrder() {
     };
     fetchImages();
   }, []);
+
+  function getPriceListEntry(text) {
+    const safeHTML = DOMPurify.sanitize(text);
+
+    return (
+      <>
+        <span dangerouslySetInnerHTML={{ __html: safeHTML }} />
+      </>
+    );
+  }
 
   //console.log("presaleMedia", presaleMedia);
   //console.log("pricelist", JSON.stringify(pricelist));
@@ -203,10 +214,10 @@ export default function PreOrder() {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-22">
-                    {parse(list.itemsLanguages?.[0]?.title)}
+                    {getPriceListEntry(list.itemsLanguages?.[0]?.title)}
                   </div>
                   <span className="text-13 opacity">
-                    {parse(list.itemsLanguages?.[0]?.subTitle)}
+                    {getPriceListEntry(list.itemsLanguages?.[0]?.subTitle)}
                   </span>
                 </div>
                 <div className="text-right lh-1">

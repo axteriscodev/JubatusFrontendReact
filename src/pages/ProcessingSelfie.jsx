@@ -40,6 +40,7 @@ export default function ProcessingSelfie() {
           api: import.meta.env.VITE_API_URL + "/contents/fetch-hash",
           method: "POST",
           body: JSON.stringify({ hashId: receivedData.userHash }),
+          needAuth: true,
         });
       } else {
         //sezione upload email e selfie
@@ -47,7 +48,14 @@ export default function ProcessingSelfie() {
 
         formData.append("eventId", receivedData.eventId);
         formData.append("email", receivedData.email);
-        formData.append("image", receivedData.image);
+
+        // Image may be null when license plate is provided
+        if (receivedData.image) {
+          formData.append("image", receivedData.image);
+        }
+
+        // Add bib number field - backend will handle placeholder creation
+        formData.append("bibNumber", receivedData.bibNumber || "");
         formData.append("lang", currentLanguage?.acronym ?? "");
 
         //caricamento selfie
@@ -55,6 +63,7 @@ export default function ProcessingSelfie() {
           api: import.meta.env.VITE_API_URL + "/contents/fetch",
           method: "POST",
           body: formData,
+          needAuth: true,
         });
       }
 

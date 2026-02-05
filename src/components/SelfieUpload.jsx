@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { heicTo, isHeic } from "heic-to";
 import { useTranslations } from "../features/TranslationProvider";
 
@@ -8,7 +9,10 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   const fileInputRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [bibNumber, setBibNumber] = useState("");
+  const [processedFile, setProcessedFile] = useState(null);
   const { t } = useTranslations();
+  const showBibNumber = useSelector((state) => state.competition?.bibNumber);
 
   const handleImageClick = () => {
     if (imageUrl || loading) return false;
@@ -20,7 +24,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
     if (!file) return;
 
     setLoading(true);
-    let processedFile = file;
+    let currentProcessedFile = file;
 
     try {
       if (await isHeic(file)) {
@@ -30,21 +34,23 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
           type: "image/jpeg",
           quality: 0.9,
         });
-        processedFile = new File(
+        currentProcessedFile = new File(
           [convertedBlob],
           file.name.replace(/\.heic$/i, ".jpg"),
           { type: "image/jpeg" },
         );
       }
 
-      setImageUrl(URL.createObjectURL(processedFile));
-      onDataChange(processedFile);
+      setImageUrl(URL.createObjectURL(currentProcessedFile));
+      setProcessedFile(currentProcessedFile);
+      onDataChange({ image: currentProcessedFile, bibNumber: bibNumber });
       onError = false;
     } catch (err) {
       console.error("Errore nella conversione HEIC:", err);
       onError = true;
       setImageUrl(null);
-      onDataChange(null);
+      setProcessedFile(null);
+      onDataChange({ image: null, bibNumber: "" });
     } finally {
       setLoading(false);
     }
@@ -54,9 +60,16 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
     const confirmDelete = window.confirm(t("SELFIE_REMOVE"));
     if (confirmDelete) {
       setImageUrl(null);
+      setProcessedFile(null);
       fileInputRef.current.value = "";
-      onDataChange(null);
+      onDataChange({ image: null, bibNumber: bibNumber });
     }
+  };
+
+  const handleBibNumberChange = (event) => {
+    const value = event.target.value;
+    setBibNumber(value);
+    onDataChange({ image: processedFile, bibNumber: value });
   };
 
   return (
@@ -93,6 +106,23 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         </div>
       )}
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
+      {showBibNumber && (
+        <div className="mt-3 text-start">
+          <label htmlFor="bibNumber" className="form-label">
+            {t("TARGA_TITLE")}
+          </label>
+          <input
+            id="bibNumber"
+            type="text"
+            className="form-control mb-5"
+            placeholder={t("TARGA_PLACEHOLDER")}
+            value={bibNumber}
+            onChange={handleBibNumberChange}
+          />
+          <small className="text-muted">{t("TARGA_HELP")}</small>
+        </div>
+      )}
+
       <input
         type="file"
         ref={fileInputRef}
