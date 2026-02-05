@@ -3,7 +3,7 @@ import { PriceListItem } from "./PriceListItem";
 /**
  * Componente per una singola card listino - VERSIONE TAILWIND
  */
-export function PriceListCard({ list, index, handlers, totalLists }) {
+export function PriceListCard({ list, index, handlers, totalLists, labelList = [], currencySymbol = "€" }) {
   return (
     <div className="border-0 shadow-sm rounded-lg bg-white">
       {/* Header */}
@@ -118,6 +118,8 @@ export function PriceListCard({ list, index, handlers, totalLists }) {
               onUpdateWithLanguage={handlers.updateItemWithLanguage}
               onRemove={handlers.removeItemFromList}
               canRemove={list.items.length > 1}
+              labelList={labelList}
+              currencySymbol={currencySymbol}
             />
           ))}
         </div>

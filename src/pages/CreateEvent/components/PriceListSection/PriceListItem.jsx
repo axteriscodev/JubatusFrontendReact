@@ -1,3 +1,6 @@
+import { useState } from "react";
+import Collapse from "../../../../shared/components/ui/Collapse";
+
 /**
  * Componente per un singolo item (pacchetto) all'interno di un listino - VERSIONE TAILWIND
  */
@@ -9,7 +12,17 @@ export function PriceListItem({
   onUpdateWithLanguage,
   onRemove,
   canRemove,
+  currencySymbol = "€",
+  labelList = [],
 }) {
+  const [showTranslations, setShowTranslations] = useState(false);
+
+  const selectedLabel = labelList.find((label) => label.id === item.labelId);
+
+  const hasLegacyTexts =
+    !item.labelId &&
+    (item.itemsLanguages?.[0]?.title || item.itemsLanguages?.[0]?.subTitle);
+
   return (
     <div className="border-2 border-blue-500/25 rounded-lg bg-white">
       <div className="p-3">
@@ -30,7 +43,7 @@ export function PriceListItem({
             type="button"
             onClick={() => onRemove(formIndex, rowIndex)}
             disabled={!canRemove}
-            className="p-1.5 border border-red-500 text-red-500 rounded-md shadow-sm 
+            className="p-1.5 border border-red-500 text-red-500 rounded-md shadow-sm
                        hover:bg-red-500 hover:text-white transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -39,60 +52,138 @@ export function PriceListItem({
         </div>
 
         {/* Informazioni principali */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {/* Titolo */}
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3">
+          {/* Colonna sinistra: label + traduzioni + legacy */}
           <div>
             <label
-              htmlFor={`f${formIndex}-r${rowIndex}-title`}
+              htmlFor={`f${formIndex}-r${rowIndex}-labelId`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-type mr-2"></i>Titolo
+              <i className="bi bi-tag mr-2"></i>Label Pacchetto
             </label>
-            <input
-              type="text"
-              id={`f${formIndex}-r${rowIndex}-title`}
-              value={item.itemsLanguages?.[0]?.title ?? ""}
+            <select
+              id={`f${formIndex}-r${rowIndex}-labelId`}
+              value={item.labelId ?? ""}
               onChange={(e) =>
-                onUpdateWithLanguage(
+                onUpdate(
                   formIndex,
                   rowIndex,
-                  "title",
-                  e.target.value,
+                  "labelId",
+                  e.target.value ? parseInt(e.target.value) : null,
                 )
               }
-              placeholder="Es: Pacchetto Basic"
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem] bg-white
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {/* Sottotitolo */}
-          <div>
-            <label
-              htmlFor={`f${formIndex}-r${rowIndex}-subTitle`}
-              className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-text-left mr-2"></i>Sottotitolo
-            </label>
-            <input
-              type="text"
-              id={`f${formIndex}-r${rowIndex}-subTitle`}
-              value={item.itemsLanguages?.[0]?.subTitle ?? ""}
-              onChange={(e) =>
-                onUpdateWithLanguage(
-                  formIndex,
-                  rowIndex,
-                  "subTitle",
-                  e.target.value,
-                )
-              }
-              placeholder="Es: Ideale per eventi piccoli"
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+              <option value="">Seleziona una label...</option>
+              {labelList.map((label) => (
+                <option key={label.id} value={label.id}>
+                  {label.label}
+                </option>
+              ))}
+            </select>
+
+            {/* Anteprima traduzioni della label selezionata */}
+            {selectedLabel && selectedLabel.labelsLanguages?.length > 0 && (
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowTranslations(!showTranslations)}
+                  className="text-blue-600 text-sm font-semibold hover:text-blue-800 transition-colors"
+                >
+                  <i
+                    className={`bi bi-chevron-${showTranslations ? "up" : "down"} mr-1`}
+                  ></i>
+                  <i className="bi bi-translate mr-1"></i>
+                  Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
+                </button>
+                <Collapse in={showTranslations}>
+                  <div className="mt-2 p-2 bg-gray-100 rounded-lg border flex flex-col gap-2">
+                    {selectedLabel.labelsLanguages.map((lang, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white border rounded px-2 py-1"
+                        style={{ fontSize: "0.85rem" }}
+                      >
+                        <span className="font-semibold text-blue-600">
+                          {lang.title}
+                        </span>
+                        {lang.subtitle && (
+                          <span className="text-gray-500"> - {lang.subtitle}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Collapse>
+              </div>
+            )}
+
+            {/* Campi legacy per retrocompatibilità */}
+            {hasLegacyTexts && (
+              <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500 rounded-lg">
+                <small className="text-yellow-600 font-semibold block mb-2">
+                  <i className="bi bi-exclamation-triangle mr-1"></i>
+                  Testi esistenti (modalità legacy)
+                </small>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label
+                      htmlFor={`f${formIndex}-r${rowIndex}-title`}
+                      className="block font-semibold text-gray-600 text-xs mb-1"
+                    >
+                      Titolo
+                    </label>
+                    <input
+                      type="text"
+                      id={`f${formIndex}-r${rowIndex}-title`}
+                      value={item.itemsLanguages?.[0]?.title ?? ""}
+                      onChange={(e) =>
+                        onUpdateWithLanguage(
+                          formIndex,
+                          rowIndex,
+                          "title",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Titolo pacchetto"
+                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`f${formIndex}-r${rowIndex}-subTitle`}
+                      className="block font-semibold text-gray-600 text-xs mb-1"
+                    >
+                      Sottotitolo
+                    </label>
+                    <input
+                      type="text"
+                      id={`f${formIndex}-r${rowIndex}-subTitle`}
+                      value={item.itemsLanguages?.[0]?.subTitle ?? ""}
+                      onChange={(e) =>
+                        onUpdateWithLanguage(
+                          formIndex,
+                          rowIndex,
+                          "subTitle",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Sottotitolo pacchetto"
+                      className="w-full border border-gray-300 rounded px-2 py-1 text-sm
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <small className="text-gray-500 block mt-2">
+                  <i className="bi bi-info-circle mr-1"></i>
+                  Seleziona una label sopra per passare al nuovo sistema
+                </small>
+              </div>
+            )}
           </div>
 
-          {/* Opzioni */}
+          {/* Colonna destra: Opzioni */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
               <i className="bi bi-star-fill mr-2"></i>Opzioni
@@ -213,7 +304,7 @@ export function PriceListItem({
             </label>
             <div className="flex shadow-sm">
               <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md font-medium">
-                €
+                {currencySymbol}
               </span>
               <input
                 type="number"
@@ -271,12 +362,12 @@ export function PriceListItem({
                 {item.discount > 0 && (
                   <div>
                     <small className="text-gray-500 line-through">
-                      €{parseFloat(item.price).toFixed(2)}
+                      {currencySymbol}{parseFloat(item.price).toFixed(2)}
                     </small>
                   </div>
                 )}
                 <span className="text-xl font-bold text-green-600">
-                  €
+                  {currencySymbol}
                   {(
                     parseFloat(item.price) *
                     (1 - parseFloat(item.discount || 0) / 100)
