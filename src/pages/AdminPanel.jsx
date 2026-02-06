@@ -24,7 +24,7 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const competitions = useSelector(
-    (state) => state.adminCompetitions.competitions
+    (state) => state.adminCompetitions.competitions,
   );
 
   useEffect(() => {
@@ -58,10 +58,7 @@ export default function AdminPanel() {
   return (
     <div className="container text-left">
       <div className="flex justify-end my-10">
-        <Button
-          onClick={handleLogout}
-          variant="outline"
-        >
+        <Button onClick={handleLogout} variant="outline">
           <i className="bi bi-box-arrow-right"></i> Logout
         </Button>
       </div>
@@ -98,11 +95,11 @@ export default function AdminPanel() {
                   </Button>
                   {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
               <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
-                  <Button
+                  {/* <Button
                     variant="danger"
                     onClick={() => {
                       const confirmDelete = window.confirm(
-                        "Sei sicuro di voler rimuovere l'evento?"
+                        "Sei sicuro di voler rimuovere l'evento?",
                       );
                       if (confirmDelete) {
                         handleDeleteCompetition(competition);
@@ -111,6 +108,18 @@ export default function AdminPanel() {
                     size="sm"
                   >
                     <i className="bi bi-trash"></i>
+                  </Button> */}
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() =>
+                      window.open(
+                        `${import.meta.env.VITE_EVENT_ENDPOINT}${competition.slug}`,
+                        "_blank",
+                      )
+                    }
+                  >
+                    <i className="bi bi-box-arrow-up-right"></i>
                   </Button>
                 </ButtonGroup>
               </td>
@@ -124,4 +133,3 @@ export default function AdminPanel() {
     </div>
   );
 }
-
