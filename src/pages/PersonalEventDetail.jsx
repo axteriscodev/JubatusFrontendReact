@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { ArrowLeft, LogOut, ShoppingCart } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Carousel from "../shared/components/ui/Carousel.jsx";
@@ -120,10 +121,10 @@ export default function PersonalEventDetail() {
       <div className="container">
         <div className="flex justify-between my-10">
           <Button onClick={handleBack} variant="outline-light" size="sm">
-            <i className="bi bi-arrow-left"></i>
+            <ArrowLeft size={16} />
           </Button>
           <Button onClick={handleLogout} variant="outline-danger">
-            <i className="bi bi-box-arrow-right"></i> Logout
+            <LogOut size={16} className="inline" /> Logout
           </Button>
         </div>
         {purchasedItems?.length > 0 ? (
@@ -198,7 +199,7 @@ export default function PersonalEventDetail() {
       className="text-white text-decoration-none p-0 ml-auto"
       onClick={() => handleGoToShop()}
     >
-      <i className="bi bi-cart mr-2 fs-3"></i>
+      <ShoppingCart size={28} className="inline mr-2" />
       {t("PERSONAL_SHOP")}
     </Button>
   </div>

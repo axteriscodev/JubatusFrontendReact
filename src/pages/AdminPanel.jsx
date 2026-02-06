@@ -1,3 +1,4 @@
+import { LogOut, Pencil, ExternalLink, Plus } from "lucide-react";
 import Button from "../shared/components/ui/Button";
 import ButtonGroup from "../shared/components/ui/ButtonGroup";
 import Table from "../shared/components/ui/Table";
@@ -10,7 +11,7 @@ import { logOut } from "../utils/auth";
 
 import {
   fetchCompetitions,
-  deleteCompetition,
+  //deleteCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
 
 /**
@@ -59,7 +60,7 @@ export default function AdminPanel() {
     <div className="container text-left">
       <div className="flex justify-end my-10">
         <Button onClick={handleLogout} variant="outline">
-          <i className="bi bi-box-arrow-right"></i> Logout
+          <LogOut size={16} className="inline" /> Logout
         </Button>
       </div>
       <h1>Elenco eventi</h1>
@@ -91,7 +92,7 @@ export default function AdminPanel() {
                     onClick={() => handleEditCompetition(competition)}
                     size="sm"
                   >
-                    <i className="bi bi-pencil"></i>
+                    <Pencil size={16} />
                   </Button>
                   {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
               <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
@@ -119,7 +120,7 @@ export default function AdminPanel() {
                       )
                     }
                   >
-                    <i className="bi bi-box-arrow-up-right"></i>
+                    <ExternalLink size={16} />
                   </Button>
                 </ButtonGroup>
               </td>
@@ -128,7 +129,7 @@ export default function AdminPanel() {
         </tbody>
       </Table>
       <Button onClick={handleCreateCompetition} variant="primary">
-        <i className="bi bi-plus"></i> Aggiungi nuovo evento
+        <Plus size={16} className="inline" /> Aggiungi nuovo evento
       </Button>
     </div>
   );

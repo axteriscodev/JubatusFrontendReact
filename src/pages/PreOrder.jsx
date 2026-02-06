@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SquareCheckBig } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
@@ -125,13 +126,22 @@ export default function PreOrder() {
             </h2>
             <div className="ml-4 mt-20">
               <p>
-                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
+                <SquareCheckBig
+                  size={16}
+                  className="inline text-success mr-2"
+                />{" "}
                 {t("PREORDER_BULLET1")}
                 <br />
-                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
+                <SquareCheckBig
+                  size={16}
+                  className="inline text-success mr-2"
+                />{" "}
                 {t("PREORDER_BULLET2")}
                 <br />
-                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
+                <SquareCheckBig
+                  size={16}
+                  className="inline text-success mr-2"
+                />{" "}
                 {t("PREORDER_BULLET3")}
               </p>
             </div>

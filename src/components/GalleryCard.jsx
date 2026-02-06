@@ -1,4 +1,4 @@
-import { Play } from "lucide-react";
+import { Play, Search } from "lucide-react";
 import { useTranslations } from "../features/TranslationProvider";
 
 export default function GalleryCard({
@@ -61,7 +61,7 @@ export default function GalleryCard({
                 style={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
               >
                 <div className="bg-white rounded-full flex items-center justify-center w-20 h-20 opacity-90">
-                  <Play size={40} className="text-gray-900 ml-1" fill="currentColor" />
+                  <Play size={40} className="text-gray-900 ml-1" />
                 </div>
               </div>
             )}
@@ -117,7 +117,7 @@ export default function GalleryCard({
           className="text-white no-underline p-0 bg-transparent border-0 cursor-pointer hover:underline"
           onClick={() => onNewSearchClick(eventId)}
         >
-          <i className="bi bi-search mr-2"></i>
+          <Search size={16} className="inline mr-2" />
           {t("PERSONAL_NEW_RESEARCH")}
         </button>
       </div>

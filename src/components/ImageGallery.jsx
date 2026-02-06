@@ -1,3 +1,4 @@
+import { Search, Check, Heart } from "lucide-react";
 import styles from "./ImageGallery.module.css";
 import { useTranslations } from "../features/TranslationProvider";
 import { getEventContents } from "../utils/contents-utils";
@@ -109,7 +110,7 @@ export default function ImageGallery({
                     onOpenLightbox?.(images, i, select, actions, personalSlice)
                   }
                 >
-                  <i className="bi bi-search"></i>
+                  <Search size={16} />
                 </div>
 
                 {/* Cerchio di selezione: visibile solo se select è true, 
@@ -119,7 +120,7 @@ export default function ImageGallery({
                     className={styles.circle}
                     onClick={() => onImageClick?.(image.key)}
                   >
-                    <i className="bi bi-check"></i>
+                    <Check size={16} />
                   </div>
                 )}
 
@@ -133,7 +134,7 @@ export default function ImageGallery({
                 {/* Icona cuore: visibile solo se l'immagine è tra i preferiti */}
                 {highLightFavourite && image.favorite && (
                   <div className={styles.favorite}>
-                    <i className="bi bi-heart-fill text-danger"></i>
+                    <Heart size={16} className="text-danger" fill="currentColor" />
                   </div>
                 )}
               </div>

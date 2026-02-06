@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   EventStatus,
@@ -23,7 +24,7 @@ import { useTranslations } from "../features/TranslationProvider";
 const LogoutButton = ({ onLogout }) => (
   <div className="flex justify-end my-10">
     <Button onClick={onLogout} variant="outline" size="sm">
-      <i className="bi bi-box-arrow-right"></i> Logout
+      <LogOut size={16} className="inline" /> Logout
     </Button>
   </div>
 );

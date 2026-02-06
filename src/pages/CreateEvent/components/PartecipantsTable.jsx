@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { RefreshCw, Search, XCircle, X, Inbox } from "lucide-react";
 import { apiRequest } from "../../../services/api-services";
 
 /**
@@ -150,7 +151,7 @@ export function PartecipantsTable({ eventId }) {
               </>
             ) : (
               <>
-                <i className="bi bi-arrow-clockwise mr-2"></i>
+                <RefreshCw size={14} className="inline mr-2" />
                 Aggiorna
               </>
             )}
@@ -162,7 +163,7 @@ export function PartecipantsTable({ eventId }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
         <div className="flex shadow-sm">
           <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
-            <i className="bi bi-search text-blue-600"></i>
+            <Search size={16} className="text-blue-600" />
           </span>
           <input
             type="text"
@@ -180,7 +181,7 @@ export function PartecipantsTable({ eventId }) {
               className="px-3 border-2 border-l-0 border-gray-300 text-gray-600 
                          hover:bg-gray-100 transition-colors rounded-r-md -ml-px"
             >
-              <i className="bi bi-x-circle"></i>
+              <XCircle size={16} />
             </button>
           )}
         </div>
@@ -201,7 +202,7 @@ export function PartecipantsTable({ eventId }) {
               onClick={() => setError(null)}
               className="text-red-700 hover:text-red-900"
             >
-              <i className="bi bi-x-lg"></i>
+              <X size={16} />
             </button>
           </div>
         </div>
@@ -238,7 +239,7 @@ export function PartecipantsTable({ eventId }) {
       {!loading && !error && emails.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-500">
-            <i className="bi bi-inbox text-5xl"></i>
+            <Inbox size={48} className="mx-auto" />
             <p className="mt-3">Nessun partecipante caricato</p>
             <small>Carica un file Excel per visualizzare i partecipanti</small>
           </div>
@@ -249,7 +250,7 @@ export function PartecipantsTable({ eventId }) {
       {!loading && !error && emails.length > 0 && filteredEmails.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-500">
-            <i className="bi bi-search text-5xl"></i>
+            <Search size={48} className="mx-auto" />
             <p className="mt-3">
               Nessun risultato trovato per &quot;{searchTerm}&quot;
             </p>
