@@ -99,10 +99,10 @@ export default function GalleryCard({
                 )}
 
                 {isLast && (
-                  <div
-                    className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/70"
-                  >
-                    <span className="text-white text-4xl">+{remainingCount}</span>
+                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/70">
+                    <span className="text-white text-4xl">
+                      +{remainingCount}
+                    </span>
                   </div>
                 )}
               </div>
@@ -117,7 +117,7 @@ export default function GalleryCard({
           className="text-white no-underline p-0 bg-transparent border-0 cursor-pointer hover:underline"
           onClick={() => onNewSearchClick(eventId)}
         >
-          <Search size={16} className="inline mr-2" />
+          <Search size={16} className="mr-2" />
           {t("PERSONAL_NEW_RESEARCH")}
         </button>
       </div>

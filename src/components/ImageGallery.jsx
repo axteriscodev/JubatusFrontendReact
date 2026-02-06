@@ -110,7 +110,7 @@ export default function ImageGallery({
                     onOpenLightbox?.(images, i, select, actions, personalSlice)
                   }
                 >
-                  <Search size={16} />
+                  <Search size={32} />
                 </div>
 
                 {/* Cerchio di selezione: visibile solo se select è true, 
@@ -134,7 +134,11 @@ export default function ImageGallery({
                 {/* Icona cuore: visibile solo se l'immagine è tra i preferiti */}
                 {highLightFavourite && image.favorite && (
                   <div className={styles.favorite}>
-                    <Heart size={16} className="text-danger" fill="currentColor" />
+                    <Heart
+                      size={16}
+                      className="text-danger"
+                      fill="currentColor"
+                    />
                   </div>
                 )}
               </div>
