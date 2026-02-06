@@ -1,11 +1,12 @@
 /**
  * Componente per le informazioni base dell'evento - VERSIONE TAILWIND
  */
-export function EventBasicInfo({ 
-  formData, 
-  onInputChange, 
-  onTitleChange, 
-  tagList 
+export function EventBasicInfo({
+  formData,
+  onInputChange,
+  onTitleChange,
+  tagList,
+  currencyList
 }) {
   return (
     <div className="shadow-sm rounded-lg bg-white mb-4">
@@ -103,6 +104,29 @@ export function EventBasicInfo({
                 tagList.map((tag) => (
                   <option key={tag.id} value={tag.id}>
                     {tag.tag}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {/* Valuta */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-currency-exchange mr-2"></i>Valuta
+            </label>
+            <select
+              name="currencyId"
+              value={formData.currencyId}
+              onChange={onInputChange}
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                         bg-white"
+            >
+              <option value="">Seleziona una valuta</option>
+              {Array.isArray(currencyList) &&
+                currencyList.map((currency) => (
+                  <option key={currency.id} value={currency.id}>
+                    {currency.currency}
                   </option>
                 ))}
             </select>

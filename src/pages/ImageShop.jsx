@@ -16,19 +16,13 @@ export default function ImageShop() {
   const imagesList = useSelector((state) => state.cart.products);
   const hasPhoto = useSelector((state) => state.cart.hasPhoto);
   const hasVideo = useSelector((state) => state.cart.hasVideo);
+  const hasClip = useSelector((state) => state.cart.hasClip);
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
   const { t } = useTranslations();
 
-  //const numPhoto = imagesList?.filter(item => item.fileTypeId === 1).length;
   const numVideo = imagesList?.filter((item) => item.fileTypeId === 2).length;
-
-  //console.log("numPhoto", numPhoto);
-  //console.log("numVideo", numVideo);
-  //console.log("hasPhoto", hasPhoto);
-  //console.log("hasVideo", hasVideo);
-
-  //console.log("imagesList", JSON.stringify(imagesList));
+  const numClips = imagesList?.filter((item) => item.fileTypeId === 3).length;
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
@@ -37,10 +31,10 @@ export default function ImageShop() {
   const [slides, setSlides] = useState([]);
 
   const photoItems = useSelector((state) => state.cart.items);
+  const alertPack = useSelector((state) => state.cart.alertPack);
 
   const handleImageClick = (imageKey) => {
     if (!imageKey || !photoItems) return;
-
     const isInCart = photoItems.some(
       (element) => element?.keyOriginal === imageKey,
     );
@@ -67,9 +61,7 @@ export default function ImageShop() {
 
   useEffect(() => {
     setUiPreset(eventPreset);
-  }, []);
-
-  const alertPack = useSelector((state) => state.cart.alertPack);
+  }, [eventPreset]);
 
   return (
     <>
@@ -94,37 +86,42 @@ export default function ImageShop() {
             </div>
           </div>
         </div>
-        {hasPhoto && !hasVideo && (
-          <div className="my-20 text-left">
-            <h2>{t("RESULT_TITLE")}</h2>
-            <p>{t("RESULT_PHOTO")}</p>
-          </div>
-        )}
-        {!hasPhoto && hasVideo && numVideo == 0 && (
-          <div className="my-20">{parse(t("RESULT_VIDEO"))}</div>
-        )}
-        {!hasPhoto && hasVideo && numVideo > 0 && (
-          <div className="my-20 text-left">
-            <h2>{t("RESULT_TITLE")}</h2>
-            <p>{t("CART_VIDEO")}</p>
-          </div>
-        )}
-        {hasPhoto && hasVideo && numVideo == 0 && (
-          <div className="my-20 text-left">
-            <h2>{t("RESULT_TITLE")}</h2>
-            <p>{t("RESULT_PHOTO")}</p>
-            <h4>
-              il <strong>tuo</strong> video è in preparazione: riceverai una
-              mail per vederlo appena pronto, entro 24 ore 🎥🏃‍♂️🔥
-            </h4>
-          </div>
-        )}
-        {hasPhoto && hasVideo && numVideo > 0 && (
-          <div className="my-20 text-left">
-            <h2>{t("RESULT_TITLE")}</h2>
-            <p>{t("CART_PHOTOVIDEO")}</p>
-          </div>
-        )}
+
+        {/* LOGICA MESSAGGI AGGIORNATA */}
+        <div className="my-20 text-left">
+          <h2>{t("RESULT_TITLE")}</h2>
+
+          {/* Solo Foto */}
+          {hasPhoto && !hasVideo && !hasClip && <p>{t("RESULT_PHOTO")}</p>}
+
+          {/* Solo Video (o Video in preparazione) */}
+          {!hasPhoto &&
+            hasVideo &&
+            !hasClip &&
+            (numVideo === 0 ? (
+              parse(t("RESULT_VIDEO"))
+            ) : (
+              <p>{t("CART_VIDEO")}</p>
+            ))}
+
+          {/* Solo Clips */}
+          {!hasPhoto && !hasVideo && hasClip && (
+            <p>{numClips > 0 ? t("CART_CLIPS") : t("RESULT_CLIPS")}</p>
+          )}
+
+          {/* Combinazioni Miste */}
+          {hasPhoto && (hasVideo || hasClip) && (
+            <>
+              <p>{t("CART_PHOTOVIDEO")}</p>
+              {(numVideo === 0 || numClips === 0) && (
+                <h4>
+                  i tuoi <strong>video/clips</strong> sono in preparazione:
+                  riceverai una mail per vederli appena pronti 🎥🏃‍♂️🔥
+                </h4>
+              )}
+            </>
+          )}
+        </div>
 
         {imagesList?.length > 0 && (
           <>

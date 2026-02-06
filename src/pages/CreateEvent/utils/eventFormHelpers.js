@@ -64,6 +64,7 @@ export const createEmptyPriceItem = () => ({
   labelId: null,
   bestOffer: false,
   quantityPhoto: "",
+  quantityClip: "",
   quantityVideo: "",
   price: "",
   discount: "",

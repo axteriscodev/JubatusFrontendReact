@@ -11,6 +11,7 @@ import { errorToast, successToast } from "../../utils/toast-manager";
 import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
+import { useCurrencies } from "./hooks/useCurrencies";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -50,6 +51,7 @@ export default function CreateEvent() {
   );
 
   const { tagList, loading: tagsLoading } = useTags();
+  const { currencyList } = useCurrencies();
 
   // Effetto per aggiungere/rimuovere classe admin al body
   useEffect(() => {
@@ -141,6 +143,7 @@ export default function CreateEvent() {
                 onInputChange={handleInputChange}
                 onTitleChange={handleTitleChange}
                 tagList={tagList}
+                currencyList={currencyList}
               />
               <EventDates formData={formData} onInputChange={handleInputChange} />
               <EventColors formData={formData} onInputChange={handleInputChange} />

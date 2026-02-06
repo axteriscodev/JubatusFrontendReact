@@ -1,9 +1,14 @@
+import { useSelector } from "react-redux";
+import { useListItemLabels } from "../../hooks/useListItemLabels";
 import { PriceListCard } from "./PriceListCard";
 
 /**
  * Componente principale per la sezione listini prezzi - VERSIONE TAILWIND
  */
 export function PriceListSection({ priceLists, handlers }) {
+  const { labelList } = useListItemLabels();
+  const currencySymbol = useSelector((state) => state.competition.currencySymbol);
+
   return (
     <div className="col-span-12">
       <div className="flex items-center justify-between mb-4">
@@ -43,6 +48,8 @@ export function PriceListSection({ priceLists, handlers }) {
               index={index}
               handlers={handlers}
               totalLists={priceLists.length}
+              labelList={labelList}
+              currencySymbol={currencySymbol}
             />
           ))}
         </div>
