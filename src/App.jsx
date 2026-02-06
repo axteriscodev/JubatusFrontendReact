@@ -41,8 +41,11 @@ import ChoosePayment from "./pages/ChoosePayment";
 function App() {
   const router = useMemo(() => {
     const getRedirectRoute = () => {
-      if (isAdmin()) return "/admin";
-      if (isAuthenticated()) return "/personal";
+      if (isAdmin()) {
+        return "/admin";
+      } else if (isAuthenticated()) {
+        return "/personal";
+      }
       return "/";
     };
 
