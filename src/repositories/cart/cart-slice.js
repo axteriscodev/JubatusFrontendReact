@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSlice } from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
 
@@ -18,7 +19,7 @@ const initialState = {
   alertPack: false,
   hasPhoto: false,
   hasVideo: false,
-  hasClips: false,
+  hasClip: false,
   allPhotos: false,
   video: false,
   previousAllPhotosPurchase: false,
@@ -54,6 +55,15 @@ const cartSlice = createSlice({
     },
     updatePreviousAllPhotosPurchase(state, action) {
       state.previousAllPhotosPurchase = action.payload;
+    },
+    updateHasPhoto(state, action) {
+      state.hasPhoto = action.payload;
+    },
+    updateHasVideo(state, action) {
+      state.hasVideo = action.payload;
+    },
+    updateHasClip(state, action) {
+      state.hasClip = action.payload;
     },
 
     addItemToCart(state, action) {
@@ -108,7 +118,7 @@ const cartSlice = createSlice({
       state.selectedPreorder = action.payload;
       state.allPhotos = action.payload.quantityPhoto === -1;
       state.video = action.payload.quantityVideo !== 0;
-      state.hasClips = action.payload.quantityClip !== 0;
+      state.hasClip = action.payload.quantityClip !== 0;
 
       if (action.payload.discount) {
         const discountPrice =
@@ -130,7 +140,7 @@ const cartSlice = createSlice({
       state.totalPrice = 0;
       state.allPhotos = false;
       state.video = false;
-      state.hasClips = false;
+      state.hasClip = false;
       state.selectedPreorder = null;
     },
 
@@ -227,7 +237,7 @@ const performRecalculate = (state) => {
 
   state.hasPhoto = state.items.some((item) => item.fileTypeId === 1);
   state.hasVideo = state.items.some((item) => item.fileTypeId === 2);
-  state.hasClips = state.items.some((item) => item.fileTypeId === 3);
+  state.hasClip = state.items.some((item) => item.fileTypeId === 3);
   state.video = state.hasVideo;
 
   // Alert Pack logic

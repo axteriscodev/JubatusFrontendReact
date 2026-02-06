@@ -16,13 +16,13 @@ export default function ImageShop() {
   const imagesList = useSelector((state) => state.cart.products);
   const hasPhoto = useSelector((state) => state.cart.hasPhoto);
   const hasVideo = useSelector((state) => state.cart.hasVideo);
-  const hasClips = useSelector((state) => state.cart.hasClips); 
+  const hasClip = useSelector((state) => state.cart.hasClip);
   const pricesList = useSelector((state) => state.cart.prices);
   const eventPreset = useSelector((state) => state.competition);
   const { t } = useTranslations();
 
   const numVideo = imagesList?.filter((item) => item.fileTypeId === 2).length;
-  const numClips = imagesList?.filter((item) => item.fileTypeId === 3).length; 
+  const numClips = imagesList?.filter((item) => item.fileTypeId === 3).length;
 
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(false);
@@ -35,7 +35,9 @@ export default function ImageShop() {
 
   const handleImageClick = (imageKey) => {
     if (!imageKey || !photoItems) return;
-    const isInCart = photoItems.some((element) => element?.keyOriginal === imageKey);
+    const isInCart = photoItems.some(
+      (element) => element?.keyOriginal === imageKey,
+    );
 
     if (isInCart) {
       dispatch(cartActions.removeItemFromCart(imageKey));
@@ -88,28 +90,33 @@ export default function ImageShop() {
         {/* LOGICA MESSAGGI AGGIORNATA */}
         <div className="my-20 text-left">
           <h2>{t("RESULT_TITLE")}</h2>
-          
+
           {/* Solo Foto */}
-          {hasPhoto && !hasVideo && !hasClips && <p>{t("RESULT_PHOTO")}</p>}
+          {hasPhoto && !hasVideo && !hasClip && <p>{t("RESULT_PHOTO")}</p>}
 
           {/* Solo Video (o Video in preparazione) */}
-          {!hasPhoto && hasVideo && !hasClips && (
-             numVideo === 0 ? parse(t("RESULT_VIDEO")) : <p>{t("CART_VIDEO")}</p>
-          )}
+          {!hasPhoto &&
+            hasVideo &&
+            !hasClip &&
+            (numVideo === 0 ? (
+              parse(t("RESULT_VIDEO"))
+            ) : (
+              <p>{t("CART_VIDEO")}</p>
+            ))}
 
           {/* Solo Clips */}
-          {!hasPhoto && !hasVideo && hasClips && (
-             <p>{numClips > 0 ? t("CART_CLIPS") : t("RESULT_CLIPS")}</p>
+          {!hasPhoto && !hasVideo && hasClip && (
+            <p>{numClips > 0 ? t("CART_CLIPS") : t("RESULT_CLIPS")}</p>
           )}
 
           {/* Combinazioni Miste */}
-          {hasPhoto && (hasVideo || hasClips) && (
+          {hasPhoto && (hasVideo || hasClip) && (
             <>
               <p>{t("CART_PHOTOVIDEO")}</p>
               {(numVideo === 0 || numClips === 0) && (
                 <h4>
-                  i tuoi <strong>video/clips</strong> sono in preparazione: riceverai una
-                  mail per vederli appena pronti 🎥🏃‍♂️🔥
+                  i tuoi <strong>video/clips</strong> sono in preparazione:
+                  riceverai una mail per vederli appena pronti 🎥🏃‍♂️🔥
                 </h4>
               )}
             </>
