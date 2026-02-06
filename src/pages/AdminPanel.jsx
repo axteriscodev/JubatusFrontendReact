@@ -46,9 +46,9 @@ export default function AdminPanel() {
     navigate("/admin/create-event", { state: competition });
   };
 
-  const handleDeleteCompetition = (competition) => {
-    dispatch(deleteCompetition(competition));
-  };
+  // const handleDeleteCompetition = (competition) => {
+  //   dispatch(deleteCompetition(competition));
+  // };
 
   const handleLogout = () => {
     logOut();

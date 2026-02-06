@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import {
   addCompetition,
   editCompetition,
+  deleteCompetition,
 } from "../../repositories/admin-competitions/admin-competitions-actions";
 import { errorToast, successToast } from "../../utils/toast-manager";
 
@@ -24,7 +25,10 @@ import { ParticipantsUpload } from "./components/ParticipantsUpload";
 import { PartecipantsTable } from "./components/PartecipantsTable";
 
 // Utilities
-import { prepareSubmitData, getDefaultPriceLists } from "./utils/eventFormHelpers";
+import {
+  prepareSubmitData,
+  getDefaultPriceLists,
+} from "./utils/eventFormHelpers";
 
 /**
  * Pagina per la creazione/modifica dell'evento
@@ -47,7 +51,7 @@ export default function CreateEvent() {
   } = useEventForm(receivedComp);
 
   const priceListHandlers = usePriceLists(
-    receivedComp?.lists || getDefaultPriceLists()
+    receivedComp?.lists || getDefaultPriceLists(),
   );
 
   const { tagList, loading: tagsLoading } = useTags();
@@ -65,7 +69,10 @@ export default function CreateEvent() {
    * Gestisce il submit del form
    */
   const handleSubmit = async () => {
-    const submitData = prepareSubmitData(formData, priceListHandlers.priceLists);
+    const submitData = prepareSubmitData(
+      formData,
+      priceListHandlers.priceLists,
+    );
 
     let result;
     if (submitData.id) {
@@ -85,6 +92,16 @@ export default function CreateEvent() {
       // Rimaniamo sulla pagina - NON navighiamo verso /admin
     } else {
       errorToast("Si è verificato un errore durante il salvataggio");
+    }
+  };
+
+  const handleDelete = () => {
+    const confirmDelete = window.confirm(
+      "Sei sicuro di voler rimuovere l'evento?",
+    );
+    if (confirmDelete) {
+      dispatch(deleteCompetition(receivedComp));
+      navigate("/admin");
     }
   };
 
@@ -145,8 +162,14 @@ export default function CreateEvent() {
                 tagList={tagList}
                 currencyList={currencyList}
               />
-              <EventDates formData={formData} onInputChange={handleInputChange} />
-              <EventColors formData={formData} onInputChange={handleInputChange} />
+              <EventDates
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
+              <EventColors
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
               <EventLogo
                 formData={formData}
                 receivedComp={receivedComp}
@@ -180,7 +203,11 @@ export default function CreateEvent() {
         </div>
 
         {/* Azioni sempre visibili fuori dalle tab */}
-        <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
+        <FormActions
+          onSubmit={handleSubmit}
+          onDelete={handleDelete}
+          onCancel={handleReturnToList}
+        />
       </form>
     </div>
   );
