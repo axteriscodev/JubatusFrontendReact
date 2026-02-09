@@ -34,9 +34,9 @@ export default function Checkout() {
     else navigate("/image-shop/");
   };
 
-  const checkoutResponse = useCallback(() => {
+  const checkoutResponse = useCallback(async () => {
     // Create a Checkout Session
-    return fetch(
+    const res = await fetch(
       import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
       {
         method: "POST",
@@ -57,7 +57,8 @@ export default function Checkout() {
                     (item) => item.fileTypeId === 1 && item.purchased !== true,
                   ),
                   ...cart.items.filter(
-                    (item) => item.fileTypeId === 2 && item.purchased !== true,
+                    (item_1) =>
+                      item_1.fileTypeId === 2 && item_1.purchased !== true,
                   ),
                 ]
               : cart.items,
@@ -66,24 +67,19 @@ export default function Checkout() {
           lang: currentLanguage.acronym,
         }),
       },
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw Response(
-            JSON.stringify({ status: res.status, message: res.message }),
-          );
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-        dispatch(cartActions.updateOrderId(data.data.orderId));
-        return {
-          clientSecret: data.data.clientSecret,
-          orderId: data.data.orderId,
-          isFree: data.data.isFree,
-        };
-      });
+    );
+    if (!res.ok) {
+      throw Response(
+        JSON.stringify({ status: res.status, message: res.message }),
+      );
+    }
+    const data = await res.json();
+    dispatch(cartActions.updateOrderId(data.data.orderId));
+    return {
+      clientSecret: data.data.clientSecret,
+      orderId: data.data.orderId,
+      isFree: data.data.isFree,
+    };
   }, [cart, currentLanguage, dispatch]);
 
   useEffect(() => {
