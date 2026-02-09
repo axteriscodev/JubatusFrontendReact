@@ -55,7 +55,7 @@ export default function ImageGallery({
     <>
       {/* Griglia responsive della galleria: 3 colonne su mobile, 4 su tablet, 5 su desktop */}
       <div
-        className={`grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-center gap-2 pb-30 ${styles.gallery}`}
+        className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-2 pb-30 ${styles.gallery}`}
       >
         {data.map((image, i) => (
           // Contenitore singola immagine con chiave unica
