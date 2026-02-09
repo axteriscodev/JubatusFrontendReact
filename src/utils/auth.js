@@ -1,4 +1,3 @@
-import { redirect } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 /**
@@ -7,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 
 /**
  * Metodo per il recupero del token
- * @returns 
+ * @returns
  */
 export function getAuthToken() {
   const token = localStorage.getItem("jwt");
@@ -52,7 +51,7 @@ export function getLevel() {
 
 /**
  * Metodo per la verifica dell'autenticazione
- * 
+ *
  * @returns true se l'utente è autenticato, false altrimenti
  */
 export function isAuthenticated() {
@@ -62,13 +61,14 @@ export function isAuthenticated() {
 
 /**
  * Verifica se l'utente ha diritti di amministrazione
- * 
+ *
  * @returns true se l'utente è un admin, false altrimenti
  */
 export function isAdmin() {
   const token = getAuthToken();
   const level = getLevel();
-  return isValid(token) && level !== null && level <= "1";
+  const result = isValid(token) && level !== null && level <= "1";
+  return result;
 }
 
 /**
@@ -81,7 +81,7 @@ export function logOut() {
 
 /**
  * Metodo interno per la verifica della validità del token
- * 
+ *
  * @param {*} token - il token jwt da verificare
  * @returns - true se il token è valido, false altrimenti
  */

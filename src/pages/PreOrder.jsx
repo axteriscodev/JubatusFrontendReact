@@ -106,8 +106,8 @@ export default function PreOrder() {
   return (
     <>
       <div className="container">
-        <div className="d-flex justify-content-center">
-          <div className="text-start">
+        <div className="flex justify-center">
+          <div className="text-left">
             <Link to={"/event/" + eventPreset.slug}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
@@ -117,28 +117,28 @@ export default function PreOrder() {
           </div>
         </div>
         <h2 className="text-30">{parse(t("PREORDER_STAR"))}</h2>
-        <div className="row row-cols-lg-2">
-          <div className="text-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="text-left">
             {parse(t("PREORDER_TITLE"))}
-            <h2 className="mt-md text-center text-30">
+            <h2 className="mt-20 text-center text-30">
               🎥 {t("PREORDER_CONTENT")}:
             </h2>
-            <div className="ms-4 mt-md">
+            <div className="ml-4 mt-20">
               <p>
-                <i className="bi bi-check-square-fill text-success me-2"></i>{" "}
+                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
                 {t("PREORDER_BULLET1")}
                 <br />
-                <i className="bi bi-check-square-fill text-success me-2"></i>{" "}
+                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
                 {t("PREORDER_BULLET2")}
                 <br />
-                <i className="bi bi-check-square-fill text-success me-2"></i>{" "}
+                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
                 {t("PREORDER_BULLET3")}
               </p>
             </div>
           </div>
-          <div className="my-md">
+          <div className="my-20">
             {loadingGallery ? (
-              <div className="d-flex justify-content-center">
+              <div className="flex justify-center">
                 <div className="spinner-border" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
@@ -147,11 +147,11 @@ export default function PreOrder() {
               <p className="text-danger">{error}</p>
             ) : (
               <>
-                <div className={`row g-2 ${styles.mediaContainer}`}>
+                <div className={`row gap-2 ${styles.mediaContainer}`}>
                   {numPhoto > 0 && (
                     <div className={hasVideo ? "col-7" : "col"}>
                       <div
-                        className={`row row-cols-2 g-2 ${styles.imageContainer}`}
+                        className={`row row-cols-2 gap-2 ${styles.imageContainer}`}
                       >
                         {presaleMedia.images.map((img, i) => (
                           <div key={i}>
@@ -191,27 +191,27 @@ export default function PreOrder() {
             )}
           </div>
         </div>
-        <div className="text-start">
+        <div className="text-left">
           <h2 className="text-center text-30">
             ⏱️ {parse(t("PREORDER_READY"))}
           </h2>
-          <p className="mt-md">{parse(t("PREORDER_ORIGINAL"))}</p>
-          <p className="mt-md">&#128576; {t("PREORDER_DISCOUNT")}</p>
+          <p className="mt-20">{parse(t("PREORDER_ORIGINAL"))}</p>
+          <p className="mt-20">&#128576; {t("PREORDER_DISCOUNT")}</p>
         </div>
-        <div className="text-start mt-md">
+        <div className="text-left mt-20">
           <h3 className="text-24">{t("PREORDER_CHOOSE")}:</h3>
           {pricelist.map((list, i) => (
             <div
               key={i}
               onClick={(event) => handleSelection(event, list)}
-              className={`mt-xs ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}
+              className={`mt-5 ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}
               style={
                 list.bestOffer
                   ? { "--best-offer-label": `'${t("BEST_OFFER")}'` }
                   : undefined
               }
             >
-              <div className="d-flex justify-content-between align-items-center">
+              <div className="flex justify-between items-center">
                 <div>
                   <div className="text-22">
                     {getPriceListEntry(list.itemsLanguages?.[0]?.title)}
@@ -220,8 +220,8 @@ export default function PreOrder() {
                     {getPriceListEntry(list.itemsLanguages?.[0]?.subTitle)}
                   </span>
                 </div>
-                <div className="text-end lh-1">
-                  <div className="text-decoration-line-through">
+                <div className="text-right lh-1">
+                  <div className="line-through">
                     {eventPreset.currency === "EUR"
                       ? `${list.price} ${eventPreset.currencySymbol}`
                       : `${eventPreset.currencySymbol} ${list.price}`}
@@ -238,7 +238,7 @@ export default function PreOrder() {
         </div>
         <button
           onClick={handlePreorderCheckout}
-          className="my-button w-100 mt-sm"
+          className="my-button w-full mt-10"
           disabled={!selectedPreorder}
         >
           Prenota ora

@@ -4,6 +4,7 @@
 export const FileType = {
   IMAGE: 1,
   VIDEO: 2,
+  CLIP: 3,
 };
 
 /**
@@ -83,7 +84,8 @@ export const NormalizeContent = (item) => {
   // Determina quale URL utilizzare in base allo stato di acquisto:
   // - Se acquistato: usa la versione tiny o thumbnail
   // - Se non acquistato: usa la versione preview (con watermark/blur)
-  const isVideo = item.fileTypeId === FileType.VIDEO;
+  const isVideo = (item.fileTypeId === FileType.VIDEO) || (item.fileTypeId === FileType.CLIP);
+  
   let src;
   let srcThumbnail;
   let srcTiny;

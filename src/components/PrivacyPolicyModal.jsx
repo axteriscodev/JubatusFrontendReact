@@ -1,23 +1,22 @@
 import React from 'react';
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import Modal from "../shared/components/ui/Modal";
+import Button from "../shared/components/ui/Button";
 
 const PrivacyPolicyModal = ({ show, onHide }) => {
   return (
-    <Modal 
-      show={show} 
-      onHide={onHide} 
+    <Modal
+      show={show}
+      onHide={onHide}
       size="xl"
       centered
-      scrollable
     >
-      <Modal.Header closeButton>
+      <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>
-          <h2 className="modal-title-custom">Informativa sulla Policy</h2>
+          <h2 className="text-2xl font-bold">Informativa sulla Policy</h2>
         </Modal.Title>
       </Modal.Header>
-      
-      <Modal.Body>
+
+      <Modal.Body className="max-h-[70vh] overflow-y-auto">
         <div className="privacy-policy-content">
           <p className="effective-date">In vigore dal: 15/08/2023</p>
 
@@ -810,7 +809,7 @@ const PrivacyPolicyModal = ({ show, onHide }) => {
       </Modal.Body>
       
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="primary" onClick={onHide}>
           Chiudi
         </Button>
       </Modal.Footer>

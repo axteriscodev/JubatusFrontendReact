@@ -1,210 +1,175 @@
-import { Form, Row, Col, Card } from "react-bootstrap";
-
 /**
- * Componente per le informazioni base dell'evento - VERSIONE MIGLIORATA
+ * Componente per le informazioni base dell'evento - VERSIONE TAILWIND
  */
 export function EventBasicInfo({
   formData,
   onInputChange,
   onTitleChange,
   tagList,
-  currencyList,
-  errors = {},
-  onClearError = () => {}
+  currencyList
 }) {
-  // Handler per input con pulizia errore
-  const handleInputWithClear = (e) => {
-    const { name } = e.target;
-    if (errors[name]) {
-      onClearError(name);
-    }
-    onInputChange(e);
-  };
-
-  // Handler per titolo con pulizia errore
-  const handleTitleWithClear = (e) => {
-    if (errors.title) {
-      onClearError('title');
-    }
-    onTitleChange(e);
-  };
   return (
-    <Card className="shadow-sm border-0 mb-4">
-      <Card.Body className="p-4">
-        <div className="d-flex align-items-center mb-4">
-          <div className="bg-info bg-opacity-10 rounded-3 p-3 me-3">
-            <i className="bi bi-info-circle-fill text-primary fs-4"></i>
+    <div className="shadow-sm rounded-lg bg-white mb-4">
+      <div className="p-4">
+        {/* Header */}
+        <div className="flex items-center mb-4">
+          <div className="bg-cyan-500/10 rounded-xl p-3 mr-3">
+            <i className="bi bi-info-circle-fill text-blue-600 text-2xl"></i>
           </div>
           <div>
-            <h5 className="mb-1 fw-bold">Informazioni Base</h5>
-            <p className="text-muted mb-0 small">Dettagli principali dell'evento</p>
+            <h5 className="mb-1 font-bold text-lg">Informazioni Base</h5>
+            <p className="text-gray-500 mb-0 text-sm">Dettagli principali dell'evento</p>
           </div>
         </div>
 
-        <Row className="g-3">
-          <Col lg={6}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-pencil-fill me-2"></i>Titolo evento
-              </Form.Label>
-              <Form.Control
-                placeholder="Inserisci il titolo dell'evento"
-                value={formData.title}
-                onChange={handleTitleWithClear}
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-                isInvalid={!!errors.title}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.title}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {/* Titolo evento */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-pencil-fill mr-2"></i>Titolo evento
+            </label>
+            <input
+              type="text"
+              placeholder="Inserisci il titolo dell'evento"
+              value={formData.title}
+              onChange={onTitleChange}
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
 
-          <Col lg={6}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-link-45deg me-2"></i>URL
-              </Form.Label>
-              <Form.Control
-                placeholder="URL generato automaticamente"
-                value={formData.slug}
-                disabled
-                readOnly
-                className="bg-light border-2"
-                style={{ fontSize: '0.95rem' }}
-              />
-            </Form.Group>
-          </Col>
+          {/* URL */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-link-45deg mr-2"></i>URL
+            </label>
+            <input
+              type="text"
+              placeholder="URL generato automaticamente"
+              value={formData.slug}
+              disabled
+              readOnly
+              className="w-full bg-gray-100 border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         text-gray-500 cursor-not-allowed"
+            />
+          </div>
 
-          <Col lg={6}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-geo-alt-fill me-2"></i>Località
-              </Form.Label>
-              <Form.Control
-                name="location"
-                value={formData.location}
-                onChange={onInputChange}
-                placeholder="Es: Milano, Via Roma 123"
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-              />
-            </Form.Group>
-          </Col>
+          {/* Località */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-geo-alt-fill mr-2"></i>Località
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={onInputChange}
+              placeholder="Es: Milano, Via Roma 123"
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
 
-          <Col lg={6}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-cloud-arrow-up-fill me-2"></i>Path S3
-              </Form.Label>
-              <Form.Control
-                name="pathS3"
-                value={formData.pathS3}
-                onChange={handleInputWithClear}
-                placeholder="percorso/cartella/s3"
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-                isInvalid={!!errors.pathS3}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.pathS3}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
+          {/* Path S3 */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-cloud-arrow-up-fill mr-2"></i>Path S3
+            </label>
+            <input
+              type="text"
+              name="pathS3"
+              value={formData.pathS3}
+              onChange={onInputChange}
+              placeholder="percorso/cartella/s3"
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
 
-          <Col lg={6}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-tag-fill me-2"></i>Tipologia evento
-              </Form.Label>
-              <Form.Select
-                name="tagId"
-                value={formData.tagId}
-                onChange={handleInputWithClear}
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-                isInvalid={!!errors.tagId}
-              >
-                <option value="">Seleziona una tipologia</option>
-                {Array.isArray(tagList) &&
-                  tagList.map((tag) => (
-                    <option key={tag.id} value={tag.id}>
-                      {tag.tag}
-                    </option>
-                  ))}
-              </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {errors.tagId}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
+          {/* Tipologia evento */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-tag-fill mr-2"></i>Tipologia evento
+            </label>
+            <select
+              name="tagId"
+              value={formData.tagId}
+              onChange={onInputChange}
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                         bg-white"
+            >
+              <option value="">Seleziona una tipologia</option>
+              {Array.isArray(tagList) &&
+                tagList.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.tag}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-          <Col lg={6}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-currency-exchange me-2"></i>Valuta
-              </Form.Label>
-              <Form.Select
-                name="currencyId"
-                value={formData.currencyId}
-                onChange={handleInputWithClear}
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-                isInvalid={!!errors.currencyId}
-              >
-                <option value="">Seleziona una valuta</option>
-                {Array.isArray(currencyList) &&
-                  currencyList.map((currency) => (
-                    <option key={currency.id} value={currency.id}>
-                      {currency.currency}
-                    </option>
-                  ))}
-              </Form.Select>
-              <Form.Control.Feedback type="invalid">
-                {errors.currencyId}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
+          {/* Valuta */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-currency-exchange mr-2"></i>Valuta
+            </label>
+            <select
+              name="currencyId"
+              value={formData.currencyId}
+              onChange={onInputChange}
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                         bg-white"
+            >
+              <option value="">Seleziona una valuta</option>
+              {Array.isArray(currencyList) &&
+                currencyList.map((currency) => (
+                  <option key={currency.id} value={currency.id}>
+                    {currency.currency}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-          <Col xs={12}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-emoji-smile-fill me-2"></i>Emoji attesa
-              </Form.Label>
-              <Form.Control
-                name="emoji"
-                value={formData.emoji}
-                onChange={onInputChange}
-                placeholder="🚴 🏃 ⚽"
-                className="border-2"
-                style={{ fontSize: '1.2rem' }}
-              />
-            </Form.Group>
-          </Col>
+          {/* Emoji attesa */}
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-emoji-smile-fill mr-2"></i>Emoji attesa
+            </label>
+            <input
+              type="text"
+              name="emoji"
+              value={formData.emoji}
+              onChange={onInputChange}
+              placeholder="🚴 🏃 ⚽"
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-xl
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
 
-          <Col xs={12}>
-            <Form.Group>
-              <Form.Label className="fw-semibold text-secondary small mb-2">
-                <i className="bi bi-text-paragraph me-2"></i>Descrizione
-              </Form.Label>
-              <Form.Control
-                name="description"
-                value={formData.description}
-                onChange={onInputChange}
-                placeholder="Inserisci una descrizione dettagliata dell'evento..."
-                as="textarea"
-                rows={4}
-                className="border-2"
-                style={{ fontSize: '0.95rem' }}
-              />
-            </Form.Group>
-          </Col>
+          {/* Descrizione - full width */}
+          <div className="lg:col-span-2">
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <i className="bi bi-text-paragraph mr-2"></i>Descrizione
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={onInputChange}
+              placeholder="Inserisci una descrizione dettagliata dell'evento..."
+              rows={4}
+              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                         resize-vertical"
+            />
+          </div>
 
-          <Col xs={12}>
-            <Card className="bg-light border-0">
-              <Card.Body className="p-3">
-                <Form.Check
+          {/* Checkbox partecipanti verificati - full width */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-100 rounded-lg p-3">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
                   type="checkbox"
                   id="verifiedAttendanceEvent"
                   name="verifiedAttendanceEvent"
@@ -215,24 +180,22 @@ export function EventBasicInfo({
                       value: e.target.checked
                     }
                   })}
-                  label={
-                    <div>
-                      <span className="fw-semibold">
-                        <i className="bi bi-shield-check me-2 text-primary"></i>
-                        Evento con partecipanti verificati
-                      </span>
-                      <div className="text-muted small mt-1">
-                        Abilita la gestione dei partecipanti con caricamento Excel (numero chiuso)
-                      </div>
-                    </div>
-                  }
-                  className="mb-0"
+                  className="w-5 h-5 mt-0.5 text-blue-600 rounded focus:ring-blue-500 shrink-0"
                 />
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Card.Body>
-    </Card>
+                <div>
+                  <span className="font-semibold">
+                    <i className="bi bi-shield-check mr-2 text-blue-600"></i>
+                    Evento con partecipanti verificati
+                  </span>
+                  <div className="text-gray-500 text-sm mt-1">
+                    Abilita la gestione dei partecipanti con caricamento Excel (numero chiuso)
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

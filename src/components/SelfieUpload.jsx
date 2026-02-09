@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { heicTo, isHeic } from "heic-to";
 import { useTranslations } from "../features/TranslationProvider";
+import { FormLabel } from "../shared/components/ui/Form";
+import Input from "../shared/components/ui/Input";
 
 import styles from "./SelfieUpload.module.css";
 
@@ -75,7 +77,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
   return (
     <div>
       <h3>{t("SELFIE_TITLE")}</h3>
-      <p className="my-sm text-secondary">{t("SELFIE_UPLOAD")}</p>
+      <p className="my-10 text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
         className={`${styles.avatar} ${!imageUrl && !loading ? styles.add : ""}`}
         onClick={handleImageClick}
@@ -96,7 +98,7 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
         )}
       </div>
       {imageUrl && !loading && (
-        <div class="d-flex justify-content-center mb-1">
+        <div className="flex justify-center items-center">
           <img
             src="/images/trash-fill.svg"
             className={styles.trash}
@@ -107,14 +109,11 @@ export default function SelfieUpload({ onDataChange, onError = false }) {
       )}
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}
       {showBibNumber && (
-        <div className="mt-3 text-start">
-          <label htmlFor="bibNumber" className="form-label">
-            {t("TARGA_TITLE")}
-          </label>
-          <input
+        <div className="mb-8 text-left">
+          <FormLabel htmlFor="bibNumber">{t("TARGA_TITLE")}</FormLabel>
+          <Input
             id="bibNumber"
             type="text"
-            className="form-control mb-5"
             placeholder={t("TARGA_PLACEHOLDER")}
             value={bibNumber}
             onChange={handleBibNumberChange}

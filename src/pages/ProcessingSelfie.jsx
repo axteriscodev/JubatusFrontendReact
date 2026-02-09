@@ -139,7 +139,7 @@ export default function ProcessingSelfie() {
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
-        css="mb-sm"
+        css="mb-10"
       />
       {parse(t("WAITING_SEARCH"))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>

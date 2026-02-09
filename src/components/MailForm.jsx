@@ -1,7 +1,8 @@
 import { useState } from "react";
-import Form from "react-bootstrap/Form";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import { FormLabel } from "../shared/components/ui/Form";
+import Input from "../shared/components/ui/Input";
+import Modal from "../shared/components/ui/Modal";
+import Button from "../shared/components/ui/Button";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
 import PrivacyPolicyModal from "./PrivacyPolicyModal";
@@ -37,14 +38,20 @@ export default function MailForm({
   };
 
   return (
-    <div className="text-start">
-      <Form.Label>{t("EMAIL_EMAIL")}</Form.Label>
-      <Form.Control
+    <div className="text-left">
+      <FormLabel htmlFor="email">{t("EMAIL_EMAIL")}</FormLabel>
+      <Input
         type="email"
         name="email"
+        id="email"
         value={emailValue}
         onChange={(e) => setEmailValue(e.target.value)}
         placeholder={t("EMAIL_ENTER")}
+        error={
+          onErrors.emailError ||
+          onErrors.emailNotPresent ||
+          onErrors.emailDuplicated
+        }
       />
       {onErrors.emailError && <p className="on-error">{t("EMAIL_VALID")}</p>}
       {onErrors.emailNotPresent && (
@@ -53,34 +60,40 @@ export default function MailForm({
       {onErrors.emailDuplicated && (
         <p className="on-error">{t("EMAIL_DUPLICATED")}</p>
       )}
-      <div className="my-xs">
+      <div className="my-5">
         {showPrivacy && (
           <>
-            <div className="form-check form-switch switch-scale">
+            <div className="flex items-center gap-2 mb-2">
               <input
-                className="form-check-input"
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckDefault"
                 checked={isChecked}
                 onChange={handlePrivacyChange}
+                className="w-11 h-6 bg-gray-200 rounded-full appearance-none cursor-pointer transition-colors duration-200 checked:bg-blue-600 relative
+                  before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform before:duration-200
+                  checked:before:translate-x-5"
               />
               <label
-                className="form-check-label text-10"
+                className="text-base cursor-pointer"
                 htmlFor="flexSwitchCheckDefault"
               >
                 {t("SELFIE_PRIVACY")}
-              </label>{" "}
-              <a href="#" className="text-10" onClick={handleShow}>
+              </label>
+              <a
+                href="#"
+                className="text-base text-secondary-event hover:underline"
+                onClick={handleShow}
+              >
                 {t("SELFIE_PRIVACY2")}
               </a>
             </div>
 
             {/* Modal breve con info privacy */}
-            <Modal show={show} onHide={handleClose} animation={false}>
-              <Modal.Header closeButton>
+            <Modal show={show} onHide={handleClose}>
+              <Modal.Header closeButton onHide={handleClose}>
                 <Modal.Title>
-                  <font className="text-black">{t("PRIVACY_TITLE")}</font>
+                  <span className="text-black">{t("PRIVACY_TITLE")}</span>
                 </Modal.Title>
               </Modal.Header>
               <Modal.Body>
@@ -90,7 +103,7 @@ export default function MailForm({
                   <a
                     href="#"
                     onClick={handlePrivacyPolicyShow}
-                    className="text-black"
+                    className="text-black underline hover:no-underline"
                   >
                     {t("EMAIL_PRIVACY")}
                   </a>
@@ -98,7 +111,7 @@ export default function MailForm({
                 </p>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="dark" onClick={handleClose}>
+                <Button variant="primary" onClick={handleClose}>
                   {t("PRIVACY_CLOSE")}
                 </Button>
               </Modal.Footer>
@@ -116,7 +129,7 @@ export default function MailForm({
         )}
       </div>
       <button
-        className="my-button w-100 mt-sm"
+        className="my-button w-full mt-10"
         onClick={(event) =>
           submitHandle(event, {
             email: emailValue,

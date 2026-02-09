@@ -1,8 +1,10 @@
-import { Button, ButtonGroup, Table } from "react-bootstrap";
+import Button from "../shared/components/ui/Button";
+import ButtonGroup from "../shared/components/ui/ButtonGroup";
+import Table from "../shared/components/ui/Table";
+import Tooltip from "../shared/components/ui/Tooltip";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
-import { Tooltip } from "bootstrap";
 import { formatDate } from "../utils/data-formatter";
 import { logOut } from "../utils/auth";
 
@@ -26,13 +28,6 @@ export default function AdminPanel() {
   );
 
   useEffect(() => {
-    const tooltipTriggerList = document.querySelectorAll(
-      '[data-bs-toggle="tooltip"]'
-    );
-    tooltipTriggerList.forEach((el) => {
-      new Tooltip(el);
-    });
-
     // aggiungo la classe admin per aggiornare le variabili CSS
     document.body.classList.add("admin");
     // rimuovo la classe admin al "destroy" del componente
@@ -61,17 +56,17 @@ export default function AdminPanel() {
   };
 
   return (
-    <div className="container text-start">
-      <div className="d-flex justify-content-end my-sm">
+    <div className="container text-left">
+      <div className="flex justify-end my-10">
         <Button
           onClick={handleLogout}
-          variant="outline-danger"
+          variant="outline"
         >
-          <i class="bi bi-box-arrow-right"></i> Logout
+          <i className="bi bi-box-arrow-right"></i> Logout
         </Button>
       </div>
       <h1>Elenco eventi</h1>
-      <Table striped bordered hover className="my-sm">
+      <Table className="my-10 table-auto">
         <thead>
           <tr>
             <th>#</th>
@@ -92,14 +87,12 @@ export default function AdminPanel() {
               <td>{formatDate(competition.dateEvent)}</td>
               <td>{formatDate(competition.dateStart)}</td>
               <td>{formatDate(competition.dateExpiry)}</td>
-              <td>
-                <ButtonGroup aria-label="Azioni">
+              <td className="text-right">
+                <ButtonGroup>
                   <Button
                     variant="secondary"
                     onClick={() => handleEditCompetition(competition)}
-                    className="btn-sm"
-                    data-bs-toggle="tooltip"
-                    title="Modifica evento"
+                    size="sm"
                   >
                     <i className="bi bi-pencil"></i>
                   </Button>
@@ -115,9 +108,7 @@ export default function AdminPanel() {
                         handleDeleteCompetition(competition);
                       }
                     }}
-                    className="btn-sm"
-                    data-bs-toggle="tooltip"
-                    title="Elimina evento"
+                    size="sm"
                   >
                     <i className="bi bi-trash"></i>
                   </Button>

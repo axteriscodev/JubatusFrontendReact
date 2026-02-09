@@ -25,7 +25,7 @@ export default function ProgressBar() {
   return (
     <>
       <div
-        className="progress mt-md"
+        className="progress mt-20"
         role="progressbar"
         aria-label="Basic example"
         aria-valuenow={progress}

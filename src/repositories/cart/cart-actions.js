@@ -1,10 +1,11 @@
 import { cartActions } from "./cart-slice";
 import { store } from "../store";
 import { getPreferredLanguage } from "../../utils/language-utils";
+import { apiRequest, listenSSE } from "../../services/api-services";
 
 /**
  * NON ANCORA UTILIZZATO
- * Actions per le operazioni di asincrone del carrello
+ * Actions per le operazioni asincrone del carrello
  */
 
 export const fetchContents = (receivedData) => {
@@ -17,10 +18,10 @@ export const fetchContents = (receivedData) => {
     formData.append("image", receivedData.image);
 
     //caricamento selfie
-    const response = await sendRequest(
+    const response = await apiRequest(
       import.meta.env.VITE_API_URL + "/contents/fetch",
       "POST",
-      formData
+      formData,
     );
 
     if (response.ok) {
@@ -29,7 +30,8 @@ export const fetchContents = (receivedData) => {
       const currentLanguage = getPreferredLanguage();
 
       const response = await fetch(
-        import.meta.env.VITE_API_URL + `/contents/event-list/${eventId}/${currentLanguage.acronym}`
+        import.meta.env.VITE_API_URL +
+          `/contents/event-list/${eventId}/${currentLanguage.acronym}`,
       );
 
       if (response.ok) {
@@ -56,11 +58,11 @@ export const fetchContents = (receivedData) => {
         },
         () => {
           console.log("Errore!");
-        }
+        },
       );
     } else {
       throw Response(
-        JSON.stringify({ status: response.status, message: response.message })
+        JSON.stringify({ status: response.status, message: response.message }),
       );
     }
   };
@@ -68,7 +70,7 @@ export const fetchContents = (receivedData) => {
 
 /**
  * Fetch del listino prezzi
- *  
+ *
  */
 export const fetchPriceList = (eventId) => {
   return async (dispatch) => {
@@ -76,7 +78,8 @@ export const fetchPriceList = (eventId) => {
     const currentLanguage = getPreferredLanguage();
 
     const response = await fetch(
-      import.meta.env.VITE_API_URL + `/contents/event-list/${eventId}/${currentLanguage.acronym}`
+      import.meta.env.VITE_API_URL +
+        `/contents/event-list/${eventId}/${currentLanguage.acronym}`,
     );
 
     if (response.ok) {
@@ -86,9 +89,8 @@ export const fetchPriceList = (eventId) => {
     }
 
     return Promise.resolve(false);
-  }
-
-}
+  };
+};
 
 export function getAllItemsPrice() {
   const state = store.getState();

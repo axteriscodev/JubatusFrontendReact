@@ -9,6 +9,8 @@ import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { useLanguage } from "../features/LanguageContext";
 import parse from 'html-react-parser';
+import { FormLabel } from "../shared/components/ui/Form";
+import Input from "../shared/components/ui/Input";
 
 export default function MailConfirmation() {
   const dispatch = useDispatch();
@@ -103,10 +105,10 @@ export default function MailConfirmation() {
 
   return (
     <div className="form-sm">
-      <div className="my-md text-start">
+      <div className="my-20 text-left">
         {isEmailEmpty || isNameEmpty ? (
           <>
-            <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
+            <h2 className="mb-10">{t('PAYMENT_COMPLETED')}</h2>
             <h4 className="">{t('EMAIL_ENTER')}</h4>
             <p>
               {t('EMAIL_AREA')}
@@ -114,7 +116,7 @@ export default function MailConfirmation() {
           </>
         ) : (
           <>
-            <h2 className="mb-sm">{t('PAYMENT_COMPLETED')}</h2>
+            <h2 className="mb-10">{t('PAYMENT_COMPLETED')}</h2>
             <p>
               {parse(t('PAYMENT_ACCESS').replace("$email", userEmail))} <br />
               {t('PAYMENT_CORRECT')}
@@ -123,13 +125,13 @@ export default function MailConfirmation() {
         )}
       </div>
       
-      <div className="mb-3 text-start">
-        <label htmlFor="name" className="form-label">
+      <div className="mb-3 text-left">
+        <FormLabel htmlFor="name">
           {t('NAME_CONFIRM_LABEL')}
-        </label>
-        <input
+        </FormLabel>
+        <Input
           type="text"
-          className={`form-control ${nameError ? 'is-invalid' : ''}`}
+          className={`${nameError ? 'is-invalid' : ''}`}
           id="name"
           value={name}
           onChange={(e) => {

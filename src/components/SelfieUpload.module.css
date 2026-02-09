@@ -1,12 +1,13 @@
+@import "tailwindcss";
 .avatar {
     width: 200px;
     height: 200px;
     border: 2px dashed;
     border-radius: 50%;
     border-color: var(--secondary-event-color, --secondary-color);
-    margin: var(--val-sm-calc) auto;
     position: relative;
     background: rgba(158, 158, 158, 0.2);
+    @apply mx-auto my-10;
 }
 .avatar.add{
   cursor: pointer;

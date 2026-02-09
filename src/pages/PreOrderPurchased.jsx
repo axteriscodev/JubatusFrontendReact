@@ -23,7 +23,7 @@ export default function PreOrderPurchased() {
                         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
                     />
                 </Link>
-                <h2 className="mt-md">{parse(t('PURCHASE_TITLE'))}</h2>
+                <h2 className="mt-20">{parse(t('PURCHASE_TITLE'))}</h2>
                 <p>{t("PREORDER_EMAIL")}</p>
             </div>
         </>
