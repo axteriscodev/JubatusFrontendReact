@@ -1,4 +1,4 @@
-import { createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { calculatePrice } from "../../utils/best-price-calculator";
 
 /**
@@ -175,7 +175,7 @@ const cartSlice = createSlice({
     addItemToCart(state, action) {
       //console.log(action.payload);
       const product = state.products.find(
-        (item) => item.keyOriginal === action.payload
+        (item) => item.keyOriginal === action.payload,
       );
 
       state.totalQuantity++;
@@ -200,13 +200,13 @@ const cartSlice = createSlice({
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find(
-          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0,
         )?.price ?? 0;
 
       // pacchetto completo
       const CompletePackPrice =
         state.prices.find(
-          (item) => item.quantityPhoto === -1 && item.quantityVideo === 1
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === -1,
         )?.price ?? 0;
 
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
@@ -230,7 +230,7 @@ const cartSlice = createSlice({
         totalPrice = packageCalculator(
           state.items,
           state.prices,
-          state.previousAllPhotosPurchase
+          state.previousAllPhotosPurchase,
         );
       }
 
@@ -251,7 +251,7 @@ const cartSlice = createSlice({
       //state.totalPrice = state.totalPrice - 9;
 
       state.items = state.items.filter(
-        (item) => item.keyOriginal !== itemToRemove
+        (item) => item.keyOriginal !== itemToRemove,
       );
 
       let totalPrice = packageCalculator(state.items, state.prices);
@@ -262,13 +262,13 @@ const cartSlice = createSlice({
       //prezzo 'pacchetto tutte le foto'
       const photoPackPrice =
         state.prices.find(
-          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === 0,
         )?.price ?? 0;
 
       // pacchetto completo
       const CompletePackPrice =
         state.prices.find(
-          (item) => item.quantityPhoto === -1 && item.quantityVideo === 1
+          (item) => item.quantityPhoto === -1 && item.quantityVideo === 1,
         )?.price ?? 0;
 
       //se manca una foto e se il prezzo totale è inferiore al pacchetto completo mostro l'alert
@@ -293,7 +293,7 @@ const cartSlice = createSlice({
         totalPrice = packageCalculator(
           state.items,
           state.prices,
-          state.previousAllPhotosPurchase
+          state.previousAllPhotosPurchase,
         );
       }
 
@@ -448,7 +448,7 @@ const cartSlice = createSlice({
         (img) =>
           img.keyPreview === updated.keyPreview ||
           img.keyThumbnail === updated.keyThumbnail ||
-          img.keyOriginal === updated.keyOriginal
+          img.keyOriginal === updated.keyOriginal,
       );
       if (index !== -1) {
         state.purchased[index] = {
@@ -479,10 +479,10 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   }));
 
   const photosCount = formattedItems.filter(
-    (item) => item.fileTypeId === 1
+    (item) => item.fileTypeId === 1,
   ).length;
   const videosCount = formattedItems.filter(
-    (item) => item.fileTypeId === 2
+    (item) => item.fileTypeId === 2,
   ).length;
 
   const formattedPrices = prices.map(
@@ -493,7 +493,7 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
       price,
       discount,
       bestOffer,
-    })
+    }),
   );
 
   const photoPackPrice =
@@ -501,8 +501,9 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
       ?.price ?? 0;
 
   const completePackPrice =
-    prices.find((item) => item.quantityPhoto === -1 && item.quantityVideo === 1)
-      ?.price ?? 0;
+    prices.find(
+      (item) => item.quantityPhoto === -1 && item.quantityVideo === -1,
+    )?.price ?? 0;
 
   // Calcolo base
   let basePrice = calculatePrice(formattedPrices, photosCount, videosCount);
