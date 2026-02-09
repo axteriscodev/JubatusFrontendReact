@@ -12,6 +12,7 @@ import { apiRequest } from "../services/api-services";
 export default function TotalShopButton({ onButtonClick = null }) {
   const navigate = useNavigate();
   const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const totalItems = useSelector((state) => state.cart.items.length);
   const eventPreset = useSelector((state) => state.competition);
   const { t } = useTranslations();
 
@@ -55,9 +56,9 @@ export default function TotalShopButton({ onButtonClick = null }) {
     <button
       className="my-button w-3/4 fixed-bottom mx-auto mb-10"
       disabled={isLoading}
-      onClick={totalPrice === 0 ? onButtonClick : handleCheckout}
+      onClick={totalItems === 0 ? onButtonClick : handleCheckout}
     >
-      {totalPrice === 0 ? (
+      {totalItems === 0 ? (
         <>{t("CHECKOUT_SELECT")}</>
       ) : (
         `${t("CHECKOUT_TOTAL")}: ${eventPreset.currency === "EUR" ? `${totalPrice.toFixed(2)} ${eventPreset.currencySymbol}` : `${eventPreset.currencySymbol} ${totalPrice.toFixed(2)}`}`
