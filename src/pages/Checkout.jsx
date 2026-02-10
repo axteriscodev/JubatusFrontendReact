@@ -6,7 +6,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { isPhotoFullPackEligible } from "../utils/offers";
 import { useTranslations } from "../features/TranslationProvider";
 import { useLanguage } from "../features/LanguageContext";
@@ -18,6 +18,8 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
  * Pagina per il checkout
  */
 export default function Checkout() {
+  const location = useLocation();
+  const receivedData = location.state;
   const cart = useSelector((state) => state.cart);
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
@@ -86,8 +88,21 @@ export default function Checkout() {
     const fetchCheckoutData = async () => {
       try {
         setIsLoading(true);
-        const data = await checkoutResponse();
-        setCheckoutData(data);
+
+        if (receivedData?.clientSecret && receivedData?.orderId) {
+          // Sessione già creata da TotalShopButton, usa i dati ricevuti
+          dispatch(cartActions.updateOrderId(receivedData.orderId));
+          setCheckoutData({
+            clientSecret: receivedData.clientSecret,
+            orderId: receivedData.orderId,
+            isFree: false,
+          });
+        } else {
+          // Fallback: crea la sessione autonomamente (flusso PreOrder, retry, ecc.)
+          const data = await checkoutResponse();
+          setCheckoutData(data);
+        }
+
         setError(null);
       } catch (err) {
         console.error("Checkout error:", err);
