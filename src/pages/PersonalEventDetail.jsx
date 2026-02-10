@@ -45,15 +45,15 @@ export default function PersonalEventDetail() {
 
         const eventsData = await response.json();
         console.log("Dati ricevuti:", eventsData); // Debug
-        if(eventsData.data.length > 0){
+        if (eventsData.data.length > 0) {
           const event = eventsData.data[0];
-        //setError(null);
-        setEventData(event);
-        dispatch(
-          personalActions.updatePurchased(
-            event.items.filter((item) => item.isPurchased) || []
-          )
-        );
+          //setError(null);
+          setEventData(event);
+          dispatch(
+            personalActions.updatePurchased(
+              event.items.filter((item) => item.isPurchased) || [],
+            ),
+          );
         }
       } catch (err) {
         console.error("Errore nel caricamento:", err);
@@ -78,11 +78,7 @@ export default function PersonalEventDetail() {
       return [];
     }
 
-    return (
-      eventData.items.filter(
-        (item) => item.isPurchased === false
-      ) || []
-    );
+    return eventData.items.filter((item) => item.isPurchased === false) || [];
   }, [eventData]);
 
   const handleLogout = () => {
@@ -105,7 +101,7 @@ export default function PersonalEventDetail() {
     startIndex = 0,
     select,
     actions,
-    personalSlice
+    personalSlice,
   ) => {
     setIndex(startIndex);
     setOpen(true);
@@ -178,6 +174,7 @@ export default function PersonalEventDetail() {
                 personalSlice={true}
                 onOpenLightbox={openLightbox}
                 aspectRatio={eventData?.aspectRatio}
+                isShop={false}
               />
             </div>
           </>
@@ -186,23 +183,23 @@ export default function PersonalEventDetail() {
         {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
         {unpurchasedItems.length > 0 && (
           <>
-<div className="flex justify-center mb-1">
-  <div className="flex items-center">
-    <h2 className="my-10 mt-30">{t("PERSONAL_AVAILABLE")}</h2>
-  </div>
-</div>
-<div className="flex justify-center">
-  <div className="flex items-center gap-3">
-        <Button
-      variant="link"
-      className="text-white text-decoration-none p-0 ml-auto"
-      onClick={() => handleGoToShop()}
-    >
-      <i className="bi bi-cart mr-2 fs-3"></i>
-      {t("PERSONAL_SHOP")}
-    </Button>
-  </div>
-</div>
+            <div className="flex justify-center mb-1">
+              <div className="flex items-center">
+                <h2 className="my-10 mt-30">{t("PERSONAL_AVAILABLE")}</h2>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="link"
+                  className="text-white text-decoration-none p-0 ml-auto"
+                  onClick={() => handleGoToShop()}
+                >
+                  <i className="bi bi-cart mr-2 fs-3"></i>
+                  {t("PERSONAL_SHOP")}
+                </Button>
+              </div>
+            </div>
             <div className="mt-20">
               <ImageGallery
                 images={unpurchasedItems}
