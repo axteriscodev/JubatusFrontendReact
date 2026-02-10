@@ -7,19 +7,15 @@ export default function ChoosePayment() {
   const { t } = useTranslations();
 
   const receivedData = location.state;
+
   // TODO: adattare i nomi dei campi quando la struttura della risposta server sarà definita
   const paymentMethods = receivedData?.payments ?? [];
   const orderId = receivedData?.orderId;
 
-  function handleSelectStripe() {
+  function handleSelect(id) {
     navigate("/checkout", {
-      state: { orderId, paymentId: paymentMethods[0].id },
+      state: { orderId, paymentId: id },
     });
-  }
-
-  function handleSelectCounter() {
-    // TODO: potrebbe servire una chiamata al backend per confermare il pagamento alla cassa
-    navigate("/pay-at-counter");
   }
 
   // TODO: aggiungere handler per altri metodi di pagamento
@@ -35,23 +31,28 @@ export default function ChoosePayment() {
   }
 
   return (
-    <div className="form-sm">
+    <div className="form-sm justify-center gap-4 px-6">
       {/* TODO: aggiungere chiave di traduzione per "Scegli metodo di pagamento" */}
+      <p className="text-center text-xl font-semibold mb-2">
+        Scegli come pagare
+      </p>
 
       {/* TODO: iterare dinamicamente su paymentMethods quando la struttura sarà nota */}
-      {paymentMethods.includes("stripe") && (
-        <button className="my-button w-100 mt-sm" onClick={handleSelectStripe}>
-          {/* TODO: usare la chiave di traduzione corretta */}
-          Paga con carta
-        </button>
-      )}
+      <button
+        className="my-button w-full py-5 text-lg tracking-wide shadow-md"
+        onClick={() => handleSelect(paymentMethods[0].id)}
+      >
+        {/* TODO: usare la chiave di traduzione corretta */}
+        Paga con carta
+      </button>
 
-      {paymentMethods.includes("counter") && (
-        <button className="my-button w-100 mt-sm" onClick={handleSelectCounter}>
-          {/* TODO: usare la chiave di traduzione corretta */}
-          Paga alla cassa
-        </button>
-      )}
+      <button
+        className="my-button w-full py-5 text-lg tracking-wide shadow-md"
+        onClick={() => handleSelect(paymentMethods[1].id)}
+      >
+        {/* TODO: usare la chiave di traduzione corretta */}
+        Paga alla cassa
+      </button>
     </div>
   );
 }

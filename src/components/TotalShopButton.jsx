@@ -57,6 +57,7 @@ export default function TotalShopButton({ onButtonClick = null }) {
           //clientUrl: import.meta.env.VITE_APP_DOMAIN,
           lang: currentLanguage.acronym,
         }),
+        needAuth: true,
       });
 
       if (!res.ok)
@@ -83,7 +84,7 @@ export default function TotalShopButton({ onButtonClick = null }) {
         // Caso 1: un solo metodo di pagamento (Stripe) → vai al checkout
         navigate("/checkout", {
           replace: true,
-          state: { payments, orderId },
+          state: { paymentId: payments[0].id, orderId },
         });
       }
     } catch (error) {

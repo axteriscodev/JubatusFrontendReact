@@ -35,7 +35,7 @@ export default function Checkout() {
     // Create a Checkout Session
     const jsonBody = JSON.stringify({
       orderId: receivedData.orderId,
-      paymentId: receivedData.payments[0].id,
+      paymentId: receivedData.paymentId,
       clientUrl: import.meta.env.VITE_APP_DOMAIN,
     });
     const res = await fetch(
@@ -111,22 +111,26 @@ export default function Checkout() {
     );
   }
 
-  // Paid order - mostra Stripe checkout
-  if (checkoutData?.clientSecret) {
-    const options = {
-      clientSecret: checkoutData.clientSecret,
-    };
+  if (checkoutData) {
+    // Paid order - mostra Stripe checkout
+    if (checkoutData?.clientSecret) {
+      const options = {
+        clientSecret: checkoutData.clientSecret,
+      };
 
-    return (
-      <>
-        <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-          <EmbeddedCheckout />
-        </EmbeddedCheckoutProvider>
-        <button className="my-button w-full mt-10" onClick={buttonHandle}>
-          {t("CHECKOUT_BACK")}
-        </button>
-      </>
-    );
+      return (
+        <>
+          <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+            <EmbeddedCheckout />
+          </EmbeddedCheckoutProvider>
+          <button className="my-button w-full mt-10" onClick={buttonHandle}>
+            {t("CHECKOUT_BACK")}
+          </button>
+        </>
+      );
+    } else {
+      navigate("/pay-at-counter");
+    }
   }
 
   // Fallback
