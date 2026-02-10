@@ -33,7 +33,7 @@ export default function TotalShopButton({ onButtonClick = null }) {
 
     try {
       const res = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
+        api: import.meta.env.VITE_API_URL + "/shop/create-order",
         method: "POST",
         body: JSON.stringify({
           cart: {
@@ -46,17 +46,15 @@ export default function TotalShopButton({ onButtonClick = null }) {
             items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
               ? [
                   ...cart.products.filter(
-                    (item) =>
-                      item.fileTypeId === 1 && item.purchased !== true,
+                    (item) => item.fileTypeId === 1 && item.purchased !== true,
                   ),
                   ...cart.items.filter(
-                    (item) =>
-                      item.fileTypeId === 2 && item.purchased !== true,
+                    (item) => item.fileTypeId === 2 && item.purchased !== true,
                   ),
                 ]
               : cart.items,
           },
-          clientUrl: import.meta.env.VITE_APP_DOMAIN,
+          //clientUrl: import.meta.env.VITE_APP_DOMAIN,
           lang: currentLanguage.acronym,
         }),
       });
@@ -65,10 +63,10 @@ export default function TotalShopButton({ onButtonClick = null }) {
         throw new Error("Errore durante la creazione della sessione.");
 
       const result = await res.json();
-      const { orderId, clientSecret, isFree } = result.data;
+      const { orderId, isFree, payments } = result.data;
 
       // TODO: adattare il nome del campo quando la struttura della risposta server sarà definita
-      const paymentMethods = result.data.paymentMethods; // TODO: placeholder
+      const paymentMethods = result.data.payments; // TODO: placeholder
 
       dispatch(cartActions.updateOrderId(orderId));
 
@@ -79,13 +77,13 @@ export default function TotalShopButton({ onButtonClick = null }) {
         // Caso 2: più metodi di pagamento → scegli come pagare
         navigate("/choose-payment", {
           replace: true,
-          state: { paymentMethods, orderId, clientSecret },
+          state: { payments, orderId },
         });
       } else {
         // Caso 1: un solo metodo di pagamento (Stripe) → vai al checkout
         navigate("/checkout", {
           replace: true,
-          state: { clientSecret, orderId },
+          state: { payments, orderId },
         });
       }
     } catch (error) {

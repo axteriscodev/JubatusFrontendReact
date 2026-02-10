@@ -8,13 +8,12 @@ export default function ChoosePayment() {
 
   const receivedData = location.state;
   // TODO: adattare i nomi dei campi quando la struttura della risposta server sarà definita
-  const paymentMethods = receivedData?.paymentMethods ?? [];
+  const paymentMethods = receivedData?.payments ?? [];
   const orderId = receivedData?.orderId;
-  const clientSecret = receivedData?.clientSecret;
 
   function handleSelectStripe() {
     navigate("/checkout", {
-      state: { clientSecret, orderId },
+      state: { orderId, paymentId: paymentMethods[0].id },
     });
   }
 
@@ -41,20 +40,14 @@ export default function ChoosePayment() {
 
       {/* TODO: iterare dinamicamente su paymentMethods quando la struttura sarà nota */}
       {paymentMethods.includes("stripe") && (
-        <button
-          className="my-button w-100 mt-sm"
-          onClick={handleSelectStripe}
-        >
+        <button className="my-button w-100 mt-sm" onClick={handleSelectStripe}>
           {/* TODO: usare la chiave di traduzione corretta */}
           Paga con carta
         </button>
       )}
 
       {paymentMethods.includes("counter") && (
-        <button
-          className="my-button w-100 mt-sm"
-          onClick={handleSelectCounter}
-        >
+        <button className="my-button w-100 mt-sm" onClick={handleSelectCounter}>
           {/* TODO: usare la chiave di traduzione corretta */}
           Paga alla cassa
         </button>

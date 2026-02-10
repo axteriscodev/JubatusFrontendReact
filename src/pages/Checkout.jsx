@@ -7,9 +7,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { useNavigate, useLocation } from "react-router-dom";
-import { isPhotoFullPackEligible } from "../utils/offers";
 import { useTranslations } from "../features/TranslationProvider";
-import { useLanguage } from "../features/LanguageContext";
 import ProgressBar from "../components/ProgressBar";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -20,17 +18,14 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 export default function Checkout() {
   const location = useLocation();
   const receivedData = location.state;
-  const cart = useSelector((state) => state.cart);
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentLanguage } = useLanguage();
   const { t } = useTranslations();
 
   const [checkoutData, setCheckoutData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const buttonHandle = () => {
     if (eventPreset.preOrder) navigate("/pre-order");
     else navigate("/image-shop/");
@@ -38,6 +33,11 @@ export default function Checkout() {
 
   const checkoutResponse = useCallback(async () => {
     // Create a Checkout Session
+    const jsonBody = JSON.stringify({
+      orderId: receivedData.orderId,
+      paymentId: receivedData.payments[0].id,
+      clientUrl: import.meta.env.VITE_APP_DOMAIN,
+    });
     const res = await fetch(
       import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
       {
@@ -45,29 +45,7 @@ export default function Checkout() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          cart: {
-            userId: cart.userId,
-            eventId: cart.eventId,
-            searchId: cart.searchId,
-            allPhotos: cart.allPhotos,
-            video: cart.video,
-            amount: cart.totalPrice,
-            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
-              ? [
-                  ...cart.products.filter(
-                    (item) => item.fileTypeId === 1 && item.purchased !== true,
-                  ),
-                  ...cart.items.filter(
-                    (item_1) =>
-                      item_1.fileTypeId === 2 && item_1.purchased !== true,
-                  ),
-                ]
-              : cart.items,
-          },
-          clientUrl: import.meta.env.VITE_APP_DOMAIN,
-          lang: currentLanguage.acronym,
-        }),
+        body: jsonBody,
       },
     );
     if (!res.ok) {
@@ -80,9 +58,8 @@ export default function Checkout() {
     return {
       clientSecret: data.data.clientSecret,
       orderId: data.data.orderId,
-      isFree: data.data.isFree,
     };
-  }, [cart, currentLanguage, dispatch]);
+  }, [dispatch, receivedData]);
 
   useEffect(() => {
     const fetchCheckoutData = async () => {
@@ -95,7 +72,6 @@ export default function Checkout() {
           setCheckoutData({
             clientSecret: receivedData.clientSecret,
             orderId: receivedData.orderId,
-            isFree: false,
           });
         } else {
           // Fallback: crea la sessione autonomamente (flusso PreOrder, retry, ecc.)
@@ -115,12 +91,6 @@ export default function Checkout() {
     fetchCheckoutData();
   }, []);
 
-  useEffect(() => {
-    if (checkoutData?.isFree === true) {
-      navigate("/mail-confirmation");
-    }
-  }, [checkoutData, navigate]);
-
   // Loading state
   if (isLoading) {
     return <ProgressBar />;
@@ -137,16 +107,6 @@ export default function Checkout() {
         <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
           {t("CHECKOUT_BACK")}
         </button>
-      </>
-    );
-  }
-
-  // Free order - mostra messaggio temporaneo prima del redirect
-  if (checkoutData?.isFree === true) {
-    return (
-      <>
-        <h3>{t("CHECKOUT_FREE_ORDER")}</h3>
-        <ProgressBar />
       </>
     );
   }
