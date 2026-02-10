@@ -8,7 +8,7 @@ import { useTranslations } from "../features/TranslationProvider";
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { useLanguage } from "../features/LanguageContext";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 import { FormLabel } from "../shared/components/ui/Form";
 import Input from "../shared/components/ui/Input";
 
@@ -27,7 +27,7 @@ export default function MailConfirmation() {
   const [nameError, setNameError] = useState(false);
   //const [surnameError, setSurnameError] = useState(false);
   const { t } = useTranslations();
-  
+
   const isEmailEmpty = !userEmail || userEmail.trim() === "";
   const isNameEmpty = !fullName || fullName.trim() === "";
   //const isSurnameEmpty = !userSurname || userSurname.trim() === "";
@@ -39,53 +39,53 @@ export default function MailConfirmation() {
     try {
       const { email } = data;
       let formErrors = new FormErrors();
-      
+
       console.log(data.email);
       console.log(name);
       //console.log(surname);
       console.log(data.privacy);
-      
+
       // Validazione
       formErrors.emailError = !validator.isEmail(data.email);
       const isNameValid = name && name.trim() !== "";
       //const isSurnameValid = surname && surname.trim() !== "";
-      
+
       setNameError(!isNameValid);
       //setSurnameError(!isSurnameValid);
-      
-      if (formErrors.emailError || !isNameValid ) {
+
+      if (formErrors.emailError || !isNameValid) {
         setFormErrors(formErrors);
         return;
       }
-      
-      let body = JSON.stringify({ 
-        userId, 
-        orderId, 
-        email, 
+
+      let body = JSON.stringify({
+        userId,
+        orderId,
+        email,
         fullname: name.trim(),
         //surname: surname.trim(),
-        lang: currentLanguage.acronym 
+        lang: currentLanguage.acronym,
       });
-      
+
       console.log(`body: ${body}`);
-      
+
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/confirm-email",
         method: "POST",
         body: body,
       });
-      
+
       if (response.ok) {
         const json = await response.json();
         console.log("risposta ok");
 
         // Email già esistente
-        if(json.data.emailDuplicated){
+        if (json.data.emailDuplicated) {
           formErrors.emailDuplicated = true;
           setFormErrors(formErrors);
           return;
         }
-        
+
         if (json.data.emailModified) {
           dispatch(cartActions.updateUserEmail(email));
         }
@@ -95,7 +95,7 @@ export default function MailConfirmation() {
         // if (json.data.surnameModified) {
         //   dispatch(cartActions.updateUserSurname(surname.trim()));
         // }
-        
+
         navigate("/thank-you");
       }
     } catch (err) {
@@ -108,42 +108,36 @@ export default function MailConfirmation() {
       <div className="my-20 text-left">
         {isEmailEmpty || isNameEmpty ? (
           <>
-            <h2 className="mb-10">{t('PAYMENT_COMPLETED')}</h2>
-            <h4 className="">{t('EMAIL_ENTER')}</h4>
-            <p>
-              {t('EMAIL_AREA')}
-            </p>
+            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
+            <h4 className="">{t("EMAIL_ENTER")}</h4>
+            <p>{t("EMAIL_AREA")}</p>
           </>
         ) : (
           <>
-            <h2 className="mb-10">{t('PAYMENT_COMPLETED')}</h2>
+            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
             <p>
-              {parse(t('PAYMENT_ACCESS').replace("$email", userEmail))} <br />
-              {t('PAYMENT_CORRECT')}
+              {parse(t("PAYMENT_ACCESS").replace("$email", userEmail))} <br />
+              {t("PAYMENT_CORRECT")}
             </p>
           </>
         )}
       </div>
-      
+
       <div className="mb-3 text-left">
-        <FormLabel htmlFor="name">
-          {t('NAME_CONFIRM_LABEL')}
-        </FormLabel>
+        <FormLabel htmlFor="name">{t("NAME_CONFIRM_LABEL")}</FormLabel>
         <Input
           type="text"
-          className={`${nameError ? 'is-invalid' : ''}`}
+          className={`${nameError ? "is-invalid" : ""}`}
           id="name"
           value={name}
           onChange={(e) => {
             setName(e.target.value);
             setNameError(false);
           }}
-          placeholder={t('NAME_PLACEHOLDER')}
+          placeholder={t("NAME_PLACEHOLDER")}
         />
         {nameError && (
-          <div className="invalid-feedback">
-            {t('NAME_REQUIRED')}
-          </div>
+          <div className="invalid-feedback">{t("NAME_REQUIRED")}</div>
         )}
       </div>
 
@@ -174,6 +168,7 @@ export default function MailConfirmation() {
         defaultEmail={userEmail ?? ""}
         showPrivacy={false}
         onErrors={formErrors}
+        externalPayment={false}
       />
     </div>
   );
