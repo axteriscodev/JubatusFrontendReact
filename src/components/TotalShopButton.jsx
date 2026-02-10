@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslations } from "../features/TranslationProvider";
 import { useLanguage } from "../features/LanguageContext";
 import { useState } from "react";
+import { apiRequest } from "../services/api-services";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { isPhotoFullPackEligible } from "../utils/offers";
 
@@ -31,39 +32,34 @@ export default function TotalShopButton({ onButtonClick = null }) {
     setIsLoading(true);
 
     try {
-      const res = await fetch(
-        import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      const res = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
+        method: "POST",
+        body: JSON.stringify({
+          cart: {
+            userId: cart.userId,
+            eventId: cart.eventId,
+            searchId: cart.searchId,
+            allPhotos: cart.allPhotos,
+            video: cart.video,
+            amount: cart.totalPrice,
+            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
+              ? [
+                  ...cart.products.filter(
+                    (item) =>
+                      item.fileTypeId === 1 && item.purchased !== true,
+                  ),
+                  ...cart.items.filter(
+                    (item) =>
+                      item.fileTypeId === 2 && item.purchased !== true,
+                  ),
+                ]
+              : cart.items,
           },
-          body: JSON.stringify({
-            cart: {
-              userId: cart.userId,
-              eventId: cart.eventId,
-              searchId: cart.searchId,
-              allPhotos: cart.allPhotos,
-              video: cart.video,
-              amount: cart.totalPrice,
-              items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
-                ? [
-                    ...cart.products.filter(
-                      (item) =>
-                        item.fileTypeId === 1 && item.purchased !== true,
-                    ),
-                    ...cart.items.filter(
-                      (item) =>
-                        item.fileTypeId === 2 && item.purchased !== true,
-                    ),
-                  ]
-                : cart.items,
-            },
-            clientUrl: import.meta.env.VITE_APP_DOMAIN,
-            lang: currentLanguage.acronym,
-          }),
-        },
-      );
+          clientUrl: import.meta.env.VITE_APP_DOMAIN,
+          lang: currentLanguage.acronym,
+        }),
+      });
 
       if (!res.ok)
         throw new Error("Errore durante la creazione della sessione.");
