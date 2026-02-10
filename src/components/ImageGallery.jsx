@@ -1,5 +1,6 @@
 import styles from "./ImageGallery.module.css";
 import { Play } from "lucide-react";
+import reelIcon from "../assets/reel-icon.svg";
 import { useTranslations } from "../features/TranslationProvider";
 import { getEventContents } from "../utils/contents-utils";
 
@@ -90,12 +91,9 @@ export default function ImageGallery({
                   {(image.fileTypeId === 2 || image.fileTypeId === 3) && (
                     <div className={styles.contentTypeBadge}>
                       {image.fileTypeId === 2 ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="2" fill="white" stroke="black" strokeWidth="1.5"/>
-                          <polygon points="9 17 9 7 17 12" fill="black" stroke="none"/>
-                        </svg>
+                        <img src={reelIcon} width={22} height={22} alt="reel" />
                       ) : (
-                        <Play size={16} strokeWidth={1.5} fill="white" />
+                        <Play size={18} strokeWidth={1.5} fill="white" />
                       )}
                     </div>
                   )}
