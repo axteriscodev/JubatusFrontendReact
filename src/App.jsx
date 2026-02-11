@@ -37,6 +37,7 @@ import { LanguageProvider } from "./features/LanguageContext";
 import { TranslationProvider } from "./features/TranslationProvider";
 import RouterWrapper from "./components/RouterWrapper";
 import ChoosePayment from "./pages/ChoosePayment";
+import PayAtCounter from "./pages/PayAtCounter";
 
 function App() {
   const router = useMemo(() => {
@@ -105,6 +106,7 @@ function App() {
             errorElement: <ErrorPage />,
           },
           { path: "/choose-payment", element: <ChoosePayment /> },
+          { path: "/pay-at-counter", element: <PayAtCounter /> },
           { path: "/checkout", element: <Checkout /> },
           {
             path: "/checkout-outcome",

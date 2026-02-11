@@ -88,6 +88,7 @@ export default function Login() {
           defaultEmail={""}
           showPrivacy={false}
           onErrors={formErrors}
+          externalPayment={false}
         />
       </div>
     </div>

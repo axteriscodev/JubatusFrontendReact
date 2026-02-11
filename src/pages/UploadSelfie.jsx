@@ -120,6 +120,7 @@ export default function UploadSelfie() {
         submitHandle={handleSubmit}
         defaultEmail={""}
         onErrors={formErrors}
+        externalPayment={false}
       />
     </div>
   );
