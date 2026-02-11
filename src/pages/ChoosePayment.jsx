@@ -43,7 +43,7 @@ export default function ChoosePayment() {
         onClick={() => handleSelect(paymentMethods[0].id)}
       >
         {/* TODO: usare la chiave di traduzione corretta */}
-        Paga con carta
+        Paga con Stripe
       </button>
 
       <button
