@@ -107,30 +107,50 @@ export default function CustomLightbox({
       plugins={normalizedSlides.length > 1 ? [Thumbnails, Video] : [Video]}
       render={{
         slide: ({ slide }) => {
-          if (slide.isVideo) {
-            // Video
-            return (
-              <video
-                controls
-                controlsList="nodownload"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "100%",
-                  margin: "0 auto",
-                }}
-              >
-                <source src={slide.src} type="video/mp4" />
-                {t("LIGHTBOX_SUPPORT")}
-              </video>
-            );
-          }
-          // Immagine normale (fallback)
-          return (
+          const media = slide.isVideo ? (
+            <video
+              controls
+              controlsList="nodownload"
+              className="max-w-full max-h-full mx-auto"
+            >
+              <source src={slide.src} type="video/mp4" />
+              {t("LIGHTBOX_SUPPORT")}
+            </video>
+          ) : (
             <img
               src={slide.src}
               alt=""
-              style={{ maxWidth: "100%", maxHeight: "100%" }}
+              className="max-w-full max-h-full"
             />
+          );
+
+          return (
+            <div className="flex flex-col items-center h-full w-full">
+              {actions && (
+                <div className="flex gap-4 text-5xl py-2 z-1000">
+                  <a onClick={handleFavouriteClick} aria-label="Favourite image" className="cursor-pointer">
+                    <i
+                      className={`bi ${
+                        currentImage.favorite
+                          ? "bi-heart-fill text-red-500"
+                          : "bi-heart text-white"
+                      }`}
+                    ></i>
+                  </a>
+                  <a
+                    onClick={handleDownload}
+                    title="Download"
+                    aria-label="Download image"
+                    className="cursor-pointer"
+                  >
+                    <i className="bi bi-box-arrow-down text-white"></i>
+                  </a>
+                </div>
+              )}
+              <div className="flex-1 flex items-center justify-center min-h-0 w-full">
+                {media}
+              </div>
+            </div>
           );
         },
         thumbnail: ({ slide, rect }) => 
@@ -188,29 +208,6 @@ export default function CustomLightbox({
             )}
             {(shopMode && currentImage.isPurchased) && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
-            )}
-            {actions && (
-              <div className="text-5xl flex gap-3 justify-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">
-                <a onClick={handleFavouriteClick} aria-label="Favourite image">
-                  <i
-                    className={`bi ${
-                      currentImage.favorite
-                        ? "bi-heart-fill text-danger"
-                        : "bi-heart text-white"
-                    }`}
-                  ></i>
-                </a>
-                <a
-                  onClick={handleDownload}
-                  title="Download"
-                  aria-label="Download image"
-                >
-                  <i className="bi bi-box-arrow-down text-white"></i>
-                </a>
-                {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
-                <i className="bi bi-arrow-up-right"></i>
-              </a>} */}
-              </div>
             )}
           </>
         ),

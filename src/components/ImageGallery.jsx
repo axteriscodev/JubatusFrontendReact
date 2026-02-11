@@ -1,4 +1,6 @@
 import styles from "./ImageGallery.module.css";
+import { Play } from "lucide-react";
+import reelIcon from "../assets/reel-icon.svg";
 import { useTranslations } from "../features/TranslationProvider";
 import { getEventContents } from "../utils/contents-utils";
 
@@ -35,6 +37,7 @@ export default function ImageGallery({
   photoItems = null,
   personalSlice = false,
   aspectRatio = "1:1",
+  isShop = false,
 }) {
   // Recupera i contenuti degli eventi personali dalle immagini
   const data = getEventContents(images);
@@ -84,6 +87,17 @@ export default function ImageGallery({
                     className={styles.galleryImage}
                   />
 
+                  {/* Badge tipo contenuto: icona play circolare per Reel (typeId 2), play per Clip (typeId 3) */}
+                  {(image.fileTypeId === 2 || image.fileTypeId === 3) && (
+                    <div className={styles.contentTypeBadge}>
+                      {image.fileTypeId === 2 ? (
+                        <img src={reelIcon} width={22} height={22} alt="reel" />
+                      ) : (
+                        <Play size={18} strokeWidth={1.5} fill="white" />
+                      )}
+                    </div>
+                  )}
+
                   {/* Filtro rosso se applyRedFilter è true e l'immagine non è acquistata */}
                   {applyRedFilter && image.isPurchased === false && (
                     <div
@@ -124,11 +138,11 @@ export default function ImageGallery({
                 )}
 
                 {/* Badge "Acquistato": visibile solo se l'immagine è stata acquistata */}
-                {/* {highLightPurchased && image.isPurchased &&
-                <div className={styles.purchased}>
-                  {t("GALLERY_PURCHASE")}
-                </div>
-                } */}
+                {isShop && highLightPurchased && image.isPurchased && (
+                  <div className={styles.purchased}>
+                    {t("GALLERY_PURCHASE")}
+                  </div>
+                )}
 
                 {/* Icona cuore: visibile solo se l'immagine è tra i preferiti */}
                 {highLightFavourite && image.favorite && (
