@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   addCompetition,
@@ -13,6 +13,7 @@ import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
 import { useCurrencies } from "./hooks/useCurrencies";
+import { useEventData } from "./hooks/useEventData";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -24,6 +25,8 @@ import { FormActions } from "./components/FormActions";
 import { ParticipantsUpload } from "./components/ParticipantsUpload";
 import { PartecipantsTable } from "./components/PartecipantsTable";
 import PendingPayments from "./components/PendingPayments";
+import LoadingState from "../../shared/components/ui/LoadingState";
+import Button from "../../shared/components/ui/Button";
 
 // Utilities
 import {
@@ -37,7 +40,9 @@ import {
 export default function CreateEvent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const receivedComp = useLocation().state;
+
+  // Fetch dei dati completi dell'evento (se in edit mode)
+  const { eventData, loading: eventLoading, error: eventError } = useEventData();
 
   // State per gestire le tab
   const [activeTab, setActiveTab] = useState("info");
@@ -49,11 +54,13 @@ export default function CreateEvent() {
     handleTitleChange,
     handleFileChange,
     updateField,
-  } = useEventForm(receivedComp);
+  } = useEventForm(eventData);
 
-  const priceListHandlers = usePriceLists(
-    receivedComp?.lists || getDefaultPriceLists(),
+  const initialPriceLists = useMemo(
+    () => eventData?.lists || getDefaultPriceLists(),
+    [eventData],
   );
+  const priceListHandlers = usePriceLists(initialPriceLists);
 
   const { tagList, loading: tagsLoading } = useTags();
   const { currencyList } = useCurrencies();
@@ -65,6 +72,29 @@ export default function CreateEvent() {
       document.body.classList.remove("admin");
     };
   }, []);
+
+  // Loading state durante il caricamento dell'evento
+  if (eventLoading) {
+    return (
+      <div className="container mx-auto px-4 text-left">
+        <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+        <LoadingState message="Caricamento evento..." />
+      </div>
+    );
+  }
+
+  // Error state se il caricamento fallisce
+  if (eventError) {
+    return (
+      <div className="container mx-auto px-4 text-left">
+        <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+        <p className="text-red-500">Errore nel caricamento dell'evento.</p>
+        <Button onClick={() => navigate("/admin")} variant="outline">
+          Torna alla lista
+        </Button>
+      </div>
+    );
+  }
 
   /**
    * Gestisce il submit del form
@@ -101,7 +131,7 @@ export default function CreateEvent() {
       "Sei sicuro di voler rimuovere l'evento?",
     );
     if (confirmDelete) {
-      dispatch(deleteCompetition(receivedComp));
+      dispatch(deleteCompetition(eventData));
       navigate("/admin");
     }
   };
@@ -176,7 +206,7 @@ export default function CreateEvent() {
               />
               <EventLogo
                 formData={formData}
-                receivedComp={receivedComp}
+                receivedComp={eventData}
                 onFileChange={handleFileChange}
               />
             </div>

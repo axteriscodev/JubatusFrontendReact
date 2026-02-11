@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { slugify } from "../../../utils/data-formatter";
 import { getInitialFormData } from "../utils/eventFormHelpers";
 
@@ -8,6 +8,12 @@ import { getInitialFormData } from "../utils/eventFormHelpers";
  */
 export function useEventForm(receivedComp) {
   const [formData, setFormData] = useState(getInitialFormData(receivedComp));
+
+  useEffect(() => {
+    if (receivedComp) {
+      setFormData(getInitialFormData(receivedComp));
+    }
+  }, [receivedComp]);
 
   /**
    * Gestisce il cambio di un campo generico del form

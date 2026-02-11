@@ -139,6 +139,11 @@ function App() {
             element: <CreateEvent />,
             loader: createEventLoader,
           },
+          {
+            path: "/admin/create-event/:eventId",
+            element: <CreateEvent />,
+            loader: createEventLoader,
+          },
         ],
       },
     ]);

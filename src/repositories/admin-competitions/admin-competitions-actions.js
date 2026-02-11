@@ -126,6 +126,38 @@ export const deleteCompetition = (competition) => {
 };
 
 /**
+ * Fetch di una singola competizione per ID
+ *
+ * @param {number} eventId - ID dell'evento
+ */
+export const fetchCompetitionById = (eventId) => {
+  return async () => {
+    const fetchData = async () => {
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/event/" + eventId,
+        method: "GET",
+        needAuth: true,
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore nel caricamento dell'evento");
+      }
+
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const eventData = await fetchData();
+      return { success: true, data: eventData.data || eventData };
+    } catch (error) {
+      console.log("Errore nel caricamento dell'evento");
+      return { success: false, data: null };
+    }
+  };
+};
+
+/**
  * Aggiunta di un listino prezzi per una competizione
  * @param {*} competition - competizione a cui aggiungere il listino
  * @param {*} priceList - listino da aggiungere

@@ -44,7 +44,7 @@ export default function AdminPanel() {
   const handleCreateCompetition = () => navigate("/admin/create-event");
 
   const handleEditCompetition = (competition) => {
-    navigate("/admin/create-event", { state: competition });
+    navigate(`/admin/create-event/${competition.id}`);
   };
 
   // const handleDeleteCompetition = (competition) => {
