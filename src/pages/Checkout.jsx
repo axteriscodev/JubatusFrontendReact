@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   EmbeddedCheckoutProvider,
@@ -6,10 +6,9 @@ import {
 } from "@stripe/react-stripe-js";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../repositories/cart/cart-slice";
-import { useNavigate } from "react-router-dom";
-import { isPhotoFullPackEligible } from "../utils/offers";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslations } from "../features/TranslationProvider";
-import { useLanguage } from "../features/LanguageContext";
+import ProgressBar from "../components/ProgressBar";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -17,76 +16,123 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
  * Pagina per il checkout
  */
 export default function Checkout() {
-  const cart = useSelector((state) => state.cart);
+  const location = useLocation();
+  const receivedData = location.state;
   const eventPreset = useSelector((state) => state.competition);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { currentLanguage } = useLanguage();
   const { t } = useTranslations();
 
-  const buttonHandle = (event) => {
+  const [checkoutData, setCheckoutData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const buttonHandle = () => {
     if (eventPreset.preOrder) navigate("/pre-order");
     else navigate("/image-shop/");
   };
 
-  const fetchClientSecret = useCallback(() => {
+  const checkoutResponse = useCallback(async () => {
     // Create a Checkout Session
-    return fetch(
+    const jsonBody = JSON.stringify({
+      orderId: receivedData.orderId,
+      paymentId: receivedData.paymentId,
+      clientUrl: import.meta.env.VITE_APP_DOMAIN,
+    });
+    const res = await fetch(
       import.meta.env.VITE_API_URL + "/shop/create-checkout-session",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          cart: {
-            userId: cart.userId,
-            eventId: cart.eventId,
-            searchId: cart.searchId,
-            allPhotos: cart.allPhotos,
-            video: cart.video,
-            amount: cart.totalPrice,
-            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
-              ? [
-                  ...cart.products.filter(
-                    (item) => item.fileTypeId === 1 && item.purchased !== true
-                  ),
-                  ...cart.items.filter(
-                    (item) => item.fileTypeId === 2 && item.purchased !== true
-                  ),
-                ]
-              : cart.items,
-          },
-          clientUrl: import.meta.env.VITE_APP_DOMAIN,
-          lang: currentLanguage.acronym
-        }),
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw Response(
-            JSON.stringify({ status: res.status, message: res.message })
-          );
+        body: jsonBody,
+      },
+    );
+    if (!res.ok) {
+      throw Response(
+        JSON.stringify({ status: res.status, message: res.message }),
+      );
+    }
+    const data = await res.json();
+    dispatch(cartActions.updateOrderId(data.data.orderId));
+    return {
+      clientSecret: data.data.clientSecret,
+      orderId: data.data.orderId,
+    };
+  }, [dispatch, receivedData]);
+
+  useEffect(() => {
+    const fetchCheckoutData = async () => {
+      try {
+        setIsLoading(true);
+
+        if (receivedData?.clientSecret && receivedData?.orderId) {
+          // Sessione già creata da TotalShopButton, usa i dati ricevuti
+          dispatch(cartActions.updateOrderId(receivedData.orderId));
+          setCheckoutData({
+            clientSecret: receivedData.clientSecret,
+            orderId: receivedData.orderId,
+          });
+        } else {
+          // Fallback: crea la sessione autonomamente (flusso PreOrder, retry, ecc.)
+          const data = await checkoutResponse();
+          setCheckoutData(data);
         }
 
-        return res.json();
-      })
-      .then((data) => {
-        dispatch(cartActions.updateOrderId(data.data.orderId));
-        return data.data.clientSecret;
-      });
+        setError(null);
+      } catch (err) {
+        console.error("Checkout error:", err);
+        setError(err.message || "Errore durante il checkout");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCheckoutData();
   }, []);
 
-  const options = { fetchClientSecret };
+  // Loading state
+  if (isLoading) {
+    return <ProgressBar />;
+  }
 
-  return (
-    <>
-      <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-        <EmbeddedCheckout />
-      </EmbeddedCheckoutProvider>
-      <button className="my-button w-full mt-10" onClick={buttonHandle}>
-        {t("CHECKOUT_BACK")}
-      </button>
-    </>
-  );
+  // Error state
+  if (error) {
+    return (
+      <>
+        <div className="alert alert-danger" role="alert">
+          <h3>{t("ERROR")}</h3>
+          <p>{error}</p>
+        </div>
+        <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
+          {t("CHECKOUT_BACK")}
+        </button>
+      </>
+    );
+  }
+
+  if (checkoutData) {
+    // Paid order - mostra Stripe checkout
+    if (checkoutData?.clientSecret) {
+      const options = {
+        clientSecret: checkoutData.clientSecret,
+      };
+
+      return (
+        <>
+          <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+            <EmbeddedCheckout />
+          </EmbeddedCheckoutProvider>
+          <button className="my-button w-full mt-10" onClick={buttonHandle}>
+            {t("CHECKOUT_BACK")}
+          </button>
+        </>
+      );
+    } else {
+      navigate("/pay-at-counter");
+    }
+  }
+
+  // Fallback
+  return null;
 }

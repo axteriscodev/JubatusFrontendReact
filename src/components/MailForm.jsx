@@ -12,6 +12,7 @@ export default function MailForm({
   submitHandle,
   showPrivacy = true,
   onErrors,
+  externalPayment = false,
 }) {
   const [isChecked, setIsChecked] = useState(false);
   const [emailValue, setEmailValue] = useState(defaultEmail || "");
@@ -137,7 +138,9 @@ export default function MailForm({
           })
         }
       >
-        {parse(t("SELFIE_NEXT"))}
+        {externalPayment
+          ? parse(t("EXTERNAL_PAYMENT_BUTTON"))
+          : parse(t("SELFIE_NEXT"))}
       </button>
     </div>
   );

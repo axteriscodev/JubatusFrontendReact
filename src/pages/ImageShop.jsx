@@ -134,6 +134,7 @@ export default function ImageShop() {
               onImageClick={handleImageClick}
               photoItems={photoItems}
               aspectRatio={eventPreset.aspectRatio}
+              isShop={true}
             />
             <TotalShopButton onButtonClick={handleButtonClick} />
           </>

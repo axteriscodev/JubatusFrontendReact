@@ -118,6 +118,7 @@ export const NormalizeContent = (item) => {
     favorite, //se il contenuto è tra i preferiti
     isVideo, // Identifica se il contenuto è un video
     isPurchased, //se il contenuto è già stato acquistato
-    urlOriginal: item.urlOriginal
+    urlOriginal: item.urlOriginal,
+    fileTypeId: item.fileTypeId
   };
 };

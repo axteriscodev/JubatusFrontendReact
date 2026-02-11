@@ -74,6 +74,7 @@ export const fetchContents = (receivedData) => {
  */
 export const fetchPriceList = (eventId) => {
   return async (dispatch) => {
+
     const currentLanguage = getPreferredLanguage();
 
     const response = await fetch(

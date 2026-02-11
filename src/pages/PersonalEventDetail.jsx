@@ -46,15 +46,15 @@ export default function PersonalEventDetail() {
 
         const eventsData = await response.json();
         console.log("Dati ricevuti:", eventsData); // Debug
-        if(eventsData.data.length > 0){
+        if (eventsData.data.length > 0) {
           const event = eventsData.data[0];
-        //setError(null);
-        setEventData(event);
-        dispatch(
-          personalActions.updatePurchased(
-            event.items.filter((item) => item.isPurchased) || []
-          )
-        );
+          //setError(null);
+          setEventData(event);
+          dispatch(
+            personalActions.updatePurchased(
+              event.items.filter((item) => item.isPurchased) || [],
+            ),
+          );
         }
       } catch (err) {
         console.error("Errore nel caricamento:", err);
@@ -79,11 +79,7 @@ export default function PersonalEventDetail() {
       return [];
     }
 
-    return (
-      eventData.items.filter(
-        (item) => item.isPurchased === false
-      ) || []
-    );
+    return eventData.items.filter((item) => item.isPurchased === false) || [];
   }, [eventData]);
 
   const handleLogout = () => {
@@ -106,7 +102,7 @@ export default function PersonalEventDetail() {
     startIndex = 0,
     select,
     actions,
-    personalSlice
+    personalSlice,
   ) => {
     setIndex(startIndex);
     setOpen(true);
@@ -179,6 +175,7 @@ export default function PersonalEventDetail() {
                 personalSlice={true}
                 onOpenLightbox={openLightbox}
                 aspectRatio={eventData?.aspectRatio}
+                isShop={false}
               />
             </div>
           </>

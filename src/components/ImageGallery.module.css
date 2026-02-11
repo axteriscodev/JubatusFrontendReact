@@ -111,3 +111,18 @@
   object-position: center;
   display: block;
 }
+.contentTypeBadge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    /* background-color: rgba(0, 0, 0, 0.55); */
+    color: white;
+    padding: 4px 6px;
+    border-radius: var(--border-radius);
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
