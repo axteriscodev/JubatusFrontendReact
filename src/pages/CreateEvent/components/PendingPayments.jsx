@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RefreshCw, Inbox, Search } from "lucide-react";
+import { RefreshCw, Inbox, Search, CheckCircle } from "lucide-react";
 import { apiRequest } from "../../../services/api-services";
 import Spinner from "../../../shared/components/ui/Spinner";
 import SearchBar from "../../../shared/components/ui/SearchBar";
@@ -7,25 +7,22 @@ import EmptyState from "../../../shared/components/ui/EmptyState";
 import LoadingState from "../../../shared/components/ui/LoadingState";
 import Alert from "../../../shared/components/ui/Alert";
 
-/**
- * Componente per visualizzare e gestire la lista dei partecipanti verificati
- */
-export function PartecipantsTable({ eventId }) {
-  const [emails, setEmails] = useState([]);
-  const [filteredEmails, setFilteredEmails] = useState([]);
+export default function PendingPayments({ eventId }) {
+  const [payments, setPayments] = useState([]);
+  const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [deleteInProgress, setDeleteInProgress] = useState(null);
+  const [markingPaid, setMarkingPaid] = useState(null);
 
-  // Fetch attendees from API
-  const fetchAttendees = async () => {
+  // Fetch pending payments from API
+  const fetchPendingPayments = async () => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/events/${eventId}/attendees`,
+        api: `${import.meta.env.VITE_API_URL}/events/${eventId}/pending-payments`,
         method: "GET",
         needAuth: true,
       });
@@ -34,11 +31,11 @@ export function PartecipantsTable({ eventId }) {
 
       if (!response.ok) {
         throw new Error(
-          responseData.message || "Errore durante il caricamento"
+          responseData.message || "Errore durante il caricamento",
         );
       }
 
-      setEmails(responseData.data.emails || []);
+      setPayments(responseData.data || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -46,39 +43,34 @@ export function PartecipantsTable({ eventId }) {
     }
   };
 
-  // Delete email handler
-  const handleDeleteEmail = async (email) => {
-    const confirmDelete = window.confirm(
-      `Sei sicuro di voler rimuovere "${email}" dalla lista partecipanti?`
+  // Mark as paid handler (placeholder — API endpoint verrà collegato in seguito)
+  const handleMarkPaid = async (payment) => {
+    const confirmPaid = window.confirm(
+      `Sei sicuro di voler segnare l'ordine "${payment.orderNumber}" come pagato?`,
     );
 
-    if (!confirmDelete) return;
+    if (!confirmPaid) return;
 
-    setDeleteInProgress(email);
+    setMarkingPaid(payment.id);
 
     try {
-      const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/events/${eventId}/attendees`,
-        method: "DELETE",
-        needAuth: true,
-        body: JSON.stringify({ email }),
-        contentType: "application/json",
-      });
+      // TODO: collegare endpoint API
+      // await apiRequest({
+      //   api: `${import.meta.env.VITE_API_URL}/events/${eventId}/pending-payments/${payment.id}/mark-paid`,
+      //   method: "POST",
+      //   needAuth: true,
+      // });
+      console.log("Segna come pagato:", payment);
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          responseData.message || "Errore durante l'eliminazione"
-        );
-      }
+      // Simula breve attesa per feedback visivo
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Remove from local state
-      setEmails((prev) => prev.filter((e) => e !== email));
+      setPayments((prev) => prev.filter((p) => p.id !== payment.id));
     } catch (err) {
       setError(err.message);
     } finally {
-      setDeleteInProgress(null);
+      setMarkingPaid(null);
     }
   };
 
@@ -89,25 +81,26 @@ export function PartecipantsTable({ eventId }) {
 
   // Refresh handler
   const handleRefresh = () => {
-    fetchAttendees();
+    fetchPendingPayments();
   };
 
-  // Filter emails based on search term
+  // Filter payments based on search term
   useEffect(() => {
     if (!searchTerm.trim()) {
-      setFilteredEmails(emails);
+      setFilteredPayments(payments);
     } else {
-      const filtered = emails.filter((email) =>
-        email.toLowerCase().includes(searchTerm.toLowerCase())
+      const term = searchTerm.toLowerCase();
+      const filtered = payments.filter((p) =>
+        p.orderNumber.toLowerCase().includes(term),
       );
-      setFilteredEmails(filtered);
+      setFilteredPayments(filtered);
     }
-  }, [emails, searchTerm]);
+  }, [payments, searchTerm]);
 
   // Initial load
   useEffect(() => {
     if (eventId) {
-      fetchAttendees();
+      fetchPendingPayments();
     }
   }, [eventId]);
 
@@ -117,9 +110,9 @@ export function PartecipantsTable({ eventId }) {
       <div className="mb-3">
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="text-xl font-bold">Lista partecipanti</h4>
+            <h4 className="text-xl font-bold">Pagamenti in sospeso</h4>
             <p className="text-gray-500 mb-0">
-              Elenco degli indirizzi email dei partecipanti verificati caricati
+              Ordini in attesa di conferma pagamento
             </p>
           </div>
           <button
@@ -147,13 +140,13 @@ export function PartecipantsTable({ eventId }) {
 
       {/* Search Section */}
       <SearchBar
-        placeholder="Cerca per email..."
+        placeholder="Cerca per numero ordine..."
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
         onClear={() => setSearchTerm("")}
-        filteredCount={filteredEmails.length}
-        totalCount={emails.length}
-        countLabel="partecipanti"
+        filteredCount={filteredPayments.length}
+        totalCount={payments.length}
+        countLabel="pagamenti"
       />
 
       {/* Error Alert */}
@@ -165,20 +158,20 @@ export function PartecipantsTable({ eventId }) {
 
       {/* Loading State */}
       {loading && !error && (
-        <LoadingState message="Caricamento partecipanti..." />
+        <LoadingState message="Caricamento pagamenti in sospeso..." />
       )}
 
       {/* Empty State */}
-      {!loading && !error && emails.length === 0 && (
+      {!loading && !error && payments.length === 0 && (
         <EmptyState
           icon={Inbox}
-          title="Nessun partecipante caricato"
-          subtitle="Carica un file Excel per visualizzare i partecipanti"
+          title="Nessun pagamento in sospeso"
+          subtitle="Tutti i pagamenti sono stati confermati"
         />
       )}
 
       {/* No Results State */}
-      {!loading && !error && emails.length > 0 && filteredEmails.length === 0 && (
+      {!loading && !error && payments.length > 0 && filteredPayments.length === 0 && (
         <EmptyState
           icon={Search}
           title={`Nessun risultato trovato per "${searchTerm}"`}
@@ -186,7 +179,7 @@ export function PartecipantsTable({ eventId }) {
       )}
 
       {/* Table with Data */}
-      {!loading && !error && filteredEmails.length > 0 && (
+      {!loading && !error && filteredPayments.length > 0 && (
         <div className="overflow-x-auto shadow-sm rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -195,42 +188,51 @@ export function PartecipantsTable({ eventId }) {
                   #
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Email
+                  Numero Ordine
                 </th>
-                {/* <th className="w-[100px] px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Importo
+                </th>
+                <th className="w-[140px] px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Azioni
-                </th> */}
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredEmails.map((email, index) => (
+              {filteredPayments.map((payment, index) => (
                 <tr
-                  key={email}
+                  key={payment.id}
                   className="hover:bg-gray-50 transition-colors even:bg-gray-50"
                 >
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {index + 1}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {email}
+                    {payment.orderNumber}
                   </td>
-                  {/* <td className="px-4 py-3 whitespace-nowrap text-center">
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    &euro;{payment.amount.toFixed(2)}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-center">
                     <button
                       type="button"
-                      onClick={() => handleDeleteEmail(email)}
-                      disabled={deleteInProgress === email}
-                      title="Elimina partecipante"
-                      className="p-1.5 border border-red-500 text-red-500 rounded-md
-                                 hover:bg-red-500 hover:text-white transition-colors
+                      onClick={() => handleMarkPaid(payment)}
+                      disabled={markingPaid === payment.id}
+                      title="Segna come pagato"
+                      className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
+                                 hover:bg-green-600 hover:text-white transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {deleteInProgress === email ? (
+                      {markingPaid === payment.id ? (
                         <Spinner size="sm" />
                       ) : (
-                        <i className="bi bi-trash"></i>
+                        <>
+                          <CheckCircle size={14} className="inline mr-1" />
+                          Segna pagato
+                        </>
                       )}
                     </button>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>

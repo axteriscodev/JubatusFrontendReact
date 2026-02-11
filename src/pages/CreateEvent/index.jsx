@@ -23,6 +23,7 @@ import { PriceListSection } from "./components/PriceListSection";
 import { FormActions } from "./components/FormActions";
 import { ParticipantsUpload } from "./components/ParticipantsUpload";
 import { PartecipantsTable } from "./components/PartecipantsTable";
+import PendingPayments from "./components/PendingPayments";
 
 // Utilities
 import {
@@ -120,6 +121,9 @@ export default function CreateEvent() {
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants", label: "Partecipanti" }]
       : []),
+    ...(formData.id
+      ? [{ key: "orders", label: "Pagamenti in sospeso" }]
+      : []),
   ];
 
   return (
@@ -200,6 +204,13 @@ export default function CreateEvent() {
                 <PartecipantsTable eventId={formData.id} />
               </div>
             )}
+
+          {/* Tab 4: Pagamenti in sospeso (condizionale) */}
+          {activeTab === "orders" && formData.id && (
+            <div>
+              <PendingPayments eventId={formData.id} />
+            </div>
+          )}
         </div>
 
         {/* Azioni sempre visibili fuori dalle tab */}
