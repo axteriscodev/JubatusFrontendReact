@@ -58,7 +58,11 @@ export const addCompetition = (competition) => {
 
     try {
       const responseData = await sendRequest();
-      dispatch(adminCompetitionsActions.addCompetition(responseData.event || responseData));
+      dispatch(
+        adminCompetitionsActions.addCompetition(
+          responseData.event || responseData,
+        ),
+      );
       return { success: true, data: responseData.event || responseData };
     } catch (error) {
       console.log("Qualcosa è andato storto");
@@ -134,7 +138,7 @@ export const fetchCompetitionById = (eventId) => {
   return async () => {
     const fetchData = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/event/" + eventId,
+        api: import.meta.env.VITE_API_URL + "/events/event/" + eventId,
         method: "GET",
         needAuth: true,
       });
@@ -190,5 +194,3 @@ export const editListForCompetition = (competition, priceList) => {
 export const deleteListForCompetition = (competition, priceList) => {
   return async (dispatch) => {};
 };
-
-

@@ -129,10 +129,11 @@ function App() {
           },
           { path: "/processing-photos", element: <ProcessingPhotos /> },
           { path: "/content-error", element: <ContentError /> },
+
           {
-            path: "/admin",
-            element: <AdminPanel />,
-            loader: adminLoader,
+            path: "/admin/create-event/:eventId",
+            element: <CreateEvent />,
+            loader: createEventLoader,
           },
           {
             path: "/admin/create-event",
@@ -140,9 +141,9 @@ function App() {
             loader: createEventLoader,
           },
           {
-            path: "/admin/create-event/:eventId",
-            element: <CreateEvent />,
-            loader: createEventLoader,
+            path: "/admin",
+            element: <AdminPanel />,
+            loader: adminLoader,
           },
         ],
       },

@@ -1,4 +1,4 @@
-import { LogOut, Pencil, ExternalLink, Plus } from "lucide-react";
+import { LogOut, Pencil, ExternalLink, Plus, Settings } from "lucide-react";
 import Button from "../shared/components/ui/Button";
 import ButtonGroup from "../shared/components/ui/ButtonGroup";
 import Table from "../shared/components/ui/Table";
@@ -88,11 +88,11 @@ export default function AdminPanel() {
               <td className="text-right">
                 <ButtonGroup>
                   <Button
-                    variant="secondary"
+                    variant="link"
                     onClick={() => handleEditCompetition(competition)}
                     size="sm"
                   >
-                    <Pencil size={16} />
+                    <Settings size={16} />
                   </Button>
                   {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
               <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
