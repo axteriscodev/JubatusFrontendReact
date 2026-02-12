@@ -42,7 +42,7 @@ export default function CreateEvent() {
   const dispatch = useDispatch();
 
   // Fetch dei dati completi dell'evento (se in edit mode)
-  const { eventData, loading: eventLoading, error: eventError } = useEventData();
+  const { eventData, externalPayment, loading: eventLoading, error: eventError } = useEventData();
 
   // State per gestire le tab
   const [activeTab, setActiveTab] = useState("info");
@@ -238,7 +238,7 @@ export default function CreateEvent() {
           {/* Tab 4: Pagamenti in sospeso (condizionale) */}
           {activeTab === "orders" && formData.id && (
             <div>
-              <PendingPayments eventId={formData.id} />
+              <PendingPayments eventId={formData.id} initialPayments={externalPayment} />
             </div>
           )}
         </div>

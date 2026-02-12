@@ -7,15 +7,22 @@ import EmptyState from "../../../shared/components/ui/EmptyState";
 import LoadingState from "../../../shared/components/ui/LoadingState";
 import Alert from "../../../shared/components/ui/Alert";
 
-export default function PendingPayments({ eventId }) {
-  const [payments, setPayments] = useState([]);
+export default function PendingPayments({ eventId, initialPayments }) {
+  const [payments, setPayments] = useState(initialPayments || []);
   const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [markingPaid, setMarkingPaid] = useState(null);
 
-  // Fetch pending payments from API
+  // Aggiorna lo state quando arrivano i dati iniziali dalla prop
+  useEffect(() => {
+    if (initialPayments) {
+      setPayments(initialPayments);
+    }
+  }, [initialPayments]);
+
+  // Fetch pending payments from API (usato dal pulsante Aggiorna)
   const fetchPendingPayments = async () => {
     setLoading(true);
     setError(null);
@@ -46,17 +53,17 @@ export default function PendingPayments({ eventId }) {
   // Mark as paid handler (placeholder — API endpoint verrà collegato in seguito)
   const handleMarkPaid = async (payment) => {
     const confirmPaid = window.confirm(
-      `Sei sicuro di voler segnare l'ordine "${payment.orderNumber}" come pagato?`,
+      `Sei sicuro di voler segnare l'ordine "${payment.idOrdine}" come pagato?`,
     );
 
     if (!confirmPaid) return;
 
-    setMarkingPaid(payment.id);
+    setMarkingPaid(payment.idOrdine);
 
     try {
       // TODO: collegare endpoint API
       // await apiRequest({
-      //   api: `${import.meta.env.VITE_API_URL}/events/${eventId}/pending-payments/${payment.id}/mark-paid`,
+      //   api: `${import.meta.env.VITE_API_URL}/events/${eventId}/pending-payments/${payment.idOrdine}/mark-paid`,
       //   method: "POST",
       //   needAuth: true,
       // });
@@ -66,7 +73,7 @@ export default function PendingPayments({ eventId }) {
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Remove from local state
-      setPayments((prev) => prev.filter((p) => p.id !== payment.id));
+      setPayments((prev) => prev.filter((p) => p.idOrdine !== payment.idOrdine));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -90,19 +97,23 @@ export default function PendingPayments({ eventId }) {
       setFilteredPayments(payments);
     } else {
       const term = searchTerm.toLowerCase();
-      const filtered = payments.filter((p) =>
-        p.orderNumber.toLowerCase().includes(term),
+      const filtered = payments.filter(
+        (p) =>
+          String(p.idOrdine).includes(term) ||
+          (p.email && p.email.toLowerCase().includes(term)),
       );
       setFilteredPayments(filtered);
     }
   }, [payments, searchTerm]);
 
-  // Initial load
-  useEffect(() => {
-    if (eventId) {
-      fetchPendingPayments();
-    }
-  }, [eventId]);
+  // Formatta i conteggi fileType in modo compatto
+  const formatFileTypeCounts = (fileTypeCounts) => {
+    if (!fileTypeCounts || fileTypeCounts.length === 0) return "—";
+    return fileTypeCounts
+      .filter((ft) => ft.count > 0)
+      .map((ft) => `${ft.count} ${ft.fileTypeName}`)
+      .join(", ") || "—";
+  };
 
   return (
     <div className="container mx-auto px-4">
@@ -140,7 +151,7 @@ export default function PendingPayments({ eventId }) {
 
       {/* Search Section */}
       <SearchBar
-        placeholder="Cerca per numero ordine..."
+        placeholder="Cerca per ordine o email..."
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
         onClear={() => setSearchTerm("")}
@@ -188,10 +199,16 @@ export default function PendingPayments({ eventId }) {
                   #
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Numero Ordine
+                  Ordine
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Email
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Importo
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Contenuti
                 </th>
                 <th className="w-[140px] px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Azioni
@@ -201,29 +218,35 @@ export default function PendingPayments({ eventId }) {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredPayments.map((payment, index) => (
                 <tr
-                  key={payment.id}
+                  key={payment.idOrdine}
                   className="hover:bg-gray-50 transition-colors even:bg-gray-50"
                 >
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {index + 1}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {payment.orderNumber}
+                    {payment.idOrdine}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    &euro;{payment.amount.toFixed(2)}
+                    {payment.email || "—"}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {payment.currency || "€"}{payment.amount?.toFixed(2) ?? "—"}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {formatFileTypeCounts(payment.fileTypeCounts)}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-center">
                     <button
                       type="button"
                       onClick={() => handleMarkPaid(payment)}
-                      disabled={markingPaid === payment.id}
+                      disabled={markingPaid === payment.idOrdine}
                       title="Segna come pagato"
                       className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
                                  hover:bg-green-600 hover:text-white transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {markingPaid === payment.id ? (
+                      {markingPaid === payment.idOrdine ? (
                         <Spinner size="sm" />
                       ) : (
                         <>

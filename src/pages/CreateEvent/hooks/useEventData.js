@@ -12,6 +12,7 @@ export function useEventData() {
   const { eventId } = useParams();
   const dispatch = useDispatch();
   const [eventData, setEventData] = useState(null);
+  const [externalPayment, setExternalPayment] = useState(null);
   const [loading, setLoading] = useState(!!eventId);
   const [error, setError] = useState(null);
 
@@ -27,7 +28,8 @@ export function useEventData() {
         const result = await dispatch(fetchCompetitionById(eventId));
 
         if (result.success) {
-          setEventData(result.data);
+          setEventData(result.data.eventData);
+          setExternalPayment(result.data.externalPayment);
           setError(null);
         } else {
           throw new Error("Errore nel caricamento dell'evento");
@@ -44,5 +46,5 @@ export function useEventData() {
     loadEvent();
   }, [eventId, dispatch]);
 
-  return { eventData, loading, error };
+  return { eventData, externalPayment, loading, error };
 }

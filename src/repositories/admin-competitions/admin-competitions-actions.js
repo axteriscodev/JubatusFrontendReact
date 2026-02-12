@@ -148,8 +148,15 @@ export const fetchCompetitionById = (eventId) => {
     };
 
     try {
-      const eventData = await fetchData();
-      return { success: true, data: eventData.data || eventData };
+      const responseData = await fetchData();
+      const data = responseData.data || responseData;
+      return {
+        success: true,
+        data: {
+          eventData: data.eventData || null,
+          externalPayment: data.externalPayment ?? null,
+        },
+      };
     } catch (error) {
       console.log("Errore nel caricamento dell'evento");
       return { success: false, data: null };
