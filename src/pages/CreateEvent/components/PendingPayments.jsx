@@ -60,12 +60,11 @@ export default function PendingPayments({ eventId, initialPayments }) {
     setMarkingPaid(payment.idOrdine);
 
     try {
-      // TODO: collegare endpoint API
-      // await apiRequest({
-      //   api: `${import.meta.env.VITE_API_URL}/events/${eventId}/pending-payments/${payment.idOrdine}/mark-paid`,
-      //   method: "POST",
-      //   needAuth: true,
-      // });
+      await apiRequest({
+        api: `${import.meta.env.VITE_API_URL}/orders/${payment.idOrdine}/confirm-payment`,
+        method: "PUT",
+        needAuth: true,
+      });
       console.log("Segna come pagato:", payment);
 
       // Simula breve attesa per feedback visivo
