@@ -210,7 +210,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Contenuti
                 </th>
-                <th className="w-[140px] px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="w-35 px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
                   Azioni
                 </th>
               </tr>
