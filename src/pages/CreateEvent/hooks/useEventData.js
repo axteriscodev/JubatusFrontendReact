@@ -29,7 +29,7 @@ export function useEventData() {
 
         if (result.success) {
           setEventData(result.data.eventData);
-          setExternalPayment(result.data.externalPayment);
+          setExternalPayment(result.data.externalPayment ?? null);
           setError(null);
         } else {
           throw new Error("Errore nel caricamento dell'evento");
@@ -46,5 +46,5 @@ export function useEventData() {
     loadEvent();
   }, [eventId, dispatch]);
 
-  return { eventData, externalPayment, loading, error };
+  return { eventData, externalPayment, loading, error, eventId };
 }

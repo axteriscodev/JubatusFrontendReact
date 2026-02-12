@@ -42,7 +42,10 @@ export default function CreateEvent() {
   const dispatch = useDispatch();
 
   // Fetch dei dati completi dell'evento (se in edit mode)
-  const { eventData, externalPayment, loading: eventLoading, error: eventError } = useEventData();
+  const { eventData, externalPayment, loading: eventLoading, error: eventError, eventId } = useEventData();
+
+  // Se siamo in edit mode ma eventData è null (e il caricamento è finito), l'utente non ha permessi di modifica
+  const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
 
   // State per gestire le tab
   const [activeTab, setActiveTab] = useState("info");
@@ -64,6 +67,13 @@ export default function CreateEvent() {
 
   const { tagList, loading: tagsLoading } = useTags();
   const { currencyList } = useCurrencies();
+
+  // Se readOnly, forza la tab su "orders"
+  useEffect(() => {
+    if (readOnly) {
+      setActiveTab("orders");
+    }
+  }, [readOnly]);
 
   // Effetto per aggiungere/rimuovere classe admin al body
   useEffect(() => {
@@ -145,13 +155,13 @@ export default function CreateEvent() {
 
   // Definizione delle tab
   const tabs = [
-    { key: "info", label: "Info evento" },
-    { key: "priceLists", label: "Listini prezzi" },
+    ...(!readOnly ? [{ key: "info", label: "Info evento" }] : []),
+    ...(!readOnly ? [{ key: "priceLists", label: "Listini prezzi" }] : []),
     // Tab partecipanti condizionale
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants", label: "Partecipanti" }]
       : []),
-    ...(formData.id
+    ...(externalPayment !== null && (formData.id || readOnly)
       ? [{ key: "orders", label: "Pagamenti in sospeso" }]
       : []),
   ];
@@ -236,15 +246,16 @@ export default function CreateEvent() {
             )}
 
           {/* Tab 4: Pagamenti in sospeso (condizionale) */}
-          {activeTab === "orders" && formData.id && (
+          {activeTab === "orders" && (formData.id || readOnly) && (
             <div>
-              <PendingPayments eventId={formData.id} initialPayments={externalPayment} />
+              <PendingPayments eventId={formData.id || eventId} initialPayments={externalPayment} />
             </div>
           )}
         </div>
 
         {/* Azioni sempre visibili fuori dalle tab */}
         <FormActions
+          readOnly={readOnly}
           onSubmit={handleSubmit}
           onDelete={handleDelete}
           onCancel={handleReturnToList}
