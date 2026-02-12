@@ -61,14 +61,10 @@ export default function PendingPayments({ eventId, initialPayments }) {
 
     try {
       await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/orders/${payment.idOrdine}/confirm-payment`,
+        api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/confirm-payment`,
         method: "PUT",
         needAuth: true,
       });
-      console.log("Segna come pagato:", payment);
-
-      // Simula breve attesa per feedback visivo
-      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Remove from local state
       setPayments((prev) =>
