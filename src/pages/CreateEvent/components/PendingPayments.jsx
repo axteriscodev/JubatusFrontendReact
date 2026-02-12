@@ -6,6 +6,7 @@ import SearchBar from "../../../shared/components/ui/SearchBar";
 import EmptyState from "../../../shared/components/ui/EmptyState";
 import LoadingState from "../../../shared/components/ui/LoadingState";
 import Alert from "../../../shared/components/ui/Alert";
+import Modal from "../../../shared/components/ui/Modal";
 
 export default function PendingPayments({ eventId, initialPayments }) {
   const [payments, setPayments] = useState(initialPayments || []);
@@ -14,6 +15,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [markingPaid, setMarkingPaid] = useState(null);
+  const [confirmPayment, setConfirmPayment] = useState(null);
 
   // Aggiorna lo state quando arrivano i dati iniziali dalla prop
   useEffect(() => {
@@ -50,14 +52,11 @@ export default function PendingPayments({ eventId, initialPayments }) {
     }
   };
 
-  // Mark as paid handler (placeholder — API endpoint verrà collegato in seguito)
-  const handleMarkPaid = async (payment) => {
-    const confirmPaid = window.confirm(
-      `Sei sicuro di voler segnare l'ordine "${payment.idOrdine}" come pagato?`,
-    );
+  // Conferma mark-as-paid usando i dati dal modal
+  const confirmMarkPaid = async () => {
+    if (!confirmPayment) return;
 
-    if (!confirmPaid) return;
-
+    const payment = confirmPayment;
     setMarkingPaid(payment.idOrdine);
 
     try {
@@ -73,7 +72,10 @@ export default function PendingPayments({ eventId, initialPayments }) {
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Remove from local state
-      setPayments((prev) => prev.filter((p) => p.idOrdine !== payment.idOrdine));
+      setPayments((prev) =>
+        prev.filter((p) => p.idOrdine !== payment.idOrdine),
+      );
+      setConfirmPayment(null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -109,10 +111,12 @@ export default function PendingPayments({ eventId, initialPayments }) {
   // Formatta i conteggi fileType in modo compatto
   const formatFileTypeCounts = (fileTypeCounts) => {
     if (!fileTypeCounts || fileTypeCounts.length === 0) return "—";
-    return fileTypeCounts
-      .filter((ft) => ft.count > 0)
-      .map((ft) => `${ft.count} ${ft.fileTypeName}`)
-      .join(", ") || "—";
+    return (
+      fileTypeCounts
+        .filter((ft) => ft.count > 0)
+        .map((ft) => `${ft.count} ${ft.fileTypeName}`)
+        .join(", ") || "—"
+    );
   };
 
   return (
@@ -182,12 +186,15 @@ export default function PendingPayments({ eventId, initialPayments }) {
       )}
 
       {/* No Results State */}
-      {!loading && !error && payments.length > 0 && filteredPayments.length === 0 && (
-        <EmptyState
-          icon={Search}
-          title={`Nessun risultato trovato per "${searchTerm}"`}
-        />
-      )}
+      {!loading &&
+        !error &&
+        payments.length > 0 &&
+        filteredPayments.length === 0 && (
+          <EmptyState
+            icon={Search}
+            title={`Nessun risultato trovato per "${searchTerm}"`}
+          />
+        )}
 
       {/* Table with Data */}
       {!loading && !error && filteredPayments.length > 0 && (
@@ -195,22 +202,22 @@ export default function PendingPayments({ eventId, initialPayments }) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="w-15 px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="w-15 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   #
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold  uppercase tracking-wider">
                   Ordine
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold  uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Importo
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Contenuti
                 </th>
-                <th className="w-35 px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th className="w-35 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">
                   Azioni
                 </th>
               </tr>
@@ -231,7 +238,8 @@ export default function PendingPayments({ eventId, initialPayments }) {
                     {payment.email || "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {payment.currency || "€"}{payment.amount?.toFixed(2) ?? "—"}
+                    {payment.currency?.symbol || payment.currency || "€"}
+                    {payment.amount?.toFixed(2) ?? "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {formatFileTypeCounts(payment.fileTypeCounts)}
@@ -239,7 +247,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
                   <td className="px-4 py-3 whitespace-nowrap text-center">
                     <button
                       type="button"
-                      onClick={() => handleMarkPaid(payment)}
+                      onClick={() => setConfirmPayment(payment)}
                       disabled={markingPaid === payment.idOrdine}
                       title="Segna come pagato"
                       className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
@@ -262,6 +270,78 @@ export default function PendingPayments({ eventId, initialPayments }) {
           </table>
         </div>
       )}
+      {/* Confirm Payment Modal */}
+      <Modal
+        show={!!confirmPayment}
+        onHide={() => setConfirmPayment(null)}
+        centered
+        size="sm"
+      >
+        <Modal.Header closeButton onHide={() => setConfirmPayment(null)}>
+          <Modal.Title>Conferma pagamento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {confirmPayment && (
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600">Ordine</span>
+                <span className="text-gray-900">{confirmPayment.idOrdine}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600">Email</span>
+                <span className="text-gray-900">
+                  {confirmPayment.email || "—"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600">Importo</span>
+                <span className="text-gray-900">
+                  {confirmPayment.currency?.symbol ||
+                    confirmPayment.currency ||
+                    "€"}
+                  {confirmPayment.amount?.toFixed(2) ?? "—"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600">Contenuti</span>
+                <span className="text-gray-900">
+                  {formatFileTypeCounts(confirmPayment.fileTypeCounts)}
+                </span>
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            onClick={() => setConfirmPayment(null)}
+            className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md
+                       hover:bg-gray-100 transition-colors"
+          >
+            Annulla
+          </button>
+          <button
+            type="button"
+            onClick={confirmMarkPaid}
+            disabled={markingPaid === confirmPayment?.idOrdine}
+            className="px-4 py-2 text-sm bg-green-600 text-white rounded-md
+                       hover:bg-green-700 transition-colors
+                       disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {markingPaid === confirmPayment?.idOrdine ? (
+              <>
+                <Spinner size="sm" className="inline mr-1" />
+                Conferma...
+              </>
+            ) : (
+              <>
+                <CheckCircle size={14} className="inline mr-1" />
+                Conferma
+              </>
+            )}
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
