@@ -198,10 +198,10 @@ export default function PreOrder() {
               <div className="d-flex justify-content-between align-items-center">
                 <div>
                   <div className="text-22">
-                    {list.itemsLanguages?.[0]?.title}
+                    {parse(list.itemsLanguages?.[0]?.title)}
                   </div>
                   <span className="text-13 opacity">
-                    {list.itemsLanguages?.[0]?.subTitle}
+                    {parse(list.itemsLanguages?.[0]?.subTitle)}
                   </span>
                 </div>
                 <div className="text-end lh-1">
