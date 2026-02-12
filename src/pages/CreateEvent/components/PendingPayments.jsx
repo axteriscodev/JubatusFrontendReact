@@ -1,37 +1,66 @@
 import { useState, useEffect } from "react";
-import { RefreshCw, Inbox, Search, CheckCircle } from "lucide-react";
+import { RefreshCw, Inbox, CheckCircle } from "lucide-react";
 import { apiRequest } from "../../../services/api-services";
 import Spinner from "../../../shared/components/ui/Spinner";
-import SearchBar from "../../../shared/components/ui/SearchBar";
 import EmptyState from "../../../shared/components/ui/EmptyState";
 import LoadingState from "../../../shared/components/ui/LoadingState";
 import Alert from "../../../shared/components/ui/Alert";
 import Modal from "../../../shared/components/ui/Modal";
+import Pagination from "../../../shared/components/ui/Pagination";
 
 export default function PendingPayments({ eventId, initialPayments }) {
-  const [payments, setPayments] = useState(initialPayments || []);
-  const [filteredPayments, setFilteredPayments] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [payments, setPayments] = useState(initialPayments?.data || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [markingPaid, setMarkingPaid] = useState(null);
   const [confirmPayment, setConfirmPayment] = useState(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(
+    initialPayments?.pagination?.page || 1,
+  );
+  const [pageSize, setPageSize] = useState(
+    initialPayments?.pagination?.limit || 10,
+  );
+  const [totalPages, setTotalPages] = useState(
+    initialPayments?.pagination?.totalPages || 1,
+  );
+  const [totalItems, setTotalItems] = useState(
+    initialPayments?.pagination?.total || 0,
+  );
+
+  // Filter state
+  const [filterEmail, setFilterEmail] = useState("");
+  const [filterAmount, setFilterAmount] = useState("");
+
   // Aggiorna lo state quando arrivano i dati iniziali dalla prop
   useEffect(() => {
     if (initialPayments) {
-      setPayments(initialPayments);
+      setPayments(initialPayments.data || []);
+      setTotalPages(initialPayments.pagination?.totalPages || 1);
+      setTotalItems(initialPayments.pagination?.total || 0);
+      setCurrentPage(initialPayments.pagination?.page || 1);
+      setPageSize(initialPayments.pagination?.limit || 10);
     }
   }, [initialPayments]);
 
-  // Fetch pending payments from API (usato dal pulsante Aggiorna)
-  const fetchPendingPayments = async () => {
+  // Fetch pending payments from API con supporto filtri e paginazione
+  const fetchPendingPayments = async (
+    page = currentPage,
+    email = filterEmail,
+    amount = filterAmount,
+    limit = pageSize,
+  ) => {
     setLoading(true);
     setError(null);
 
     try {
+      const params = new URLSearchParams({ page, limit });
+      if (email) params.append("email", email);
+      if (amount !== "") params.append("amount", amount);
+
       const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/events/${eventId}/pending-payments`,
+        api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/payments?${params}`,
         method: "GET",
         needAuth: true,
       });
@@ -39,12 +68,15 @@ export default function PendingPayments({ eventId, initialPayments }) {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          responseData.message || "Errore durante il caricamento",
-        );
+        throw new Error(responseData.message || "Errore durante il caricamento");
       }
 
-      setPayments(responseData.data || []);
+      const paginatedData = responseData.data;
+      setPayments(paginatedData.data || []);
+      setTotalPages(paginatedData.pagination?.totalPages || 1);
+      setTotalItems(paginatedData.pagination?.total || 0);
+      setCurrentPage(paginatedData.pagination?.page || page);
+      setPageSize(paginatedData.pagination?.limit || limit);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -70,6 +102,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
       setPayments((prev) =>
         prev.filter((p) => p.idOrdine !== payment.idOrdine),
       );
+      setTotalItems((prev) => Math.max(0, prev - 1));
       setConfirmPayment(null);
     } catch (err) {
       setError(err.message);
@@ -78,30 +111,36 @@ export default function PendingPayments({ eventId, initialPayments }) {
     }
   };
 
-  // Search handler
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
+  // Filter handlers
+  const handleApplyFilters = () => {
+    setCurrentPage(1);
+    fetchPendingPayments(1, filterEmail, filterAmount, pageSize);
+  };
+
+  const handleResetFilters = () => {
+    setFilterEmail("");
+    setFilterAmount("");
+    setCurrentPage(1);
+    fetchPendingPayments(1, "", "", pageSize);
+  };
+
+  // Pagination handler
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    fetchPendingPayments(newPage, filterEmail, filterAmount, pageSize);
+  };
+
+  // Page size handler
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+    fetchPendingPayments(1, filterEmail, filterAmount, newSize);
   };
 
   // Refresh handler
   const handleRefresh = () => {
-    fetchPendingPayments();
+    fetchPendingPayments(currentPage, filterEmail, filterAmount, pageSize);
   };
-
-  // Filter payments based on search term
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredPayments(payments);
-    } else {
-      const term = searchTerm.toLowerCase();
-      const filtered = payments.filter(
-        (p) =>
-          String(p.idOrdine).includes(term) ||
-          (p.email && p.email.toLowerCase().includes(term)),
-      );
-      setFilteredPayments(filtered);
-    }
-  }, [payments, searchTerm]);
 
   // Formatta i conteggi fileType in modo compatto
   const formatFileTypeCounts = (fileTypeCounts) => {
@@ -148,16 +187,66 @@ export default function PendingPayments({ eventId, initialPayments }) {
         </div>
       </div>
 
-      {/* Search Section */}
-      <SearchBar
-        placeholder="Cerca per ordine o email..."
-        searchTerm={searchTerm}
-        onSearchChange={handleSearchChange}
-        onClear={() => setSearchTerm("")}
-        filteredCount={filteredPayments.length}
-        totalCount={payments.length}
-        countLabel="pagamenti"
-      />
+      {/* Filter Section */}
+      <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex flex-col sm:flex-row gap-3 items-end">
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Email
+            </label>
+            <input
+              type="text"
+              value={filterEmail}
+              onChange={(e) => setFilterEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
+              placeholder="Filtra per email"
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Importo
+            </label>
+            <input
+              type="number"
+              value={filterAmount}
+              onChange={(e) => setFilterAmount(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
+              placeholder="Filtra per importo esatto"
+              min="0"
+              step="0.01"
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleApplyFilters}
+              disabled={loading}
+              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md
+                         hover:bg-blue-700 transition-colors
+                         disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Applica
+            </button>
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              disabled={loading}
+              className="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md
+                         hover:bg-gray-100 transition-colors
+                         disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">
+          Totale: <span className="font-semibold">{totalItems}</span> pagamenti
+        </p>
+      </div>
 
       {/* Error Alert */}
       {error && (
@@ -180,19 +269,8 @@ export default function PendingPayments({ eventId, initialPayments }) {
         />
       )}
 
-      {/* No Results State */}
-      {!loading &&
-        !error &&
-        payments.length > 0 &&
-        filteredPayments.length === 0 && (
-          <EmptyState
-            icon={Search}
-            title={`Nessun risultato trovato per "${searchTerm}"`}
-          />
-        )}
-
       {/* Table with Data */}
-      {!loading && !error && filteredPayments.length > 0 && (
+      {!loading && !error && payments.length > 0 && (
         <div className="overflow-x-auto shadow-sm rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -218,13 +296,13 @@ export default function PendingPayments({ eventId, initialPayments }) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredPayments.map((payment, index) => (
+              {payments.map((payment, index) => (
                 <tr
                   key={payment.idOrdine}
                   className="hover:bg-gray-50 transition-colors even:bg-gray-50"
                 >
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {index + 1}
+                    {(currentPage - 1) * pageSize + index + 1}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {payment.idOrdine}
@@ -265,6 +343,36 @@ export default function PendingPayments({ eventId, initialPayments }) {
           </table>
         </div>
       )}
+
+      {/* Pagination Footer */}
+      {!loading && !error && payments.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-3">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>Righe per pagina:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              disabled={loading}
+              className="px-2 py-1 border border-gray-300 rounded-md text-sm
+                         focus:outline-none focus:ring-2 focus:ring-blue-500
+                         disabled:opacity-50"
+            >
+              {[5, 10, 25, 50].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            disabled={loading}
+          />
+        </div>
+      )}
+
       {/* Confirm Payment Modal */}
       <Modal
         show={!!confirmPayment}
