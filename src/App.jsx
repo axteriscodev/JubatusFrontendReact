@@ -131,7 +131,7 @@ function App() {
           { path: "/content-error", element: <ContentError /> },
 
           {
-            path: "/admin/create-event/:eventId",
+            path: "/admin/event/:eventId",
             element: <CreateEvent />,
             loader: createEventLoader,
           },

@@ -45,7 +45,13 @@ export default function CreateEvent() {
   const dispatch = useDispatch();
 
   // Fetch dei dati completi dell'evento (se in edit mode)
-  const { eventData, externalPayment, loading: eventLoading, error: eventError, eventId } = useEventData();
+  const {
+    eventData,
+    externalPayment,
+    loading: eventLoading,
+    error: eventError,
+    eventId,
+  } = useEventData();
 
   // Se siamo in edit mode ma eventData è null (e il caricamento è finito), l'utente non ha permessi di modifica
   const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
@@ -54,13 +60,8 @@ export default function CreateEvent() {
   const [activeTab, setActiveTab] = useState("info");
 
   // Custom hooks per gestire lo stato
-  const {
-    formData,
-    handleInputChange,
-    handleTitleChange,
-    handleFileChange,
-    updateField,
-  } = useEventForm(eventData);
+  const { formData, handleInputChange, handleTitleChange, handleFileChange } =
+    useEventForm(eventData);
 
   const initialPriceLists = useMemo(
     () => eventData?.lists || getDefaultPriceLists(),
@@ -124,8 +125,11 @@ export default function CreateEvent() {
 
     if (result.success) {
       successToast("Info evento salvate con successo!");
-      if (!submitData.id && result.data?.id) {
-        updateField("id", result.data.id);
+      console.log("[CreateEvent] result dopo creazione:", result);
+      if (!submitData.id && result.data?.data.id) {
+        navigate(`/admin/event/${result.data.data.id}`, {
+          replace: true,
+        });
       }
     } else {
       errorToast("Si è verificato un errore durante il salvataggio");
@@ -168,7 +172,9 @@ export default function CreateEvent() {
     if (allSuccess) {
       successToast("Listini salvati con successo!");
     } else {
-      errorToast("Si è verificato un errore durante il salvataggio dei listini");
+      errorToast(
+        "Si è verificato un errore durante il salvataggio dei listini",
+      );
     }
   };
 
@@ -192,7 +198,9 @@ export default function CreateEvent() {
   // Definizione delle tab
   const tabs = [
     ...(!readOnly ? [{ key: "info", label: "Info evento" }] : []),
-    ...(!readOnly ? [{ key: "priceLists", label: "Listini prezzi" }] : []),
+    ...(!readOnly && formData.id
+      ? [{ key: "priceLists", label: "Listini prezzi" }]
+      : []),
     // Tab partecipanti condizionale
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants", label: "Partecipanti" }]
@@ -309,11 +317,13 @@ export default function CreateEvent() {
           {/* Tab 4: Pagamenti in sospeso (condizionale) */}
           {activeTab === "orders" && (formData.id || readOnly) && (
             <div>
-              <PendingPayments eventId={formData.id || eventId} initialPayments={externalPayment} />
+              <PendingPayments
+                eventId={formData.id || eventId}
+                initialPayments={externalPayment}
+              />
             </div>
           )}
         </div>
-
       </form>
     </div>
   );
