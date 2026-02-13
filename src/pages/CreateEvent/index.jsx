@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import {
-  addCompetition,
-  editCompetition,
-  deleteCompetition,
-} from "../../repositories/admin-competitions/admin-competitions-actions";
-import { errorToast, successToast } from "../../utils/toast-manager";
+import { deleteCompetition } from "../../repositories/admin-competitions/admin-competitions-actions";
 
 // Hooks personalizzati
 import { useEventForm } from "./hooks/useEventForm";
@@ -29,10 +24,7 @@ import LoadingState from "../../shared/components/ui/LoadingState";
 import Button from "../../shared/components/ui/Button";
 
 // Utilities
-import {
-  prepareSubmitData,
-  getDefaultPriceLists,
-} from "./utils/eventFormHelpers";
+import { getDefaultPriceLists } from "./utils/eventFormHelpers";
 
 /**
  * Pagina per la creazione/modifica dell'evento
@@ -56,7 +48,6 @@ export default function CreateEvent() {
     handleInputChange,
     handleTitleChange,
     handleFileChange,
-    updateField,
   } = useEventForm(eventData);
 
   const initialPriceLists = useMemo(
@@ -107,33 +98,21 @@ export default function CreateEvent() {
   }
 
   /**
-   * Gestisce il submit del form
+   * Gestisce il salvataggio delle info evento (tab 1)
+   * TODO: inviare al server solo i dati dell'evento (formData)
    */
-  const handleSubmit = async () => {
-    const submitData = prepareSubmitData(
-      formData,
-      priceListHandlers.priceLists,
-    );
+  const handleSubmitEventInfo = async () => {
+    // TODO: dispatch(editCompetition(...)) o dispatch(addCompetition(...)) con solo formData
+    console.log("TODO: salva info evento", formData);
+  };
 
-    let result;
-    if (submitData.id) {
-      result = await dispatch(editCompetition(submitData));
-    } else {
-      result = await dispatch(addCompetition(submitData));
-    }
-
-    if (result.success) {
-      successToast("Evento salvato con successo!");
-
-      // Se è un nuovo evento, aggiornare formData con l'ID
-      if (!submitData.id && result.data?.id) {
-        updateField("id", result.data.id);
-      }
-
-      // Rimaniamo sulla pagina - NON navighiamo verso /admin
-    } else {
-      errorToast("Si è verificato un errore durante il salvataggio");
-    }
+  /**
+   * Gestisce il salvataggio dei listini prezzi (tab 2)
+   * TODO: inviare al server solo i listini prezzi
+   */
+  const handleSubmitPriceLists = async () => {
+    // TODO: dispatch(editCompetitionPriceLists(...)) con solo priceListHandlers.priceLists
+    console.log("TODO: salva listini", priceListHandlers.priceLists);
   };
 
   const handleDelete = () => {
@@ -219,6 +198,11 @@ export default function CreateEvent() {
                 receivedComp={eventData}
                 onFileChange={handleFileChange}
               />
+              <div className="mt-4 flex justify-end">
+                <Button variant="success" onClick={handleSubmitEventInfo}>
+                  Salva info evento
+                </Button>
+              </div>
             </div>
           )}
 
@@ -229,6 +213,11 @@ export default function CreateEvent() {
                 priceLists={priceListHandlers.priceLists}
                 handlers={priceListHandlers}
               />
+              <div className="mt-4 flex justify-end">
+                <Button variant="success" onClick={handleSubmitPriceLists}>
+                  Salva listini prezzi
+                </Button>
+              </div>
             </div>
           )}
 
@@ -256,7 +245,6 @@ export default function CreateEvent() {
         {/* Azioni sempre visibili fuori dalle tab */}
         <FormActions
           readOnly={readOnly}
-          onSubmit={handleSubmit}
           onDelete={handleDelete}
           onCancel={handleReturnToList}
         />

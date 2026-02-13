@@ -3,7 +3,7 @@ import Button from "../../../shared/components/ui/Button";
 /**
  * Componente per i pulsanti di azione del form
  */
-export function FormActions({ onSubmit, onDelete, onCancel, readOnly }) {
+export function FormActions({ onDelete, onCancel, readOnly }) {
   if (readOnly) {
     return (
       <div className="flex justify-end mt-10">
@@ -16,9 +16,6 @@ export function FormActions({ onSubmit, onDelete, onCancel, readOnly }) {
 
   return (
     <div className="flex justify-between mt-10">
-      <Button onClick={onSubmit} variant="success">
-        Salva dati
-      </Button>
       <Button onClick={onDelete} variant="danger">
         Elimina evento
       </Button>
