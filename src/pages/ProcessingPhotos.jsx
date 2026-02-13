@@ -9,6 +9,7 @@ import { personalActions } from "../repositories/personal/personal-slice";
 import ProgressBar from "../components/ProgressBar";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from 'html-react-parser';
+import { ROUTES } from "../routes";
 
 /**
  * Pagina di attesa durante l'elaborazione delle foto acquistate
@@ -33,7 +34,7 @@ export default function ProcessingPhotos() {
         const jsonData = JSON.parse(data);
         dispatch(cartActions.setPurchasedItems(jsonData.contents));
         dispatch(personalActions.updatePurchased(jsonData.otherContents));
-        navigate("/purchased", { replace: true });
+        navigate(ROUTES.PURCHASED, { replace: true });
 
         // if (jsonData.contents.length > 0) {
         //   navigate("/image-shop", { replace: true });
@@ -43,7 +44,7 @@ export default function ProcessingPhotos() {
       },
       () => {
         console.log(`Errore nel recupero dei contenuti ordine: ${orderId}`);
-        navigate("/content-error");
+        navigate(ROUTES.CONTENT_ERROR);
       }
     );
   }, []);

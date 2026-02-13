@@ -5,6 +5,9 @@ import {
   addCompetition,
   editCompetition,
   deleteCompetition,
+  addListToCompetition,
+  editListForCompetition,
+  deleteListForCompetition,
 } from "../../repositories/admin-competitions/admin-competitions-actions";
 import { errorToast, successToast } from "../../utils/toast-manager";
 
@@ -30,9 +33,10 @@ import Button from "../../shared/components/ui/Button";
 
 // Utilities
 import {
-  prepareSubmitData,
+  prepareEventInfoData,
   getDefaultPriceLists,
 } from "./utils/eventFormHelpers";
+import { ROUTES } from "../../routes";
 
 /**
  * Pagina per la creazione/modifica dell'evento
@@ -42,7 +46,13 @@ export default function CreateEvent() {
   const dispatch = useDispatch();
 
   // Fetch dei dati completi dell'evento (se in edit mode)
-  const { eventData, externalPayment, loading: eventLoading, error: eventError, eventId } = useEventData();
+  const {
+    eventData,
+    externalPayment,
+    loading: eventLoading,
+    error: eventError,
+    eventId,
+  } = useEventData();
 
   // Se siamo in edit mode ma eventData è null (e il caricamento è finito), l'utente non ha permessi di modifica
   const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
@@ -51,13 +61,8 @@ export default function CreateEvent() {
   const [activeTab, setActiveTab] = useState("info");
 
   // Custom hooks per gestire lo stato
-  const {
-    formData,
-    handleInputChange,
-    handleTitleChange,
-    handleFileChange,
-    updateField,
-  } = useEventForm(eventData);
+  const { formData, handleInputChange, handleTitleChange, handleFileChange } =
+    useEventForm(eventData);
 
   const initialPriceLists = useMemo(
     () => eventData?.lists || getDefaultPriceLists(),
@@ -99,7 +104,7 @@ export default function CreateEvent() {
       <div className="container mx-auto px-4 text-left">
         <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
         <p className="text-red-500">Errore nel caricamento dell'evento.</p>
-        <Button onClick={() => navigate("/admin")} variant="outline">
+        <Button onClick={() => navigate(ROUTES.ADMIN)} variant="outline">
           Torna alla lista
         </Button>
       </div>
@@ -107,13 +112,10 @@ export default function CreateEvent() {
   }
 
   /**
-   * Gestisce il submit del form
+   * Gestisce il salvataggio delle info evento (tab 1)
    */
-  const handleSubmit = async () => {
-    const submitData = prepareSubmitData(
-      formData,
-      priceListHandlers.priceLists,
-    );
+  const handleSubmitEventInfo = async () => {
+    const submitData = prepareEventInfoData(formData);
 
     let result;
     if (submitData.id) {
@@ -123,16 +125,57 @@ export default function CreateEvent() {
     }
 
     if (result.success) {
-      successToast("Evento salvato con successo!");
-
-      // Se è un nuovo evento, aggiornare formData con l'ID
-      if (!submitData.id && result.data?.id) {
-        updateField("id", result.data.id);
+      successToast("Info evento salvate con successo!");
+      console.log("[CreateEvent] result dopo creazione:", result);
+      if (!submitData.id && result.data?.data.id) {
+        navigate(ROUTES.ADMIN_EVENT(result.data.data.id), {
+          replace: true,
+        });
       }
-
-      // Rimaniamo sulla pagina - NON navighiamo verso /admin
     } else {
       errorToast("Si è verificato un errore durante il salvataggio");
+    }
+  };
+
+  /**
+   * Gestisce il salvataggio dei listini prezzi (tab 2).
+   * Per ogni listino: crea (POST) se nuovo, aggiorna (PUT) se esistente.
+   * Elimina (DELETE) i listini rimossi rispetto all'originale.
+   */
+  const handleSubmitPriceLists = async () => {
+    if (!formData.id) {
+      errorToast("Salva prima le info evento prima di poter gestire i listini");
+      return;
+    }
+
+    const eventId = formData.id;
+    const currentLists = priceListHandlers.priceLists;
+
+    // Calcola i listini eliminati confrontando gli ID originali con quelli correnti
+    const originalIds = new Set(
+      (eventData?.lists || []).map((l) => l.id).filter(Boolean),
+    );
+    const currentIds = new Set(currentLists.map((l) => l.id).filter(Boolean));
+    const idsToDelete = [...originalIds].filter((id) => !currentIds.has(id));
+
+    const promises = [
+      ...idsToDelete.map((id) => dispatch(deleteListForCompetition(id))),
+      ...currentLists.map((list) =>
+        list.id
+          ? dispatch(editListForCompetition(list.id, eventId, list))
+          : dispatch(addListToCompetition(eventId, list)),
+      ),
+    ];
+
+    const results = await Promise.all(promises);
+    const allSuccess = results.every((r) => r.success);
+
+    if (allSuccess) {
+      successToast("Listini salvati con successo!");
+    } else {
+      errorToast(
+        "Si è verificato un errore durante il salvataggio dei listini",
+      );
     }
   };
 
@@ -142,7 +185,7 @@ export default function CreateEvent() {
     );
     if (confirmDelete) {
       dispatch(deleteCompetition(eventData));
-      navigate("/admin");
+      navigate(ROUTES.ADMIN);
     }
   };
 
@@ -156,7 +199,9 @@ export default function CreateEvent() {
   // Definizione delle tab
   const tabs = [
     ...(!readOnly ? [{ key: "info", label: "Info evento" }] : []),
-    ...(!readOnly ? [{ key: "priceLists", label: "Listini prezzi" }] : []),
+    ...(!readOnly && formData.id
+      ? [{ key: "priceLists", label: "Listini prezzi" }]
+      : []),
     // Tab partecipanti condizionale
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants", label: "Partecipanti" }]
@@ -168,7 +213,14 @@ export default function CreateEvent() {
 
   return (
     <div className="container mx-auto px-4 text-left">
-      <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Gestione evento</h1>
+        <FormActions
+          readOnly={readOnly}
+          onDelete={handleDelete}
+          onCancel={handleReturnToList}
+        />
+      </div>
 
       <form>
         {/* Tab Navigation */}
@@ -219,6 +271,15 @@ export default function CreateEvent() {
                 receivedComp={eventData}
                 onFileChange={handleFileChange}
               />
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSubmitEventInfo}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
+                >
+                  Salva info evento
+                </button>
+              </div>
             </div>
           )}
 
@@ -229,6 +290,15 @@ export default function CreateEvent() {
                 priceLists={priceListHandlers.priceLists}
                 handlers={priceListHandlers}
               />
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSubmitPriceLists}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
+                >
+                  Salva listini prezzi
+                </button>
+              </div>
             </div>
           )}
 
@@ -248,18 +318,13 @@ export default function CreateEvent() {
           {/* Tab 4: Pagamenti in sospeso (condizionale) */}
           {activeTab === "orders" && (formData.id || readOnly) && (
             <div>
-              <PendingPayments eventId={formData.id || eventId} initialPayments={externalPayment} />
+              <PendingPayments
+                eventId={formData.id || eventId}
+                initialPayments={externalPayment}
+              />
             </div>
           )}
         </div>
-
-        {/* Azioni sempre visibili fuori dalle tab */}
-        <FormActions
-          readOnly={readOnly}
-          onSubmit={handleSubmit}
-          onDelete={handleDelete}
-          onCancel={handleReturnToList}
-        />
       </form>
     </div>
   );

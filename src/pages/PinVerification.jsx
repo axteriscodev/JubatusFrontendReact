@@ -5,6 +5,7 @@ import { setAuthToken, setLevel } from "../utils/auth";
 import PinForm from "../components/PinForm";
 import FormErrors from "../models/form-errors";
 import { useTranslations } from "../features/TranslationProvider";
+import { ROUTES } from "../routes";
 
 export default function PinVerification() {
   const navigate = useNavigate();
@@ -35,9 +36,9 @@ export default function PinVerification() {
         setAuthToken(json.data.jwt);
         setLevel(json.data.levelId);
         if (json.levelId <= 1) {
-          navigate("/admin");
+          navigate(ROUTES.ADMIN);
         } else {
-          navigate("/personal");
+          navigate(ROUTES.PERSONAL);
         }
       } else {
         if (response.status === 401) {

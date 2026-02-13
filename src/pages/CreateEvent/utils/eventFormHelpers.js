@@ -95,6 +95,15 @@ export const buildLanguageObject = (formData) => ({
 });
 
 /**
+ * Prepara i dati del form per l'invio al server (solo info evento, senza listini)
+ */
+export const prepareEventInfoData = (formData) => ({
+  ...formData,
+  languages: [buildLanguageObject(formData)],
+  verifiedAttendanceEvent: formData.verifiedAttendanceEvent,
+});
+
+/**
  * Prepara i dati del form per l'invio al server
  */
 export const prepareSubmitData = (formData, priceLists) => ({

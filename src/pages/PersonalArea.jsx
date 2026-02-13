@@ -12,6 +12,7 @@ import GalleryCard from "../components/GalleryCard";
 import { logOut } from "../utils/auth";
 import { apiRequest } from "../services/api-services";
 import { useTranslations } from "../features/TranslationProvider";
+import { ROUTES } from "../routes";
 
 /**
  * Componente LogoutButton
@@ -115,7 +116,7 @@ export default function PersonalArea() {
    */
   const handleLogout = () => {
     logOut(); // Rimuove i dati di autenticazione
-    navigate("/", { replace: true }); // Reindirizza senza salvare nella history
+    navigate(ROUTES.HOME, { replace: true }); // Reindirizza senza salvare nella history
   };
 
   /**
@@ -135,10 +136,10 @@ export default function PersonalArea() {
       switch (event.status) {
         case EventStatus.ONLY_PURCHASED: // Solo contenuti acquistati
         case EventStatus.MIXED: // Mix di contenuti acquistati e non
-          navigate(`/personal/${event.slug}`);
+          navigate(ROUTES.PERSONAL_EVENT(event.slug));
           break;
         case EventStatus.ONLY_SEARCHED: // Solo contenuti cercati/preview
-          navigate(`/event/${event.slug}/${event.hashId}`);
+          navigate(ROUTES.EVENT_WITH_HASH(event.slug, event.hashId));
           break;
         default:
           break;
@@ -149,7 +150,7 @@ export default function PersonalArea() {
   const navigateToNewSearch = (eventId) => {
     // Trova l'evento selezionato (usando === per strict equality)
     const event = galleries.find((item) => item.id === eventId);
-    navigate(`/event/${event.slug}`);
+    navigate(ROUTES.EVENT(event.slug));
   };
 
   // const navigateToShop = (eventId) => {

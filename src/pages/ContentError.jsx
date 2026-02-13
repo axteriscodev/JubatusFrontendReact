@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from 'html-react-parser';
+import { ROUTES } from "../routes";
 
 export default function ContentError() {
   const eventPreset = useSelector((state) => state.competition);
@@ -10,7 +11,7 @@ export default function ContentError() {
   const { t } = useTranslations();
 
   const buttonHandle = (event) => {
-    navigate("/event/" + eventPreset.slug);
+    navigate(ROUTES.EVENT(eventPreset.slug));
   };
 
   return (

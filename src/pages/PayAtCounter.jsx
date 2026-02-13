@@ -10,6 +10,7 @@ import FormErrors from "../models/form-errors";
 import { useLanguage } from "../features/LanguageContext";
 import { FormLabel } from "../shared/components/ui/Form";
 import Input from "../shared/components/ui/Input";
+import { ROUTES } from "../routes";
 
 export default function PayAtCounter() {
   const dispatch = useDispatch();
@@ -72,7 +73,7 @@ export default function PayAtCounter() {
           dispatch(cartActions.updateUserName(name.trim()));
         }
 
-        navigate("/event/" + eventSlug, { replace: true });
+        navigate(ROUTES.EVENT(eventSlug), { replace: true });
       }
     } catch (err) {
       console.error(`Errore invio aggiornamento dati: ${err}`);

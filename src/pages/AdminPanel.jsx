@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 import { formatDate } from "../utils/data-formatter";
 import { logOut } from "../utils/auth";
+import { ROUTES } from "../routes";
 
 import {
   fetchCompetitions,
@@ -41,10 +42,15 @@ export default function AdminPanel() {
     dispatch(fetchCompetitions());
   }, []);
 
-  const handleCreateCompetition = () => navigate("/admin/create-event");
+  const handleCreateCompetition = () => navigate(ROUTES.ADMIN_CREATE_EVENT);
 
   const handleEditCompetition = (competition) => {
-    navigate(`/admin/create-event/${competition.id}`);
+    navigate(ROUTES.ADMIN_EVENT(competition.id));
+  };
+
+  const handleOpenCompetition = (competition) => {
+    const url = `${import.meta.env.VITE_APP_DOMAIN}${ROUTES.EVENT(competition.slug)}`;
+    window.open(url, "_blank");
   };
 
   // const handleDeleteCompetition = (competition) => {
@@ -53,15 +59,19 @@ export default function AdminPanel() {
 
   const handleLogout = () => {
     logOut();
-    navigate("/", { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   return (
     <div className="container text-left">
       <div className="flex justify-end my-10">
-        <Button onClick={handleLogout} variant="outline">
-          <LogOut size={16} className="inline" /> Logout
-        </Button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+        >
+          <LogOut size={14} /> Logout
+        </button>
       </div>
       <h1>Elenco eventi</h1>
       <Table className="my-10 table-auto">
@@ -73,7 +83,15 @@ export default function AdminPanel() {
             <th>Data evento</th>
             <th>Data inizio</th>
             <th>Data scadenza</th>
-            <th>&nbsp;</th>
+            <th className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleCreateCompetition}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-100 border border-gray-400 rounded-lg hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <Plus size={14} /> nuovo evento
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -113,12 +131,7 @@ export default function AdminPanel() {
                   <Button
                     variant="link"
                     size="sm"
-                    onClick={() =>
-                      window.open(
-                        `${import.meta.env.VITE_EVENT_ENDPOINT}${competition.slug}`,
-                        "_blank",
-                      )
-                    }
+                    onClick={() => handleOpenCompetition(competition)}
                   >
                     <ExternalLink size={16} />
                   </Button>
@@ -128,9 +141,6 @@ export default function AdminPanel() {
           ))}
         </tbody>
       </Table>
-      <Button onClick={handleCreateCompetition} variant="primary">
-        <Plus size={16} className="inline" /> Aggiungi nuovo evento
-      </Button>
     </div>
   );
 }
