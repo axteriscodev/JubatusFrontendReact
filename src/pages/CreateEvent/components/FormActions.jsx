@@ -1,27 +1,29 @@
-import Button from "../../../shared/components/ui/Button";
+import { Trash2, LayoutList } from "lucide-react";
 
 /**
- * Componente per i pulsanti di azione del form
+ * Componente per i pulsanti di azione del form (header top-right)
  */
 export function FormActions({ onDelete, onCancel, readOnly }) {
-  if (readOnly) {
-    return (
-      <div className="flex justify-end mt-10">
-        <Button onClick={onCancel} variant="secondary">
-          Vai all'elenco
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex justify-between mt-10">
-      <Button onClick={onDelete} variant="danger">
-        Elimina evento
-      </Button>
-      <Button onClick={onCancel} variant="secondary">
+    <div className="flex items-center gap-2">
+      {!readOnly && (
+        <button
+          type="button"
+          onClick={onDelete}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+        >
+          <Trash2 size={14} />
+          Elimina evento
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={onCancel}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+      >
+        <LayoutList size={14} />
         Vai all'elenco
-      </Button>
+      </button>
     </div>
   );
 }

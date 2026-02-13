@@ -147,7 +147,14 @@ export default function CreateEvent() {
 
   return (
     <div className="container mx-auto px-4 text-left">
-      <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Gestione evento</h1>
+        <FormActions
+          readOnly={readOnly}
+          onDelete={handleDelete}
+          onCancel={handleReturnToList}
+        />
+      </div>
 
       <form>
         {/* Tab Navigation */}
@@ -242,12 +249,6 @@ export default function CreateEvent() {
           )}
         </div>
 
-        {/* Azioni sempre visibili fuori dalle tab */}
-        <FormActions
-          readOnly={readOnly}
-          onDelete={handleDelete}
-          onCancel={handleReturnToList}
-        />
       </form>
     </div>
   );
