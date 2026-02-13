@@ -170,27 +170,82 @@ export const fetchCompetitionById = (eventId) => {
 
 /**
  * Aggiunta di un listino prezzi per una competizione
- * @param {*} competition - competizione a cui aggiungere il listino
- * @param {*} priceList - listino da aggiungere
+ * @param {number} eventId - ID dell'evento padre
+ * @param {object} priceList - listino da aggiungere
  */
-export const addListToCompetition = (competition, priceList) => {
-  return async (dispatch) => {};
+export const addListToCompetition = (eventId, priceList) => {
+  return async () => {
+    try {
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/event-list/create",
+        method: "POST",
+        needAuth: true,
+        body: JSON.stringify({ id: eventId, list: [priceList] }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore di comunicazione col server");
+      }
+
+      const data = await response.json();
+      return { success: true, data: data.data || data };
+    } catch (error) {
+      console.log("Qualcosa è andato storto");
+      return { success: false, data: null };
+    }
+  };
 };
 
 /**
  * Modifica di un listino prezzi per una competizione
- * @param {*} competition - competizione a cui aggiungere il listino
- * @param {*} priceList - listino da aggiungere
+ * @param {number} eventListId - ID del listino da modificare
+ * @param {number} eventId - ID dell'evento padre
+ * @param {object} priceList - listino aggiornato
  */
-export const editListForCompetition = (competition, priceList) => {
-  return async (dispatch) => {};
+export const editListForCompetition = (eventListId, eventId, priceList) => {
+  return async () => {
+    try {
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/event-list/" + eventListId,
+        method: "PUT",
+        needAuth: true,
+        body: JSON.stringify({ id: eventId, list: [priceList] }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore di comunicazione col server");
+      }
+
+      const data = await response.json();
+      return { success: true, data: data.data || data };
+    } catch (error) {
+      console.log("Qualcosa è andato storto");
+      return { success: false, data: null };
+    }
+  };
 };
 
 /**
  * Cancellazione di un listino prezzi per una competizione
- * @param {*} competition - competizione a cui aggiungere il listino
- * @param {*} priceList - listino da aggiungere
+ * @param {number} eventListId - ID del listino da eliminare
  */
-export const deleteListForCompetition = (competition, priceList) => {
-  return async (dispatch) => {};
+export const deleteListForCompetition = (eventListId) => {
+  return async () => {
+    try {
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/events/event-list/" + eventListId,
+        method: "DELETE",
+        needAuth: true,
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore di comunicazione col server");
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.log("Qualcosa è andato storto");
+      return { success: false };
+    }
+  };
 };

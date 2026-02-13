@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { deleteCompetition } from "../../repositories/admin-competitions/admin-competitions-actions";
+import {
+  addCompetition,
+  editCompetition,
+  deleteCompetition,
+  addListToCompetition,
+  editListForCompetition,
+  deleteListForCompetition,
+} from "../../repositories/admin-competitions/admin-competitions-actions";
+import { errorToast, successToast } from "../../utils/toast-manager";
 
 // Hooks personalizzati
 import { useEventForm } from "./hooks/useEventForm";
@@ -24,7 +32,10 @@ import LoadingState from "../../shared/components/ui/LoadingState";
 import Button from "../../shared/components/ui/Button";
 
 // Utilities
-import { getDefaultPriceLists } from "./utils/eventFormHelpers";
+import {
+  prepareEventInfoData,
+  getDefaultPriceLists,
+} from "./utils/eventFormHelpers";
 
 /**
  * Pagina per la creazione/modifica dell'evento
@@ -48,6 +59,7 @@ export default function CreateEvent() {
     handleInputChange,
     handleTitleChange,
     handleFileChange,
+    updateField,
   } = useEventForm(eventData);
 
   const initialPriceLists = useMemo(
@@ -99,20 +111,65 @@ export default function CreateEvent() {
 
   /**
    * Gestisce il salvataggio delle info evento (tab 1)
-   * TODO: inviare al server solo i dati dell'evento (formData)
    */
   const handleSubmitEventInfo = async () => {
-    // TODO: dispatch(editCompetition(...)) o dispatch(addCompetition(...)) con solo formData
-    console.log("TODO: salva info evento", formData);
+    const submitData = prepareEventInfoData(formData);
+
+    let result;
+    if (submitData.id) {
+      result = await dispatch(editCompetition(submitData));
+    } else {
+      result = await dispatch(addCompetition(submitData));
+    }
+
+    if (result.success) {
+      successToast("Info evento salvate con successo!");
+      if (!submitData.id && result.data?.id) {
+        updateField("id", result.data.id);
+      }
+    } else {
+      errorToast("Si è verificato un errore durante il salvataggio");
+    }
   };
 
   /**
-   * Gestisce il salvataggio dei listini prezzi (tab 2)
-   * TODO: inviare al server solo i listini prezzi
+   * Gestisce il salvataggio dei listini prezzi (tab 2).
+   * Per ogni listino: crea (POST) se nuovo, aggiorna (PUT) se esistente.
+   * Elimina (DELETE) i listini rimossi rispetto all'originale.
    */
   const handleSubmitPriceLists = async () => {
-    // TODO: dispatch(editCompetitionPriceLists(...)) con solo priceListHandlers.priceLists
-    console.log("TODO: salva listini", priceListHandlers.priceLists);
+    if (!formData.id) {
+      errorToast("Salva prima le info evento prima di poter gestire i listini");
+      return;
+    }
+
+    const eventId = formData.id;
+    const currentLists = priceListHandlers.priceLists;
+
+    // Calcola i listini eliminati confrontando gli ID originali con quelli correnti
+    const originalIds = new Set(
+      (eventData?.lists || []).map((l) => l.id).filter(Boolean),
+    );
+    const currentIds = new Set(currentLists.map((l) => l.id).filter(Boolean));
+    const idsToDelete = [...originalIds].filter((id) => !currentIds.has(id));
+
+    const promises = [
+      ...idsToDelete.map((id) => dispatch(deleteListForCompetition(id))),
+      ...currentLists.map((list) =>
+        list.id
+          ? dispatch(editListForCompetition(list.id, eventId, list))
+          : dispatch(addListToCompetition(eventId, list)),
+      ),
+    ];
+
+    const results = await Promise.all(promises);
+    const allSuccess = results.every((r) => r.success);
+
+    if (allSuccess) {
+      successToast("Listini salvati con successo!");
+    } else {
+      errorToast("Si è verificato un errore durante il salvataggio dei listini");
+    }
   };
 
   const handleDelete = () => {
