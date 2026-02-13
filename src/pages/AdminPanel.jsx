@@ -59,9 +59,13 @@ export default function AdminPanel() {
   return (
     <div className="container text-left">
       <div className="flex justify-end my-10">
-        <Button onClick={handleLogout} variant="outline">
-          <LogOut size={16} className="inline" /> Logout
-        </Button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+        >
+          <LogOut size={14} /> Logout
+        </button>
       </div>
       <h1>Elenco eventi</h1>
       <Table className="my-10 table-auto">
@@ -73,7 +77,15 @@ export default function AdminPanel() {
             <th>Data evento</th>
             <th>Data inizio</th>
             <th>Data scadenza</th>
-            <th>&nbsp;</th>
+            <th className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleCreateCompetition}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus size={14} /> nuovo evento
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -128,9 +140,6 @@ export default function AdminPanel() {
           ))}
         </tbody>
       </Table>
-      <Button onClick={handleCreateCompetition} variant="primary">
-        <Plus size={16} className="inline" /> Aggiungi nuovo evento
-      </Button>
     </div>
   );
 }

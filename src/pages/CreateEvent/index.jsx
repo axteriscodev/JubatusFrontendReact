@@ -263,9 +263,13 @@ export default function CreateEvent() {
                 onFileChange={handleFileChange}
               />
               <div className="mt-4 flex justify-end">
-                <Button variant="success" onClick={handleSubmitEventInfo}>
+                <button
+                  type="button"
+                  onClick={handleSubmitEventInfo}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
+                >
                   Salva info evento
-                </Button>
+                </button>
               </div>
             </div>
           )}
@@ -278,9 +282,13 @@ export default function CreateEvent() {
                 handlers={priceListHandlers}
               />
               <div className="mt-4 flex justify-end">
-                <Button variant="success" onClick={handleSubmitPriceLists}>
+                <button
+                  type="button"
+                  onClick={handleSubmitPriceLists}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
+                >
                   Salva listini prezzi
-                </Button>
+                </button>
               </div>
             </div>
           )}
