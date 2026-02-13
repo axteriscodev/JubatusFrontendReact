@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Trash2, ShoppingCart, Heart, Download } from "lucide-react";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
@@ -29,20 +30,23 @@ export default function CustomLightbox({
 
   const { t } = useTranslations();
 
-  const effectiveSlides =
-    slides && slides.length > 0
-      ? slides
-      : slide
-      ? [{ url: slide, keyOriginal: slide, fileTypeId: 2, urlOriginal: slide }]
-      : [];
+  const effectiveSlides = useMemo(
+    () =>
+      slides && slides.length > 0
+        ? slides
+        : slide
+        ? [{ keyOriginal: slide, fileTypeId: 2, urlOriginal: slide }]
+        : [],
+    [slides, slide]
+  );
 
-  const normalizedSlides = getEventContents(effectiveSlides);
+  const normalizedSlides = useMemo(() => getEventContents(effectiveSlides), [effectiveSlides]);
+
+  const normalizedPhotoItems = useMemo(() => getEventContents(photoItems || []), [photoItems]);
 
   const currentImage = normalizedSlides[index] ?? normalizedSlides[0] ?? {};
 
-  const isSelected = photoItems?.some(
-    (el) => el.keyOriginal === currentImage.key
-  );
+  const isSelected = normalizedPhotoItems.some((el) => el.key === currentImage.key);
 
   const handleFavouriteClick = async () => {
     const rq = { contentId: currentImage.id };

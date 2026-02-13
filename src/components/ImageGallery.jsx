@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Search, Check, Heart } from "lucide-react";
 import styles from "./ImageGallery.module.css";
 import { Play } from "lucide-react";
@@ -41,10 +42,10 @@ export default function ImageGallery({
   isShop = false,
 }) {
   // Recupera i contenuti degli eventi personali dalle immagini
-  const data = getEventContents(images);
+  const data = useMemo(() => getEventContents(images), [images]);
 
   // Recupera le foto attualmente selezionate per evidenziarle nella galleria
-  const currentPhotoItems = getEventContents(photoItems || []);
+  const currentPhotoItems = useMemo(() => getEventContents(photoItems || []), [photoItems]);
 
   // Hook per le traduzioni
   const { t } = useTranslations();
@@ -63,7 +64,7 @@ export default function ImageGallery({
       >
         {data.map((image, i) => (
           // Contenitore singola immagine con chiave unica
-          <div key={`gallery_${Date.now()}_${image.key || i}_${i}`}>
+          <div key={image.key || i}>
             {/* Ratio dinamico dalle impostazioni evento */}
             <div className={`ratio ${getRatioClass(aspectRatio)}`}>
               <div>
