@@ -112,22 +112,6 @@ export default function AdminPanel() {
                   >
                     <Settings size={16} />
                   </Button>
-                  {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
-              <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
-                  {/* <Button
-                    variant="danger"
-                    onClick={() => {
-                      const confirmDelete = window.confirm(
-                        "Sei sicuro di voler rimuovere l'evento?",
-                      );
-                      if (confirmDelete) {
-                        handleDeleteCompetition(competition);
-                      }
-                    }}
-                    size="sm"
-                  >
-                    <i className="bi bi-trash"></i>
-                  </Button> */}
                   <Button
                     variant="link"
                     size="sm"
