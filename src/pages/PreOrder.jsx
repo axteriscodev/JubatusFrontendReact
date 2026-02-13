@@ -11,6 +11,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
+import { ROUTES } from "../routes";
 
 export default function PreOrder() {
   const dispatch = useDispatch();
@@ -92,7 +93,7 @@ export default function PreOrder() {
     event.preventDefault();
 
     if (selectedPreorder) {
-      navigate("/checkout");
+      navigate(ROUTES.CHECKOUT);
     }
   }
 
@@ -109,7 +110,7 @@ export default function PreOrder() {
       <div className="container">
         <div className="flex justify-center">
           <div className="text-left">
-            <Link to={"/event/" + eventPreset.slug}>
+            <Link to={ROUTES.EVENT(eventPreset.slug)}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
                 size="logo-sm"

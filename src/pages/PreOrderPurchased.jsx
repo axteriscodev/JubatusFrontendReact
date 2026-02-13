@@ -5,6 +5,7 @@ import Logo from "../components/Logo";
 import { setUiPreset } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from 'html-react-parser';
+import { ROUTES } from "../routes";
 
 export default function PreOrderPurchased() {
     const eventPreset = useSelector((state) => state.competition);
@@ -18,7 +19,7 @@ export default function PreOrderPurchased() {
     return (
         <>
             <div className="container">
-                <Link to={'/event/' + eventPreset.slug}>
+                <Link to={ROUTES.EVENT(eventPreset.slug)}>
                     <Logo
                         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
                     />

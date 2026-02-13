@@ -36,6 +36,7 @@ import {
   prepareEventInfoData,
   getDefaultPriceLists,
 } from "./utils/eventFormHelpers";
+import { ROUTES } from "../../routes";
 
 /**
  * Pagina per la creazione/modifica dell'evento
@@ -103,7 +104,7 @@ export default function CreateEvent() {
       <div className="container mx-auto px-4 text-left">
         <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
         <p className="text-red-500">Errore nel caricamento dell'evento.</p>
-        <Button onClick={() => navigate("/admin")} variant="outline">
+        <Button onClick={() => navigate(ROUTES.ADMIN)} variant="outline">
           Torna alla lista
         </Button>
       </div>
@@ -127,7 +128,7 @@ export default function CreateEvent() {
       successToast("Info evento salvate con successo!");
       console.log("[CreateEvent] result dopo creazione:", result);
       if (!submitData.id && result.data?.data.id) {
-        navigate(`/admin/event/${result.data.data.id}`, {
+        navigate(ROUTES.ADMIN_EVENT(result.data.data.id), {
           replace: true,
         });
       }
@@ -184,7 +185,7 @@ export default function CreateEvent() {
     );
     if (confirmDelete) {
       dispatch(deleteCompetition(eventData));
-      navigate("/admin");
+      navigate(ROUTES.ADMIN);
     }
   };
 

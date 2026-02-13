@@ -1,6 +1,7 @@
 import { useRouteError } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useTranslations } from "../features/TranslationProvider";
+import { ROUTES } from "../routes";
 
 export default function ErrorPage() {
   const error = useRouteError();
@@ -20,7 +21,7 @@ export default function ErrorPage() {
           {message}
         </p>
       </div>
-      <Link to="/">{t("ERROR_BACK")}</Link>
+      <Link to={ROUTES.HOME}>{t("ERROR_BACK")}</Link>
     </>
   );
 }

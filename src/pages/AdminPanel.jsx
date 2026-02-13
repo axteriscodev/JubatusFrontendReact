@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 import { formatDate } from "../utils/data-formatter";
 import { logOut } from "../utils/auth";
+import { ROUTES } from "../routes";
 
 import {
   fetchCompetitions,
@@ -41,10 +42,10 @@ export default function AdminPanel() {
     dispatch(fetchCompetitions());
   }, []);
 
-  const handleCreateCompetition = () => navigate("/admin/create-event");
+  const handleCreateCompetition = () => navigate(ROUTES.ADMIN_CREATE_EVENT);
 
   const handleEditCompetition = (competition) => {
-    navigate(`/admin/event/${competition.id}`);
+    navigate(ROUTES.ADMIN_EVENT(competition.id));
   };
 
   // const handleDeleteCompetition = (competition) => {
@@ -53,7 +54,7 @@ export default function AdminPanel() {
 
   const handleLogout = () => {
     logOut();
-    navigate("/", { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   return (

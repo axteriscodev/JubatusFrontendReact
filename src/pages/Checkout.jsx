@@ -9,6 +9,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslations } from "../features/TranslationProvider";
 import ProgressBar from "../components/ProgressBar";
+import { ROUTES } from "../routes";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -27,8 +28,8 @@ export default function Checkout() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const buttonHandle = () => {
-    if (eventPreset.preOrder) navigate("/pre-order");
-    else navigate("/image-shop/");
+    if (eventPreset.preOrder) navigate(ROUTES.PRE_ORDER);
+    else navigate(ROUTES.IMAGE_SHOP);
   };
 
   const checkoutResponse = useCallback(async () => {
@@ -129,7 +130,7 @@ export default function Checkout() {
         </>
       );
     } else {
-      navigate("/pay-at-counter");
+      navigate(ROUTES.PAY_AT_COUNTER);
     }
   }
 

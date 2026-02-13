@@ -14,6 +14,7 @@ import { personalActions } from "../repositories/personal/personal-slice";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 import { apiRequest } from "../services/api-services";
+import { ROUTES } from "../routes";
 
 export default function PersonalEventDetail() {
   const dispatch = useDispatch();
@@ -84,17 +85,17 @@ export default function PersonalEventDetail() {
 
   const handleLogout = () => {
     logOut();
-    navigate("/", { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   const handleBack = () => {
-    navigate("/personal");
+    navigate(ROUTES.PERSONAL);
   };
 
   const handleGoToShop = () => {
     const slug = eventData.slug;
     const hashId = eventData.hashId;
-    navigate(`/event/${slug}/${hashId}`);
+    navigate(ROUTES.EVENT_WITH_HASH(slug, hashId));
   };
 
   const openLightbox = (
