@@ -48,6 +48,11 @@ export default function AdminPanel() {
     navigate(ROUTES.ADMIN_EVENT(competition.id));
   };
 
+  const handleOpenCompetition = (competition) => {
+    const url = `${import.meta.env.VITE_APP_DOMAIN}${ROUTES.EVENT(competition.slug)}`;
+    window.open(url, "_blank");
+  };
+
   // const handleDeleteCompetition = (competition) => {
   //   dispatch(deleteCompetition(competition));
   // };
@@ -126,12 +131,7 @@ export default function AdminPanel() {
                   <Button
                     variant="link"
                     size="sm"
-                    onClick={() =>
-                      window.open(
-                        `${import.meta.env.VITE_EVENT_ENDPOINT}${competition.slug}`,
-                        "_blank",
-                      )
-                    }
+                    onClick={() => handleOpenCompetition(competition)}
                   >
                     <ExternalLink size={16} />
                   </Button>
