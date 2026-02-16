@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   addCompetition,
   editCompetition,
+  deleteCompetition,
+  addListToCompetition,
+  editListForCompetition,
+  deleteListForCompetition,
 } from "../../repositories/admin-competitions/admin-competitions-actions";
 import { errorToast, successToast } from "../../utils/toast-manager";
 
@@ -12,6 +16,7 @@ import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
 import { useCurrencies } from "./hooks/useCurrencies";
+import { useEventData } from "./hooks/useEventData";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -22,9 +27,16 @@ import { PriceListSection } from "./components/PriceListSection";
 import { FormActions } from "./components/FormActions";
 import { ParticipantsUpload } from "./components/ParticipantsUpload";
 import { PartecipantsTable } from "./components/PartecipantsTable";
+import PendingPayments from "./components/PendingPayments";
+import LoadingState from "../../shared/components/ui/LoadingState";
+import Button from "../../shared/components/ui/Button";
 
 // Utilities
-import { prepareSubmitData, getDefaultPriceLists } from "./utils/eventFormHelpers";
+import {
+  prepareEventInfoData,
+  getDefaultPriceLists,
+} from "./utils/eventFormHelpers";
+import { ROUTES } from "../../routes";
 
 /**
  * Pagina per la creazione/modifica dell'evento
@@ -32,26 +44,41 @@ import { prepareSubmitData, getDefaultPriceLists } from "./utils/eventFormHelper
 export default function CreateEvent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const receivedComp = useLocation().state;
+
+  // Fetch dei dati completi dell'evento (se in edit mode)
+  const {
+    eventData,
+    externalPayment,
+    loading: eventLoading,
+    error: eventError,
+    eventId,
+  } = useEventData();
+
+  // Se siamo in edit mode ma eventData è null (e il caricamento è finito), l'utente non ha permessi di modifica
+  const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
 
   // State per gestire le tab
   const [activeTab, setActiveTab] = useState("info");
 
   // Custom hooks per gestire lo stato
-  const {
-    formData,
-    handleInputChange,
-    handleTitleChange,
-    handleFileChange,
-    updateField,
-  } = useEventForm(receivedComp);
+  const { formData, handleInputChange, handleTitleChange, handleFileChange } =
+    useEventForm(eventData);
 
-  const priceListHandlers = usePriceLists(
-    receivedComp?.lists || getDefaultPriceLists()
+  const initialPriceLists = useMemo(
+    () => eventData?.lists || getDefaultPriceLists(),
+    [eventData],
   );
+  const priceListHandlers = usePriceLists(initialPriceLists);
 
   const { tagList, loading: tagsLoading } = useTags();
   const { currencyList } = useCurrencies();
+
+  // Se readOnly, forza la tab su "orders"
+  useEffect(() => {
+    if (readOnly) {
+      setActiveTab("orders");
+    }
+  }, [readOnly]);
 
   // Effetto per aggiungere/rimuovere classe admin al body
   useEffect(() => {
@@ -61,11 +88,34 @@ export default function CreateEvent() {
     };
   }, []);
 
+  // Loading state durante il caricamento dell'evento
+  if (eventLoading) {
+    return (
+      <div className="container mx-auto px-4 text-left">
+        <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+        <LoadingState message="Caricamento evento..." />
+      </div>
+    );
+  }
+
+  // Error state se il caricamento fallisce
+  if (eventError) {
+    return (
+      <div className="container mx-auto px-4 text-left">
+        <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+        <p className="text-red-500">Errore nel caricamento dell'evento.</p>
+        <Button onClick={() => navigate(ROUTES.ADMIN)} variant="outline">
+          Torna alla lista
+        </Button>
+      </div>
+    );
+  }
+
   /**
-   * Gestisce il submit del form
+   * Gestisce il salvataggio delle info evento (tab 1)
    */
-  const handleSubmit = async () => {
-    const submitData = prepareSubmitData(formData, priceListHandlers.priceLists);
+  const handleSubmitEventInfo = async () => {
+    const submitData = prepareEventInfoData(formData);
 
     let result;
     if (submitData.id) {
@@ -75,16 +125,67 @@ export default function CreateEvent() {
     }
 
     if (result.success) {
-      successToast("Evento salvato con successo!");
-
-      // Se è un nuovo evento, aggiornare formData con l'ID
-      if (!submitData.id && result.data?.id) {
-        updateField("id", result.data.id);
+      successToast("Info evento salvate con successo!");
+      console.log("[CreateEvent] result dopo creazione:", result);
+      if (!submitData.id && result.data?.data.id) {
+        navigate(ROUTES.ADMIN_EVENT(result.data.data.id), {
+          replace: true,
+        });
       }
-
-      // Rimaniamo sulla pagina - NON navighiamo verso /admin
     } else {
       errorToast("Si è verificato un errore durante il salvataggio");
+    }
+  };
+
+  /**
+   * Gestisce il salvataggio dei listini prezzi (tab 2).
+   * Per ogni listino: crea (POST) se nuovo, aggiorna (PUT) se esistente.
+   * Elimina (DELETE) i listini rimossi rispetto all'originale.
+   */
+  const handleSubmitPriceLists = async () => {
+    if (!formData.id) {
+      errorToast("Salva prima le info evento prima di poter gestire i listini");
+      return;
+    }
+
+    const eventId = formData.id;
+    const currentLists = priceListHandlers.priceLists;
+
+    // Calcola i listini eliminati confrontando gli ID originali con quelli correnti
+    const originalIds = new Set(
+      (eventData?.lists || []).map((l) => l.id).filter(Boolean),
+    );
+    const currentIds = new Set(currentLists.map((l) => l.id).filter(Boolean));
+    const idsToDelete = [...originalIds].filter((id) => !currentIds.has(id));
+
+    const promises = [
+      ...idsToDelete.map((id) => dispatch(deleteListForCompetition(id))),
+      ...currentLists.map((list) =>
+        list.id
+          ? dispatch(editListForCompetition(list.id, eventId, list))
+          : dispatch(addListToCompetition(eventId, list)),
+      ),
+    ];
+
+    const results = await Promise.all(promises);
+    const allSuccess = results.every((r) => r.success);
+
+    if (allSuccess) {
+      successToast("Listini salvati con successo!");
+    } else {
+      errorToast(
+        "Si è verificato un errore durante il salvataggio dei listini",
+      );
+    }
+  };
+
+  const handleDelete = () => {
+    const confirmDelete = window.confirm(
+      "Sei sicuro di voler rimuovere l'evento?",
+    );
+    if (confirmDelete) {
+      dispatch(deleteCompetition(eventData));
+      navigate(ROUTES.ADMIN);
     }
   };
 
@@ -97,17 +198,29 @@ export default function CreateEvent() {
 
   // Definizione delle tab
   const tabs = [
-    { key: "info", label: "Info evento" },
-    { key: "priceLists", label: "Listini prezzi" },
+    ...(!readOnly ? [{ key: "info", label: "Info evento" }] : []),
+    ...(!readOnly && formData.id
+      ? [{ key: "priceLists", label: "Listini prezzi" }]
+      : []),
     // Tab partecipanti condizionale
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants", label: "Partecipanti" }]
+      : []),
+    ...(externalPayment !== null && (formData.id || readOnly)
+      ? [{ key: "orders", label: "Pagamenti in sospeso" }]
       : []),
   ];
 
   return (
     <div className="container mx-auto px-4 text-left">
-      <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Gestione evento</h1>
+        <FormActions
+          readOnly={readOnly}
+          onDelete={handleDelete}
+          onCancel={handleReturnToList}
+        />
+      </div>
 
       <form>
         {/* Tab Navigation */}
@@ -145,13 +258,28 @@ export default function CreateEvent() {
                 tagList={tagList}
                 currencyList={currencyList}
               />
-              <EventDates formData={formData} onInputChange={handleInputChange} />
-              <EventColors formData={formData} onInputChange={handleInputChange} />
+              <EventDates
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
+              <EventColors
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
               <EventLogo
                 formData={formData}
-                receivedComp={receivedComp}
+                receivedComp={eventData}
                 onFileChange={handleFileChange}
               />
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSubmitEventInfo}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
+                >
+                  Salva info evento
+                </button>
+              </div>
             </div>
           )}
 
@@ -162,6 +290,15 @@ export default function CreateEvent() {
                 priceLists={priceListHandlers.priceLists}
                 handlers={priceListHandlers}
               />
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSubmitPriceLists}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
+                >
+                  Salva listini prezzi
+                </button>
+              </div>
             </div>
           )}
 
@@ -177,10 +314,17 @@ export default function CreateEvent() {
                 <PartecipantsTable eventId={formData.id} />
               </div>
             )}
-        </div>
 
-        {/* Azioni sempre visibili fuori dalle tab */}
-        <FormActions onSubmit={handleSubmit} onCancel={handleReturnToList} />
+          {/* Tab 4: Pagamenti in sospeso (condizionale) */}
+          {activeTab === "orders" && (formData.id || readOnly) && (
+            <div>
+              <PendingPayments
+                eventId={formData.id || eventId}
+                initialPayments={externalPayment}
+              />
+            </div>
+          )}
+        </div>
       </form>
     </div>
   );

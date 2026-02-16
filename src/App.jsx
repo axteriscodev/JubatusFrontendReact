@@ -38,25 +38,26 @@ import { TranslationProvider } from "./features/TranslationProvider";
 import RouterWrapper from "./components/RouterWrapper";
 import ChoosePayment from "./pages/ChoosePayment";
 import PayAtCounter from "./pages/PayAtCounter";
+import { ROUTES } from "./routes";
 
 function App() {
   const router = useMemo(() => {
     const getRedirectRoute = () => {
       if (isAdmin()) {
-        return "/admin";
+        return ROUTES.ADMIN;
       } else if (isAuthenticated()) {
-        return "/personal";
+        return ROUTES.PERSONAL;
       }
-      return "/";
+      return ROUTES.HOME;
     };
 
     return createBrowserRouter([
       {
         element: <RouterWrapper />,
         children: [
-          { path: "/work-in-progress", element: <WorkInProgress /> },
+          { path: ROUTES.WORK_IN_PROGRESS, element: <WorkInProgress /> },
           {
-            path: "/",
+            path: ROUTES.HOME,
             element: isAuthenticated() ? (
               <Navigate to={getRedirectRoute()} replace />
             ) : (
@@ -64,80 +65,87 @@ function App() {
             ),
           },
           {
-            path: "/email-sent",
+            path: ROUTES.EMAIL_SENT,
             element: <EmailSent />,
           },
-          { path: "/pin-verification/:userPin", element: <PinVerification /> },
-          //   //{ path: "/personal", loader: checkAuthLoader, element: <Personal /> },
           {
-            path: "/personal",
+            path: ROUTES.PIN_VERIFICATION(":userPin"),
+            element: <PinVerification />,
+          },
+          //   //{ path: ROUTES.PERSONAL, loader: checkAuthLoader, element: <Personal /> },
+          {
+            path: ROUTES.PERSONAL,
             element: <PersonalArea />,
             loader: personalLoader,
           },
           {
-            path: "/personal/:slug",
+            path: ROUTES.PERSONAL_EVENT(":slug"),
             element: <PersonalEventDetail />,
             loader: personalLoader,
           },
           {
-            path: "/event/:eventSlug",
+            path: ROUTES.EVENT(":eventSlug"),
             element: <UploadSelfie />,
             loader: updateSelfieLoader,
             errorElement: <ErrorPage />,
           },
           {
-            path: "/event/:eventSlug/:userHash",
+            path: ROUTES.EVENT_WITH_HASH(":eventSlug", ":userHash"),
             element: <UploadSelfie />,
             loader: updateSelfieLoader,
             errorElement: <ErrorPage />,
           },
-          { path: "/processing-selfie", element: <ProcessingSelfie /> },
-          { path: "/content-unavailable", element: <ContentUnavailable /> },
+          { path: ROUTES.PROCESSING_SELFIE, element: <ProcessingSelfie /> },
+          { path: ROUTES.CONTENT_UNAVAILABLE, element: <ContentUnavailable /> },
           {
-            path: "/pre-order",
+            path: ROUTES.PRE_ORDER,
             element: <PreOrder />,
             errorElement: <ErrorPage />,
           },
-          { path: "/pre-order", element: <PreOrder /> },
-          { path: "/pre-order-purchased", element: <PreOrderPurchased /> },
+          { path: ROUTES.PRE_ORDER_PURCHASED, element: <PreOrderPurchased /> },
           {
-            path: "/image-shop",
+            path: ROUTES.IMAGE_SHOP,
             element: <ImageShop />,
             errorElement: <ErrorPage />,
           },
-          { path: "/choose-payment", element: <ChoosePayment /> },
-          { path: "/pay-at-counter", element: <PayAtCounter /> },
-          { path: "/checkout", element: <Checkout /> },
+          { path: ROUTES.CHOOSE_PAYMENT, element: <ChoosePayment /> },
+          { path: ROUTES.PAY_AT_COUNTER, element: <PayAtCounter /> },
+          { path: ROUTES.CHECKOUT, element: <Checkout /> },
           {
-            path: "/checkout-outcome",
+            path: ROUTES.CHECKOUT_OUTCOME,
             element: <CheckoutOutcome />,
             errorElement: <ErrorPage />,
           },
           //Conferma dell email post acquisto
           {
-            path: "/mail-confirmation",
+            path: ROUTES.MAIL_CONFIRMATION,
             element: <MailConfirmation />,
           },
           //pagina di ringraziamenti
           {
-            path: "/thank-you",
+            path: ROUTES.THANK_YOU,
             element: <ThankYou />,
           },
           {
-            path: "/purchased",
+            path: ROUTES.PURCHASED,
             element: <Purchased /> /*, errorElement: <ErrorPage />*/,
           },
-          { path: "/processing-photos", element: <ProcessingPhotos /> },
-          { path: "/content-error", element: <ContentError /> },
+          { path: ROUTES.PROCESSING_PHOTOS, element: <ProcessingPhotos /> },
+          { path: ROUTES.CONTENT_ERROR, element: <ContentError /> },
           {
-            path: "/admin",
-            element: <AdminPanel />,
-            loader: adminLoader,
-          },
-          {
-            path: "/admin/create-event",
+            path: ROUTES.ADMIN_EVENT(":eventId"),
             element: <CreateEvent />,
             loader: createEventLoader,
+          },
+          {
+            path: ROUTES.ADMIN_CREATE_EVENT,
+            element: <CreateEvent />,
+            loader: createEventLoader,
+          },
+          {
+            path: ROUTES.ADMIN,
+            element: <AdminPanel />,
+            loader: adminLoader,
           },
         ],
       },

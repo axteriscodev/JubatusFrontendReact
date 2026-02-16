@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SquareCheckBig } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
@@ -10,6 +11,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
+import { ROUTES } from "../routes";
 
 export default function PreOrder() {
   const dispatch = useDispatch();
@@ -91,7 +93,7 @@ export default function PreOrder() {
     event.preventDefault();
 
     if (selectedPreorder) {
-      navigate("/checkout");
+      navigate(ROUTES.CHECKOUT);
     }
   }
 
@@ -108,7 +110,7 @@ export default function PreOrder() {
       <div className="container">
         <div className="flex justify-center">
           <div className="text-left">
-            <Link to={"/event/" + eventPreset.slug}>
+            <Link to={ROUTES.EVENT(eventPreset.slug)}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
                 size="logo-sm"
@@ -125,13 +127,22 @@ export default function PreOrder() {
             </h2>
             <div className="ml-4 mt-20">
               <p>
-                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
+                <SquareCheckBig
+                  size={16}
+                  className="inline text-success mr-2"
+                />{" "}
                 {t("PREORDER_BULLET1")}
                 <br />
-                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
+                <SquareCheckBig
+                  size={16}
+                  className="inline text-success mr-2"
+                />{" "}
                 {t("PREORDER_BULLET2")}
                 <br />
-                <i className="bi bi-check-square-fill text-success mr-2"></i>{" "}
+                <SquareCheckBig
+                  size={16}
+                  className="inline text-success mr-2"
+                />{" "}
                 {t("PREORDER_BULLET3")}
               </p>
             </div>
@@ -214,10 +225,12 @@ export default function PreOrder() {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-22">
-                    {getPriceListEntry(list.itemsLanguages?.[0]?.title)}
+                    {getPriceListEntry(list.itemsLanguages?.[0]?.title ?? "")}
                   </div>
                   <span className="text-13 opacity">
-                    {getPriceListEntry(list.itemsLanguages?.[0]?.subTitle)}
+                    {getPriceListEntry(
+                      list.itemsLanguages?.[0]?.subTitle ?? "",
+                    )}
                   </span>
                 </div>
                 <div className="text-right lh-1">

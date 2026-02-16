@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { ArrowLeft, LogOut, ShoppingCart } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Carousel from "../shared/components/ui/Carousel.jsx";
@@ -13,6 +14,7 @@ import { personalActions } from "../repositories/personal/personal-slice";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 import { apiRequest } from "../services/api-services";
+import { ROUTES } from "../routes";
 
 export default function PersonalEventDetail() {
   const dispatch = useDispatch();
@@ -83,17 +85,17 @@ export default function PersonalEventDetail() {
 
   const handleLogout = () => {
     logOut();
-    navigate("/", { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   const handleBack = () => {
-    navigate("/personal");
+    navigate(ROUTES.PERSONAL);
   };
 
   const handleGoToShop = () => {
     const slug = eventData.slug;
     const hashId = eventData.hashId;
-    navigate(`/event/${slug}/${hashId}`);
+    navigate(ROUTES.EVENT_WITH_HASH(slug, hashId));
   };
 
   const openLightbox = (
@@ -116,10 +118,10 @@ export default function PersonalEventDetail() {
       <div className="container">
         <div className="flex justify-between my-10">
           <Button onClick={handleBack} variant="outline-light" size="sm">
-            <i className="bi bi-arrow-left"></i>
+            <ArrowLeft size={16} />
           </Button>
           <Button onClick={handleLogout} variant="outline-danger">
-            <i className="bi bi-box-arrow-right"></i> Logout
+            <LogOut size={16} className="inline" /> Logout
           </Button>
         </div>
         {purchasedItems?.length > 0 ? (
@@ -183,23 +185,23 @@ export default function PersonalEventDetail() {
         {/* Nuova gallery per items NON acquistati (solo se status === "mixed") */}
         {unpurchasedItems.length > 0 && (
           <>
-            <div className="flex justify-center mb-1">
-              <div className="flex items-center">
-                <h2 className="my-10 mt-30">{t("PERSONAL_AVAILABLE")}</h2>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="link"
-                  className="text-white text-decoration-none p-0 ml-auto"
-                  onClick={() => handleGoToShop()}
-                >
-                  <i className="bi bi-cart mr-2 fs-3"></i>
-                  {t("PERSONAL_SHOP")}
-                </Button>
-              </div>
-            </div>
+<div className="flex justify-center mb-1">
+  <div className="flex items-center">
+    <h2 className="my-10 mt-30">{t("PERSONAL_AVAILABLE")}</h2>
+  </div>
+</div>
+<div className="flex justify-center">
+  <div className="flex items-center gap-3">
+        <Button
+      variant="link"
+      className="text-white text-decoration-none p-0 ml-auto"
+      onClick={() => handleGoToShop()}
+    >
+      <ShoppingCart size={28} className="inline mr-2" />
+      {t("PERSONAL_SHOP")}
+    </Button>
+  </div>
+</div>
             <div className="mt-20">
               <ImageGallery
                 images={unpurchasedItems}

@@ -11,6 +11,7 @@ import { useLanguage } from "../features/LanguageContext";
 import parse from "html-react-parser";
 import { FormLabel } from "../shared/components/ui/Form";
 import Input from "../shared/components/ui/Input";
+import { ROUTES } from "../routes";
 
 export default function MailConfirmation() {
   const dispatch = useDispatch();
@@ -96,7 +97,7 @@ export default function MailConfirmation() {
         //   dispatch(cartActions.updateUserSurname(surname.trim()));
         // }
 
-        navigate("/thank-you");
+        navigate(ROUTES.THANK_YOU);
       }
     } catch (err) {
       console.error(`Errore invio aggiornamento dati: ${err}`);

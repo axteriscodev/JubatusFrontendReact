@@ -1,3 +1,4 @@
+import { Trash2, ShoppingCart, Heart, Download } from "lucide-react";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
@@ -195,12 +196,12 @@ export default function CustomLightbox({
                 >
                   {isSelected ? (
                     <>
-                      <i className="bi bi-trash-fill"></i>{" "}
+                      <Trash2 size={16} className="inline" />{" "}
                       {t("LIGHTBOX_REMOVE")}
                     </>
                   ) : (
                     <>
-                      <i className="bi bi-cart"></i> {t("LIGHTBOX_SELECT")}
+                      <ShoppingCart size={16} className="inline" /> {t("LIGHTBOX_SELECT")}
                     </>
                   )}
                 </button>
@@ -208,6 +209,27 @@ export default function CustomLightbox({
             )}
             {(shopMode && currentImage.isPurchased) && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
+            )}
+            {actions && (
+              <div className="flex gap-3 justify-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">
+                <a onClick={handleFavouriteClick} aria-label="Favourite image">
+                  <Heart
+                    size={48}
+                    className={currentImage.favorite ? "text-danger" : "text-white"}
+                    fill={currentImage.favorite ? "currentColor" : "none"}
+                  />
+                </a>
+                <a
+                  onClick={handleDownload}
+                  title="Download"
+                  aria-label="Download image"
+                >
+                  <Download size={48} className="text-white" />
+                </a>
+                {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
+                <i className="bi bi-arrow-up-right"></i>
+              </a>} */}
+              </div>
             )}
           </>
         ),
