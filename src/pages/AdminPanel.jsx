@@ -1,3 +1,4 @@
+import { LogOut, Pencil, ExternalLink, Plus, Settings } from "lucide-react";
 import Button from "../shared/components/ui/Button";
 import ButtonGroup from "../shared/components/ui/ButtonGroup";
 import Table from "../shared/components/ui/Table";
@@ -7,10 +8,11 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 import { formatDate } from "../utils/data-formatter";
 import { logOut } from "../utils/auth";
+import { ROUTES } from "../routes";
 
 import {
   fetchCompetitions,
-  deleteCompetition,
+  //deleteCompetition,
 } from "../repositories/admin-competitions/admin-competitions-actions";
 
 /**
@@ -24,7 +26,7 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const competitions = useSelector(
-    (state) => state.adminCompetitions.competitions
+    (state) => state.adminCompetitions.competitions,
   );
 
   useEffect(() => {
@@ -40,30 +42,36 @@ export default function AdminPanel() {
     dispatch(fetchCompetitions());
   }, []);
 
-  const handleCreateCompetition = () => navigate("/admin/create-event");
+  const handleCreateCompetition = () => navigate(ROUTES.ADMIN_CREATE_EVENT);
 
   const handleEditCompetition = (competition) => {
-    navigate("/admin/create-event", { state: competition });
+    navigate(ROUTES.ADMIN_EVENT(competition.id));
   };
 
-  const handleDeleteCompetition = (competition) => {
-    dispatch(deleteCompetition(competition));
+  const handleOpenCompetition = (competition) => {
+    const url = `${import.meta.env.VITE_APP_DOMAIN}${ROUTES.EVENT(competition.slug)}`;
+    window.open(url, "_blank");
   };
+
+  // const handleDeleteCompetition = (competition) => {
+  //   dispatch(deleteCompetition(competition));
+  // };
 
   const handleLogout = () => {
     logOut();
-    navigate("/", { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   return (
     <div className="container text-left">
       <div className="flex justify-end my-10">
-        <Button
+        <button
+          type="button"
           onClick={handleLogout}
-          variant="outline"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
         >
-          <i className="bi bi-box-arrow-right"></i> Logout
-        </Button>
+          <LogOut size={14} /> Logout
+        </button>
       </div>
       <h1>Elenco eventi</h1>
       <Table className="my-10 table-auto">
@@ -75,7 +83,15 @@ export default function AdminPanel() {
             <th>Data evento</th>
             <th>Data inizio</th>
             <th>Data scadenza</th>
-            <th>&nbsp;</th>
+            <th className="flex justify-end">
+              <button
+                type="button"
+                onClick={handleCreateCompetition}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-100 border border-gray-400 rounded-lg hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <Plus size={14} /> nuovo evento
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -90,27 +106,18 @@ export default function AdminPanel() {
               <td className="text-right">
                 <ButtonGroup>
                   <Button
-                    variant="secondary"
+                    variant="link"
                     onClick={() => handleEditCompetition(competition)}
                     size="sm"
                   >
-                    <i className="bi bi-pencil"></i>
+                    <Settings size={16} />
                   </Button>
-                  {/*<Button variant="warning" className="btn-sm" data-bs-toggle="tooltip" title="Disattiva evento"><i className="bi bi-eraser-fill"></i></Button>
-              <Button variant="success" className="btn-sm" data-bs-toggle="tooltip" title="Ripristina evento"><i className="bi bi-arrow-counterclockwise"></i></Button>*/}
                   <Button
-                    variant="danger"
-                    onClick={() => {
-                      const confirmDelete = window.confirm(
-                        "Sei sicuro di voler rimuovere l'evento?"
-                      );
-                      if (confirmDelete) {
-                        handleDeleteCompetition(competition);
-                      }
-                    }}
+                    variant="link"
                     size="sm"
+                    onClick={() => handleOpenCompetition(competition)}
                   >
-                    <i className="bi bi-trash"></i>
+                    <ExternalLink size={16} />
                   </Button>
                 </ButtonGroup>
               </td>
@@ -118,10 +125,6 @@ export default function AdminPanel() {
           ))}
         </tbody>
       </Table>
-      <Button onClick={handleCreateCompetition} variant="primary">
-        <i className="bi bi-plus"></i> Aggiungi nuovo evento
-      </Button>
     </div>
   );
 }
-

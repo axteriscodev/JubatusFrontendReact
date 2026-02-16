@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createEmptyPriceList, createEmptyPriceItem } from "../utils/eventFormHelpers";
 
 /**
@@ -6,6 +6,12 @@ import { createEmptyPriceList, createEmptyPriceItem } from "../utils/eventFormHe
  */
 export function usePriceLists(initialLists) {
   const [priceLists, setPriceLists] = useState(initialLists);
+
+  useEffect(() => {
+    if (initialLists) {
+      setPriceLists(initialLists);
+    }
+  }, [initialLists]);
 
   /**
    * Aggiunge un nuovo listino vuoto

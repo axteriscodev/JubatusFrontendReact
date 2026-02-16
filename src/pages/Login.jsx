@@ -9,6 +9,7 @@ import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 import LanguageSelect from "../components/LanguageSelect";
 import parse from "html-react-parser";
+import { ROUTES } from "../routes";
 
 /**
  * Pagina di login
@@ -62,7 +63,7 @@ export default function Login() {
 
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));
-      navigate("/email-sent");
+      navigate(ROUTES.EMAIL_SENT);
     } else {
       if (response.status === 401) {
         formErrors.emailNotPresent = true;

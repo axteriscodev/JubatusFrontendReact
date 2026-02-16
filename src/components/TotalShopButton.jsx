@@ -6,6 +6,7 @@ import { useState } from "react";
 import { apiRequest } from "../services/api-services";
 import { cartActions } from "../repositories/cart/cart-slice";
 import { isPhotoFullPackEligible } from "../utils/offers";
+import { ROUTES } from "../routes";
 
 /**
  * Pulsante dello shop che visualizza il totale di spesa
@@ -73,16 +74,16 @@ export default function TotalShopButton({ onButtonClick = null }) {
 
       if (isFree) {
         // Caso 3: ordine gratuito → vai direttamente alla conferma email
-        navigate("/mail-confirmation", { replace: true });
+        navigate(ROUTES.MAIL_CONFIRMATION, { replace: true });
       } else if (paymentMethods && paymentMethods.length > 1) {
         // Caso 2: più metodi di pagamento → scegli come pagare
-        navigate("/choose-payment", {
+        navigate(ROUTES.CHOOSE_PAYMENT, {
           replace: true,
           state: { payments, orderId },
         });
       } else {
         // Caso 1: un solo metodo di pagamento (Stripe) → vai al checkout
-        navigate("/checkout", {
+        navigate(ROUTES.CHECKOUT, {
           replace: true,
           state: { paymentId: payments[0].id, orderId },
         });
@@ -90,7 +91,7 @@ export default function TotalShopButton({ onButtonClick = null }) {
     } catch (error) {
       console.error("Errore:", error);
       // Fallback: naviga al checkout senza state (creerà la sessione autonomamente)
-      navigate("/checkout");
+      navigate(ROUTES.CHECKOUT);
     } finally {
       setIsLoading(false);
     }

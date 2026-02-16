@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
+import { RefreshCw, Inbox, Search } from "lucide-react";
 import { apiRequest } from "../../../services/api-services";
+import Spinner from "../../../shared/components/ui/Spinner";
+import SearchBar from "../../../shared/components/ui/SearchBar";
+import EmptyState from "../../../shared/components/ui/EmptyState";
+import LoadingState from "../../../shared/components/ui/LoadingState";
+import Alert from "../../../shared/components/ui/Alert";
 
 /**
  * Componente per visualizzare e gestire la lista dei partecipanti verificati
@@ -126,31 +132,12 @@ export function PartecipantsTable({ eventId }) {
           >
             {loading ? (
               <>
-                <svg
-                  className="animate-spin inline-block w-4 h-4 mr-2"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+                <Spinner size="sm" className="mr-2" />
                 Caricamento...
               </>
             ) : (
               <>
-                <i className="bi bi-arrow-clockwise mr-2"></i>
+                <RefreshCw size={14} className="inline mr-2" />
                 Aggiorna
               </>
             )}
@@ -159,102 +146,43 @@ export function PartecipantsTable({ eventId }) {
       </div>
 
       {/* Search Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-        <div className="flex shadow-sm">
-          <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
-            <i className="bi bi-search text-blue-600"></i>
-          </span>
-          <input
-            type="text"
-            placeholder="Cerca per email..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="flex-1 border-2 border-l-0 border-gray-300 px-3 py-2
-                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                       rounded-r-md"
-          />
-          {searchTerm && (
-            <button
-              type="button"
-              onClick={() => setSearchTerm("")}
-              className="px-3 border-2 border-l-0 border-gray-300 text-gray-600 
-                         hover:bg-gray-100 transition-colors rounded-r-md -ml-px"
-            >
-              <i className="bi bi-x-circle"></i>
-            </button>
-          )}
-        </div>
-        <div className="text-right mt-2 md:mt-0 flex items-center justify-end">
-          <small className="text-gray-500">
-            Visualizzati {filteredEmails.length} di {emails.length} partecipanti
-          </small>
-        </div>
-      </div>
+      <SearchBar
+        placeholder="Cerca per email..."
+        searchTerm={searchTerm}
+        onSearchChange={handleSearchChange}
+        onClear={() => setSearchTerm("")}
+        filteredCount={filteredEmails.length}
+        totalCount={emails.length}
+        countLabel="partecipanti"
+      />
 
       {/* Error Alert */}
       {error && (
-        <div className="mb-3">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative flex justify-between items-center">
-            <span>{error}</span>
-            <button
-              type="button"
-              onClick={() => setError(null)}
-              className="text-red-700 hover:text-red-900"
-            >
-              <i className="bi bi-x-lg"></i>
-            </button>
-          </div>
-        </div>
+        <Alert variant="danger" onDismiss={() => setError(null)}>
+          {error}
+        </Alert>
       )}
 
       {/* Loading State */}
       {loading && !error && (
-        <div className="text-center py-12">
-          <svg
-            className="animate-spin inline-block w-8 h-8 text-blue-600"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <p className="text-gray-500 mt-3">Caricamento partecipanti...</p>
-        </div>
+        <LoadingState message="Caricamento partecipanti..." />
       )}
 
       {/* Empty State */}
       {!loading && !error && emails.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-500">
-            <i className="bi bi-inbox text-5xl"></i>
-            <p className="mt-3">Nessun partecipante caricato</p>
-            <small>Carica un file Excel per visualizzare i partecipanti</small>
-          </div>
-        </div>
+        <EmptyState
+          icon={Inbox}
+          title="Nessun partecipante caricato"
+          subtitle="Carica un file Excel per visualizzare i partecipanti"
+        />
       )}
 
-      {/* No Results State (search with no matches) */}
+      {/* No Results State */}
       {!loading && !error && emails.length > 0 && filteredEmails.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-gray-500">
-            <i className="bi bi-search text-5xl"></i>
-            <p className="mt-3">
-              Nessun risultato trovato per &quot;{searchTerm}&quot;
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          icon={Search}
+          title={`Nessun risultato trovato per "${searchTerm}"`}
+        />
       )}
 
       {/* Table with Data */}
@@ -276,8 +204,8 @@ export function PartecipantsTable({ eventId }) {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredEmails.map((email, index) => (
-                <tr 
-                  key={email} 
+                <tr
+                  key={email}
                   className="hover:bg-gray-50 transition-colors even:bg-gray-50"
                 >
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
@@ -297,26 +225,7 @@ export function PartecipantsTable({ eventId }) {
                                  disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {deleteInProgress === email ? (
-                        <svg
-                          className="animate-spin w-4 h-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
+                        <Spinner size="sm" />
                       ) : (
                         <i className="bi bi-trash"></i>
                       )}

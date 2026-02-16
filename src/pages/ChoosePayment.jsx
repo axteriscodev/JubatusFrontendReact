@@ -1,5 +1,6 @@
 import { useTranslations } from "../features/TranslationProvider";
 import { useNavigate, useLocation } from "react-router-dom";
+import { ROUTES } from "../routes";
 
 export default function ChoosePayment() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function ChoosePayment() {
   const orderId = receivedData?.orderId;
 
   function handleSelect(id) {
-    navigate("/checkout", {
+    navigate(ROUTES.CHECKOUT, {
       state: { orderId, paymentId: id },
     });
   }
