@@ -5,6 +5,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { useTranslations } from "../features/TranslationProvider";
 import { useLanguage } from "../features/LanguageContext";
 import ProgressBar from "../components/ProgressBar";
+import { ROUTES } from "../routes";
 
 const PAYMENT_COMPLETE = "complete";
 const PAYMENT_OPEN = "open";
@@ -52,15 +53,15 @@ export default function CheckoutOutcome() {
         // il pagamento è completo, vado a richiedere le foto reali
         if (status === PAYMENT_COMPLETE) {
           if (eventPreset.preOrder)
-            navigate("/pre-order-purchased");
+            navigate(ROUTES.PRE_ORDER_PURCHASED);
           else
-            //navigate("/processing-photos");
-              navigate("/mail-confirmation");
+            //navigate(ROUTES.PROCESSING_PHOTOS);
+              navigate(ROUTES.MAIL_CONFIRMATION);
         }
 
         // il pagamento risulta ancora in sospeso, ritorno al checkout
         if (status === PAYMENT_OPEN) {
-          navigate("/checkout");
+          navigate(ROUTES.CHECKOUT);
         }
       }, 2000);
 

@@ -12,6 +12,7 @@ import { cartActions } from "../repositories/cart/cart-slice";
 import { competitionsActions } from "../repositories/competitions/competitions-slice";
 import { setUiPreset, setHeaderData } from "../utils/graphics";
 import LanguageSelect from "../components/LanguageSelect";
+import { ROUTES } from "../routes";
 
 export default function UploadSelfie() {
   // impostare un eventuale loader per caricare nome e logo evento, più eventuali altri dati
@@ -42,7 +43,7 @@ export default function UploadSelfie() {
     if (userHash) {
       // reset del carrello
       dispatch(cartActions.resetStore());
-      navigate("/processing-selfie", {
+      navigate(ROUTES.PROCESSING_SELFIE, {
         state: {
           eventId: eventData.data.id,
           eventSlug: eventSlug,
@@ -89,7 +90,7 @@ export default function UploadSelfie() {
     // reset del carrello
     dispatch(cartActions.resetStore());
 
-    navigate("/processing-selfie", {
+    navigate(ROUTES.PROCESSING_SELFIE, {
       state: {
         eventId: eventData.data.id,
         email: data.email,
@@ -120,6 +121,7 @@ export default function UploadSelfie() {
         submitHandle={handleSubmit}
         defaultEmail={""}
         onErrors={formErrors}
+        externalPayment={false}
       />
     </div>
   );

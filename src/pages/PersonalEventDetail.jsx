@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { ArrowLeft, LogOut, ShoppingCart } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 
 import Carousel from "../shared/components/ui/Carousel.jsx";
@@ -13,6 +14,7 @@ import { personalActions } from "../repositories/personal/personal-slice";
 import { resetHeaderData } from "../utils/graphics";
 import { useTranslations } from "../features/TranslationProvider";
 import { apiRequest } from "../services/api-services";
+import { ROUTES } from "../routes";
 
 export default function PersonalEventDetail() {
   const dispatch = useDispatch();
@@ -45,15 +47,15 @@ export default function PersonalEventDetail() {
 
         const eventsData = await response.json();
         console.log("Dati ricevuti:", eventsData); // Debug
-        if(eventsData.data.length > 0){
+        if (eventsData.data.length > 0) {
           const event = eventsData.data[0];
-        //setError(null);
-        setEventData(event);
-        dispatch(
-          personalActions.updatePurchased(
-            event.items.filter((item) => item.isPurchased) || []
-          )
-        );
+          //setError(null);
+          setEventData(event);
+          dispatch(
+            personalActions.updatePurchased(
+              event.items.filter((item) => item.isPurchased) || [],
+            ),
+          );
         }
       } catch (err) {
         console.error("Errore nel caricamento:", err);
@@ -78,26 +80,22 @@ export default function PersonalEventDetail() {
       return [];
     }
 
-    return (
-      eventData.items.filter(
-        (item) => item.isPurchased === false
-      ) || []
-    );
+    return eventData.items.filter((item) => item.isPurchased === false) || [];
   }, [eventData]);
 
   const handleLogout = () => {
     logOut();
-    navigate("/", { replace: true });
+    navigate(ROUTES.HOME, { replace: true });
   };
 
   const handleBack = () => {
-    navigate("/personal");
+    navigate(ROUTES.PERSONAL);
   };
 
   const handleGoToShop = () => {
     const slug = eventData.slug;
     const hashId = eventData.hashId;
-    navigate(`/event/${slug}/${hashId}`);
+    navigate(ROUTES.EVENT_WITH_HASH(slug, hashId));
   };
 
   const openLightbox = (
@@ -105,7 +103,7 @@ export default function PersonalEventDetail() {
     startIndex = 0,
     select,
     actions,
-    personalSlice
+    personalSlice,
   ) => {
     setIndex(startIndex);
     setOpen(true);
@@ -120,10 +118,10 @@ export default function PersonalEventDetail() {
       <div className="container">
         <div className="flex justify-between my-10">
           <Button onClick={handleBack} variant="outline-light" size="sm">
-            <i className="bi bi-arrow-left"></i>
+            <ArrowLeft size={16} />
           </Button>
           <Button onClick={handleLogout} variant="outline-danger">
-            <i className="bi bi-box-arrow-right"></i> Logout
+            <LogOut size={16} className="inline" /> Logout
           </Button>
         </div>
         {purchasedItems?.length > 0 ? (
@@ -178,6 +176,7 @@ export default function PersonalEventDetail() {
                 personalSlice={true}
                 onOpenLightbox={openLightbox}
                 aspectRatio={eventData?.aspectRatio}
+                isShop={false}
               />
             </div>
           </>
@@ -198,7 +197,7 @@ export default function PersonalEventDetail() {
       className="text-white text-decoration-none p-0 ml-auto"
       onClick={() => handleGoToShop()}
     >
-      <i className="bi bi-cart mr-2 fs-3"></i>
+      <ShoppingCart size={28} className="inline mr-2" />
       {t("PERSONAL_SHOP")}
     </Button>
   </div>

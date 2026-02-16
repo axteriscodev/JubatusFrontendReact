@@ -1,3 +1,16 @@
+import {
+  Info,
+  Pencil,
+  Link,
+  MapPin,
+  CloudUpload,
+  Tag,
+  ArrowRightLeft,
+  Smile,
+  Text,
+  ShieldCheck,
+} from "lucide-react";
+
 /**
  * Componente per le informazioni base dell'evento - VERSIONE TAILWIND
  */
@@ -6,7 +19,7 @@ export function EventBasicInfo({
   onInputChange,
   onTitleChange,
   tagList,
-  currencyList
+  currencyList,
 }) {
   return (
     <div className="shadow-sm rounded-lg bg-white mb-4">
@@ -14,11 +27,13 @@ export function EventBasicInfo({
         {/* Header */}
         <div className="flex items-center mb-4">
           <div className="bg-cyan-500/10 rounded-xl p-3 mr-3">
-            <i className="bi bi-info-circle-fill text-blue-600 text-2xl"></i>
+            <Info size={24} className="text-blue-600" />
           </div>
           <div>
             <h5 className="mb-1 font-bold text-lg">Informazioni Base</h5>
-            <p className="text-gray-500 mb-0 text-sm">Dettagli principali dell'evento</p>
+            <p className="text-gray-500 mb-0 text-sm">
+              Dettagli principali dell'evento
+            </p>
           </div>
         </div>
 
@@ -26,7 +41,8 @@ export function EventBasicInfo({
           {/* Titolo evento */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-pencil-fill mr-2"></i>Titolo evento
+              <Pencil size={14} className="inline mr-2" />
+              Titolo evento
             </label>
             <input
               type="text"
@@ -41,7 +57,8 @@ export function EventBasicInfo({
           {/* URL */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-link-45deg mr-2"></i>URL
+              <Link size={14} className="inline mr-2" />
+              URL
             </label>
             <input
               type="text"
@@ -57,7 +74,8 @@ export function EventBasicInfo({
           {/* Località */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-geo-alt-fill mr-2"></i>Località
+              <MapPin size={14} className="inline mr-2" />
+              Località
             </label>
             <input
               type="text"
@@ -73,7 +91,8 @@ export function EventBasicInfo({
           {/* Path S3 */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-cloud-arrow-up-fill mr-2"></i>Path S3
+              <CloudUpload size={14} className="inline mr-2" />
+              Path S3
             </label>
             <input
               type="text"
@@ -89,7 +108,8 @@ export function EventBasicInfo({
           {/* Tipologia evento */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-tag-fill mr-2"></i>Tipologia evento
+              <Tag size={14} className="inline mr-2" />
+              Tipologia evento
             </label>
             <select
               name="tagId"
@@ -112,7 +132,8 @@ export function EventBasicInfo({
           {/* Valuta */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-currency-exchange mr-2"></i>Valuta
+              <ArrowRightLeft size={14} className="inline mr-2" />
+              Valuta
             </label>
             <select
               name="currencyId"
@@ -135,7 +156,8 @@ export function EventBasicInfo({
           {/* Emoji attesa */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-emoji-smile-fill mr-2"></i>Emoji attesa
+              <Smile size={14} className="inline mr-2" />
+              Emoji attesa
             </label>
             <input
               type="text"
@@ -151,7 +173,8 @@ export function EventBasicInfo({
           {/* Descrizione - full width */}
           <div className="lg:col-span-2">
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-text-paragraph mr-2"></i>Descrizione
+              <Text size={14} className="inline mr-2" />
+              Descrizione
             </label>
             <textarea
               name="description"
@@ -174,21 +197,27 @@ export function EventBasicInfo({
                   id="verifiedAttendanceEvent"
                   name="verifiedAttendanceEvent"
                   checked={formData.verifiedAttendanceEvent}
-                  onChange={(e) => onInputChange({
-                    target: {
-                      name: 'verifiedAttendanceEvent',
-                      value: e.target.checked
-                    }
-                  })}
+                  onChange={(e) =>
+                    onInputChange({
+                      target: {
+                        name: "verifiedAttendanceEvent",
+                        value: e.target.checked,
+                      },
+                    })
+                  }
                   className="w-5 h-5 mt-0.5 text-blue-600 rounded focus:ring-blue-500 shrink-0"
                 />
                 <div>
                   <span className="font-semibold">
-                    <i className="bi bi-shield-check mr-2 text-blue-600"></i>
+                    <ShieldCheck
+                      size={16}
+                      className="inline mr-2 text-blue-600"
+                    />
                     Evento con partecipanti verificati
                   </span>
                   <div className="text-gray-500 text-sm mt-1">
-                    Abilita la gestione dei partecipanti con caricamento Excel (numero chiuso)
+                    Abilita la gestione dei partecipanti con caricamento Excel
+                    (numero chiuso)
                   </div>
                 </div>
               </label>

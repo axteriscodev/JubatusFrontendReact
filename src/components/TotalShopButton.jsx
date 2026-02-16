@@ -1,8 +1,12 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslations } from "../features/TranslationProvider";
+import { useLanguage } from "../features/LanguageContext";
 import { useState } from "react";
 import { apiRequest } from "../services/api-services";
+import { cartActions } from "../repositories/cart/cart-slice";
+import { isPhotoFullPackEligible } from "../utils/offers";
+import { ROUTES } from "../routes";
 
 /**
  * Pulsante dello shop che visualizza il totale di spesa
@@ -11,10 +15,13 @@ import { apiRequest } from "../services/api-services";
  */
 export default function TotalShopButton({ onButtonClick = null }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const totalItems = useSelector((state) => state.cart.items.length);
   const eventPreset = useSelector((state) => state.competition);
   const { t } = useTranslations();
+  const { currentLanguage } = useLanguage();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,27 +33,65 @@ export default function TotalShopButton({ onButtonClick = null }) {
     setIsLoading(true);
 
     try {
-      const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/auth/manage-external-payment",
-        method: "GET",
+      const res = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/shop/create-order",
+        method: "POST",
+        body: JSON.stringify({
+          cart: {
+            userId: cart.userId,
+            eventId: cart.eventId,
+            searchId: cart.searchId,
+            allPhotos: cart.allPhotos,
+            video: cart.video,
+            amount: cart.totalPrice,
+            items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
+              ? [
+                  ...cart.products.filter(
+                    (item) => item.fileTypeId === 1 && item.purchased !== true,
+                  ),
+                  ...cart.items.filter(
+                    (item) => item.fileTypeId === 2 && item.purchased !== true,
+                  ),
+                ]
+              : cart.items,
+          },
+          //clientUrl: import.meta.env.VITE_APP_DOMAIN,
+          lang: currentLanguage.acronym,
+        }),
         needAuth: true,
       });
 
-      if (!response.ok)
-        throw new Error("Errore durante la verifica dei permessi.");
+      if (!res.ok)
+        throw new Error("Errore durante la creazione della sessione.");
 
-      const result = await response.json();
+      const result = await res.json();
+      const { orderId, isFree, payments } = result.data;
 
-      // Logica di reindirizzamento basata sulla risposta del server
-      if (result.data?.canManageExternalPayments) {
-        navigate("/choose-payment"); // Sostituisci con la rotta desiderata
+      // TODO: adattare il nome del campo quando la struttura della risposta server sarà definita
+      const paymentMethods = result.data.payments; // TODO: placeholder
+
+      dispatch(cartActions.updateOrderId(orderId));
+
+      if (isFree) {
+        // Caso 3: ordine gratuito → vai direttamente alla conferma email
+        navigate(ROUTES.MAIL_CONFIRMATION, { replace: true });
+      } else if (paymentMethods && paymentMethods.length > 1) {
+        // Caso 2: più metodi di pagamento → scegli come pagare
+        navigate(ROUTES.CHOOSE_PAYMENT, {
+          replace: true,
+          state: { payments, orderId },
+        });
       } else {
-        navigate("/checkout");
+        // Caso 1: un solo metodo di pagamento (Stripe) → vai al checkout
+        navigate(ROUTES.CHECKOUT, {
+          replace: true,
+          state: { paymentId: payments[0].id, orderId },
+        });
       }
     } catch (error) {
       console.error("Errore:", error);
-      // In caso di errore, puoi decidere se mandarlo comunque al checkout o mostrare un avviso
-      navigate("/checkout");
+      // Fallback: naviga al checkout senza state (creerà la sessione autonomamente)
+      navigate(ROUTES.CHECKOUT);
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,23 @@
 import { useState } from "react";
+import {
+  Star,
+  Trash2,
+  Tag,
+  ChevronUp,
+  ChevronDown,
+  Languages,
+  TriangleAlert,
+  Info,
+  Box,
+  Camera,
+  Image,
+  Presentation,
+  Film,
+  CirclePlay,
+  Euro,
+  Percent,
+  Calculator,
+} from "lucide-react";
 import Collapse from "../../../../shared/components/ui/Collapse";
 
 /**
@@ -34,7 +53,7 @@ export function PriceListItem({
             </span>
             {item.bestOffer && (
               <span className="bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium">
-                <i className="bi bi-star-fill mr-1"></i>
+                <Star size={12} className="inline mr-1" />
                 Migliore Offerta
               </span>
             )}
@@ -47,7 +66,7 @@ export function PriceListItem({
                        hover:bg-red-500 hover:text-white transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <i className="bi bi-trash"></i>
+            <Trash2 size={16} />
           </button>
         </div>
 
@@ -59,7 +78,8 @@ export function PriceListItem({
               htmlFor={`f${formIndex}-r${rowIndex}-labelId`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-tag mr-2"></i>Label Pacchetto
+              <Tag size={14} className="inline mr-2" />
+              Label Pacchetto
             </label>
             <select
               id={`f${formIndex}-r${rowIndex}-labelId`}
@@ -91,10 +111,12 @@ export function PriceListItem({
                   onClick={() => setShowTranslations(!showTranslations)}
                   className="text-blue-600 text-sm font-semibold hover:text-blue-800 transition-colors"
                 >
-                  <i
-                    className={`bi bi-chevron-${showTranslations ? "up" : "down"} mr-1`}
-                  ></i>
-                  <i className="bi bi-translate mr-1"></i>
+                  {showTranslations ? (
+                    <ChevronUp size={14} className="inline mr-1" />
+                  ) : (
+                    <ChevronDown size={14} className="inline mr-1" />
+                  )}
+                  <Languages size={14} className="inline mr-1" />
                   Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
                 </button>
                 <Collapse in={showTranslations}>
@@ -109,7 +131,10 @@ export function PriceListItem({
                           {lang.title}
                         </span>
                         {lang.subtitle && (
-                          <span className="text-gray-500"> - {lang.subtitle}</span>
+                          <span className="text-gray-500">
+                            {" "}
+                            - {lang.subtitle}
+                          </span>
                         )}
                       </div>
                     ))}
@@ -122,7 +147,7 @@ export function PriceListItem({
             {hasLegacyTexts && (
               <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500 rounded-lg">
                 <small className="text-yellow-600 font-semibold block mb-2">
-                  <i className="bi bi-exclamation-triangle mr-1"></i>
+                  <TriangleAlert size={14} className="inline mr-1" />
                   Testi esistenti (modalità legacy)
                 </small>
                 <div className="grid grid-cols-2 gap-2">
@@ -176,7 +201,7 @@ export function PriceListItem({
                   </div>
                 </div>
                 <small className="text-gray-500 block mt-2">
-                  <i className="bi bi-info-circle mr-1"></i>
+                  <Info size={14} className="inline mr-1" />
                   Seleziona una label sopra per passare al nuovo sistema
                 </small>
               </div>
@@ -186,7 +211,8 @@ export function PriceListItem({
           {/* Colonna destra: Opzioni */}
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
-              <i className="bi bi-star-fill mr-2"></i>Opzioni
+              <Star size={14} className="inline mr-2" />
+              Opzioni
             </label>
             <div className="bg-gray-100 border-0 rounded-md p-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -212,7 +238,8 @@ export function PriceListItem({
         <div className="grid grid-cols-12 gap-3">
           <div className="col-span-12">
             <small className="text-gray-500 font-semibold">
-              <i className="bi bi-box mr-2"></i>QUANTITÀ E PREZZI
+              <Box size={14} className="inline mr-2" />
+              QUANTITÀ E PREZZI
             </small>
           </div>
 
@@ -222,7 +249,8 @@ export function PriceListItem({
               htmlFor={`f${formIndex}-r${rowIndex}-quantityPhoto`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-camera-fill mr-2"></i>Foto
+              <Camera size={14} className="inline mr-2" />
+              Foto
             </label>
             <div className="flex shadow-sm">
               <input
@@ -237,7 +265,7 @@ export function PriceListItem({
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
               />
               <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
-                <i className="bi bi-image text-blue-600"></i>
+                <Image size={16} className="text-blue-600" />
               </span>
             </div>
           </div>
@@ -248,7 +276,8 @@ export function PriceListItem({
               htmlFor={`f${formIndex}-r${rowIndex}-quantityClip`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-easel-fill mr-2"></i>Clip
+              <Presentation size={14} className="inline mr-2" />
+              Clip
             </label>
             <div className="flex shadow-sm">
               <input
@@ -263,7 +292,7 @@ export function PriceListItem({
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
               />
               <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
-                <i className="bi bi-easel text-yellow-600"></i>
+                <Presentation size={16} className="text-yellow-600" />
               </span>
             </div>
           </div>
@@ -274,7 +303,8 @@ export function PriceListItem({
               htmlFor={`f${formIndex}-r${rowIndex}-quantityVideo`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-film mr-2"></i>Video
+              <Film size={14} className="inline mr-2" />
+              Video
             </label>
             <div className="flex shadow-sm">
               <input
@@ -289,7 +319,7 @@ export function PriceListItem({
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
               />
               <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
-                <i className="bi bi-play-circle text-red-500"></i>
+                <CirclePlay size={16} className="text-red-500" />
               </span>
             </div>
           </div>
@@ -300,7 +330,8 @@ export function PriceListItem({
               htmlFor={`f${formIndex}-r${rowIndex}-price`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-currency-euro mr-2"></i>Prezzo
+              <Euro size={14} className="inline mr-2" />
+              Prezzo
             </label>
             <div className="flex shadow-sm">
               <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md font-medium">
@@ -327,7 +358,8 @@ export function PriceListItem({
               htmlFor={`f${formIndex}-r${rowIndex}-discount`}
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
-              <i className="bi bi-percent mr-2"></i>Sconto
+              <Percent size={14} className="inline mr-2" />
+              Sconto
             </label>
             <div className="flex shadow-sm">
               <input
@@ -344,7 +376,7 @@ export function PriceListItem({
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
               />
               <span className="inline-flex items-center px-3 bg-white border-2 border-l-0 border-gray-300 rounded-r-md">
-                <i className="bi bi-tag text-green-500"></i>
+                <Tag size={16} className="text-green-500" />
               </span>
             </div>
           </div>
@@ -355,14 +387,15 @@ export function PriceListItem({
           <div className="mt-3 p-3 bg-green-500/10 rounded-xl">
             <div className="flex justify-between items-center">
               <span className="text-gray-600 font-semibold">
-                <i className="bi bi-calculator mr-2"></i>
+                <Calculator size={14} className="inline mr-2" />
                 Prezzo finale:
               </span>
               <div className="text-right">
                 {item.discount > 0 && (
                   <div>
                     <small className="text-gray-500 line-through">
-                      {currencySymbol}{parseFloat(item.price).toFixed(2)}
+                      {currencySymbol}
+                      {parseFloat(item.price).toFixed(2)}
                     </small>
                   </div>
                 )}

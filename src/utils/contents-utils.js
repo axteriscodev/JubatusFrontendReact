@@ -77,6 +77,9 @@ export const getEventContents = (data) => {
   // Trasforma ogni item in un oggetto contenuto con src e tipo
   const result = data.map(NormalizeContent);
 
+  const order = { 3: 0, 2: 1, 1: 2 };
+  result.sort((a, b) => (order[a.fileTypeId] ?? 3) - (order[b.fileTypeId] ?? 3));
+
   return result;
 };
 
@@ -118,6 +121,7 @@ export const NormalizeContent = (item) => {
     favorite, //se il contenuto è tra i preferiti
     isVideo, // Identifica se il contenuto è un video
     isPurchased, //se il contenuto è già stato acquistato
-    urlOriginal: item.urlOriginal
+    urlOriginal: item.urlOriginal,
+    fileTypeId: item.fileTypeId
   };
 };

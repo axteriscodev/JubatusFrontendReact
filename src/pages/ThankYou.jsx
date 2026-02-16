@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { apiRequest } from "../services/api-services";
 import { useTranslations } from "../features/TranslationProvider";
+import { ROUTES } from "../routes";
 import parse from 'html-react-parser';
 import { useLanguage } from "../features/LanguageContext";
 
@@ -17,7 +18,7 @@ export default function ThankYou() {
   const { t } = useTranslations();
 
   const submitHandle = (event) => {
-    navigate("/");
+    navigate(ROUTES.HOME);
   };
 
   //re-invio dell email di accesso

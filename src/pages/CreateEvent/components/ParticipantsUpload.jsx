@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { X } from "lucide-react";
 import { apiRequest } from "../../../services/api-services";
 
 /**
@@ -185,7 +186,7 @@ export function ParticipantsUpload({ eventId }) {
               onClick={() => setUploadStatus(null)}
               className="text-green-700 hover:text-green-900"
             >
-              <i className="bi bi-x-lg"></i>
+              <X size={16} />
             </button>
           </div>
         </div>
@@ -201,7 +202,7 @@ export function ParticipantsUpload({ eventId }) {
               onClick={() => setUploadStatus(null)}
               className="text-red-700 hover:text-red-900"
             >
-              <i className="bi bi-x-lg"></i>
+              <X size={16} />
             </button>
           </div>
         </div>

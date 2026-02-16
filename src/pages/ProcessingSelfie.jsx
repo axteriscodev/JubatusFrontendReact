@@ -10,6 +10,7 @@ import ProgressBar from "../components/ProgressBar";
 import { errorToast } from "../utils/toast-manager";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
+import { ROUTES } from "../routes";
 
 /**
  * Pagina di elaborazione selfie
@@ -75,7 +76,7 @@ export default function ProcessingSelfie() {
         dispatch(cartActions.updateSearchId(json.data));
 
         if (eventPreset.preOrder) {
-          navigate("/pre-order", { replace: true });
+          navigate(ROUTES.PRE_ORDER, { replace: true });
         } else {
           //sezione elaborazione selfie e attesa risposte dal server S3
           listenSSE(
@@ -94,15 +95,15 @@ export default function ProcessingSelfie() {
               );
 
               if (jsonData.contents.length > 0 || jsonData.hasVideo) {
-                navigate("/image-shop", { replace: true });
+                navigate(ROUTES.IMAGE_SHOP, { replace: true });
               } else {
-                navigate("/content-unavailable", { replace: true });
+                navigate(ROUTES.CONTENT_UNAVAILABLE, { replace: true });
               }
             },
             () => {
               errorToast("Si è verificato un errore");
               console.log(`Errore per la ricerca ${json.data}`);
-              navigate("/event/" + eventPreset.slug, { replace: true });
+              navigate(ROUTES.EVENT(eventPreset.slug), { replace: true });
             },
           );
         }

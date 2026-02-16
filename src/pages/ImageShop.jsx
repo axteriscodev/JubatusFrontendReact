@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useTranslations } from "../features/TranslationProvider";
 import parse from "html-react-parser";
+import { ROUTES } from "../routes";
 
 export default function ImageShop() {
   const dispatch = useDispatch();
@@ -71,7 +72,7 @@ export default function ImageShop() {
       <div className="container">
         <div className="flex justify-between">
           <div className="text-left">
-            <Link to={"/event/" + eventPreset.slug}>
+            <Link to={ROUTES.EVENT(eventPreset.slug)}>
               <Logo
                 src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
                 size="logo-sm"
@@ -134,6 +135,7 @@ export default function ImageShop() {
               onImageClick={handleImageClick}
               photoItems={photoItems}
               aspectRatio={eventPreset.aspectRatio}
+              isShop={true}
             />
             <TotalShopButton onButtonClick={handleButtonClick} />
           </>

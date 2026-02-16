@@ -8,82 +8,61 @@ import { useTranslations } from "../features/TranslationProvider";
 import MailForm from "../components/MailForm";
 import FormErrors from "../models/form-errors";
 import { useLanguage } from "../features/LanguageContext";
-import parse from "html-react-parser";
 import { FormLabel } from "../shared/components/ui/Form";
 import Input from "../shared/components/ui/Input";
 import { ROUTES } from "../routes";
 
-export default function MailConfirmation() {
+export default function PayAtCounter() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslations();
+  const { currentLanguage } = useLanguage();
+
   const userId = useSelector((state) => state.cart.userId);
   const orderId = useSelector((state) => state.cart.id);
   const userEmail = useSelector((state) => state.cart.userEmail);
   const fullName = useSelector((state) => state.cart.fullName);
-  //const userSurname = useSelector((state) => state.cart.userSurname);
-  const { currentLanguage } = useLanguage();
+  const eventSlug = useSelector((state) => state.competition.slug);
+
   const [formErrors, setFormErrors] = useState(new FormErrors());
   const [name, setName] = useState(fullName ?? "");
-  //const [surname, setSurname] = useState(userSurname ?? "");
   const [nameError, setNameError] = useState(false);
-  //const [surnameError, setSurnameError] = useState(false);
-  const { t } = useTranslations();
-
-  const isEmailEmpty = !userEmail || userEmail.trim() === "";
-  const isNameEmpty = !fullName || fullName.trim() === "";
-  //const isSurnameEmpty = !userSurname || userSurname.trim() === "";
-
-  //TODO - recupero nome e cognome da risposta Stripe
 
   async function handleSubmit(event, data) {
     event.preventDefault();
     try {
       const { email } = data;
-      let formErrors = new FormErrors();
+      let errors = new FormErrors();
 
-      console.log(data.email);
-      console.log(name);
-      //console.log(surname);
-      console.log(data.privacy);
-
-      // Validazione
-      formErrors.emailError = !validator.isEmail(data.email);
+      errors.emailError = !validator.isEmail(email);
       const isNameValid = name && name.trim() !== "";
-      //const isSurnameValid = surname && surname.trim() !== "";
-
       setNameError(!isNameValid);
-      //setSurnameError(!isSurnameValid);
 
-      if (formErrors.emailError || !isNameValid) {
-        setFormErrors(formErrors);
+      if (errors.emailError || !isNameValid) {
+        setFormErrors(errors);
         return;
       }
 
-      let body = JSON.stringify({
+      const body = JSON.stringify({
         userId,
         orderId,
         email,
         fullname: name.trim(),
-        //surname: surname.trim(),
         lang: currentLanguage.acronym,
       });
-
-      console.log(`body: ${body}`);
 
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/confirm-email",
         method: "POST",
-        body: body,
+        body,
       });
 
       if (response.ok) {
         const json = await response.json();
-        console.log("risposta ok");
 
-        // Email già esistente
         if (json.data.emailDuplicated) {
-          formErrors.emailDuplicated = true;
-          setFormErrors(formErrors);
+          errors.emailDuplicated = true;
+          setFormErrors(errors);
           return;
         }
 
@@ -93,11 +72,8 @@ export default function MailConfirmation() {
         if (json.data.nameModified) {
           dispatch(cartActions.updateUserName(name.trim()));
         }
-        // if (json.data.surnameModified) {
-        //   dispatch(cartActions.updateUserSurname(surname.trim()));
-        // }
 
-        navigate(ROUTES.THANK_YOU);
+        navigate(ROUTES.EVENT(eventSlug), { replace: true });
       }
     } catch (err) {
       console.error(`Errore invio aggiornamento dati: ${err}`);
@@ -105,23 +81,10 @@ export default function MailConfirmation() {
   }
 
   return (
-    <div className="form-sm">
-      <div className="my-20 text-left">
-        {isEmailEmpty || isNameEmpty ? (
-          <>
-            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
-            <h4 className="">{t("EMAIL_ENTER")}</h4>
-            <p>{t("EMAIL_AREA")}</p>
-          </>
-        ) : (
-          <>
-            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
-            <p>
-              {parse(t("PAYMENT_ACCESS").replace("$email", userEmail))} <br />
-              {t("PAYMENT_CORRECT")}
-            </p>
-          </>
-        )}
+    <div className="form-sm justify-center gap-4 px-6">
+      <div className="my-8 text-left">
+        <h2 className="mb-4">{t("EXTERNAL_PAYMENT_TITLE")}</h2>
+        <p>{t("EXTERNAL_PAYMENT_TEXT")}</p>
       </div>
 
       <div className="mb-3 text-left">
@@ -142,34 +105,12 @@ export default function MailConfirmation() {
         )}
       </div>
 
-      {/* <div className="mb-3">
-        <label htmlFor="surname" className="form-label">
-          {t('SURNAME_CONFIRM_LABEL')}
-        </label>
-        <input
-          type="text"
-          className={`form-control ${surnameError ? 'is-invalid' : ''}`}
-          id="surname"
-          value={surname}
-          onChange={(e) => {
-            setSurname(e.target.value);
-            setSurnameError(false);
-          }}
-          placeholder={t('SURNAME_PLACEHOLDER')}
-        />
-        {surnameError && (
-          <div className="invalid-feedback">
-            {t('SURNAME_REQUIRED')}
-          </div>
-        )}
-      </div> */}
-
       <MailForm
         submitHandle={handleSubmit}
         defaultEmail={userEmail ?? ""}
         showPrivacy={false}
         onErrors={formErrors}
-        externalPayment={false}
+        externalPayment={true}
       />
     </div>
   );

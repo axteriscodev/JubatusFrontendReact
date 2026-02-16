@@ -1,4 +1,5 @@
 import { PriceListItem } from "./PriceListItem";
+import { Receipt, Trash2, CalendarRange, CalendarPlus, Calendar, CalendarX, Package, CirclePlus } from "lucide-react";
 
 /**
  * Componente per una singola card listino - VERSIONE TAILWIND
@@ -11,7 +12,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="bg-cyan-500/10 rounded-xl p-2">
-              <i className="bi bi-receipt text-blue-600 text-xl"></i>
+              <Receipt size={20} className="text-blue-600" />
             </div>
             <div>
               <h5 className="mb-0 font-bold text-lg">Listino #{index + 1}</h5>
@@ -28,7 +29,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
                        hover:bg-red-500 hover:text-white transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <i className="bi bi-trash mr-2"></i>
+            <Trash2 size={14} className="inline mr-2" />
             Elimina listino
           </button>
         </div>
@@ -39,7 +40,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
         {/* Date del listino */}
         <div className="bg-gray-100 rounded-xl p-3 mb-4">
           <h6 className="font-semibold mb-3 text-gray-600">
-            <i className="bi bi-calendar-range mr-2"></i>
+            <CalendarRange size={16} className="inline mr-2" />
             Periodo di validità
           </h6>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -49,11 +50,11 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
                 htmlFor={`dateStart-${index}`}
                 className="block font-semibold text-gray-600 text-sm mb-2"
               >
-                <i className="bi bi-calendar-plus mr-2"></i>Data Inizio
+                <CalendarPlus size={14} className="inline mr-2" />Data Inizio
               </label>
               <div className="flex shadow-sm">
                 <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
-                  <i className="bi bi-calendar3 text-green-500"></i>
+                  <Calendar size={16} className="text-green-500" />
                 </span>
                 <input
                   type="date"
@@ -74,11 +75,11 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
                 htmlFor={`dateExpiry-${index}`}
                 className="block font-semibold text-gray-600 text-sm mb-2"
               >
-                <i className="bi bi-calendar-x mr-2"></i>Data Fine
+                <CalendarX size={14} className="inline mr-2" />Data Fine
               </label>
               <div className="flex shadow-sm">
                 <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
-                  <i className="bi bi-calendar3 text-red-500"></i>
+                  <Calendar size={16} className="text-red-500" />
                 </span>
                 <input
                   type="date"
@@ -98,7 +99,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
         {/* Titolo sezione pacchetti */}
         <div className="flex items-center justify-between mb-3">
           <h6 className="font-semibold text-gray-600">
-            <i className="bi bi-box-seam mr-2"></i>
+            <Package size={16} className="inline mr-2" />
             Pacchetti disponibili
           </h6>
           <span className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium">
@@ -130,7 +131,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
           className="mt-3 w-full py-2 px-4 border-2 border-dashed border-blue-500 text-blue-600 
                      rounded-md shadow-sm hover:bg-blue-50 transition-colors font-medium"
         >
-          <i className="bi bi-plus-circle mr-2"></i>
+          <CirclePlus size={16} className="inline mr-2" />
           Aggiungi pacchetto
         </button>
       </div>
