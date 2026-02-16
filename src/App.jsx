@@ -68,7 +68,10 @@ function App() {
             path: ROUTES.EMAIL_SENT,
             element: <EmailSent />,
           },
-          { path: ROUTES.PIN_VERIFICATION(":userPin"), element: <PinVerification /> },
+          {
+            path: ROUTES.PIN_VERIFICATION(":userPin"),
+            element: <PinVerification />,
+          },
           //   //{ path: ROUTES.PERSONAL, loader: checkAuthLoader, element: <Personal /> },
           {
             path: ROUTES.PERSONAL,
@@ -129,7 +132,6 @@ function App() {
           },
           { path: ROUTES.PROCESSING_PHOTOS, element: <ProcessingPhotos /> },
           { path: ROUTES.CONTENT_ERROR, element: <ContentError /> },
-
           {
             path: ROUTES.ADMIN_EVENT(":eventId"),
             element: <CreateEvent />,

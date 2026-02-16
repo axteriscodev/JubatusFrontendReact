@@ -92,11 +92,16 @@ export default function PendingPayments({ eventId, initialPayments }) {
     setMarkingPaid(payment.idOrdine);
 
     try {
-      await apiRequest({
+      const data = await apiRequest({
         api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/confirm-payment`,
         method: "PUT",
         needAuth: true,
       });
+
+      if (!data.paymentSaved) {
+        setError("Impossibile salvare il pagamento. Riprova più tardi.");
+        return;
+      }
 
       // Remove from local state
       setPayments((prev) =>

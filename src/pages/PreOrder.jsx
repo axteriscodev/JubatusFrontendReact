@@ -225,10 +225,12 @@ export default function PreOrder() {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="text-22">
-                    {getPriceListEntry(list.itemsLanguages?.[0]?.title)}
+                    {getPriceListEntry(list.itemsLanguages?.[0]?.title ?? "")}
                   </div>
                   <span className="text-13 opacity">
-                    {getPriceListEntry(list.itemsLanguages?.[0]?.subTitle)}
+                    {getPriceListEntry(
+                      list.itemsLanguages?.[0]?.subTitle ?? "",
+                    )}
                   </span>
                 </div>
                 <div className="text-right lh-1">
