@@ -14,6 +14,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
   const [error, setError] = useState(null);
   const [markingPaid, setMarkingPaid] = useState(null);
   const [confirmPayment, setConfirmPayment] = useState(null);
+  const [discountPercent, setDiscountPercent] = useState(0);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(
@@ -68,7 +69,9 @@ export default function PendingPayments({ eventId, initialPayments }) {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.message || "Errore durante il caricamento");
+        throw new Error(
+          responseData.message || "Errore durante il caricamento",
+        );
       }
 
       const paginatedData = responseData.data;
@@ -92,13 +95,30 @@ export default function PendingPayments({ eventId, initialPayments }) {
     setMarkingPaid(payment.idOrdine);
 
     try {
-      const data = await apiRequest({
+      const discountedAmount =
+        discountPercent > 0
+          ? payment.amount * (1 - discountPercent / 100)
+          : null;
+
+      const response = await apiRequest({
         api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/confirm-payment`,
         method: "PUT",
         needAuth: true,
+        body: JSON.stringify({
+          amount: payment.amount,
+          discountPercent: discountPercent,
+          discountedAmount:
+            discountedAmount !== null
+              ? Number(discountedAmount.toFixed(2))
+              : payment.amount,
+        }),
       });
 
-      if (!data.paymentSaved) {
+      if (!response.ok) {
+        throw new Error(data.message || "Errore durante il salvataggio");
+      }
+      const data = await response.json();
+      if (!data.data.paymentSaved) {
         setError("Impossibile salvare il pagamento. Riprova più tardi.");
         return;
       }
@@ -108,7 +128,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
         prev.filter((p) => p.idOrdine !== payment.idOrdine),
       );
       setTotalItems((prev) => Math.max(0, prev - 1));
-      setConfirmPayment(null);
+      handleCloseModal();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -140,6 +160,11 @@ export default function PendingPayments({ eventId, initialPayments }) {
     setPageSize(newSize);
     setCurrentPage(1);
     fetchPendingPayments(1, filterEmail, filterAmount, newSize);
+  };
+
+  const handleCloseModal = () => {
+    setConfirmPayment(null);
+    setDiscountPercent(0);
   };
 
   // Refresh handler
@@ -337,7 +362,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
                       ) : (
                         <>
                           <CheckCircle size={14} className="inline mr-1" />
-                          Segna pagato
+                          Gestisci
                         </>
                       )}
                     </button>
@@ -381,11 +406,11 @@ export default function PendingPayments({ eventId, initialPayments }) {
       {/* Confirm Payment Modal */}
       <Modal
         show={!!confirmPayment}
-        onHide={() => setConfirmPayment(null)}
+        onHide={handleCloseModal}
         centered
-        size="sm"
+        size="xl"
       >
-        <Modal.Header closeButton onHide={() => setConfirmPayment(null)}>
+        <Modal.Header closeButton onHide={handleCloseModal}>
           <Modal.Title>Conferma pagamento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -416,13 +441,44 @@ export default function PendingPayments({ eventId, initialPayments }) {
                   {formatFileTypeCounts(confirmPayment.fileTypeCounts)}
                 </span>
               </div>
+              <div className="flex justify-between items-center pt-2 border-t border-gray-100">
+                <label className="font-medium text-gray-600">Sconto (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={discountPercent}
+                  onChange={(e) =>
+                    setDiscountPercent(
+                      Math.min(100, Math.max(0, Number(e.target.value))),
+                    )
+                  }
+                  className="w-24 px-2 py-1 border border-gray-300 rounded-md text-right
+                             focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              {discountPercent > 0 && (
+                <div className="flex justify-between items-center pt-1 text-green-700 font-semibold">
+                  <span>Importo scontato</span>
+                  <span>
+                    {confirmPayment.currency?.symbol ||
+                      confirmPayment.currency ||
+                      "€"}
+                    {(
+                      confirmPayment.amount *
+                      (1 - discountPercent / 100)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </Modal.Body>
         <Modal.Footer>
           <button
             type="button"
-            onClick={() => setConfirmPayment(null)}
+            onClick={handleCloseModal}
             className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md
                        hover:bg-gray-100 transition-colors"
           >
@@ -444,7 +500,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
             ) : (
               <>
                 <CheckCircle size={14} className="inline mr-1" />
-                Conferma
+                Segna pagato
               </>
             )}
           </button>

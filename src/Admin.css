@@ -60,3 +60,11 @@ table > tbody > tr > td:last-child:not(:first-child) {
 .button-group *:not(:last-child):not(:first-child) button {
     @apply rounded-l-none rounded-r-none;
 }
+
+/* Admin layout overrides */
+html:has(body.admin) {
+  font-size: 18px; /* scale all rem-based Tailwind utilities (~+12.5%) */
+}
+body.admin .container {
+  max-width: 96rem; /* 1536px instead of default 1280px */
+}
