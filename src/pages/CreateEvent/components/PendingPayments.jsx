@@ -68,7 +68,9 @@ export default function PendingPayments({ eventId, initialPayments }) {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.message || "Errore durante il caricamento");
+        throw new Error(
+          responseData.message || "Errore durante il caricamento",
+        );
       }
 
       const paginatedData = responseData.data;
@@ -383,7 +385,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
         show={!!confirmPayment}
         onHide={() => setConfirmPayment(null)}
         centered
-        size="sm"
+        size="xl"
       >
         <Modal.Header closeButton onHide={() => setConfirmPayment(null)}>
           <Modal.Title>Conferma pagamento</Modal.Title>
