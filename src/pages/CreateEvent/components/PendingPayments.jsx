@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RefreshCw, Inbox, CheckCircle } from "lucide-react";
+import { RefreshCw, Inbox, CheckCircle, CreditCard } from "lucide-react";
 import { apiRequest } from "../../../services/api-services";
 import Spinner from "../../../shared/components/ui/Spinner";
 import EmptyState from "../../../shared/components/ui/EmptyState";
@@ -441,36 +441,74 @@ export default function PendingPayments({ eventId, initialPayments }) {
                   {formatFileTypeCounts(confirmPayment.fileTypeCounts)}
                 </span>
               </div>
-              <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                <label className="font-medium text-gray-600">Sconto (%)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={discountPercent}
-                  onChange={(e) =>
-                    setDiscountPercent(
-                      Math.min(100, Math.max(0, Number(e.target.value))),
-                    )
-                  }
-                  className="w-24 px-2 py-1 border border-gray-300 rounded-md text-right
-                             focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              <div className="pt-2 border-t border-gray-100 space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="font-medium text-gray-600">Sconto (%)</label>
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
+                      {[5, 10, 15, 20].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() =>
+                            setDiscountPercent(
+                              discountPercent === preset ? 0 : preset,
+                            )
+                          }
+                          className={`px-2 py-0.5 text-xs rounded border transition-colors
+                            ${discountPercent === preset
+                              ? "bg-green-600 text-white border-green-600"
+                              : "border-gray-300 text-gray-600 hover:border-green-500 hover:text-green-600"
+                            }`}
+                        >
+                          {preset}%
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={discountPercent}
+                      onChange={(e) =>
+                        setDiscountPercent(
+                          Math.min(100, Math.max(0, Number(e.target.value))),
+                        )
+                      }
+                      className="w-20 px-2 py-1 border border-gray-300 rounded-md text-right
+                                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
               </div>
               {discountPercent > 0 && (
-                <div className="flex justify-between items-center pt-1 text-green-700 font-semibold">
-                  <span>Importo scontato</span>
-                  <span>
-                    {confirmPayment.currency?.symbol ||
-                      confirmPayment.currency ||
-                      "€"}
-                    {(
-                      confirmPayment.amount *
-                      (1 - discountPercent / 100)
-                    ).toFixed(2)}
-                  </span>
-                </div>
+                <>
+                  <div className="flex justify-between items-center pt-1 text-green-700 font-semibold">
+                    <span>Importo finale</span>
+                    <span>
+                      {confirmPayment.currency?.symbol ||
+                        confirmPayment.currency ||
+                        "€"}
+                      {(
+                        confirmPayment.amount *
+                        (1 - discountPercent / 100)
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm text-green-600">
+                    <span>Risparmio</span>
+                    <span>
+                      -{confirmPayment.currency?.symbol ||
+                        confirmPayment.currency ||
+                        "€"}
+                      {(
+                        confirmPayment.amount *
+                        (discountPercent / 100)
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                </>
               )}
             </div>
           )}
@@ -484,6 +522,18 @@ export default function PendingPayments({ eventId, initialPayments }) {
           >
             Annulla
           </button>
+          {/* Pagato POS - placeholder, API non ancora disponibile */}
+          <button
+            type="button"
+            disabled
+            title="Funzionalità in arrivo"
+            className="px-4 py-2 text-sm border border-blue-400 text-blue-400 rounded-md
+                       cursor-not-allowed opacity-60"
+          >
+            <CreditCard size={14} className="inline mr-1" />
+            Pagato POS
+          </button>
+          {/* Pagato cash - usa l'API esistente */}
           <button
             type="button"
             onClick={confirmMarkPaid}
@@ -500,7 +550,7 @@ export default function PendingPayments({ eventId, initialPayments }) {
             ) : (
               <>
                 <CheckCircle size={14} className="inline mr-1" />
-                Segna pagato
+                Pagato cash
               </>
             )}
           </button>
