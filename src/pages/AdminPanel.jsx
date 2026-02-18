@@ -78,6 +78,7 @@ export default function AdminPanel() {
         <thead>
           <tr>
             <th>#</th>
+            <th>Logo</th>
             <th>Nome</th>
             <th>Località</th>
             <th>Data evento</th>
@@ -98,6 +99,11 @@ export default function AdminPanel() {
           {competitions.map((competition) => (
             <tr key={competition.id}>
               <td>{competition.id}</td>
+              <td>
+                {competition.logo && (
+                  <img src={competition.logo} alt="" className="h-8 w-auto" />
+                )}
+              </td>
               <td>{competition.languages[0].title}</td>
               <td>{competition.languages[0].location}</td>
               <td>{formatDate(competition.dateEvent)}</td>
@@ -105,13 +111,15 @@ export default function AdminPanel() {
               <td>{formatDate(competition.dateExpiry)}</td>
               <td className="text-right">
                 <ButtonGroup>
-                  <Button
-                    variant="link"
-                    onClick={() => handleEditCompetition(competition)}
-                    size="sm"
-                  >
-                    <Settings size={16} />
-                  </Button>
+                  {competition.canManage !== false && (
+                    <Button
+                      variant="link"
+                      onClick={() => handleEditCompetition(competition)}
+                      size="sm"
+                    >
+                      <Settings size={16} />
+                    </Button>
+                  )}
                   <Button
                     variant="link"
                     size="sm"
