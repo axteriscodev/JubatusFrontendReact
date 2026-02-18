@@ -101,7 +101,7 @@ export default function AdminPanel() {
               <td>{competition.id}</td>
               <td>
                 {competition.logo && (
-                  <img src={competition.logo} alt="" className="h-8 w-auto" />
+                  <img src={`${import.meta.env.VITE_API_URL}/${competition.logo}`} alt="" className="h-8 w-auto" />
                 )}
               </td>
               <td>{competition.languages[0].title}</td>
