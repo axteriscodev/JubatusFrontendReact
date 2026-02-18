@@ -68,7 +68,7 @@ export function isAuthenticated() {
 export function isAdmin() {
   const token = getAuthToken();
   const level = getLevel();
-  const result = isValid(token) && level !== null && parseInt(level) >= 1;
+  const result = isValid(token) && level !== null && parseInt(level) !== 3;
   return result;
 }
 
