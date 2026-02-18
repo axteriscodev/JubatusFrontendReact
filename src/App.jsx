@@ -40,17 +40,14 @@ import ChoosePayment from "./pages/ChoosePayment";
 import PayAtCounter from "./pages/PayAtCounter";
 import { ROUTES } from "./routes";
 
+function HomeRoute() {
+  if (isAdmin()) return <Navigate to={ROUTES.ADMIN} replace />;
+  if (isAuthenticated()) return <Navigate to={ROUTES.PERSONAL} replace />;
+  return <Login />;
+}
+
 function App() {
   const router = useMemo(() => {
-    const getRedirectRoute = () => {
-      if (isAdmin()) {
-        return ROUTES.ADMIN;
-      } else if (isAuthenticated()) {
-        return ROUTES.PERSONAL;
-      }
-      return ROUTES.HOME;
-    };
-
     return createBrowserRouter([
       {
         element: <RouterWrapper />,
@@ -58,11 +55,7 @@ function App() {
           { path: ROUTES.WORK_IN_PROGRESS, element: <WorkInProgress /> },
           {
             path: ROUTES.HOME,
-            element: isAuthenticated() ? (
-              <Navigate to={getRedirectRoute()} replace />
-            ) : (
-              <Login />
-            ),
+            element: <HomeRoute />,
           },
           {
             path: ROUTES.EMAIL_SENT,
