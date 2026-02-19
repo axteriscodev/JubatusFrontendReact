@@ -117,12 +117,20 @@ export default function ReaderFormModal({ show, onHide, onSaved }) {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" type="button" onClick={onHide} className="!rounded-lg">
+            <button
+              type="button"
+              onClick={onHide}
+              className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
               Annulla
-            </Button>
-            <Button variant="primary" type="submit" disabled={saving} className="!rounded-lg">
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-green-600 border border-green-500 rounded-lg hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               {saving ? "Salvataggio..." : "Salva"}
-            </Button>
+            </button>
           </Modal.Footer>
         </form>
       )}
