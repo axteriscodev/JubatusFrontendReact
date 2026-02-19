@@ -15,16 +15,23 @@
    - [GET /terminal/readers/with-events](#22-get-terminalreaderswith-events)
    - [POST /terminal/readers](#23-post-terminalreaders)
    - [PUT /terminal/readers/:readerId/location](#24-put-terminalreadersreaderidlocation)
-3. [Associazione Evento ↔ Reader](#3-associazione-evento--reader)
-   - [GET /terminal/events/:eventId/readers](#31-get-terminaleventseventidreaders)
-   - [POST /terminal/events/:eventId/readers/:readerId](#32-post-terminaleventseventidreadersreaderid)
-   - [DELETE /terminal/events/:eventId/readers/:readerId](#33-delete-terminaleventseventidreadersreaderid)
-4. [Pagamento POS](#4-pagamento-pos)
-   - [POST /terminal/payment](#41-post-terminalpayment)
-   - [POST /terminal/payment/:paymentIntentId/capture](#42-post-terminalpaymentpaymentintentidcapture)
-   - [DELETE /terminal/payment/:paymentIntentId](#43-delete-terminalpaymentpaymentintentid)
-5. [Simulazione (solo sviluppo)](#5-simulazione-solo-sviluppo)
-   - [POST /terminal/readers/:readerId/simulate-card](#51-post-terminalreadersreaderidsimulate-card)
+   - [PUT /terminal/readers/:readerId/label](#25-put-terminalreadersreaderidlabel)
+   - [PUT /terminal/readers/:readerId/active](#26-put-terminalreadersreaderidactive)
+   - [DELETE /terminal/readers/:readerId](#27-delete-terminalreadersreaderid)
+3. [Associazione Evento ↔ Location](#3-associazione-evento--location)
+   - [GET /terminal/events/:eventId/locations](#31-get-terminaleventseventidlocations)
+   - [POST /terminal/events/:eventId/locations/:locationId](#32-post-terminaleventseventidlocationslocationid)
+   - [DELETE /terminal/events/:eventId/locations/:locationId](#33-delete-terminaleventseventidlocationslocationid)
+4. [Associazione Evento ↔ Reader](#4-associazione-evento--reader)
+   - [GET /terminal/events/:eventId/readers](#41-get-terminaleventseventidreaders)
+   - [POST /terminal/events/:eventId/readers/:readerId](#42-post-terminaleventseventidreadersreaderid)
+   - [DELETE /terminal/events/:eventId/readers/:readerId](#43-delete-terminaleventseventidreadersreaderid)
+5. [Pagamento POS](#5-pagamento-pos)
+   - [POST /terminal/payment](#51-post-terminalpayment)
+   - [POST /terminal/payment/:paymentIntentId/capture](#52-post-terminalpaymentpaymentintentidcapture)
+   - [DELETE /terminal/payment/:paymentIntentId](#53-delete-terminalpaymentpaymentintentid)
+6. [Simulazione (solo sviluppo)](#6-simulazione-solo-sviluppo)
+   - [POST /terminal/readers/:readerId/simulate-card](#61-post-terminalreadersreaderidsimulate-card)
 
 ---
 
@@ -315,11 +322,238 @@ Content-Type: application/json
 
 ---
 
-## 3. Associazione Evento ↔ Reader
+### 2.5 PUT /terminal/readers/:readerId/label
+
+Aggiorna l'etichetta identificativa di un reader.
+
+**Request**
+```
+PUT /terminal/readers/3/label
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+```json
+{
+  "label": "Cassa VIP"
+}
+```
+
+| Campo | Tipo | Obbligatorio | Note |
+|---|---|---|---|
+| `readerId` (path) | integer | ✅ | ID del reader nel database |
+| `label` (body) | string | ✅ | Nuova etichetta del reader |
+
+**Response 200**
+```json
+{
+  "status": 200,
+  "message": "Label reader aggiornata",
+  "data": {
+    "readerId": "3",
+    "label": "Cassa VIP"
+  }
+}
+```
+
+**Errori**
+
+| Codice | Causa |
+|---|---|
+| 404 | `readerId` non trovato nel database |
+
+---
+
+### 2.6 PUT /terminal/readers/:readerId/active
+
+Attiva o disattiva un reader.
+
+**Request**
+```
+PUT /terminal/readers/3/active
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+```json
+{
+  "active": false
+}
+```
+
+| Campo | Tipo | Obbligatorio | Note |
+|---|---|---|---|
+| `readerId` (path) | integer | ✅ | ID del reader nel database |
+| `active` (body) | boolean | ✅ | `true` per attivare, `false` per disattivare |
+
+**Response 200**
+```json
+{
+  "status": 200,
+  "message": "Reader disattivato",
+  "data": {
+    "readerId": "3",
+    "active": false
+  }
+}
+```
+
+> Il messaggio sarà `"Reader attivato"` o `"Reader disattivato"` in base al valore di `active`.
+
+**Errori**
+
+| Codice | Causa |
+|---|---|
+| 404 | `readerId` non trovato nel database |
+
+---
+
+### 2.7 DELETE /terminal/readers/:readerId
+
+Nasconde un reader (soft-delete): imposta `hide: true` nel database. Il reader non comparirà più in nessuna lista. L'operazione è irreversibile tramite API.
+
+**Request**
+```
+DELETE /terminal/readers/3
+Authorization: Bearer <token>
+```
+
+> Nessun body richiesto.
+
+**Response 200**
+```json
+{
+  "status": 200,
+  "message": "Reader nascosto",
+  "data": {
+    "readerId": "3"
+  }
+}
+```
+
+**Errori**
+
+| Codice | Causa |
+|---|---|
+| 404 | `readerId` non trovato nel database |
+
+---
+
+## 3. Associazione Evento ↔ Location
+
+### 3.1 GET /terminal/events/:eventId/locations
+
+Restituisce tutte le location associate a un evento.
+
+**Request**
+```
+GET /terminal/events/42/locations
+Authorization: Bearer <token>
+```
+
+**Response 200**
+```json
+{
+  "status": 200,
+  "message": "Location dell'evento",
+  "data": {
+    "locations": [
+      {
+        "id": 1,
+        "stripeLocationId": "tml_xxx",
+        "displayName": "Sede Milano",
+        "addressLine1": "Via Roma 10",
+        "city": "Milano",
+        "state": null,
+        "country": "IT",
+        "postalCode": "20100",
+        "hide": false,
+        "createdAt": "2025-01-10T10:00:00.000Z",
+        "updatedAt": "2025-01-10T10:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+**Errori**
+
+| Codice | Causa |
+|---|---|
+| 204 | L'evento non appartiene all'organizzazione dell'utente |
+
+---
+
+### 3.2 POST /terminal/events/:eventId/locations/:locationId
+
+Associa una location esistente a un evento.
+
+**Request**
+```
+POST /terminal/events/42/locations/1
+Authorization: Bearer <token>
+```
+
+> Nessun body richiesto.
+
+**Response 200**
+```json
+{
+  "status": 200,
+  "message": "Location associata all'evento",
+  "data": {
+    "eventId": "42",
+    "locationId": "1"
+  }
+}
+```
+
+**Errori**
+
+| Codice | Causa |
+|---|---|
+| 204 | L'evento non appartiene all'organizzazione dell'utente |
+| 404 | `locationId` non trovato nel database |
+
+---
+
+### 3.3 DELETE /terminal/events/:eventId/locations/:locationId
+
+Rimuove l'associazione tra una location e un evento.
+
+**Request**
+```
+DELETE /terminal/events/42/locations/1
+Authorization: Bearer <token>
+```
+
+> Nessun body richiesto.
+
+**Response 200**
+```json
+{
+  "status": 200,
+  "message": "Location rimossa dall'evento",
+  "data": {
+    "eventId": "42",
+    "locationId": "1"
+  }
+}
+```
+
+**Errori**
+
+| Codice | Causa |
+|---|---|
+| 204 | L'evento non appartiene all'organizzazione dell'utente |
+
+---
+
+## 4. Associazione Evento ↔ Reader
 
 > **Nota:** un reader può essere associato a **un solo evento alla volta**. Assegnare un reader già associato a un nuovo evento rimuove automaticamente l'associazione precedente.
 
-### 3.1 GET /terminal/events/:eventId/readers
+### 4.1 GET /terminal/events/:eventId/readers
 
 Restituisce tutti i reader associati a un determinato evento.
 
@@ -358,7 +592,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 3.2 POST /terminal/events/:eventId/readers/:readerId
+### 4.2 POST /terminal/events/:eventId/readers/:readerId
 
 Associa un reader a un evento. Se il reader era già associato a un altro evento, quella associazione viene rimossa.
 
@@ -391,7 +625,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 3.3 DELETE /terminal/events/:eventId/readers/:readerId
+### 4.3 DELETE /terminal/events/:eventId/readers/:readerId
 
 Rimuove l'associazione tra un reader e un evento.
 
@@ -421,7 +655,7 @@ Authorization: Bearer <token>
 
 ---
 
-## 4. Pagamento POS
+## 5. Pagamento POS
 
 ### Flusso tipico
 
@@ -435,7 +669,7 @@ Per annullare in qualsiasi momento prima della capture: `DELETE /terminal/paymen
 
 ---
 
-### 4.1 POST /terminal/payment
+### 5.1 POST /terminal/payment
 
 Crea un `PaymentIntent` su Stripe e lo invia al reader specificato. Il reader mostrerà la schermata di pagamento al cliente.
 
@@ -492,7 +726,7 @@ Content-Type: application/json
 
 ---
 
-### 4.2 POST /terminal/payment/:paymentIntentId/capture
+### 5.2 POST /terminal/payment/:paymentIntentId/capture
 
 Cattura un `PaymentIntent` già autorizzato dal reader (il cliente ha presentato la carta con successo).
 
@@ -524,7 +758,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 4.3 DELETE /terminal/payment/:paymentIntentId
+### 5.3 DELETE /terminal/payment/:paymentIntentId
 
 Annulla un `PaymentIntent`. Può essere chiamato prima della presentazione della carta o dopo una presentazione fallita.
 
@@ -548,11 +782,11 @@ Authorization: Bearer <token>
 
 ---
 
-## 5. Simulazione (solo sviluppo)
+## 6. Simulazione (solo sviluppo)
 
 > ⚠️ **Questa API funziona esclusivamente in ambiente di test Stripe. Non usarla in produzione.**
 
-### 5.1 POST /terminal/readers/:readerId/simulate-card
+### 6.1 POST /terminal/readers/:readerId/simulate-card
 
 Simula la presentazione di una carta al reader (utile per test automatici senza hardware fisico).
 

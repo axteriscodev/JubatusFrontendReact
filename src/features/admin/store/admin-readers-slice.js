@@ -9,6 +9,12 @@ const adminReadersSlice = createSlice({
     setReaders(state, action) {
       state.readers = [...action.payload];
     },
+    updateReader(state, action) {
+      const index = state.readers.findIndex((r) => r.id === action.payload.id);
+      if (index !== -1) {
+        state.readers[index] = action.payload;
+      }
+    },
   },
 });
 
