@@ -27,6 +27,7 @@ import { PriceListSection } from "./components/PriceListSection";
 import { FormActions } from "./components/FormActions";
 import { ParticipantsUpload } from "./components/ParticipantsUpload";
 import { PartecipantsTable } from "./components/PartecipantsTable";
+import { EventLocations } from "./components/EventLocations";
 import PendingPayments from "./components/PendingPayments";
 import LoadingState from "@common/components/ui/LoadingState";
 import Button from "@common/components/ui/Button";
@@ -194,6 +195,9 @@ export default function CreateEvent() {
     ...(!readOnly && formData.id
       ? [{ key: "priceLists", label: "Listini prezzi" }]
       : []),
+    ...(!readOnly && formData.id
+      ? [{ key: "locations", label: "Location / POS" }]
+      : []),
     // Tab partecipanti condizionale
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants", label: "Partecipanti" }]
@@ -294,7 +298,12 @@ export default function CreateEvent() {
             </div>
           )}
 
-          {/* Tab 3: Partecipanti (condizionale) */}
+          {/* Tab 3: Location / POS */}
+          {activeTab === "locations" && formData.id && !readOnly && (
+            <EventLocations eventId={formData.id} />
+          )}
+
+          {/* Tab 4: Partecipanti (condizionale) */}
           {activeTab === "participants" &&
             formData.id &&
             formData.verifiedAttendanceEvent && (
@@ -307,7 +316,7 @@ export default function CreateEvent() {
               </div>
             )}
 
-          {/* Tab 4: Pagamenti in sospeso (condizionale) */}
+          {/* Tab 5: Pagamenti in sospeso (condizionale) */}
           {activeTab === "orders" && (formData.id || readOnly) && (
             <div>
               <PendingPayments
