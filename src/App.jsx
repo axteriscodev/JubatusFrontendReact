@@ -28,6 +28,8 @@ import CheckoutOutcome from "./pages/CheckoutOutcome";
 import ProcessingPhotos from "./pages/ProcessingPhotos";
 import AdminPanel from "./pages/AdminPanel";
 import { loader as adminLoader } from "./pages/AdminPanel.loader";
+import AdminReaders from "./pages/AdminReaders";
+import { loader as adminReadersLoader } from "./pages/AdminReaders.loader";
 import CreateEvent from "./pages/CreateEvent";
 import { loader as createEventLoader } from "./pages/CreateEvent/CreateEvent.loader";
 import ContentError from "./pages/ContentError";
@@ -139,6 +141,11 @@ function App() {
             path: ROUTES.ADMIN,
             element: <AdminPanel />,
             loader: adminLoader,
+          },
+          {
+            path: ROUTES.ADMIN_READERS,
+            element: <AdminReaders />,
+            loader: adminReadersLoader,
           },
         ],
       },

@@ -16,6 +16,7 @@ import cartSlice from "./cart/cart-slice";
 import personalSlice from "./personal/personal-slice";
 import competitionsSlice from "./competitions/competitions-slice";
 import adminCompetitionsSlice from "./admin-competitions/admin-competitions-slice";
+import adminReadersSlice from "./admin-readers/admin-readers-slice";
 
 const persistConfig = {
   key: "root",
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   personal: personalSlice.reducer,
   competition: competitionsSlice.reducer,
   adminCompetitions: adminCompetitionsSlice.reducer,
+  adminReaders: adminReadersSlice.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -24,4 +24,6 @@ export const ROUTES = {
   ADMIN: "/admin",
   ADMIN_CREATE_EVENT: "/admin/create-event",
   ADMIN_EVENT: (eventId) => `/admin/event/${eventId}`,
+  ADMIN_READERS: "/admin/readers",
+  ADMIN_READER: (readerId) => `/admin/readers/${readerId}`,
 };

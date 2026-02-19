@@ -1,0 +1,63 @@
+Endpoint: GET /terminal/readers/with-events
+Auth: Authorization: Bearer <adminToken>
+
+Restituisce la lista di tutti i reader. Ogni reader include la sua location e un array events: se il reader è assegnato a un evento l'array conterrà quell'evento (con id, slug, dateEvent, dateStart, dateExpiry), altrimenti sarà vuoto ([]).
+
+esempio di json ricevuto:
+{
+  "readers": [
+    {
+      "id": 2,
+      "stripeReaderId": "tmr_FaKeAbCd1234",
+      "label": "Cassa 1",
+      "registrationCode": "simulated-wpe",
+      "active": true,
+      "hide": false,
+      "terminalLocationId": 1,
+      "location": {
+        "id": 1,
+        "stripeLocationId": "tml_FaKeXyZ789",
+        "displayName": "Sede principale",
+        "addressLine1": "Via Roma 10",
+        "city": "Milano",
+        "state": "MI",
+        "country": "IT",
+        "postalCode": "20100",
+        "active": true,
+        "hide": false
+      },
+      "events": [
+        {
+          "id": 42,
+          "slug": "maratona-2025",
+          "dateEvent": "2025-06-15T08:00:00.000Z",
+          "dateStart": "2025-05-01T00:00:00.000Z",
+          "dateExpiry": "2025-06-15T23:59:59.000Z"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "stripeReaderId": "tmr_FaKeEfGh5678",
+      "label": "Cassa 2",
+      "registrationCode": "simulated-wpe",
+      "active": true,
+      "hide": false,
+      "terminalLocationId": 1,
+      "location": {
+        "id": 1,
+        "stripeLocationId": "tml_FaKeXyZ789",
+        "displayName": "Sede principale",
+        "addressLine1": "Via Roma 10",
+        "city": "Milano",
+        "state": "MI",
+        "country": "IT",
+        "postalCode": "20100",
+        "active": true,
+        "hide": false
+      },
+      "events": []
+    }
+  ]
+}
+Cassa 1 è assegnata all'evento maratona-2025, Cassa 2 non è assegnata a nessun evento (events: []).
