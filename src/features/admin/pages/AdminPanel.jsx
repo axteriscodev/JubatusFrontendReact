@@ -1,4 +1,4 @@
-import { LogOut, Pencil, ExternalLink, Plus, Settings } from "lucide-react";
+import { ExternalLink, Plus, Settings } from "lucide-react";
 import Button from "@common/components/ui/Button";
 import ButtonGroup from "@common/components/ui/ButtonGroup";
 import Table from "@common/components/ui/Table";
@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 import { formatDate } from "@common/utils/data-formatter";
-import { logOut } from "@common/utils/auth";
 import { ROUTES } from "@/routes";
 
 import {
@@ -30,15 +29,6 @@ export default function AdminPanel() {
   );
 
   useEffect(() => {
-    // aggiungo la classe admin per aggiornare le variabili CSS
-    document.body.classList.add("admin");
-    // rimuovo la classe admin al "destroy" del componente
-    return () => {
-      document.body.classList.remove("admin");
-    };
-  }, []);
-
-  useEffect(() => {
     dispatch(fetchCompetitions());
   }, []);
 
@@ -57,23 +47,9 @@ export default function AdminPanel() {
   //   dispatch(deleteCompetition(competition));
   // };
 
-  const handleLogout = () => {
-    logOut();
-    navigate(ROUTES.HOME, { replace: true });
-  };
-
   return (
     <div className="container text-left">
-      <div className="flex justify-end my-10">
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-        >
-          <LogOut size={14} /> Logout
-        </button>
-      </div>
-      <h1>Elenco eventi</h1>
+      <h1 className="mb-10">Elenco eventi</h1>
       <Table className="my-10 table-auto">
         <thead>
           <tr>

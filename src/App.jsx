@@ -26,6 +26,7 @@ import Purchased from "@features/shop/pages/Purchased";
 import Checkout from "@features/shop/pages/Checkout";
 import CheckoutOutcome from "@features/shop/pages/CheckoutOutcome";
 import ProcessingPhotos from "@features/user/pages/ProcessingPhotos";
+import AdminLayout from "@features/admin/components/AdminLayout";
 import AdminPanel from "@features/admin/pages/AdminPanel";
 import { loader as adminLoader } from "@features/admin/pages/AdminPanel.loader";
 import AdminReaders from "@features/admin/pages/AdminReaders";
@@ -128,24 +129,29 @@ function App() {
           { path: ROUTES.PROCESSING_PHOTOS, element: <ProcessingPhotos /> },
           { path: ROUTES.CONTENT_ERROR, element: <ContentError /> },
           {
-            path: ROUTES.ADMIN_EVENT(":eventId"),
-            element: <CreateEvent />,
-            loader: createEventLoader,
-          },
-          {
-            path: ROUTES.ADMIN_CREATE_EVENT,
-            element: <CreateEvent />,
-            loader: createEventLoader,
-          },
-          {
-            path: ROUTES.ADMIN,
-            element: <AdminPanel />,
-            loader: adminLoader,
-          },
-          {
-            path: ROUTES.ADMIN_READERS,
-            element: <AdminReaders />,
-            loader: adminReadersLoader,
+            element: <AdminLayout />,
+            children: [
+              {
+                path: ROUTES.ADMIN,
+                element: <AdminPanel />,
+                loader: adminLoader,
+              },
+              {
+                path: ROUTES.ADMIN_READERS,
+                element: <AdminReaders />,
+                loader: adminReadersLoader,
+              },
+              {
+                path: ROUTES.ADMIN_CREATE_EVENT,
+                element: <CreateEvent />,
+                loader: createEventLoader,
+              },
+              {
+                path: ROUTES.ADMIN_EVENT(":eventId"),
+                element: <CreateEvent />,
+                loader: createEventLoader,
+              },
+            ],
           },
         ],
       },

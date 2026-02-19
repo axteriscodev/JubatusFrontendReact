@@ -80,14 +80,6 @@ export default function CreateEvent() {
     }
   }, [readOnly]);
 
-  // Effetto per aggiungere/rimuovere classe admin al body
-  useEffect(() => {
-    document.body.classList.add("admin");
-    return () => {
-      document.body.classList.remove("admin");
-    };
-  }, []);
-
   // Loading state durante il caricamento dell'evento
   if (eventLoading) {
     return (

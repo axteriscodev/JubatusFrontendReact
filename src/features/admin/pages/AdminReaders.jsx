@@ -40,13 +40,6 @@ export default function AdminReaders() {
   });
 
   useEffect(() => {
-    document.body.classList.add("admin");
-    return () => {
-      document.body.classList.remove("admin");
-    };
-  }, []);
-
-  useEffect(() => {
     dispatch(fetchReaders());
   }, []);
 
@@ -154,7 +147,7 @@ export default function AdminReaders() {
 
   return (
     <div className="container text-left">
-      <div className="my-10 flex items-center justify-between">
+      <div className="mb-10 flex items-center justify-between">
         <h1>Elenco Reader POS</h1>
         <button
           type="button"
