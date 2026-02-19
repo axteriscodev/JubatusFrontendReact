@@ -1,12 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { CalendarDays, CreditCard, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, CalendarDays, CreditCard, MapPin, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { ROUTES } from "@/routes";
 import { logOut } from "@common/utils/auth";
 
 const NAV_ITEMS = [
-  { label: "Elenco eventi", to: ROUTES.ADMIN, icon: CalendarDays, end: true },
+  { label: "Dashboard", to: ROUTES.ADMIN, icon: LayoutDashboard, end: true },
+  { label: "Elenco eventi", to: ROUTES.ADMIN_EVENTS, icon: CalendarDays },
   { label: "Elenco reader", to: ROUTES.ADMIN_READERS, icon: CreditCard },
+  { label: "Elenco location", to: ROUTES.ADMIN_LOCATIONS, icon: MapPin },
 ];
 
 export default function AdminSidebar() {

@@ -22,8 +22,10 @@ export const ROUTES = {
   PROCESSING_PHOTOS: "/processing-photos",
   CONTENT_ERROR: "/content-error",
   ADMIN: "/admin",
+  ADMIN_EVENTS: "/admin/events",
   ADMIN_CREATE_EVENT: "/admin/create-event",
   ADMIN_EVENT: (eventId) => `/admin/event/${eventId}`,
   ADMIN_READERS: "/admin/readers",
   ADMIN_READER: (readerId) => `/admin/readers/${readerId}`,
+  ADMIN_LOCATIONS: "/admin/locations",
 };

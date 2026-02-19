@@ -27,10 +27,13 @@ import Checkout from "@features/shop/pages/Checkout";
 import CheckoutOutcome from "@features/shop/pages/CheckoutOutcome";
 import ProcessingPhotos from "@features/user/pages/ProcessingPhotos";
 import AdminLayout from "@features/admin/components/AdminLayout";
-import AdminPanel from "@features/admin/pages/AdminPanel";
+import AdminDashboard from "@features/admin/pages/AdminDashboard";
+import AdminEvents from "@features/admin/pages/AdminEvents";
 import { loader as adminLoader } from "@features/admin/pages/AdminPanel.loader";
 import AdminReaders from "@features/admin/pages/AdminReaders";
 import { loader as adminReadersLoader } from "@features/admin/pages/AdminReaders.loader";
+import AdminLocations from "@features/admin/pages/AdminLocations";
+import { loader as adminLocationsLoader } from "@features/admin/pages/AdminLocations.loader";
 import CreateEvent from "@features/admin/pages/CreateEvent";
 import { loader as createEventLoader } from "@features/admin/pages/CreateEvent/CreateEvent.loader";
 import ContentError from "@common/pages/ContentError";
@@ -133,13 +136,23 @@ function App() {
             children: [
               {
                 path: ROUTES.ADMIN,
-                element: <AdminPanel />,
+                element: <AdminDashboard />,
+                loader: adminLoader,
+              },
+              {
+                path: ROUTES.ADMIN_EVENTS,
+                element: <AdminEvents />,
                 loader: adminLoader,
               },
               {
                 path: ROUTES.ADMIN_READERS,
                 element: <AdminReaders />,
                 loader: adminReadersLoader,
+              },
+              {
+                path: ROUTES.ADMIN_LOCATIONS,
+                element: <AdminLocations />,
+                loader: adminLocationsLoader,
               },
               {
                 path: ROUTES.ADMIN_CREATE_EVENT,
