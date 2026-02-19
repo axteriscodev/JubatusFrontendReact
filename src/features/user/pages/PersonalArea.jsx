@@ -1,0 +1,251 @@
+import { useState, useEffect } from "react";
+import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  EventStatus,
+  getPersonalEventGalleries,
+} from "@common/utils/contents-utils";
+import Spinner from "@common/components/ui/Spinner";
+import Alert from "@common/components/ui/Alert";
+import Button from "@common/components/ui/Button";
+import GalleryCard from "@common/components/GalleryCard";
+import { logOut } from "@common/utils/auth";
+import { apiRequest } from "@common/services/api-services";
+import { useTranslations } from "@common/i18n/TranslationProvider";
+import { ROUTES } from "@/routes";
+
+/**
+ * Componente LogoutButton
+ *
+ * Pulsante riutilizzabile per il logout dell'utente
+ * Evita duplicazione del codice tra diversi stati del componente
+ *
+ * @param {Function} onLogout - Callback da eseguire al click
+ */
+const LogoutButton = ({ onLogout }) => (
+  <div className="flex justify-end my-10">
+    <Button onClick={onLogout} variant="outline" size="sm">
+      <LogOut size={16} className="inline" /> Logout
+    </Button>
+  </div>
+);
+
+/**
+ * Componente PersonalArea
+ *
+ * Visualizza l'area personale dell'utente autenticato con la lista degli eventi
+ * della sua libreria. Gestisce il caricamento, gli errori e la navigazione verso
+ * i dettagli degli eventi in base al loro stato.
+ *
+ * Stati gestiti:
+ * - Loading: Mostra uno spinner durante il caricamento
+ * - Error: Mostra un messaggio di errore con possibilità di retry
+ * - Empty: Nessun evento trovato
+ * - Success: Lista di eventi con gallerie
+ */
+export default function PersonalArea() {
+  const navigate = useNavigate();
+  const { t } = useTranslations();
+  // Stati del componente
+  const [galleries, setGalleries] = useState([]); // Array di gallerie eventi
+  const [loading, setLoading] = useState(true); // Stato di caricamento
+  const [error, setError] = useState(null); // Messaggio di errore
+
+  /**
+   * Carica gli eventi dalla libreria personale dell'utente
+   * Effettua una chiamata API autenticata e formatta i dati ricevuti
+   */
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null); // Reset dell'errore precedente
+
+      // Chiamata API autenticata per recuperare gli eventi
+      const response = await apiRequest({
+        api: import.meta.env.VITE_API_URL + "/library/fetch",
+        method: "GET",
+        needAuth: true, // Richiede autenticazione
+      });
+
+      // Verifica la risposta della richiesta
+      if (!response.ok) {
+        throw new Error("Errore nel caricamento degli eventi");
+      }
+
+      const eventsData = await response.json();
+
+      // Formatta e salva i dati nello stato
+      prepareContent(eventsData.data);
+    } catch (err) {
+      console.error("Errore nel caricamento:", err);
+      setError(err.message); // Salva il messaggio di errore
+    } finally {
+      setLoading(false); // Fine del caricamento in ogni caso
+    }
+  };
+
+  /**
+   * Effect per caricare gli eventi all'mount del componente
+   */
+  useEffect(() => {
+    loadEvents();
+  }, []); // Dependency array vuoto = esegue solo al mount
+
+  /**
+   * Prepara e formatta i dati degli eventi ricevuti dall'API
+   * Valida che i dati siano un array e li trasforma nel formato corretto
+   *
+   * @param {Array} data - Dati grezzi degli eventi dall'API
+   */
+  const prepareContent = (data) => {
+    // Validazione del formato dati
+    if (!Array.isArray(data)) {
+      console.error("I dati non sono un array:", data);
+      setError("Formato dati non valido");
+      return;
+    }
+
+    // Trasforma i dati usando la utility function
+    const formattedGalleries = getPersonalEventGalleries(data);
+    setGalleries(formattedGalleries);
+  };
+
+  /**
+   * Gestisce il logout dell'utente
+   * Effettua il logout e reindirizza alla pagina di login
+   */
+  const handleLogout = () => {
+    logOut(); // Rimuove i dati di autenticazione
+    navigate(ROUTES.HOME, { replace: true }); // Reindirizza senza salvare nella history
+  };
+
+  /**
+   * Gestisce la navigazione verso i dettagli di un evento
+   * La route di destinazione dipende dallo stato dell'evento:
+   * - "onlyPurchased" / "mixed": Route personale con contenuti acquistati
+   * - "onlySearched": Route pubblica dell'evento
+   *
+   * @param {number} eventId - ID dell'evento da visualizzare
+   */
+  const navigateToDetail = (eventId) => {
+    // Trova l'evento selezionato (usando === per strict equality)
+    const event = galleries.find((item) => item.id === eventId);
+
+    if (event) {
+      // Naviga verso route diverse in base allo stato dell'evento
+      switch (event.status) {
+        case EventStatus.ONLY_PURCHASED: // Solo contenuti acquistati
+        case EventStatus.MIXED: // Mix di contenuti acquistati e non
+          navigate(ROUTES.PERSONAL_EVENT(event.slug));
+          break;
+        case EventStatus.ONLY_SEARCHED: // Solo contenuti cercati/preview
+          navigate(ROUTES.EVENT_WITH_HASH(event.slug, event.hashId));
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  const navigateToNewSearch = (eventId) => {
+    // Trova l'evento selezionato (usando === per strict equality)
+    const event = galleries.find((item) => item.id === eventId);
+    navigate(ROUTES.EVENT(event.slug));
+  };
+
+  // const navigateToShop = (eventId) => {
+  //   // Trova l'evento selezionato (usando === per strict equality)
+  //   const event = galleries.find((item) => item.id === eventId);
+  //   navigate(`/event/${event.slug}/${event.hashId}`);
+  // };
+
+  // ============================================
+  // RENDERING CONDIZIONALE (Multiple Returns)
+  // ============================================
+
+  /**
+   * STATO DI LOADING
+   * Mostra uno spinner centrato mentre i dati vengono caricati
+   */
+  if (loading) {
+    return (
+      <>
+        <div className="text-center mt-5">
+          <h1>{t("PERSONAL_TITLE")}</h1>
+          <Spinner animation="border" variant="light" />
+          {/* <p className="text-white mt-3">Caricamento eventi...</p> */}
+        </div>
+      </>
+    );
+  }
+
+  /**
+   * STATO DI ERRORE
+   * Mostra un alert con il messaggio di errore e un pulsante per riprovare
+   */
+  if (error) {
+    return (
+      <div className="mt-5">
+        <h1>{t("PERSONAL_TITLE")}</h1>
+        <Alert variant="danger">
+          <Alert.Heading>Errore</Alert.Heading>
+          <p>{error}</p>
+          <Button
+            variant="outline-danger"
+            onClick={loadEvents} // Riprova la chiamata API senza ricaricare la pagina
+          >
+            Riprova
+          </Button>
+        </Alert>
+      </div>
+    );
+  }
+
+  /**
+   * STATO EMPTY
+   * Nessun evento trovato nella libreria dell'utente
+   */
+  if (galleries.length === 0) {
+    return (
+      <div className="container">
+        <h1 className="my-10 mt-30">{t("PERSONAL_TITLE")}</h1>
+        <LogoutButton onLogout={handleLogout} />
+        <div className="text-center mt-5">
+          <p className="text-white">Nessun evento trovato nella tua libreria</p>
+        </div>
+      </div>
+    );
+  }
+
+  /**
+   * RENDERING PRINCIPALE
+   * Mostra la griglia di gallerie eventi
+   */
+  return (
+    <div className="container">
+      {/* Header con pulsante logout */}
+      <LogoutButton onLogout={handleLogout} />
+      <h1 className="my-10 mt-30">{t("PERSONAL_TITLE")}</h1>
+
+      {/* Griglia di gallerie eventi */}
+      <div className="container">
+        <div className="max-w-4xl mx-auto">
+          {galleries.map((gallery) => (
+            <GalleryCard
+              key={gallery.id}
+              title={gallery.title}
+              logo={gallery.logo}
+              images={gallery.images}
+              totalImages={gallery.totalImages}
+              eventId={gallery.id}
+              //eventStatus={gallery.status}
+              onPhotoClick={navigateToDetail} // Callback per la navigazione
+              onNewSearchClick={navigateToNewSearch}
+              //onGoToShop={navigateToShop}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
