@@ -1,8 +1,20 @@
 # Piano di Migrazione a TypeScript
 
-**Versione:** 1.0
+**Versione:** 1.1
 **Data:** 2026-02-19
-**Stato:** Bozza
+**Stato:** In corso
+
+| Fase | Descrizione | Stato |
+|------|-------------|-------|
+| 0 | Tooling e configurazione | ✅ Completata |
+| 1 | Utils e services | ⏳ Da fare |
+| 2 | Redux store | ⏳ Da fare |
+| 3 | Context i18n | ⏳ Da fare |
+| 4 | Componenti UI atomici | ⏳ Da fare |
+| 5 | Componenti condivisi e pagine comuni | ⏳ Da fare |
+| 6 | Feature: admin | ⏳ Da fare |
+| 7 | Feature: shop e user | ⏳ Da fare |
+| 8 | Entry point e router | ⏳ Da fare |
 
 ---
 
@@ -460,7 +472,7 @@ export interface UserState {
 
 La migrazione segue un ordine **bottom-up**: si parte dai moduli senza dipendenze interne (utils) e si sale verso i componenti e le pagine. Questo garantisce che, al momento di tipare un componente, tutti i suoi import siano già tipati.
 
-### Fase 0 — Tooling e configurazione (Stimato: 1–2 ore)
+### Fase 0 — Tooling e configurazione ✅ COMPLETATA (2026-02-19)
 
 **Obiettivo:** repository compilante con la nuova configurazione, senza ancora rinominare file.
 
