@@ -47,6 +47,7 @@ export default function AdminLocations() {
         <thead>
           <tr>
             <th>#</th>
+            <th>StripeId</th>
             <th>Nome</th>
             <th>Indirizzo</th>
             <th>Città</th>
@@ -68,6 +69,7 @@ export default function AdminLocations() {
             locations.map((loc) => (
               <tr key={loc.id}>
                 <td>{loc.id}</td>
+                <td>{loc.stripeLocationId}</td>
                 <td>{loc.displayName}</td>
                 <td>{loc.addressLine1}</td>
                 <td>{loc.city}</td>

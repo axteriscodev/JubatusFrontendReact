@@ -32,6 +32,8 @@ import AdminEvents from "@features/admin/pages/AdminEvents";
 import { loader as adminLoader } from "@features/admin/pages/AdminPanel.loader";
 import AdminReaders from "@features/admin/pages/AdminReaders";
 import { loader as adminReadersLoader } from "@features/admin/pages/AdminReaders.loader";
+import AdminReaderDetail from "@features/admin/pages/AdminReaderDetail";
+import { loader as adminReaderDetailLoader } from "@features/admin/pages/AdminReaderDetail.loader";
 import AdminLocations from "@features/admin/pages/AdminLocations";
 import { loader as adminLocationsLoader } from "@features/admin/pages/AdminLocations.loader";
 import CreateEvent from "@features/admin/pages/CreateEvent";
@@ -148,6 +150,11 @@ function App() {
                 path: ROUTES.ADMIN_READERS,
                 element: <AdminReaders />,
                 loader: adminReadersLoader,
+              },
+              {
+                path: ROUTES.ADMIN_READER(":readerId"),
+                element: <AdminReaderDetail />,
+                loader: adminReaderDetailLoader,
               },
               {
                 path: ROUTES.ADMIN_LOCATIONS,

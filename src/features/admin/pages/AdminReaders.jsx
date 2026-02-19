@@ -37,7 +37,7 @@ export default function AdminReaders() {
         <h1>Elenco Reader POS</h1>
         <button
           type="button"
-          onClick={() => setShowReaderModal(true)}
+          onClick={() => setShowLocationModal(true)}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           <Plus size={14} /> nuova location
