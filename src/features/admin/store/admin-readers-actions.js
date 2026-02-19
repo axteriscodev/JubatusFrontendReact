@@ -64,6 +64,40 @@ export const toggleReaderActive = (readerId, active) => {
 };
 
 /**
+ * Aggiorna la label di un reader
+ *
+ * @param {number} readerId - ID del reader
+ * @param {string} label - nuova label
+ * @param {object} currentReader - dati attuali del reader (per merge locale)
+ */
+export const updateReaderLabel = (readerId, label, currentReader) => {
+  return async (dispatch) => {
+    try {
+      const response = await apiRequest({
+        api:
+          import.meta.env.VITE_API_URL +
+          "/terminal/readers/" +
+          readerId +
+          "/label",
+        method: "PUT",
+        needAuth: true,
+        body: JSON.stringify({ label }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Errore nell'aggiornamento della label");
+      }
+
+      dispatch(adminReadersActions.updateReader({ ...currentReader, label }));
+      return { success: true };
+    } catch (error) {
+      console.error("Errore nell'aggiornamento della label", error);
+      return { success: false };
+    }
+  };
+};
+
+/**
  * Fetch della lista di reader POS con i relativi eventi
  */
 export const fetchReaders = () => {
