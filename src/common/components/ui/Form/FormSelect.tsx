@@ -1,9 +1,11 @@
 import React from 'react';
 
-/**
- * FormSelect component - Select dropdown
- */
-const FormSelect = React.forwardRef(({
+export interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  isInvalid?: boolean;
+  className?: string;
+}
+
+const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(({
   value,
   onChange,
   disabled = false,

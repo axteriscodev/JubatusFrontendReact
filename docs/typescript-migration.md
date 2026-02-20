@@ -9,8 +9,8 @@
 | 0 | Tooling e configurazione | ✅ Completata |
 | 1 | Utils e services | ✅ Completata |
 | 2 | Redux store | ✅ Completata |
-| 3 | Context i18n | ⏳ Da fare |
-| 4 | Componenti UI atomici | ⏳ Da fare |
+| 3 | Context i18n | ✅ Completata |
+| 4 | Componenti UI atomici | ✅ Completata |
 | 5 | Componenti condivisi e pagine comuni | ⏳ Da fare |
 | 6 | Feature: admin | ⏳ Da fare |
 | 7 | Feature: shop e user | ⏳ Da fare |
@@ -541,7 +541,7 @@ src/common/store/hooks.ts  (nuovo — hook tipati useAppDispatch/useAppSelector)
 
 ---
 
-### Fase 3 — Context i18n (Stimato: 3–4 ore)
+### Fase 3 — Context i18n ✅ COMPLETATA (2026-02-20)
 
 I due context wrappano l'intera app e sono usati da molti componenti.
 
@@ -552,7 +552,7 @@ src/common/i18n/TranslationProvider.jsx → .tsx
 
 ---
 
-### Fase 4 — Componenti UI atomici (Stimato: 1–2 giorni)
+### Fase 4 — Componenti UI atomici ✅ COMPLETATA (2026-02-20)
 
 I componenti UI in `src/common/components/ui/` sono foglie dell'albero di dipendenze. Migrarli crea un effetto a cascata positivo.
 

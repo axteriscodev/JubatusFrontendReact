@@ -1,15 +1,36 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-/**
- * Carousel component - Simple image carousel
- */
-const Carousel = ({ children, activeIndex: controlledIndex, onSelect, className = "", ...props }) => {
+export interface CarouselItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const CarouselItem = ({ children, className = "", ...props }: CarouselItemProps) => {
+  return (
+    <div className={`w-full ${className}`} {...props}>
+      {children}
+    </div>
+  );
+};
+
+interface CarouselComponent extends React.FC<CarouselProps> {
+  Item: typeof CarouselItem;
+}
+
+export interface CarouselProps {
+  children: React.ReactNode;
+  activeIndex?: number;
+  onSelect?: (index: number) => void;
+  className?: string;
+}
+
+const Carousel: CarouselComponent = ({ children, activeIndex: controlledIndex, onSelect, className = "", ...props }) => {
   const [internalIndex, setInternalIndex] = useState(0);
   const activeIndex = controlledIndex !== undefined ? controlledIndex : internalIndex;
 
   const items = Array.isArray(children) ? children : [children];
 
-  const handleSelect = (index) => {
+  const handleSelect = (index: number) => {
     if (controlledIndex === undefined) {
       setInternalIndex(index);
     }
@@ -37,14 +58,6 @@ const Carousel = ({ children, activeIndex: controlledIndex, onSelect, className 
           </button>
         </>
       )}
-    </div>
-  );
-};
-
-const CarouselItem = ({ children, className = "", ...props }) => {
-  return (
-    <div className={`w-full ${className}`} {...props}>
-      {children}
     </div>
   );
 };

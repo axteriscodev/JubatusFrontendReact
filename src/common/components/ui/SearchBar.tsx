@@ -1,4 +1,15 @@
+import React from 'react';
 import { Search, XCircle } from "lucide-react";
+
+export interface SearchBarProps {
+  placeholder?: string;
+  searchTerm: string;
+  onSearchChange: React.ChangeEventHandler<HTMLInputElement>;
+  onClear: () => void;
+  filteredCount: number;
+  totalCount: number;
+  countLabel?: string;
+}
 
 const SearchBar = ({
   placeholder = "Cerca...",
@@ -8,7 +19,7 @@ const SearchBar = ({
   filteredCount,
   totalCount,
   countLabel = "risultati",
-}) => {
+}: SearchBarProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
       <div className="flex shadow-sm">

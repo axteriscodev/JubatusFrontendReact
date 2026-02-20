@@ -1,7 +1,3 @@
-/**
- * Form components barrel export
- * Replaces react-bootstrap Form components
- */
 import FormLabel from './FormLabel';
 import FormError from './FormError';
 import FormField from './FormField';

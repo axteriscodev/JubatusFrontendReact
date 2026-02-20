@@ -1,26 +1,44 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext } from 'react';
 
-/**
- * Tabs component with Tailwind CSS styling
- * Replaces react-bootstrap Tabs/Tab
- *
- * Usage:
- * <Tabs defaultActiveKey="tab1">
- *   <Tab eventKey="tab1" title="Tab 1">Content 1</Tab>
- *   <Tab eventKey="tab2" title="Tab 2">Content 2</Tab>
- * </Tabs>
- */
+interface TabsContextValue {
+  activeKey: string | undefined;
+  onSelect: (key: string) => void;
+}
 
-// Context for sharing tabs state
-const TabsContext = createContext();
+const TabsContext = createContext<TabsContextValue>({
+  activeKey: undefined,
+  onSelect: () => undefined,
+});
 
-const Tabs = ({ children, defaultActiveKey, activeKey: controlledActiveKey, onSelect, className = '', ...props }) => {
+export interface TabProps {
+  children?: React.ReactNode;
+  eventKey: string;
+  title: React.ReactNode;
+  disabled?: boolean;
+}
+
+export const Tab = (_props: TabProps): null => {
+  return null;
+};
+
+interface TabsComponent extends React.FC<TabsProps> {
+  Tab: typeof Tab;
+}
+
+export interface TabsProps {
+  children: React.ReactNode;
+  defaultActiveKey?: string;
+  activeKey?: string;
+  onSelect?: (key: string) => void;
+  className?: string;
+}
+
+const Tabs: TabsComponent = ({ children, defaultActiveKey, activeKey: controlledActiveKey, onSelect, className = '', ...props }) => {
   const [internalActiveKey, setInternalActiveKey] = useState(defaultActiveKey);
 
-  // Use controlled if provided, otherwise use internal state
   const activeKey = controlledActiveKey !== undefined ? controlledActiveKey : internalActiveKey;
 
-  const handleSelect = (key) => {
+  const handleSelect = (key: string) => {
     if (controlledActiveKey === undefined) {
       setInternalActiveKey(key);
     }
@@ -34,7 +52,7 @@ const Tabs = ({ children, defaultActiveKey, activeKey: controlledActiveKey, onSe
         <div className="flex border-b border-gray-200 mb-4">
           {React.Children.map(children, (child) => {
             if (!React.isValidElement(child)) return null;
-            const { eventKey, title, disabled } = child.props;
+            const { eventKey, title, disabled } = child.props as TabProps;
 
             const isActive = activeKey === eventKey;
 
@@ -65,7 +83,7 @@ const Tabs = ({ children, defaultActiveKey, activeKey: controlledActiveKey, onSe
         <div className="tab-content">
           {React.Children.map(children, (child) => {
             if (!React.isValidElement(child)) return null;
-            const { eventKey } = child.props;
+            const { eventKey } = child.props as TabProps;
 
             if (activeKey !== eventKey) return null;
 
@@ -75,7 +93,7 @@ const Tabs = ({ children, defaultActiveKey, activeKey: controlledActiveKey, onSe
                 id={`tab-panel-${eventKey}`}
                 className="animate-fadeIn"
               >
-                {child.props.children}
+                {(child.props as TabProps).children}
               </div>
             );
           })}
@@ -85,14 +103,6 @@ const Tabs = ({ children, defaultActiveKey, activeKey: controlledActiveKey, onSe
   );
 };
 
-const Tab = ({ children, eventKey, title, disabled = false, ...props }) => {
-  // This component is just a placeholder for structure
-  // The actual rendering is handled by Tabs component
-  return null;
-};
-
-// Export compound component
 Tabs.Tab = Tab;
 
-export { Tab };
 export default Tabs;

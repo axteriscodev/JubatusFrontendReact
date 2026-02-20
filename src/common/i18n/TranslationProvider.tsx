@@ -1,23 +1,34 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLanguage } from './LanguageContext';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '@common/store/hooks';
+import type { Language, TranslationContextValue } from '@/types/i18n';
+import type { ApiResponse } from '@/types/api';
 
-export const TranslationContext = createContext({
+interface TranslationItem {
+  key: string;
+  value: string;
+}
+
+export const TranslationContext = createContext<TranslationContextValue>({
   translations: {},
   t: (key) => key,
   loadingTranslations: true,
-   currentLanguage: null,
+  currentLanguage: null,
 });
 
-export function TranslationProvider({ children }) {
+interface TranslationProviderProps {
+  children: React.ReactNode;
+}
+
+export function TranslationProvider({ children }: TranslationProviderProps) {
   const { currentLanguage } = useLanguage();
   const langCode = currentLanguage.acronym;
-  const tagId = useSelector((state) => state.competition?.tagId);
+  const tagId = useAppSelector((state) => state.competition?.tagId);
 
-  const [translations, setTranslations] = useState({});
+  const [translations, setTranslations] = useState<Record<string, string>>({});
   const [loadingTranslations, setLoadingTranslations] = useState(true);
 
-  const t = (key) => {
+  const t = (key: string): string => {
     if (!key) return "";
 
     //se ho il tag, provo a cercare la traduzione col tag
@@ -33,7 +44,7 @@ export function TranslationProvider({ children }) {
     return "";
   };
 
-  const toDictionary = (array) =>
+  const toDictionary = (array: TranslationItem[]): Record<string, string> =>
     Object.fromEntries(array.map(item => [item.key, item.value]));
 
   useEffect(() => {
@@ -48,7 +59,7 @@ export function TranslationProvider({ children }) {
           throw new Error(`Errore HTTP: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data = await response.json() as ApiResponse<TranslationItem[]>;
         setTranslations(toDictionary(data.data));
       } catch (error) {
         console.error("Errore durante il fetch delle traduzioni:", error);
@@ -63,13 +74,15 @@ export function TranslationProvider({ children }) {
     }
   }, [langCode]);
 
+  const currentLang: Language = currentLanguage;
+
   return (
-    <TranslationContext.Provider value={{ translations, t, loadingTranslations, currentLanguage }}>
+    <TranslationContext.Provider value={{ translations, t, loadingTranslations, currentLanguage: currentLang }}>
       {children}
     </TranslationContext.Provider>
   );
 }
 
-export function useTranslations() {
+export function useTranslations(): TranslationContextValue {
   return useContext(TranslationContext);
 }

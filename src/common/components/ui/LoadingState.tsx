@@ -1,6 +1,10 @@
 import Spinner from "./Spinner";
 
-const LoadingState = ({ message = "Caricamento..." }) => {
+export interface LoadingStateProps {
+  message?: string;
+}
+
+const LoadingState = ({ message = "Caricamento..." }: LoadingStateProps) => {
   return (
     <div className="text-center py-12">
       <Spinner size="md" />

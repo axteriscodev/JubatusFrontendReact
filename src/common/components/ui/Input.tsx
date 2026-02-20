@@ -1,20 +1,11 @@
 import React from "react";
 
-/**
- * Input component with Tailwind CSS styling
- * Replaces react-bootstrap Form.Control
- *
- * @param {Object} props
- * @param {string} props.type - Input type (text, email, password, number, etc.)
- * @param {string} props.value - Input value
- * @param {Function} props.onChange - Change handler
- * @param {string} props.placeholder - Placeholder text
- * @param {boolean} props.disabled - Disabled state
- * @param {boolean} props.error - Error state for validation
- * @param {string} props.className - Additional CSS classes
- * @param {string} props.name - Input name attribute
- */
-const Input = React.forwardRef(
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'error'> {
+  error?: boolean;
+  className?: string;
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       type = "text",

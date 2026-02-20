@@ -1,21 +1,27 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-/**
- * Modal component with Tailwind CSS styling
- * Replaces react-bootstrap Modal
- *
- * @param {Object} props
- * @param {boolean} props.show - Show/hide modal
- * @param {Function} props.onHide - Close handler
- * @param {React.ReactNode} props.children - Modal content
- * @param {boolean} props.centered - Center modal vertically
- * @param {'sm' | 'md' | 'lg' | 'xl'} props.size - Modal size
- * @param {boolean} props.backdrop - Show backdrop (default: true)
- * @param {boolean} props.keyboard - Close on ESC key (default: true)
- * @param {string} props.className - Additional CSS classes
- */
-const Modal = ({
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+
+export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {
+  show: boolean;
+  onHide: () => void;
+  children: React.ReactNode;
+  centered?: boolean;
+  size?: ModalSize;
+  backdrop?: boolean;
+  keyboard?: boolean;
+  className?: string;
+}
+
+interface ModalComponent extends React.FC<ModalProps> {
+  Header: typeof ModalHeader;
+  Title: typeof ModalTitle;
+  Body: typeof ModalBody;
+  Footer: typeof ModalFooter;
+}
+
+const Modal: ModalComponent = ({
   show,
   onHide,
   children,
@@ -26,11 +32,10 @@ const Modal = ({
   className = '',
   ...props
 }) => {
-  // Handle ESC key
   useEffect(() => {
     if (!show || !keyboard) return;
 
-    const handleEscape = (e) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onHide();
       }
@@ -40,7 +45,6 @@ const Modal = ({
     return () => document.removeEventListener('keydown', handleEscape);
   }, [show, keyboard, onHide]);
 
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (show) {
       document.body.style.overflow = 'hidden';
@@ -54,7 +58,7 @@ const Modal = ({
 
   if (!show) return null;
 
-  const sizeClasses = {
+  const sizeClasses: Record<ModalSize, string> = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg',
@@ -70,12 +74,10 @@ const Modal = ({
         }
       }}
     >
-      {/* Backdrop */}
       {backdrop && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
       )}
 
-      {/* Modal content */}
       <div
         className={`relative bg-white rounded-lg shadow-xl w-full ${sizeClasses[size]} ${
           centered ? 'my-auto' : 'my-8'
@@ -92,7 +94,14 @@ const Modal = ({
   return createPortal(modal, document.body);
 };
 
-const ModalHeader = ({ children, closeButton = true, onHide, className = '', ...props }) => {
+export interface ModalHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  closeButton?: boolean;
+  onHide?: () => void;
+  className?: string;
+}
+
+const ModalHeader = ({ children, closeButton = true, onHide, className = '', ...props }: ModalHeaderProps) => {
   return (
     <div
       className={`flex items-center justify-between px-6 py-4 border-b border-gray-200 ${className}`}
@@ -114,7 +123,12 @@ const ModalHeader = ({ children, closeButton = true, onHide, className = '', ...
   );
 };
 
-const ModalTitle = ({ children, className = '', ...props }) => {
+export interface ModalSubComponentProps extends React.HTMLAttributes<HTMLElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const ModalTitle = ({ children, className = '', ...props }: ModalSubComponentProps) => {
   return (
     <h3 className={`text-xl font-bold text-gray-900 ${className}`} {...props}>
       {children}
@@ -122,7 +136,7 @@ const ModalTitle = ({ children, className = '', ...props }) => {
   );
 };
 
-const ModalBody = ({ children, className = '', ...props }) => {
+const ModalBody = ({ children, className = '', ...props }: ModalSubComponentProps) => {
   return (
     <div className={`px-6 py-4 ${className}`} {...props}>
       {children}
@@ -130,7 +144,7 @@ const ModalBody = ({ children, className = '', ...props }) => {
   );
 };
 
-const ModalFooter = ({ children, className = '', ...props }) => {
+const ModalFooter = ({ children, className = '', ...props }: ModalSubComponentProps) => {
   return (
     <div
       className={`flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 ${className}`}
@@ -141,7 +155,6 @@ const ModalFooter = ({ children, className = '', ...props }) => {
   );
 };
 
-// Export compound component
 Modal.Header = ModalHeader;
 Modal.Title = ModalTitle;
 Modal.Body = ModalBody;

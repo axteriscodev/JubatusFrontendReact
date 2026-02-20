@@ -1,8 +1,14 @@
-/**
- * Spinner component - Loading indicator
- */
-const Spinner = ({ size = "md", className = "", ...props }) => {
-  const sizeClasses = {
+import React from 'react';
+
+type SpinnerSize = 'sm' | 'md' | 'lg';
+
+export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
+  size?: SpinnerSize;
+  className?: string;
+}
+
+const Spinner = ({ size = "md", className = "", ...props }: SpinnerProps) => {
+  const sizeClasses: Record<SpinnerSize, string> = {
     sm: "w-4 h-4 border-2",
     md: "w-8 h-8 border-2",
     lg: "w-12 h-12 border-3",

@@ -1,24 +1,23 @@
 import React, { useState, useRef } from "react";
 import { Transition } from "@headlessui/react";
 
-/**
- * Tooltip component with Tailwind styling
- *
- * @param {Object} props
- * @param {React.ReactNode} props.children - The element that triggers the tooltip
- * @param {string} props.content - The tooltip text content
- * @param {string} [props.placement="top"] - Tooltip placement: "top", "bottom", "left", "right"
- * @param {string} [props.className] - Additional classes for the tooltip
- * @returns {React.ReactElement}
- */
+type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
+
+export interface TooltipProps {
+  children: React.ReactNode;
+  content: string;
+  placement?: TooltipPlacement;
+  className?: string;
+}
+
 export default function Tooltip({
   children,
   content,
   placement = "top",
   className = "",
-}) {
+}: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {
@@ -33,20 +32,18 @@ export default function Tooltip({
     }, 20);
   };
 
-  const placementClasses = {
+  const placementClasses: Record<TooltipPlacement, string> = {
     top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
     bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
     left: "right-full top-1/2 -translate-y-1/2 mr-2",
     right: "left-full top-1/2 -translate-y-1/2 ml-2",
   };
 
-  const arrowClasses = {
+  const arrowClasses: Record<TooltipPlacement, string> = {
     top: "top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-900",
-    bottom:
-      "bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-900",
+    bottom: "bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-900",
     left: "left-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-r-transparent border-l-gray-900",
-    right:
-      "right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent border-r-gray-900",
+    right: "right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent border-r-gray-900",
   };
 
   return (

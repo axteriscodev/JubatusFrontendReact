@@ -1,9 +1,17 @@
 import React from 'react';
 
-/**
- * FormCheck component - Checkbox/Radio
- */
-const FormCheck = React.forwardRef(({
+export interface FormCheckProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+  type?: 'checkbox' | 'radio';
+  id?: string;
+  label?: string;
+  checked?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  disabled?: boolean;
+  className?: string;
+  name?: string;
+}
+
+const FormCheck = React.forwardRef<HTMLInputElement, FormCheckProps>(({
   type = 'checkbox',
   id,
   label,

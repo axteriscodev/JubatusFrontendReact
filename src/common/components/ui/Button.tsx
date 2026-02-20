@@ -1,18 +1,15 @@
 import React from 'react';
 
-/**
- * Button component with Tailwind CSS styling
- * Replaces react-bootstrap Button
- *
- * @param {Object} props
- * @param {'primary' | 'secondary' | 'success' | 'danger' | 'link' | 'outline'} props.variant - Button style variant
- * @param {'sm' | 'md' | 'lg'} props.size - Button size
- * @param {boolean} props.disabled - Disabled state
- * @param {string} props.className - Additional CSS classes
- * @param {string} props.type - Button type attribute
- * @param {Function} props.onClick - Click handler
- * @param {React.ReactNode} props.children - Button content
- */
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'link' | 'outline';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  children: React.ReactNode;
+  className?: string;
+}
+
 const Button = ({
   children,
   variant = 'primary',
@@ -22,12 +19,10 @@ const Button = ({
   type = 'button',
   onClick,
   ...props
-}) => {
-  // Base classes for all buttons
+}: ButtonProps) => {
   const baseClasses = 'inline-flex gap-2 items-center justify-center font-bold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
-  // Variant-specific classes
-  const variantClasses = {
+  const variantClasses: Record<ButtonVariant, string> = {
     primary: 'bg-primary text-bg text-white border-3 border-primary hover:bg-secondary-event hover:border-secondary-event rounded-full',
     secondary: 'bg-secondary text-white border-3 border-secondary hover:bg-secondary-event/90 rounded-full',
     success: 'bg-green-500 text-white border-3 border-green-500 hover:bg-green-500/90 rounded-full',
@@ -36,8 +31,7 @@ const Button = ({
     outline: 'bg-transparent text-primary border-2 border-primary hover:bg-red-500 hover:text-white rounded-full',
   };
 
-  // Size-specific classes
-  const sizeClasses = {
+  const sizeClasses: Record<ButtonSize, string> = {
     sm: 'text-sm px-4 py-1',
     md: 'text-xl px-5 py-1.5',
     lg: 'text-2xl px-6 py-2',

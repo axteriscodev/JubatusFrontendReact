@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import type { Language, LanguageContextValue, StoredLanguage } from '@/types/i18n';
+import type { ApiResponse } from '@/types/api';
 import {
   getBrowserLanguages,
   findBestLanguageMatch,
@@ -9,22 +11,26 @@ import {
 const LANGUAGE_VERSION = 1;
 
 // Lingua di default
-const defaultLanguage = {
+const defaultLanguage: Language = {
   id: "",
   acronym: "it",
   language: "Italiano",
 };
 
-const LanguageContext = createContext({
+const LanguageContext = createContext<LanguageContextValue>({
   currentLanguage: defaultLanguage,
-  setLanguage: () => {},
+  setLanguage: () => undefined,
   availableLanguages: [],
   loadingLanguages: false,
 });
 
-export function LanguageProvider({ children }) {
-  const [currentLanguage, setCurrentLanguage] = useState(null);
-  const [availableLanguages, setAvailableLanguages] = useState([]);
+interface LanguageProviderProps {
+  children: React.ReactNode;
+}
+
+export function LanguageProvider({ children }: LanguageProviderProps) {
+  const [currentLanguage, setCurrentLanguage] = useState<Language | null>(null);
+  const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
   const [loadingLanguages, setLoadingLanguages] = useState(true);
 
   useEffect(() => {
@@ -39,16 +45,16 @@ export function LanguageProvider({ children }) {
           throw new Error(`Errore HTTP: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data = await response.json() as ApiResponse<Language[]>;
         setAvailableLanguages(data.data);
 
         const saved = localStorage.getItem("preferred_lang");
-        let preferredLang;
+        let preferredLang: Language | null | undefined;
         let hasValidVersion = false;
 
         if (saved) {
           try {
-            const parsed = JSON.parse(saved);
+            const parsed = JSON.parse(saved) as StoredLanguage;
             // Check if the saved preference has the version field
             hasValidVersion = parsed.version === LANGUAGE_VERSION;
 
@@ -77,10 +83,8 @@ export function LanguageProvider({ children }) {
         if (preferredLang) {
           setCurrentLanguage(preferredLang);
           // Save with version field
-          localStorage.setItem("preferred_lang", JSON.stringify({
-            ...preferredLang,
-            version: LANGUAGE_VERSION
-          }));
+          const toStore: StoredLanguage = { ...preferredLang, version: LANGUAGE_VERSION };
+          localStorage.setItem("preferred_lang", JSON.stringify(toStore));
         }
       } catch (error) {
         console.error("Errore durante il fetch delle lingue:", error);
@@ -93,13 +97,11 @@ export function LanguageProvider({ children }) {
     fetchLanguages();
   }, []);
 
-  const setLanguage = (lang) => {
+  const setLanguage = (lang: Language) => {
     setCurrentLanguage(lang);
     // Save with version field
-    localStorage.setItem("preferred_lang", JSON.stringify({
-      ...lang,
-      version: LANGUAGE_VERSION
-    }));
+    const toStore: StoredLanguage = { ...lang, version: LANGUAGE_VERSION };
+    localStorage.setItem("preferred_lang", JSON.stringify(toStore));
   };
 
   return (
@@ -116,6 +118,6 @@ export function LanguageProvider({ children }) {
   );
 }
 
-export function useLanguage() {
+export function useLanguage(): LanguageContextValue {
   return useContext(LanguageContext);
 }

@@ -1,12 +1,16 @@
-import React from 'react';
 import FormLabel from './FormLabel';
 import FormError from './FormError';
-import Input from '../Input';
+import Input, { InputProps } from '../Input';
 
-/**
- * FormField component - combines Label, Input, and Error
- * Provides a complete form field with validation
- */
+export interface FormFieldProps extends Omit<InputProps, 'error'> {
+  label?: string;
+  error?: string;
+  required?: boolean;
+  id?: string;
+  name?: string;
+  className?: string;
+}
+
 const FormField = ({
   label,
   error,
@@ -15,8 +19,8 @@ const FormField = ({
   name,
   className = '',
   ...inputProps
-}) => {
-  const fieldId = id || name;
+}: FormFieldProps) => {
+  const fieldId = id ?? name;
 
   return (
     <div className={`mb-4 ${className}`}>

@@ -1,16 +1,19 @@
-import React from "react";
+import React from 'react';
 
-/**
- * FormLabel component with Tailwind CSS styling
- * Replaces react-bootstrap Form.Label
- */
+export interface FormLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  children: React.ReactNode;
+  htmlFor?: string;
+  required?: boolean;
+  className?: string;
+}
+
 const FormLabel = ({
   children,
   htmlFor,
   required = false,
   className = "",
   ...props
-}) => {
+}: FormLabelProps) => {
   return (
     <label
       htmlFor={htmlFor}

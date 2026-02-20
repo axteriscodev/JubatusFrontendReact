@@ -1,11 +1,18 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  disabled?: boolean;
+}
+
 export default function Pagination({
   currentPage,
   totalPages,
   onPageChange,
   disabled = false,
-}) {
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
