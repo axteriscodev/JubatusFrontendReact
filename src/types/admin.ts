@@ -3,7 +3,7 @@ export interface Reader {
   label: string;
   stripeReaderId: string;
   active: boolean;
-  events?: Array<{ id: number; slug: string }>;
+  event: { id: number; title: string };
 }
 
 export interface Location {

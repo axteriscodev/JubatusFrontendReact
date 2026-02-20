@@ -175,9 +175,33 @@ export function EventLocations({ eventId }: EventLocationsProps) {
     }
   };
 
-  const handleRemoveReader = async (_readerId: string) => {
-    successToast("POS rimosso dall'evento");
-    await fetchEventLocations();
+  const handleRemoveReader = async (locId: string, readerId: string) => {
+    if (!readerId) return;
+
+    try {
+      const relocRes = await apiRequest({
+        api: `${BASE}/terminal/readers/${readerId}/location`,
+        method: "PUT",
+        needAuth: true,
+        body: JSON.stringify({ locationId: undefined }),
+      });
+
+      if (!relocRes.ok) {
+        errorToast("Errore nella cancellazione del pos alla location");
+        return;
+      }
+
+      // rimuove il reader appena eliminato dalla select
+      setSelectedReaderIds((prev) => ({
+        ...prev,
+        [locId]: prev[locId] === readerId ? "" : prev[locId],
+      }));
+
+      successToast("POS eliminato dall'evento");
+      await fetchEventLocations();
+    } catch {
+      errorToast("Errore nell'associazione del POS");
+    }
   };
 
   const handleNewLocationFormChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -400,7 +424,9 @@ export function EventLocations({ eventId }: EventLocationsProps) {
                             </span>
                             <button
                               type="button"
-                              onClick={() => handleRemoveReader(reader.id)}
+                              onClick={() =>
+                                handleRemoveReader(loc.id, reader.id)
+                              }
                               className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
                             >
                               <Trash2 size={11} />

@@ -63,7 +63,7 @@ export default function AdminReaders() {
               <td>{reader.id}</td>
               <td>{reader.label}</td>
               <td>{reader.stripeReaderId}</td>
-              <td>{reader.events && reader.events.length > 0 ? reader.events[0].slug : "-"}</td>
+              <td>{reader.event ? reader.event.title : "-"}</td>
               <td className="text-right">
                 <ButtonGroup>
                   <Button
