@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
 import Modal from "@common/components/ui/Modal";
 import Form from "@common/components/ui/Form";
 import { apiRequest } from "@common/services/api-services";
@@ -40,7 +40,7 @@ export default function LocationFormModal({ show, onHide, onSaved }: LocationFor
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async (e: FormEvent) => {
+  const handleSave = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {

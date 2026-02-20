@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
 import Modal from "@common/components/ui/Modal";
 import Form from "@common/components/ui/Form";
 import LoadingState from "@common/components/ui/LoadingState";
@@ -50,7 +50,7 @@ export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormMod
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = async (e: FormEvent) => {
+  const handleSave = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     try {

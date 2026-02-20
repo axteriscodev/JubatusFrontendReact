@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@common/store/hooks";
 import { userActions } from "../store/user-slice";
@@ -28,9 +28,7 @@ export default function Login() {
     resetHeaderData();
   }, []);
 
-  async function handleSubmit(event: FormEvent, data: { email: string; privacy?: boolean }) {
-    event.preventDefault();
-
+  async function handleSubmit(data: { email: string; privacy?: boolean }) {
     let errors = createFormErrors();
 
     console.log(data.email);

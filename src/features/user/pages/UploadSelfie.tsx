@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import validator from "validator";
 import { createFormErrors } from "@common/models/form-errors";
@@ -34,16 +34,26 @@ export default function UploadSelfie() {
   const navigate = useNavigate();
   const eventData = useLoaderData() as EventData;
   const dispatch = useAppDispatch();
-  const { eventSlug, userHash } = useParams<{ eventSlug: string; userHash?: string }>();
+  const { eventSlug, userHash } = useParams<{
+    eventSlug: string;
+    userHash?: string;
+  }>();
   const showBibNumber = useAppSelector((state) => state.competition?.bibNumber);
 
-  const [selfie, setSelfie] = useState<SelfieData>({ image: null, bibNumber: "" });
+  const [selfie, setSelfie] = useState<SelfieData>({
+    image: null,
+    bibNumber: "",
+  });
   const [formErrors, setFormErrors] = useState(createFormErrors());
 
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
   // inserisco il preset per l'evento nello store redux
-  dispatch(competitionsActions.setCompetitionPreset(eventData.data as unknown as Competition));
+  dispatch(
+    competitionsActions.setCompetitionPreset(
+      eventData.data as unknown as Competition,
+    ),
+  );
 
   //carico tema evento
   useEffect(() => {
@@ -73,9 +83,9 @@ export default function UploadSelfie() {
   };
 
   //invio del selfie
-  async function handleSubmit(event: FormEvent, data: { email: string; privacy?: boolean }) {
-    event.preventDefault();
-
+  async function handleSubmit(
+    data: { email: string; privacy?: boolean },
+  ) {
     let errors = createFormErrors();
 
     console.log(data.email);
@@ -92,11 +102,7 @@ export default function UploadSelfie() {
 
     errors.privacyError = !data.privacy;
 
-    if (
-      errors.imageError ||
-      errors.emailError ||
-      errors.privacyError
-    ) {
+    if (errors.imageError || errors.emailError || errors.privacyError) {
       setFormErrors(errors);
       return;
     }

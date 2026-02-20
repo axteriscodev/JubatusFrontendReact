@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type MouseEvent } from "react";
+import { useState, type ChangeEvent, type MouseEvent, type SubmitEvent } from "react";
 import { FormLabel } from "./ui/Form";
 import Input from "./ui/Input";
 import Modal from "./ui/Modal";
@@ -16,7 +16,7 @@ export interface MailFormErrors {
 
 export interface MailFormProps {
   defaultEmail: string;
-  submitHandle: (event: MouseEvent<HTMLButtonElement>, data: { email: string; privacy: boolean }) => void;
+  submitHandle: (data: { email: string; privacy: boolean }) => void | Promise<void>;
   showPrivacy?: boolean;
   onErrors: MailFormErrors;
   externalPayment?: boolean;
@@ -53,8 +53,16 @@ export default function MailForm({
     setIsChecked(newValue);
   };
 
+  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void submitHandle({
+      email: emailValue,
+      privacy: isChecked,
+    });
+  };
+
   return (
-    <div className="text-left">
+    <form className="text-left" onSubmit={handleSubmit}>
       <FormLabel htmlFor="email">{t("EMAIL_EMAIL")}</FormLabel>
       <Input
         type="email"
@@ -145,18 +153,13 @@ export default function MailForm({
         )}
       </div>
       <button
+        type="submit"
         className="my-button w-full mt-10"
-        onClick={(event) =>
-          submitHandle(event, {
-            email: emailValue,
-            privacy: isChecked,
-          })
-        }
       >
         {externalPayment
           ? parse(t("EXTERNAL_PAYMENT_BUTTON"))
           : parse(t("SELFIE_NEXT"))}
       </button>
-    </div>
+    </form>
   );
 }

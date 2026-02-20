@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
@@ -31,8 +31,7 @@ export default function MailConfirmation() {
 
   //TODO - recupero nome e cognome da risposta Stripe
 
-  async function handleSubmit(event: FormEvent, data: { email: string; privacy?: boolean }) {
-    event.preventDefault();
+  async function handleSubmit(data: { email: string; privacy?: boolean }) {
     try {
       const { email } = data;
       let errors = createFormErrors();
