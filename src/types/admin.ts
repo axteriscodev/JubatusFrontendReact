@@ -18,3 +18,15 @@ export interface Location {
   defaultLocation: boolean;
   active: boolean;
 }
+
+export interface StripeLocation {
+  id: string;
+  stripeLocationId: string;
+  displayName: string;
+  addressLine1: string;
+  city: string;
+  country: string;
+  readers?: unknown[];
+  isDefault: boolean;
+  event: { id: number; title: string };
+}

@@ -3,17 +3,7 @@ import Table from "@common/components/ui/Table";
 import LocationFormModal from "../components/LocationFormModal";
 import { useEffect, useState } from "react";
 import { apiRequest } from "@common/services/api-services";
-
-interface StripeLocation {
-  id: string;
-  stripeLocationId: string;
-  displayName: string;
-  addressLine1: string;
-  city: string;
-  country: string;
-  readers?: unknown[];
-  isDefault: boolean;
-}
+import type { StripeLocation } from "@/types/admin";
 
 export default function AdminLocations() {
   const [locations, setLocations] = useState<StripeLocation[]>([]);
@@ -57,8 +47,10 @@ export default function AdminLocations() {
             <th>StripeId</th>
             <th>Nome</th>
             <th>Indirizzo</th>
-            <th>Città</th>
+            <th>Citta</th>
             <th>Paese</th>
+            <th>Evento</th>
+            <th>Default</th>
             <th>Reader</th>
             <th className="flex justify-end">
               <button
@@ -81,6 +73,8 @@ export default function AdminLocations() {
                 <td>{loc.addressLine1}</td>
                 <td>{loc.city}</td>
                 <td>{loc.country}</td>
+                <td>{loc.event?.title || "-"}</td>
+                <td>{loc.isDefault ? "Si" : "No"}</td>
                 <td>{loc.readers?.length ?? 0}</td>
                 <td></td>
               </tr>
