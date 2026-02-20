@@ -2,6 +2,7 @@ import { Settings, Plus } from "lucide-react";
 import Button from "@common/components/ui/Button";
 import ButtonGroup from "@common/components/ui/ButtonGroup";
 import Table from "@common/components/ui/Table";
+import Badge from "@common/components/ui/Badge";
 import LocationFormModal from "../components/LocationFormModal";
 import ReaderFormModal from "../components/ReaderFormModal";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +46,9 @@ export default function AdminReaders() {
             <th>#</th>
             <th>Label</th>
             <th>Stripe ID</th>
+            <th>Location</th>
             <th>Evento</th>
+            <th>Stato</th>
             <th className="flex justify-end">
               <button
                 type="button"
@@ -63,7 +66,13 @@ export default function AdminReaders() {
               <td>{reader.id}</td>
               <td>{reader.label}</td>
               <td>{reader.stripeReaderId}</td>
+              <td>{reader.location?.displayName || "-"}</td>
               <td>{reader.event ? reader.event.title : "-"}</td>
+              <td>
+                <Badge bg={reader.active ? "success" : "secondary"}>
+                  {reader.active ? "Attivo" : "Disattivo"}
+                </Badge>
+              </td>
               <td className="text-right">
                 <ButtonGroup>
                   <Button

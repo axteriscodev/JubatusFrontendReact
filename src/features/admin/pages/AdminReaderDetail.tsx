@@ -1,23 +1,15 @@
-import { ArrowLeft, Pencil, Check, X, ChevronDown, Search } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { ROUTES } from "@/routes";
 import Badge from "@common/components/ui/Badge";
 import Form from "@common/components/ui/Form";
-import { apiRequest } from "@common/services/api-services";
 import {
   fetchReaders,
-  associateReaderToEvent,
   toggleReaderActive,
   updateReaderLabel,
 } from "../store/admin-readers-actions";
-
-interface EventOption {
-  id: number;
-  slug?: string;
-  name?: string;
-}
 
 export default function AdminReaderDetail() {
   const { readerId } = useParams<{ readerId: string }>();
@@ -27,73 +19,17 @@ export default function AdminReaderDetail() {
   const readers = useAppSelector((state) => state.adminReaders.readers);
   const reader = readers.find((r) => r.id === Number(readerId));
 
-  const [events, setEvents] = useState<EventOption[]>([]);
-  const [selectedEventId, setSelectedEventId] = useState<number | "">("");
-  const [savingEvent, setSavingEvent] = useState(false);
   const [savingStatus, setSavingStatus] = useState(false);
 
-  // Label editing
   const [editingLabel, setEditingLabel] = useState(false);
   const [labelValue, setLabelValue] = useState("");
   const [savingLabel, setSavingLabel] = useState(false);
-
-  // Event dropdown with search
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (readers.length === 0) {
       dispatch(fetchReaders());
     }
   }, [dispatch, readers.length]);
-
-  useEffect(() => {
-    apiRequest({
-      api: import.meta.env.VITE_API_URL + "/events/fetch",
-      method: "GET",
-      needAuth: true,
-    })
-      .then((res) => res.ok && res.json())
-      .then((data) => data && setEvents((data as { data: EventOption[] }).data || []))
-      .catch(() => console.error("Errore nel caricamento degli eventi"));
-  }, []);
-
-  // Close dropdown on click outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-        setSearchQuery("");
-      }
-    };
-    if (dropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [dropdownOpen]);
-
-  const filteredEvents = events.filter((event) => {
-    const q = searchQuery.toLowerCase();
-    return (
-      (event.slug || "").toLowerCase().includes(q) ||
-      (event.name || "").toLowerCase().includes(q)
-    );
-  });
-
-  const selectedEvent = events.find((e) => e.id === selectedEventId);
-
-  const handleAssociateEvent = async () => {
-    if (!selectedEventId || !reader) return;
-    setSavingEvent(true);
-    const result = await dispatch(
-      associateReaderToEvent(reader.id, Number(selectedEventId)),
-    );
-    if (result?.success) {
-      setSelectedEventId("");
-    }
-    setSavingEvent(false);
-  };
 
   const handleToggleActive = async () => {
     if (!reader) return;
@@ -114,13 +50,16 @@ export default function AdminReaderDetail() {
       setEditingLabel(false);
       return;
     }
+
     setSavingLabel(true);
-    updateReaderLabel(reader.id, labelValue.trim(), reader)(dispatch).finally(
-      () => {
-        setSavingLabel(false);
-        setEditingLabel(false);
-      },
-    );
+    updateReaderLabel(
+      reader.id,
+      labelValue.trim(),
+      reader,
+    )(dispatch).finally(() => {
+      setSavingLabel(false);
+      setEditingLabel(false);
+    });
   };
 
   const handleCancelLabel = () => {
@@ -135,208 +74,176 @@ export default function AdminReaderDetail() {
       </div>
     );
   }
+  const location = reader.location;
 
   return (
     <div className="container text-left">
       <button
         type="button"
         onClick={() => navigate(ROUTES.ADMIN_READERS)}
-        className="inline-flex items-center gap-1.5 mb-6 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+        className="mb-5 inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700"
       >
         <ArrowLeft size={16} /> Readers
       </button>
 
-      <div className="mb-8 flex items-center gap-3">
-        <h1>
-          Reader #{reader.id} — {reader.label}
-        </h1>
-        <Badge bg={reader.active ? "success" : "secondary"}>
-          {reader.active ? "Attivo" : "Inattivo"}
-        </Badge>
-      </div>
-
-      {/* Dati Reader */}
-      <div className="bg-white border border-gray-200 rounded-xl mb-6">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-base font-semibold text-gray-700">Dati Reader</h2>
+      <div className="overflow-visible rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-100 px-5 py-4 md:px-6">
+          <div className="min-w-0">
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Reader #{reader.id}
+            </p>
+            <h1 className="mt-1 truncate text-xl font-semibold text-gray-900">
+              {reader.label}
+            </h1>
+          </div>
+          <Badge bg={reader.active ? "success" : "secondary"}>
+            {reader.active ? "Attivo" : "Inattivo"}
+          </Badge>
         </div>
-        <div className="px-6 py-4 space-y-3">
-          {/* Label — editabile */}
-          <div className="flex gap-4 items-center">
-            <span className="text-sm text-gray-500 w-28">Label</span>
-            {editingLabel ? (
-              <div className="flex items-center gap-2">
-                <Form.Control
-                  value={labelValue}
-                  onChange={(e) => setLabelValue(e.target.value)}
-                  className="text-sm py-1 h-auto"
-                  disabled={savingLabel}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSaveLabel();
-                    if (e.key === "Escape") handleCancelLabel();
-                  }}
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={handleSaveLabel}
-                  disabled={savingLabel}
-                  className="inline-flex items-center justify-center p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors disabled:opacity-50"
-                  title="Salva"
-                >
-                  <Check size={16} />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancelLabel}
-                  disabled={savingLabel}
-                  className="inline-flex items-center justify-center p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors disabled:opacity-50"
-                  title="Annulla"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900">
-                  {reader.label}
-                </span>
-                <button
-                  type="button"
-                  onClick={handleStartEditLabel}
-                  className="inline-flex items-center justify-center p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                  title="Modifica label"
-                >
-                  <Pencil size={14} />
-                </button>
-              </div>
-            )}
-          </div>
 
-          <div className="flex gap-4">
-            <span className="text-sm text-gray-500 w-28">Stripe ID</span>
-            <span className="text-sm font-mono text-gray-900">
-              {reader.stripeReaderId}
-            </span>
-          </div>
-          <div className="flex gap-4">
-            <span className="text-sm text-gray-500 w-28">Evento</span>
-            <span className="text-sm text-gray-900">
-              {reader.events && reader.events.length > 0 ? (
-                reader.events[0].slug
+        <div className="space-y-6 px-5 py-5 md:px-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 px-4 py-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Label
+              </p>
+              {editingLabel ? (
+                <div className="mt-2 flex items-center gap-2">
+                  <Form.Control
+                    value={labelValue}
+                    onChange={(e) => setLabelValue(e.target.value)}
+                    className="h-auto py-1.5 text-sm"
+                    disabled={savingLabel}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveLabel();
+                      if (e.key === "Escape") handleCancelLabel();
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveLabel}
+                    disabled={savingLabel}
+                    className="inline-flex items-center justify-center rounded p-1 text-green-600 transition-colors hover:bg-green-50 hover:text-green-700 disabled:opacity-50"
+                    title="Salva"
+                  >
+                    <Check size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelLabel}
+                    disabled={savingLabel}
+                    className="inline-flex items-center justify-center rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
+                    title="Annulla"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
               ) : (
-                <span className="text-gray-400">—</span>
-              )}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Associa Evento */}
-      <div className="bg-white border border-gray-200 rounded-xl mb-6">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-base font-semibold text-gray-700">
-            Associa a un evento
-          </h2>
-        </div>
-        <div className="px-6 py-4">
-          <div className="flex items-center gap-3">
-            {/* Dropdown con ricerca */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                type="button"
-                onClick={() => setDropdownOpen((o) => !o)}
-                className="flex items-center justify-between gap-2 min-w-50 px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors"
-              >
-                <span className={selectedEvent ? "text-gray-900" : "text-gray-400"}>
-                  {selectedEvent
-                    ? selectedEvent.slug || selectedEvent.name || `Evento #${selectedEvent.id}`
-                    : "Seleziona un evento..."}
-                </span>
-                <ChevronDown size={14} className="text-gray-400 shrink-0" />
-              </button>
-
-              {dropdownOpen && (
-                <div className="absolute z-50 mt-1 w-72 bg-white border border-gray-200 rounded-lg shadow-lg">
-                  <div className="p-2 border-b border-gray-100">
-                    <div className="flex items-center gap-1.5 px-2 py-1 border border-gray-300 rounded-md bg-white focus-within:ring-1 focus-within:ring-secondary-event/50 focus-within:border-secondary-event">
-                      <Search size={13} className="text-gray-400 shrink-0" />
-                      <input
-                        autoFocus
-                        type="text"
-                        placeholder="Cerca evento..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full text-sm bg-transparent outline-none text-gray-900 placeholder:text-gray-400"
-                      />
-                    </div>
-                  </div>
-                  <div className="max-h-48 overflow-y-auto py-1">
-                    {filteredEvents.length > 0 ? (
-                      filteredEvents.map((event) => (
-                        <button
-                          key={event.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedEventId(event.id);
-                            setDropdownOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 ${
-                            selectedEventId === event.id
-                              ? "bg-gray-50 font-medium text-gray-900"
-                              : "text-gray-700"
-                          }`}
-                        >
-                          {event.slug || event.name || `Evento #${event.id}`}
-                        </button>
-                      ))
-                    ) : (
-                      <p className="px-3 py-2 text-sm text-gray-400">
-                        Nessun risultato
-                      </p>
-                    )}
-                  </div>
+                <div className="mt-1.5 flex items-center gap-1.5">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {reader.label}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleStartEditLabel}
+                    className="inline-flex items-center justify-center rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                    title="Modifica label"
+                  >
+                    <Pencil size={14} />
+                  </button>
                 </div>
               )}
             </div>
 
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 px-4 py-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Stripe ID
+              </p>
+              <p className="mt-1.5 truncate text-sm font-mono text-gray-900">
+                {reader.stripeReaderId}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 px-4 py-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Evento corrente
+              </p>
+              <p className="mt-1.5 truncate text-sm text-gray-900">
+                {reader.event ? (
+                  reader.event.title
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4 border-t border-gray-100 pt-4">
+            <div className="rounded-xl border border-gray-200 bg-gray-50/70 px-4 py-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Location associata
+              </p>
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <p className="text-xs text-gray-500">Nome</p>
+                  <p className="text-sm font-medium text-gray-900">
+                    {location?.displayName || "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Stripe Location ID</p>
+                  <p className="text-sm font-mono text-gray-900">
+                    {location?.stripeLocationId || "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Stato</p>
+                  <p className="text-sm text-gray-900">
+                    {location ? (location.active ? "Attiva" : "Disattiva") : "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Indirizzo</p>
+                  <p className="text-sm text-gray-900">
+                    {location?.addressLine1 || "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Citta</p>
+                  <p className="text-sm text-gray-900">{location?.city || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">CAP / Provincia</p>
+                  <p className="text-sm text-gray-900">
+                    {location
+                      ? `${location.postalCode || "-"}${
+                          location.state ? ` - ${location.state}` : ""
+                        }`
+                      : "-"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <button
               type="button"
-              onClick={handleAssociateEvent}
-              disabled={!selectedEventId || savingEvent}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-500 rounded-lg hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleToggleActive}
+              disabled={savingStatus}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                reader.active
+                  ? "border-red-500 text-red-600 hover:bg-red-50"
+                  : "border-green-500 text-green-600 hover:bg-green-50"
+              }`}
             >
-              {savingEvent ? "Associo..." : "Associa"}
+              {savingStatus
+                ? "Aggiornamento..."
+                : reader.active
+                  ? "Disattiva reader"
+                  : "Riattiva reader"}
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Gestione stato */}
-      <div className="bg-white border border-gray-200 rounded-xl">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-base font-semibold text-gray-700">
-            Gestione stato
-          </h2>
-        </div>
-        <div className="px-6 py-4">
-          <button
-            type="button"
-            onClick={handleToggleActive}
-            disabled={savingStatus}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-              reader.active
-                ? "text-red-600 border-red-500 hover:bg-red-50"
-                : "text-green-600 border-green-500 hover:bg-green-50"
-            }`}
-          >
-            {savingStatus
-              ? "Aggiornamento..."
-              : reader.active
-                ? "Disattiva reader"
-                : "Riattiva reader"}
-          </button>
         </div>
       </div>
     </div>

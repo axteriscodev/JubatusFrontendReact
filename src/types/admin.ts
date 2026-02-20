@@ -3,10 +3,18 @@ export interface Reader {
   label: string;
   stripeReaderId: string;
   active: boolean;
+  location: Location;
   event: { id: number; title: string };
 }
 
 export interface Location {
   id: number;
-  name: string;
+  stripeLocationId: string;
+  displayName: string;
+  addressLine1: string;
+  city: string;
+  postalCode: string;
+  state: string | null | undefined;
+  defaultLocation: boolean;
+  active: boolean;
 }

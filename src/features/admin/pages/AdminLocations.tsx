@@ -12,6 +12,7 @@ interface StripeLocation {
   city: string;
   country: string;
   readers?: unknown[];
+  isDefault: boolean;
 }
 
 export default function AdminLocations() {
@@ -28,7 +29,9 @@ export default function AdminLocations() {
         needAuth: true,
       });
       if (response.ok) {
-        const data = await response.json() as { data: { locations: StripeLocation[] } };
+        const data = (await response.json()) as {
+          data: { locations: StripeLocation[] };
+        };
         setLocations(data.data.locations);
       }
     } catch {
