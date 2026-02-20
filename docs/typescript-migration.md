@@ -11,7 +11,7 @@
 | 2 | Redux store | ✅ Completata |
 | 3 | Context i18n | ✅ Completata |
 | 4 | Componenti UI atomici | ✅ Completata |
-| 5 | Componenti condivisi e pagine comuni | ⏳ Da fare |
+| 5 | Componenti condivisi e pagine comuni | ✅ Completata |
 | 6 | Feature: admin | ⏳ Da fare |
 | 7 | Feature: shop e user | ⏳ Da fare |
 | 8 | Entry point e router | ⏳ Da fare |
@@ -589,7 +589,7 @@ src/common/components/ui/index.js              → .ts   (barrel re-export)
 
 ---
 
-### Fase 5 — Componenti condivisi e pagine comuni (Stimato: 1 giorno)
+### Fase 5 — Componenti condivisi e pagine comuni ✅ COMPLETATA (2026-02-20)
 
 ```
 src/common/components/RouterWrapper.jsx     → .tsx

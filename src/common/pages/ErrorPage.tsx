@@ -1,10 +1,14 @@
-import { useRouteError } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useRouteError, Link } from "react-router-dom";
 import { useTranslations } from "../i18n/TranslationProvider";
 import { ROUTES } from "@/routes";
 
+interface RouteError {
+  message?: string;
+  status?: number;
+}
+
 export default function ErrorPage() {
-  const error = useRouteError();
+  const error = useRouteError() as RouteError;
   const { t } = useTranslations();
 
   const message =

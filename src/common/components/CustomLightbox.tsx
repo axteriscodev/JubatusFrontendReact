@@ -6,7 +6,23 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Video from "yet-another-react-lightbox/plugins/video";
 import styles from "./CustomLightbox.module.css";
 import { useTranslations } from "../i18n/TranslationProvider";
-import { getEventContents } from "../utils/contents-utils";
+import { getEventContents, NormalizedContent } from "../utils/contents-utils";
+
+export interface CustomLightboxProps {
+  open: boolean;
+  slides?: NormalizedContent[] | null;
+  slide?: string | null;
+  index?: number;
+  setIndex?: ((newIndex: number) => void) | null;
+  select?: boolean;
+  actions?: boolean;
+  addToCart?: boolean;
+  onClose: () => void;
+  onUpdateSlide?: ((index: number, slide: unknown) => void) | null;
+  onImageClick?: ((key: string) => void) | null;
+  photoItems?: NormalizedContent[] | null;
+  shopMode?: boolean;
+}
 
 export default function CustomLightbox({
   open,
@@ -22,26 +38,22 @@ export default function CustomLightbox({
   onImageClick = null,
   photoItems = null,
   shopMode = false,
-}) {
-  //const dispatch = useDispatch();
-
-  //const currentImage = slides[index] ?? 0;
-
+}: CustomLightboxProps) {
   const { t } = useTranslations();
 
   const effectiveSlides =
     slides && slides.length > 0
       ? slides
       : slide
-      ? [{ url: slide, keyOriginal: slide, fileTypeId: 2, urlOriginal: slide }]
+      ? [{ url: slide, keyOriginal: slide, fileTypeId: 2 as const, urlOriginal: slide, id: 0, src: slide, srcThumbnail: slide, srcTiny: slide, key: slide, favorite: false, isVideo: true, isPurchased: false }]
       : [];
 
   const normalizedSlides = getEventContents(effectiveSlides);
 
-  const currentImage = normalizedSlides[index] ?? normalizedSlides[0] ?? {};
+  const currentImage: Partial<NormalizedContent> = normalizedSlides[index] ?? normalizedSlides[0] ?? {};
 
   const isSelected = photoItems?.some(
-    (el) => el.keyOriginal === currentImage.key
+    (el) => el.key === currentImage.key
   );
 
   const handleFavouriteClick = async () => {
@@ -61,7 +73,6 @@ export default function CustomLightbox({
       const originalSlide = effectiveSlides[index];
       const updatedSlide = {
         ...originalSlide,
-        //favorite: !currentImage.favorite
         favorite: data.data,
       };
       onUpdateSlide(index, updatedSlide);
@@ -70,6 +81,7 @@ export default function CustomLightbox({
 
   const handleDownload = async () => {
     const url = currentImage.urlOriginal;
+    if (!url) return;
     const response = await fetch(url);
     const blob = await response.blob();
 
@@ -85,8 +97,6 @@ export default function CustomLightbox({
     a.remove();
     window.URL.revokeObjectURL(blobUrl);
   };
-
-  //const handleShareClick = (image) => alert(`Share: ${image.urlOriginal}`);
 
   return (
     <Lightbox
@@ -104,22 +114,24 @@ export default function CustomLightbox({
           setIndex?.(newIndex);
         },
       }}
-      slides={normalizedSlides}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      slides={normalizedSlides as any}
       plugins={normalizedSlides.length > 1 ? [Thumbnails, Video] : [Video]}
       render={{
-        slide: ({ slide }) => {
-          const media = slide.isVideo ? (
+        slide: ({ slide: s }) => {
+          const typedSlide = s as NormalizedContent;
+          const media = typedSlide.isVideo ? (
             <video
               controls
               controlsList="nodownload"
               className="max-w-full max-h-full mx-auto"
             >
-              <source src={slide.src} type="video/mp4" />
+              <source src={typedSlide.src} type="video/mp4" />
               {t("LIGHTBOX_SUPPORT")}
             </video>
           ) : (
             <img
-              src={slide.src}
+              src={typedSlide.src}
               alt=""
               className="max-w-full max-h-full"
             />
@@ -154,26 +166,28 @@ export default function CustomLightbox({
             </div>
           );
         },
-        thumbnail: ({ slide, rect }) => 
-          {  
-            return <div
-            style={{
-              width: rect.width,
-              height: rect.height,
-              position: "relative",
-              overflow: "hidden",
-              borderRadius: "4px",
-            }}
-            className={slide.isVideo ? "video" : ""}
-          >
-            <img
-              src={slide.srcTiny || "/images/play-icon.webp"}
-              alt=""
-              className={styles.thunbnail}
-              loading="lazy"
-            />
-          </div>}
-        ,
+        thumbnail: ({ slide: s, rect }) => {
+          const typedSlide = s as NormalizedContent;
+          return (
+            <div
+              style={{
+                width: rect.width,
+                height: rect.height,
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: "4px",
+              }}
+              className={typedSlide.isVideo ? "video" : ""}
+            >
+              <img
+                src={typedSlide.srcTiny || "/images/play-icon.webp"}
+                alt=""
+                className={styles.thunbnail}
+                loading="lazy"
+              />
+            </div>
+          );
+        },
         slideHeader: () => (
           <>
             {addToCart && select && !currentImage.isPurchased && (
@@ -188,9 +202,7 @@ export default function CustomLightbox({
               >
                 <button
                   onClick={() =>
-                    onImageClick?.(
-                      currentImage.key
-                    )
+                    onImageClick?.(currentImage.key!)
                   }
                   className={`my-button w-full ${isSelected ? "remove" : "add"}`}
                 >
@@ -226,9 +238,6 @@ export default function CustomLightbox({
                 >
                   <Download size={48} className="text-white" />
                 </a>
-                {/* {<a onClick={() => handleShareClick(currentImage)} aria-label="Share image">
-                <i className="bi bi-arrow-up-right"></i>
-              </a>} */}
               </div>
             )}
           </>

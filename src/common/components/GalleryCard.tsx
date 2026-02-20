@@ -1,5 +1,16 @@
 import { Play, Search } from "lucide-react";
 import { useTranslations } from "../i18n/TranslationProvider";
+import type { NormalizedContent } from "../utils/contents-utils";
+
+export interface GalleryCardProps {
+  title: string;
+  logo: string;
+  images?: NormalizedContent[];
+  totalImages: number;
+  eventId: number | string;
+  onPhotoClick: (eventId: number | string) => void;
+  onNewSearchClick: (eventId: number | string) => void;
+}
 
 export default function GalleryCard({
   title,
@@ -9,7 +20,7 @@ export default function GalleryCard({
   eventId,
   onPhotoClick,
   onNewSearchClick,
-}) {
+}: GalleryCardProps) {
   const { t } = useTranslations();
 
   if (!images || images.length === 0) {

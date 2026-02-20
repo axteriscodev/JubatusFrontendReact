@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const PrivacyPolicy = () => {
   const [activeSection, setActiveSection] = useState('');
@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
       sections.forEach(section => {
         const rect = section.getBoundingClientRect();
         if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
-          setActiveSection(section.getAttribute('data-section'));
+          setActiveSection(section.getAttribute('data-section') ?? '');
         }
       });
     };
@@ -24,7 +24,7 @@ const PrivacyPolicy = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });

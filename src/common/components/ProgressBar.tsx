@@ -29,8 +29,8 @@ export default function ProgressBar() {
         role="progressbar"
         aria-label="Basic example"
         aria-valuenow={progress}
-        aria-valuemin="0"
-        aria-valuemax="100"
+        aria-valuemin={0}
+        aria-valuemax={100}
       >
         <div className="progress-bar" style={{ width: `${progress}%` }}></div>
       </div>

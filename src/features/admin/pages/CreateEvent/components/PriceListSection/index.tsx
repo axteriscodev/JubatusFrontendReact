@@ -1,14 +1,28 @@
-import { useSelector } from "react-redux";
-import { Euro, CirclePlus, Inbox } from "lucide-react";
-import { useListItemLabels } from "../../hooks/useListItemLabels";
-import { PriceListCard } from "./PriceListCard";
+import { useSelector } from 'react-redux';
+import { Euro, CirclePlus, Inbox } from 'lucide-react';
+import { useListItemLabels } from '../../hooks/useListItemLabels';
+import { PriceListCard } from './PriceListCard';
+import type { RootState } from '@common/store/store';
+import type { PriceList, PriceItem } from '@/types/cart';
 
-/**
- * Componente principale per la sezione listini prezzi - VERSIONE TAILWIND
- */
-export function PriceListSection({ priceLists, handlers }) {
+interface PriceListHandlers {
+  addList: () => void;
+  removeList: (index: number) => void;
+  updateListDate: (formIndex: number, field: 'dateStart' | 'dateExpiry', value: string) => void;
+  addItemToList: (formIndex: number) => void;
+  removeItemFromList: (formIndex: number, rowIndex: number) => void;
+  updateItem: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+  updateItemWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+}
+
+export interface PriceListSectionProps {
+  priceLists: PriceList[];
+  handlers: PriceListHandlers;
+}
+
+export function PriceListSection({ priceLists, handlers }: PriceListSectionProps) {
   const { labelList } = useListItemLabels();
-  const currencySymbol = useSelector((state) => state.competition.currencySymbol);
+  const currencySymbol = useSelector((state: RootState) => state.competition.currencySymbol);
 
   return (
     <div className="col-span-12">

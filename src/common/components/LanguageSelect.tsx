@@ -3,7 +3,11 @@ import Dropdown from "./ui/Dropdown";
 import { useLanguage } from "../i18n/LanguageContext";
 import { getFlagCode } from "../utils/flag-utils";
 
-export default function LanguageSelect({ onChange }) {
+export interface LanguageSelectProps {
+  onChange?: (acronym: string) => void;
+}
+
+export default function LanguageSelect({ onChange }: LanguageSelectProps) {
   const { currentLanguage, setLanguage, availableLanguages, loadingLanguages } =
     useLanguage();
 
@@ -11,7 +15,7 @@ export default function LanguageSelect({ onChange }) {
     availableLanguages.find((l) => l.acronym === currentLanguage.acronym) ??
     currentLanguage;
 
-  const handleChange = (lang) => {
+  const handleChange = (lang: typeof currentLanguage) => {
     setLanguage(lang);
     onChange?.(lang.acronym);
   };
@@ -27,7 +31,10 @@ export default function LanguageSelect({ onChange }) {
   if (loadingLanguages) return null;
 
   // Custom toggle component per avere lo stesso styling
-  const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  const CustomToggle = React.forwardRef<
+    HTMLButtonElement,
+    { children?: React.ReactNode; onClick?: React.MouseEventHandler<HTMLButtonElement> }
+  >(({ onClick }, ref) => (
     <button
       ref={ref}
       onClick={onClick}
@@ -53,7 +60,7 @@ export default function LanguageSelect({ onChange }) {
         height="20"
         viewBox="0 0 20 20"
         /* Usa 'text-secondary-event' come base.
-       Se vuoi che cambi quando passi il mouse sul bottone, 
+       Se vuoi che cambi quando passi il mouse sul bottone,
        aggiungi group-hover:text-qualcosa
     */
         className="ml-1 transition-colors duration-150 fill-secondary"
@@ -72,12 +79,12 @@ export default function LanguageSelect({ onChange }) {
       <Dropdown.Toggle
         as={CustomToggle}
         id="language-dropdown"
-      ></Dropdown.Toggle>
+      >{null}</Dropdown.Toggle>
 
       <Dropdown.Menu>
         {availableLanguages.map((lang) => (
           <Dropdown.Item
-            key={lang.languageId}
+            key={lang.id}
             onClick={() => handleChange(lang)}
           >
             <div className="flex items-center gap-3">

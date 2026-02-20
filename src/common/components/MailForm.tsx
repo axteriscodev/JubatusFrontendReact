@@ -7,33 +7,48 @@ import { useTranslations } from "../i18n/TranslationProvider";
 import parse from "html-react-parser";
 import PrivacyPolicyModal from "./PrivacyPolicyModal";
 
+export interface MailFormErrors {
+  emailError?: boolean;
+  emailNotPresent?: boolean;
+  emailDuplicated?: boolean;
+  privacyError?: boolean;
+}
+
+export interface MailFormProps {
+  defaultEmail: string;
+  submitHandle: (event: React.MouseEvent<HTMLButtonElement>, data: { email: string; privacy: boolean }) => void;
+  showPrivacy?: boolean;
+  onErrors: MailFormErrors;
+  externalPayment?: boolean;
+}
+
 export default function MailForm({
   defaultEmail,
   submitHandle,
   showPrivacy = true,
   onErrors,
   externalPayment = false,
-}) {
+}: MailFormProps) {
   const [isChecked, setIsChecked] = useState(false);
   const [emailValue, setEmailValue] = useState(defaultEmail || "");
   const [show, setShow] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = (event) => {
+  const handleShow = (event: React.MouseEvent<HTMLAnchorElement>) => {
     setShow(true);
     event.preventDefault();
   };
 
   const handlePrivacyPolicyClose = () => setShowPrivacyPolicy(false);
-  const handlePrivacyPolicyShow = (event) => {
+  const handlePrivacyPolicyShow = (event: React.MouseEvent<HTMLAnchorElement>) => {
     setShowPrivacyPolicy(true);
     event.preventDefault();
   };
 
   const { t } = useTranslations();
 
-  const handlePrivacyChange = (event) => {
+  const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked;
     setIsChecked(newValue);
   };

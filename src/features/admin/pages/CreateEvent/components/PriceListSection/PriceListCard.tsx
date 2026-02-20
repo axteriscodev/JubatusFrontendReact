@@ -1,13 +1,36 @@
-import { PriceListItem } from "./PriceListItem";
-import { Receipt, Trash2, CalendarRange, CalendarPlus, Calendar, CalendarX, Package, CirclePlus } from "lucide-react";
+import { PriceListItem } from './PriceListItem';
+import { Receipt, Trash2, CalendarRange, CalendarPlus, Calendar, CalendarX, Package, CirclePlus } from 'lucide-react';
+import type { PriceList, PriceItem } from '@/types/cart';
+import type { ListItemLabel } from '../../hooks/useListItemLabels';
 
-/**
- * Componente per una singola card listino - VERSIONE TAILWIND
- */
-export function PriceListCard({ list, index, handlers, totalLists, labelList = [], currencySymbol = "€" }) {
+interface PriceListHandlers {
+  removeList: (index: number) => void;
+  updateListDate: (formIndex: number, field: 'dateStart' | 'dateExpiry', value: string) => void;
+  addItemToList: (formIndex: number) => void;
+  removeItemFromList: (formIndex: number, rowIndex: number) => void;
+  updateItem: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+  updateItemWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+}
+
+export interface PriceListCardProps {
+  list: PriceList;
+  index: number;
+  handlers: PriceListHandlers;
+  totalLists: number;
+  labelList?: ListItemLabel[];
+  currencySymbol?: string;
+}
+
+export function PriceListCard({
+  list,
+  index,
+  handlers,
+  totalLists,
+  labelList = [],
+  currencySymbol = '€',
+}: PriceListCardProps) {
   return (
     <div className="border-0 shadow-sm rounded-lg bg-white">
-      {/* Header */}
       <div className="bg-white border-b px-4 py-3 rounded-t-lg">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -25,7 +48,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
             type="button"
             onClick={() => handlers.removeList(index)}
             disabled={totalLists === 1}
-            className="px-3 py-1.5 text-sm border border-red-500 text-red-500 rounded-md shadow-sm 
+            className="px-3 py-1.5 text-sm border border-red-500 text-red-500 rounded-md shadow-sm
                        hover:bg-red-500 hover:text-white transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -35,21 +58,15 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
         </div>
       </div>
 
-      {/* Body */}
       <div className="p-4">
-        {/* Date del listino */}
         <div className="bg-gray-100 rounded-xl p-3 mb-4">
           <h6 className="font-semibold mb-3 text-gray-600">
             <CalendarRange size={16} className="inline mr-2" />
             Periodo di validità
           </h6>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Data Inizio */}
             <div>
-              <label 
-                htmlFor={`dateStart-${index}`}
-                className="block font-semibold text-gray-600 text-sm mb-2"
-              >
+              <label htmlFor={`dateStart-${index}`} className="block font-semibold text-gray-600 text-sm mb-2">
                 <CalendarPlus size={14} className="inline mr-2" />Data Inizio
               </label>
               <div className="flex shadow-sm">
@@ -60,21 +77,15 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
                   type="date"
                   id={`dateStart-${index}`}
                   value={list.dateStart}
-                  onChange={(e) =>
-                    handlers.updateListDate(index, "dateStart", e.target.value)
-                  }
-                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 
+                  onChange={(e) => handlers.updateListDate(index, 'dateStart', e.target.value)}
+                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2
                              text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
 
-            {/* Data Fine */}
             <div>
-              <label 
-                htmlFor={`dateExpiry-${index}`}
-                className="block font-semibold text-gray-600 text-sm mb-2"
-              >
+              <label htmlFor={`dateExpiry-${index}`} className="block font-semibold text-gray-600 text-sm mb-2">
                 <CalendarX size={14} className="inline mr-2" />Data Fine
               </label>
               <div className="flex shadow-sm">
@@ -85,10 +96,8 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
                   type="date"
                   id={`dateExpiry-${index}`}
                   value={list.dateExpiry}
-                  onChange={(e) =>
-                    handlers.updateListDate(index, "dateExpiry", e.target.value)
-                  }
-                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 
+                  onChange={(e) => handlers.updateListDate(index, 'dateExpiry', e.target.value)}
+                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2
                              text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -96,7 +105,6 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
           </div>
         </div>
 
-        {/* Titolo sezione pacchetti */}
         <div className="flex items-center justify-between mb-3">
           <h6 className="font-semibold text-gray-600">
             <Package size={16} className="inline mr-2" />
@@ -107,7 +115,6 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
           </span>
         </div>
 
-        {/* Items del listino */}
         <div className="flex flex-col gap-3">
           {list.items.map((item, itemIndex) => (
             <PriceListItem
@@ -128,7 +135,7 @@ export function PriceListCard({ list, index, handlers, totalLists, labelList = [
         <button
           type="button"
           onClick={() => handlers.addItemToList(index)}
-          className="mt-3 w-full py-2 px-4 border-2 border-dashed border-blue-500 text-blue-600 
+          className="mt-3 w-full py-2 px-4 border-2 border-dashed border-blue-500 text-blue-600
                      rounded-md shadow-sm hover:bg-blue-50 transition-colors font-medium"
         >
           <CirclePlus size={16} className="inline mr-2" />

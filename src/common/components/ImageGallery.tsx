@@ -3,7 +3,7 @@ import styles from "./ImageGallery.module.css";
 import { Play } from "lucide-react";
 import reelIcon from "../../assets/reel-icon.svg";
 import { useTranslations } from "../i18n/TranslationProvider";
-import { getEventContents } from "../utils/contents-utils";
+import { getEventContents, NormalizedContent } from "../utils/contents-utils";
 
 /**
  * Componente ImageGallery
@@ -13,19 +13,22 @@ import { getEventContents } from "../utils/contents-utils";
  * - Evidenziazione di immagini acquistate/preferite
  * - Lightbox per visualizzazione ingrandita
  * - Azioni personalizzate sulle immagini
- *
- * @param {Array} images - Array di oggetti immagine da visualizzare
- * @param {boolean} select - Abilita la selezione delle immagini (default: true)
- * @param {boolean} actions - Abilita azioni aggiuntive sulle immagini (default: false)
- * @param {boolean} highLightPurchased - Evidenzia le immagini acquistate (default: false)
- * @param {boolean} highLightFavourite - Evidenzia le immagini preferite (default: false)
- * @param {boolean} applyRedFilter - Applica filtro rosso alle immagini non acquistate (default: false)
- * @param {Function} onOpenLightbox - Callback per aprire il lightbox
- * @param {Function} onImageClick - Callback per il click sull'immagine
- * @param {Array} photoItems - Array di foto selezionate per evidenziare la selezione
- * @param {boolean} personalSlice - Flag per gestione slice personale (default: false)
- * @param {string} aspectRatio - Aspect ratio delle immagini (es: "1:1", "3:2", "16:9"). Default: "1:1"
  */
+export interface ImageGalleryProps {
+  images: unknown[];
+  select?: boolean;
+  actions?: boolean;
+  highLightPurchased?: boolean;
+  highLightFavourite?: boolean;
+  applyRedFilter?: boolean;
+  onOpenLightbox?: (images: unknown[], index: number, select: boolean, actions: boolean, personalSlice: boolean) => void;
+  onImageClick?: (key: string) => void;
+  photoItems?: unknown[] | null;
+  personalSlice?: boolean;
+  aspectRatio?: string;
+  isShop?: boolean;
+}
+
 export default function ImageGallery({
   images,
   select = true,
@@ -33,24 +36,24 @@ export default function ImageGallery({
   highLightPurchased = false,
   highLightFavourite = false,
   applyRedFilter = false,
-  onOpenLightbox = null,
-  onImageClick = null,
+  onOpenLightbox,
+  onImageClick,
   photoItems = null,
   personalSlice = false,
   aspectRatio = "1:1",
   isShop = false,
-}) {
+}: ImageGalleryProps) {
   // Recupera i contenuti degli eventi personali dalle immagini
-  const data = getEventContents(images);
+  const data: NormalizedContent[] = getEventContents(images);
 
   // Recupera le foto attualmente selezionate per evidenziarle nella galleria
-  const currentPhotoItems = getEventContents(photoItems || []);
+  const currentPhotoItems: NormalizedContent[] = getEventContents(photoItems || []);
 
   // Hook per le traduzioni
   const { t } = useTranslations();
 
   // Converte aspectRatio da formato "3:2" a classe CSS "ratio-3-2"
-  const getRatioClass = (ratio) => {
+  const getRatioClass = (ratio: string) => {
     if (!ratio) return "ratio-1-1"; // Fallback di default
     return `ratio-${ratio.replace(":", "-")}`;
   };
@@ -127,7 +130,7 @@ export default function ImageGallery({
                   <Search size={32} />
                 </div>
 
-                {/* Cerchio di selezione: visibile solo se select è true, 
+                {/* Cerchio di selezione: visibile solo se select è true,
                     highLightPurchased è true e l'immagine non è stata acquistata */}
                 {select && highLightPurchased && !image.isPurchased && (
                   <div
