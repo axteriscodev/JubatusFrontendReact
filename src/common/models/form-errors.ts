@@ -4,6 +4,7 @@ export interface FormErrors {
   emailNotPresent: boolean;
   pinError: boolean;
   privacyError: boolean;
+  emailDuplicated?: boolean;
 }
 
 export function createFormErrors(overrides: Partial<FormErrors> = {}): FormErrors {

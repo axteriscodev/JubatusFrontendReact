@@ -150,6 +150,10 @@ const cartSlice = createSlice({
       state.eventId = eventId;
     },
 
+    setPurchasedItems(state, action: PayloadAction<CartProduct[]>) {
+      state.purchased = action.payload;
+    },
+
     updatePurchasedItem(state, action: PayloadAction<Partial<CartProduct> & { keyOriginal: string }>) {
       const updated = action.payload;
       const index = state.purchased.findIndex(

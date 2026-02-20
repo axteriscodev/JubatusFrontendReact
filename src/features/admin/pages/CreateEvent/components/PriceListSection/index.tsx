@@ -5,14 +5,17 @@ import { PriceListCard } from './PriceListCard';
 import type { RootState } from '@common/store/store';
 import type { PriceList, PriceItem } from '@/types/cart';
 
+// Accetta anche string perché i valori arrivano da input HTML (e.target.value)
+type PriceItemInputValue = PriceItem[keyof PriceItem] | string;
+
 interface PriceListHandlers {
   addList: () => void;
   removeList: (index: number) => void;
   updateListDate: (formIndex: number, field: 'dateStart' | 'dateExpiry', value: string) => void;
   addItemToList: (formIndex: number) => void;
   removeItemFromList: (formIndex: number, rowIndex: number) => void;
-  updateItem: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
-  updateItemWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+  updateItem: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
+  updateItemWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
 }
 
 export interface PriceListSectionProps {

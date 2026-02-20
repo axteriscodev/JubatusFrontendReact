@@ -3,13 +3,16 @@ import { Receipt, Trash2, CalendarRange, CalendarPlus, Calendar, CalendarX, Pack
 import type { PriceList, PriceItem } from '@/types/cart';
 import type { ListItemLabel } from '../../hooks/useListItemLabels';
 
+// Accetta anche string perché i valori arrivano da input HTML (e.target.value)
+type PriceItemInputValue = PriceItem[keyof PriceItem] | string;
+
 interface PriceListHandlers {
   removeList: (index: number) => void;
   updateListDate: (formIndex: number, field: 'dateStart' | 'dateExpiry', value: string) => void;
   addItemToList: (formIndex: number) => void;
   removeItemFromList: (formIndex: number, rowIndex: number) => void;
-  updateItem: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
-  updateItemWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+  updateItem: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
+  updateItemWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
 }
 
 export interface PriceListCardProps {

@@ -35,12 +35,15 @@ interface PriceItemWithLegacy extends PriceItem {
   itemsLanguages?: Array<{ title?: string; subTitle?: string }>;
 }
 
+// Accetta anche string perché i valori arrivano da input HTML (e.target.value)
+type PriceItemInputValue = PriceItem[keyof PriceItem] | string;
+
 export interface PriceListItemProps {
   item: PriceItemWithLegacy;
   formIndex: number;
   rowIndex: number;
-  onUpdate: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
-  onUpdateWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItem[keyof PriceItem]) => void;
+  onUpdate: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
+  onUpdateWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
   onRemove: (formIndex: number, rowIndex: number) => void;
   canRemove: boolean;
   currencySymbol?: string;

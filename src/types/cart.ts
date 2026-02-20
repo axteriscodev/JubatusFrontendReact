@@ -34,6 +34,7 @@ export interface CartItem {
 }
 
 export interface PreorderPack {
+  id?: number;
   quantityPhoto: number;
   quantityVideo: number;
   quantityClip: number;
