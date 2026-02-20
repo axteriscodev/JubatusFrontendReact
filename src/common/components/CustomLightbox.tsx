@@ -45,16 +45,30 @@ export default function CustomLightbox({
     slides && slides.length > 0
       ? slides
       : slide
-      ? [{ url: slide, keyOriginal: slide, fileTypeId: 2 as const, urlOriginal: slide, id: 0, src: slide, srcThumbnail: slide, srcTiny: slide, key: slide, favorite: false, isVideo: true, isPurchased: false }]
-      : [];
+        ? [
+            {
+              url: slide,
+              keyOriginal: slide,
+              fileTypeId: 2 as const,
+              urlOriginal: slide,
+              id: 0,
+              src: slide,
+              srcThumbnail: slide,
+              srcTiny: slide,
+              key: slide,
+              favorite: false,
+              isVideo: true,
+              isPurchased: false,
+            },
+          ]
+        : [];
 
   const normalizedSlides = getEventContents(effectiveSlides);
 
-  const currentImage: Partial<NormalizedContent> = normalizedSlides[index] ?? normalizedSlides[0] ?? {};
+  const currentImage: Partial<NormalizedContent> =
+    normalizedSlides[index] ?? normalizedSlides[0] ?? {};
 
-  const isSelected = photoItems?.some(
-    (el) => el.key === currentImage.key
-  );
+  const isSelected = photoItems?.some((el) => el.key === currentImage.key);
 
   const handleFavouriteClick = async () => {
     const rq = { contentId: currentImage.id };
@@ -64,7 +78,7 @@ export default function CustomLightbox({
         headers: { "content-type": "application/json" },
         method: "POST",
         body: JSON.stringify(rq),
-      }
+      },
     );
     const data = await response.json();
 
@@ -140,15 +154,19 @@ export default function CustomLightbox({
           return (
             <div className="flex flex-col items-center h-full w-full">
               {actions && (
-                <div className="flex gap-4 text-5xl py-2 z-1000">
-                  <a onClick={handleFavouriteClick} aria-label="Favourite image" className="cursor-pointer">
-                    <i
-                      className={`bi ${
-                        currentImage.favorite
-                          ? "bi-heart-fill text-red-500"
-                          : "bi-heart text-white"
-                      }`}
-                    ></i>
+                <div className="flex gap-6 py-2 z-10">
+                  <a
+                    onClick={handleFavouriteClick}
+                    aria-label="Favourite image"
+                    className="cursor-pointer"
+                  >
+                    <Heart
+                      size={42}
+                      className={
+                        currentImage.favorite ? "text-red-500" : "text-white"
+                      }
+                      fill={currentImage.favorite ? "currentColor" : "none"}
+                    />
                   </a>
                   <a
                     onClick={handleDownload}
@@ -156,7 +174,7 @@ export default function CustomLightbox({
                     aria-label="Download image"
                     className="cursor-pointer"
                   >
-                    <i className="bi bi-box-arrow-down text-white"></i>
+                    <Download size={42} className="text-white" />
                   </a>
                 </div>
               )}
@@ -201,9 +219,7 @@ export default function CustomLightbox({
                 }}
               >
                 <button
-                  onClick={() =>
-                    onImageClick?.(currentImage.key!)
-                  }
+                  onClick={() => onImageClick?.(currentImage.key!)}
                   className={`my-button w-full ${isSelected ? "remove" : "add"}`}
                 >
                   {isSelected ? (
@@ -213,32 +229,15 @@ export default function CustomLightbox({
                     </>
                   ) : (
                     <>
-                      <ShoppingCart size={16} className="inline" /> {t("LIGHTBOX_SELECT")}
+                      <ShoppingCart size={16} className="inline" />{" "}
+                      {t("LIGHTBOX_SELECT")}
                     </>
                   )}
                 </button>
               </div>
             )}
-            {(shopMode && currentImage.isPurchased) && (
+            {shopMode && currentImage.isPurchased && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
-            )}
-            {actions && (
-              <div className="flex gap-3 justify-between position-absolute top-0 start-50 translate-middle-x z-3 px-4 py-1 mt-3">
-                <a onClick={handleFavouriteClick} aria-label="Favourite image">
-                  <Heart
-                    size={48}
-                    className={currentImage.favorite ? "text-danger" : "text-white"}
-                    fill={currentImage.favorite ? "currentColor" : "none"}
-                  />
-                </a>
-                <a
-                  onClick={handleDownload}
-                  title="Download"
-                  aria-label="Download image"
-                >
-                  <Download size={48} className="text-white" />
-                </a>
-              </div>
             )}
           </>
         ),
