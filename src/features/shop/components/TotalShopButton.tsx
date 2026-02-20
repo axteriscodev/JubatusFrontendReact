@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import { useLanguage } from "@common/i18n/LanguageContext";
@@ -24,7 +24,7 @@ export default function TotalShopButton({ onButtonClick = null }: TotalShopButto
 
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleCheckout(event: React.MouseEvent) {
+  async function handleCheckout(event: MouseEvent) {
     event.preventDefault();
 
     if (isLoading) return;

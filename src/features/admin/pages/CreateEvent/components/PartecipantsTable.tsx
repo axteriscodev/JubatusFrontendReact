@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import { RefreshCw, Inbox, Search } from 'lucide-react';
 import { apiRequest } from '@common/services/api-services';
 import Spinner from '@common/components/ui/Spinner';
@@ -73,7 +73,7 @@ export function PartecipantsTable({ eventId }: PartecipantsTableProps) {
     }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 

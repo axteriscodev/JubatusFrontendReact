@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
@@ -28,7 +28,7 @@ export default function PayAtCounter() {
   const [name, setName] = useState(fullName ?? "");
   const [nameError, setNameError] = useState(false);
 
-  async function handleSubmit(event: React.FormEvent, data: { email: string; privacy?: boolean }) {
+  async function handleSubmit(event: FormEvent, data: { email: string; privacy?: boolean }) {
     event.preventDefault();
     try {
       const { email } = data;

@@ -38,10 +38,7 @@ export default function LanguageSelect({ onChange }: LanguageSelectProps) {
     <button
       ref={ref}
       onClick={onClick}
-      /* 1. Rimosso btn-link per evitare conflitti Bootstrap
-     2. Aggiunto 'group' per controllare i figli (l'SVG) all'hover
-     3. Usato !bg-transparent per forzare lo stato iniziale se Bootstrap rompe
-  */
+      /* Toggle custom con stile controllato via Tailwind */
       className="group p-2 inline-flex items-center bg-transparent! rounded-sm transition-colors duration-150 hover:bg-gray-200! focus:outline-none"
     >
       <div className="pr-3 inline-flex items-center">

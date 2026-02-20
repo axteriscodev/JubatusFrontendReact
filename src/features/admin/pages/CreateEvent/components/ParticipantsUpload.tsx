@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { X } from 'lucide-react';
 import { apiRequest } from '@common/services/api-services';
 
@@ -14,7 +14,7 @@ export function ParticipantsUpload({ eventId }: ParticipantsUploadProps) {
   const [uploadStatus, setUploadStatus] = useState<UploadStatus>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
       setSelectedFile(null);

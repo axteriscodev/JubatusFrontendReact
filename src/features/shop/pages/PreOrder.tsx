@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { SquareCheckBig } from "lucide-react";
+import { useState, useEffect, type CSSProperties, type MouseEvent } from "react";
+import { LoaderCircle, SquareCheckBig } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import { useNavigate } from "react-router-dom";
 import Logo from "@common/components/Logo";
@@ -96,13 +96,13 @@ export default function PreOrder() {
     return ((price * (100 - (discount ?? 0))) / 100).toFixed(2);
   };
 
-  function handleSelection(_event: React.MouseEvent, list: PriceListItem) {
+  function handleSelection(_event: MouseEvent, list: PriceListItem) {
     if (list.id === selectedPreorder?.id)
       dispatch(cartActions.unSelectPreorder());
     else dispatch(cartActions.selectPreorder(list as unknown as PreorderPack));
   }
 
-  function handlePreorderCheckout(event: React.MouseEvent) {
+  function handlePreorderCheckout(event: MouseEvent) {
     event.preventDefault();
 
     if (selectedPreorder) {
@@ -163,19 +163,22 @@ export default function PreOrder() {
           <div className="my-20">
             {loadingGallery ? (
               <div className="flex justify-center">
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <LoaderCircle
+                  className="h-8 w-8 animate-spin text-secondary"
+                  aria-label="Loading"
+                />
               </div>
             ) : error ? (
-              <p className="text-danger">{error}</p>
+              <p className="text-red-500">{error}</p>
             ) : (
               <>
-                <div className={`row gap-2 ${styles.mediaContainer}`}>
+                <div
+                  className={`grid grid-cols-1 gap-2 ${numPhoto > 0 && hasVideo ? "md:grid-cols-12" : ""} ${styles.mediaContainer}`}
+                >
                   {numPhoto > 0 && (
-                    <div className={hasVideo ? "col-7" : "col"}>
+                    <div className={hasVideo ? "md:col-span-7" : "w-full"}>
                       <div
-                        className={`row row-cols-2 gap-2 ${styles.imageContainer}`}
+                        className={`grid grid-cols-2 gap-2 ${styles.imageContainer}`}
                       >
                         {presaleMedia.images!.map((img, i) => (
                           <div key={i}>
@@ -189,22 +192,20 @@ export default function PreOrder() {
                       </div>
                     </div>
                   )}
-                  <div className="col">
-                    {hasVideo && presaleMedia.video && (
-                      <>
-                        <img
-                          src={presaleMedia.video.cover}
-                          className={styles.videoCover}
-                          alt="Cover"
-                          title="Clicca per vedere un video di esempio"
-                          onClick={() =>
-                            openLightbox(presaleMedia.video!.url)
-                          }
-                          role="button"
-                        />
-                      </>
-                    )}
-                  </div>
+                  {hasVideo && presaleMedia.video && (
+                    <div className={numPhoto > 0 ? "md:col-span-5" : "w-full"}>
+                      <img
+                        src={presaleMedia.video.cover}
+                        className={styles.videoCover}
+                        alt="Cover"
+                        title="Clicca per vedere un video di esempio"
+                        onClick={() =>
+                          openLightbox(presaleMedia.video!.url)
+                        }
+                        role="button"
+                      />
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -226,7 +227,7 @@ export default function PreOrder() {
               className={`mt-5 ${styles.pack} ${list.bestOffer ? styles.bestOffer : ""} ${list.id === selectedPreorder?.id ? styles.selected : ""}`}
               style={
                 list.bestOffer
-                  ? { "--best-offer-label": `'${t("BEST_OFFER")}'` } as React.CSSProperties
+                  ? { "--best-offer-label": `'${t("BEST_OFFER")}'` } as CSSProperties
                   : undefined
               }
             >
@@ -241,13 +242,13 @@ export default function PreOrder() {
                     )}
                   </span>
                 </div>
-                <div className="text-right lh-1">
+                <div className="text-right leading-tight">
                   <div className="line-through">
                     {eventPreset.currency === "EUR"
                       ? `${list.price} ${eventPreset.currencySymbol}`
                       : `${eventPreset.currencySymbol} ${list.price}`}
                   </div>
-                  <div className="text-30 fw-bold">
+                  <div className="text-30 font-bold">
                     {eventPreset.currency === "EUR"
                       ? `${getFinalPrice(list.price, list.discount)} ${eventPreset.currencySymbol}`
                       : `${eventPreset.currencySymbol} ${getFinalPrice(list.price, list.discount)}`}

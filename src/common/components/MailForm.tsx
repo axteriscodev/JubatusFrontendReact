@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type MouseEvent } from "react";
 import { FormLabel } from "./ui/Form";
 import Input from "./ui/Input";
 import Modal from "./ui/Modal";
@@ -16,7 +16,7 @@ export interface MailFormErrors {
 
 export interface MailFormProps {
   defaultEmail: string;
-  submitHandle: (event: React.MouseEvent<HTMLButtonElement>, data: { email: string; privacy: boolean }) => void;
+  submitHandle: (event: MouseEvent<HTMLButtonElement>, data: { email: string; privacy: boolean }) => void;
   showPrivacy?: boolean;
   onErrors: MailFormErrors;
   externalPayment?: boolean;
@@ -35,20 +35,20 @@ export default function MailForm({
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
 
   const handleClose = () => setShow(false);
-  const handleShow = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleShow = (event: MouseEvent<HTMLAnchorElement>) => {
     setShow(true);
     event.preventDefault();
   };
 
   const handlePrivacyPolicyClose = () => setShowPrivacyPolicy(false);
-  const handlePrivacyPolicyShow = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handlePrivacyPolicyShow = (event: MouseEvent<HTMLAnchorElement>) => {
     setShowPrivacyPolicy(true);
     event.preventDefault();
   };
 
   const { t } = useTranslations();
 
-  const handlePrivacyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePrivacyChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.checked;
     setIsChecked(newValue);
   };

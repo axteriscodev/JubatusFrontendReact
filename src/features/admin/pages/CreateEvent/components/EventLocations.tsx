@@ -1,8 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import { MapPin, Monitor, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
-import { apiRequest } from '@common/services/api-services';
-import { errorToast, successToast } from '@common/utils/toast-manager';
-import LoadingState from '@common/components/ui/LoadingState';
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import {
+  MapPin,
+  Monitor,
+  Trash2,
+  Plus,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { apiRequest } from "@common/services/api-services";
+import { errorToast, successToast } from "@common/utils/toast-manager";
+import LoadingState from "@common/components/ui/LoadingState";
 
 interface LocationReader {
   id: string;
@@ -42,12 +49,12 @@ interface NewLocationForm {
 }
 
 const EMPTY_NEW_LOCATION_FORM: NewLocationForm = {
-  displayName: '',
-  line1: '',
-  city: '',
-  country: 'IT',
-  postalCode: '',
-  state: '',
+  displayName: "",
+  line1: "",
+  city: "",
+  country: "IT",
+  postalCode: "",
+  state: "",
 };
 
 export interface EventLocationsProps {
@@ -59,24 +66,36 @@ export function EventLocations({ eventId }: EventLocationsProps) {
   const [allReaders, setAllReaders] = useState<Reader[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedReaderIds, setSelectedReaderIds] = useState<Record<string, string>>({});
-  const [addingForLocation, setAddingForLocation] = useState<string | null>(null);
+  const [selectedReaderIds, setSelectedReaderIds] = useState<
+    Record<string, string>
+  >({});
+  const [addingForLocation, setAddingForLocation] = useState<string | null>(
+    null,
+  );
 
   const [showNewLocationForm, setShowNewLocationForm] = useState(false);
-  const [newLocationForm, setNewLocationForm] = useState<NewLocationForm>(EMPTY_NEW_LOCATION_FORM);
+  const [newLocationForm, setNewLocationForm] = useState<NewLocationForm>(
+    EMPTY_NEW_LOCATION_FORM,
+  );
   const [creating, setCreating] = useState(false);
 
   const BASE = import.meta.env.VITE_API_URL;
 
   const fetchEventLocations = useCallback(async () => {
     try {
-      const eventLocRes = await apiRequest({ api: `${BASE}/events/event/${eventId}/locations`, method: 'GET', needAuth: true });
+      const eventLocRes = await apiRequest({
+        api: `${BASE}/events/event/${eventId}/locations`,
+        method: "GET",
+        needAuth: true,
+      });
       if (eventLocRes.ok) {
-        const data = await eventLocRes.json() as { data: { locations: EventLocation[] } };
+        const data = (await eventLocRes.json()) as {
+          data: { locations: EventLocation[] };
+        };
         setEventLocations(data.data.locations ?? []);
       }
     } catch {
-      console.error('Errore nel caricamento delle location');
+      console.error("Errore nel caricamento delle location");
     }
   }, [BASE, eventId]);
 
@@ -84,20 +103,32 @@ export function EventLocations({ eventId }: EventLocationsProps) {
     setLoading(true);
     try {
       const [eventLocRes, readersRes] = await Promise.all([
-        apiRequest({ api: `${BASE}/events/event/${eventId}/locations`, method: 'GET', needAuth: true }),
-        apiRequest({ api: `${BASE}/terminal/readers`, method: 'GET', needAuth: true }),
+        apiRequest({
+          api: `${BASE}/events/event/${eventId}/locations`,
+          method: "GET",
+          needAuth: true,
+        }),
+        apiRequest({
+          api: `${BASE}/terminal/readers`,
+          method: "GET",
+          needAuth: true,
+        }),
       ]);
 
       if (eventLocRes.ok) {
-        const data = await eventLocRes.json() as { data: { locations: EventLocation[] } };
+        const data = (await eventLocRes.json()) as {
+          data: { locations: EventLocation[] };
+        };
         setEventLocations(data.data.locations ?? []);
       }
       if (readersRes.ok) {
-        const data = await readersRes.json() as { data: { readers: Reader[] } };
+        const data = (await readersRes.json()) as {
+          data: { readers: Reader[] };
+        };
         setAllReaders(data.data.readers ?? []);
       }
     } catch {
-      console.error('Errore nel caricamento dei dati');
+      console.error("Errore nel caricamento dei dati");
     } finally {
       setLoading(false);
     }
@@ -108,7 +139,9 @@ export function EventLocations({ eventId }: EventLocationsProps) {
   }, [fetchData]);
 
   const associatedReaderIds = new Set(
-    eventLocations.flatMap((loc) => (loc.readers ?? []).map((r) => String(r.id)))
+    eventLocations.flatMap((loc) =>
+      (loc.readers ?? []).map((r) => String(r.id)),
+    ),
   );
 
   const getAvailableReaders = () =>
@@ -123,17 +156,17 @@ export function EventLocations({ eventId }: EventLocationsProps) {
       if (reader && String(reader.terminalLocationId) !== String(locId)) {
         const relocRes = await apiRequest({
           api: `${BASE}/terminal/readers/${readerId}/location`,
-          method: 'PUT',
+          method: "PUT",
           needAuth: true,
           body: JSON.stringify({ locationId: Number(locId) }),
         });
         if (!relocRes.ok) {
-          errorToast('Errore nel riassegnamento del POS alla location');
+          errorToast("Errore nel riassegnamento del POS alla location");
           return;
         }
       }
       successToast("POS associato all'evento");
-      setSelectedReaderIds((prev) => ({ ...prev, [locId]: '' }));
+      setSelectedReaderIds((prev) => ({ ...prev, [locId]: "" }));
       await fetchEventLocations();
     } catch {
       errorToast("Errore nell'associazione del POS");
@@ -147,7 +180,7 @@ export function EventLocations({ eventId }: EventLocationsProps) {
     await fetchEventLocations();
   };
 
-  const handleNewLocationFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNewLocationFormChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewLocationForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -160,14 +193,14 @@ export function EventLocations({ eventId }: EventLocationsProps) {
       !newLocationForm.postalCode ||
       !newLocationForm.country
     ) {
-      errorToast('Compila tutti i campi obbligatori');
+      errorToast("Compila tutti i campi obbligatori");
       return;
     }
     setCreating(true);
     try {
       const res = await apiRequest({
         api: `${BASE}/terminal/locations`,
-        method: 'POST',
+        method: "POST",
         needAuth: true,
         body: JSON.stringify({
           displayName: newLocationForm.displayName,
@@ -187,10 +220,10 @@ export function EventLocations({ eventId }: EventLocationsProps) {
         setShowNewLocationForm(false);
         await fetchData();
       } else {
-        errorToast('Errore nella creazione della location');
+        errorToast("Errore nella creazione della location");
       }
     } catch {
-      errorToast('Errore nella creazione della location');
+      errorToast("Errore nella creazione della location");
     } finally {
       setCreating(false);
     }
@@ -201,12 +234,14 @@ export function EventLocations({ eventId }: EventLocationsProps) {
   }
 
   const inputClass =
-    'w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white';
+    "w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white";
 
   const newLocationFormFields = (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="lg:col-span-2">
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Nome visualizzato</label>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">
+          Nome visualizzato
+        </label>
         <input
           type="text"
           name="displayName"
@@ -218,7 +253,9 @@ export function EventLocations({ eventId }: EventLocationsProps) {
         />
       </div>
       <div className="lg:col-span-2">
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Indirizzo</label>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">
+          Indirizzo
+        </label>
         <input
           type="text"
           name="line1"
@@ -230,7 +267,9 @@ export function EventLocations({ eventId }: EventLocationsProps) {
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Città</label>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">
+          Città
+        </label>
         <input
           type="text"
           name="city"
@@ -242,7 +281,9 @@ export function EventLocations({ eventId }: EventLocationsProps) {
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">CAP</label>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">
+          CAP
+        </label>
         <input
           type="text"
           name="postalCode"
@@ -254,7 +295,9 @@ export function EventLocations({ eventId }: EventLocationsProps) {
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Paese</label>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">
+          Paese
+        </label>
         <input
           type="text"
           name="country"
@@ -268,7 +311,8 @@ export function EventLocations({ eventId }: EventLocationsProps) {
       </div>
       <div>
         <label className="block text-xs font-semibold text-gray-600 mb-1">
-          Provincia / Stato <span className="text-gray-400 font-normal">(opzionale)</span>
+          Provincia / Stato{" "}
+          <span className="text-gray-400 font-normal">(opzionale)</span>
         </label>
         <input
           type="text"
@@ -287,7 +331,7 @@ export function EventLocations({ eventId }: EventLocationsProps) {
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus size={14} />
-          {creating ? 'Creazione...' : 'Crea e associa'}
+          {creating ? "Creazione..." : "Crea e associa"}
         </button>
       </div>
     </div>
@@ -304,24 +348,33 @@ export function EventLocations({ eventId }: EventLocationsProps) {
             </div>
             <div>
               <h5 className="mb-1 font-bold text-lg">Location e POS</h5>
-              <p className="text-gray-500 mb-0 text-sm">Location Stripe Terminal associate all'evento</p>
+              <p className="text-gray-500 mb-0 text-sm">
+                Location Stripe Terminal associate all'evento
+              </p>
             </div>
           </div>
 
           {eventLocations.length === 0 ? (
-            <p className="text-gray-400 text-sm italic">Nessuna location associata all'evento.</p>
+            <p className="text-gray-400 text-sm italic">
+              Nessuna location associata all'evento.
+            </p>
           ) : (
             <div className="flex flex-col gap-3">
               {eventLocations.map((loc) => {
                 const availableReaders = getAvailableReaders();
                 const isAdding = addingForLocation === loc.id;
-                const selectedReaderId = selectedReaderIds[loc.id] ?? '';
+                const selectedReaderId = selectedReaderIds[loc.id] ?? "";
 
                 return (
-                  <div key={loc.id} className="border border-gray-200 rounded-lg p-3">
+                  <div
+                    key={loc.id}
+                    className="border border-gray-200 rounded-lg p-3"
+                  >
                     <div className="flex items-center gap-2 mb-2">
                       <MapPin size={14} className="text-gray-500 shrink-0" />
-                      <span className="font-semibold text-sm">{loc.displayName}</span>
+                      <span className="font-semibold text-sm">
+                        {loc.displayName}
+                      </span>
                       <span className="text-gray-400 text-sm">
                         — {loc.addressLine1}, {loc.city} {loc.postalCode}
                       </span>
@@ -334,11 +387,16 @@ export function EventLocations({ eventId }: EventLocationsProps) {
                     ) : (
                       <ul className="flex flex-col gap-1 ml-5 mb-3">
                         {loc.readers!.map((reader) => (
-                          <li key={reader.id} className="flex items-center justify-between text-sm">
+                          <li
+                            key={reader.id}
+                            className="flex items-center justify-between text-sm"
+                          >
                             <span className="flex items-center gap-2 text-gray-700">
                               <Monitor size={13} className="text-gray-400" />
                               {reader.label}
-                              <span className="text-gray-400 text-xs font-mono">{reader.stripeReaderId}</span>
+                              <span className="text-gray-400 text-xs font-mono">
+                                {reader.stripeReaderId}
+                              </span>
                             </span>
                             <button
                               type="button"
@@ -357,13 +415,18 @@ export function EventLocations({ eventId }: EventLocationsProps) {
                       <select
                         value={selectedReaderId}
                         onChange={(e) =>
-                          setSelectedReaderIds((prev) => ({ ...prev, [loc.id]: e.target.value }))
+                          setSelectedReaderIds((prev) => ({
+                            ...prev,
+                            [loc.id]: e.target.value,
+                          }))
                         }
                         disabled={availableReaders.length === 0}
                         className="flex-1 min-w-36 border-2 border-gray-200 rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white disabled:bg-gray-50 disabled:text-gray-400"
                       >
                         <option value="">
-                          {availableReaders.length === 0 ? 'Nessun POS disponibile' : 'Aggiungi POS...'}
+                          {availableReaders.length === 0
+                            ? "Nessun POS disponibile"
+                            : "Aggiungi POS..."}
                         </option>
                         {availableReaders.map((r) => (
                           <option key={String(r.id)} value={String(r.id)}>
@@ -378,7 +441,7 @@ export function EventLocations({ eventId }: EventLocationsProps) {
                         className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-green-600 border border-green-200 rounded-lg hover:bg-green-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Plus size={12} />
-                        {isAdding ? 'Aggiunta...' : 'Aggiungi'}
+                        {isAdding ? "Aggiunta..." : "Aggiungi"}
                       </button>
                     </div>
                   </div>
@@ -406,10 +469,16 @@ export function EventLocations({ eventId }: EventLocationsProps) {
                 onClick={() => setShowNewLocationForm((v) => !v)}
                 className="flex items-center gap-2 font-semibold text-sm text-gray-700 w-full text-left"
               >
-                {showNewLocationForm ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                {showNewLocationForm ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                )}
                 Crea nuova location e associala all'evento
               </button>
-              {showNewLocationForm && <div className="mt-4">{newLocationFormFields}</div>}
+              {showNewLocationForm && (
+                <div className="mt-4">{newLocationFormFields}</div>
+              )}
             </>
           )}
         </div>

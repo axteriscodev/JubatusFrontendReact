@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { Language, LanguageContextValue, StoredLanguage } from '@/types/i18n';
 import type { ApiResponse } from '@/types/api';
 import {
@@ -25,7 +25,7 @@ const LanguageContext = createContext<LanguageContextValue>({
 });
 
 interface LanguageProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {

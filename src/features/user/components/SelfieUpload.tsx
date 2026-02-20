@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import { useAppSelector } from "@common/store/hooks";
 import { heicTo, isHeic } from "heic-to";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import { FormLabel } from "@common/components/ui/Form";
 import Input from "@common/components/ui/Input";
+import { Trash2 } from "lucide-react";
 
 import styles from "./SelfieUpload.module.css";
 
@@ -31,7 +32,7 @@ export default function SelfieUpload({ onDataChange, onError = false }: SelfieUp
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -76,7 +77,7 @@ export default function SelfieUpload({ onDataChange, onError = false }: SelfieUp
     }
   };
 
-  const handleBibNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBibNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setBibNumber(value);
     onDataChange({ image: processedFile, bibNumber: value });
@@ -107,13 +108,14 @@ export default function SelfieUpload({ onDataChange, onError = false }: SelfieUp
       </div>
       {imageUrl && !loading && (
         <div className="flex justify-center items-center">
-          <img
-            src="/images/trash-fill.svg"
-            className={styles.trash}
+          <button
+            type="button"
             onClick={handleRemoveImage}
-            style={{ cursor: "pointer" }}
-            alt="remove"
-          />
+            className="bg-transparent border-0 p-0 cursor-pointer"
+            aria-label="remove"
+          >
+            <Trash2 className={styles.trash} />
+          </button>
         </div>
       )}
       {onError && <p className="on-error">{t("SELFIE_INSERT")}</p>}

@@ -1,9 +1,10 @@
 import { Palette, PaintBucket, Star, Droplet, Eye } from 'lucide-react';
+import type { ChangeEvent } from 'react';
 import type { EventFormData } from '../utils/eventFormHelpers';
 
 export interface EventColorsProps {
   formData: EventFormData;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function EventColors({ formData, onInputChange }: EventColorsProps) {

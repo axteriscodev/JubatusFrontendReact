@@ -1,4 +1,5 @@
 import { useTranslations } from "@common/i18n/TranslationProvider";
+import Alert from "@common/components/ui/Alert";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/routes";
 
@@ -33,9 +34,9 @@ export default function ChoosePayment() {
   if (!receivedData || paymentMethods.length === 0) {
     return (
       <div className="form-sm">
-        <div className="alert alert-danger" role="alert">
-          <h3>{t("ERROR")}</h3>
-        </div>
+        <Alert variant="danger">
+          <strong>{t("ERROR")}</strong>
+        </Alert>
       </div>
     );
   }

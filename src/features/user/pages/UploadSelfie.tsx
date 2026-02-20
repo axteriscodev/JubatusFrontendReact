@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import validator from "validator";
 import { createFormErrors } from "@common/models/form-errors";
@@ -73,7 +73,7 @@ export default function UploadSelfie() {
   };
 
   //invio del selfie
-  async function handleSubmit(event: React.FormEvent, data: { email: string; privacy?: boolean }) {
+  async function handleSubmit(event: FormEvent, data: { email: string; privacy?: boolean }) {
     event.preventDefault();
 
     let errors = createFormErrors();

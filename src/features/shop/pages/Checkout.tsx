@@ -9,6 +9,7 @@ import { cartActions } from "../store/cart-slice";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import ProgressBar from "@common/components/ProgressBar";
+import Alert from "@common/components/ui/Alert";
 import { ROUTES } from "@/routes";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -111,11 +112,12 @@ export default function Checkout() {
   if (error) {
     return (
       <>
-        <div className="alert alert-danger" role="alert">
-          <h3>{t("ERROR")}</h3>
-          <p>{error}</p>
-        </div>
-        <button className="my-button w-100 mt-sm" onClick={buttonHandle}>
+        <Alert variant="danger">
+          <strong>{t("ERROR")}</strong>
+          <br />
+          {error}
+        </Alert>
+        <button className="my-button w-full mt-4" onClick={buttonHandle}>
           {t("CHECKOUT_BACK")}
         </button>
       </>

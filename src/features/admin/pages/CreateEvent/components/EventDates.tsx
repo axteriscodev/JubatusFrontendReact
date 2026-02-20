@@ -6,11 +6,12 @@ import {
   CalendarX,
   Hourglass,
 } from 'lucide-react';
+import type { ChangeEvent } from 'react';
 import type { EventFormData } from '../utils/eventFormHelpers';
 
 export interface EventDatesProps {
   formData: EventFormData;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function EventDates({ formData, onInputChange }: EventDatesProps) {

@@ -1,11 +1,11 @@
-import { useRef } from "react";
+import { useRef, type MouseEvent } from "react";
 import { FormLabel } from "@common/components/ui/Form";
 import Input from "@common/components/ui/Input";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import type { FormErrors } from "@common/models/form-errors";
 
 interface PinFormProps {
-  submitHandle: (event: React.MouseEvent, data: { pin: string }) => void;
+  submitHandle: (event: MouseEvent<HTMLButtonElement>, data: { pin: string }) => void;
   onErrors: FormErrors;
 }
 

@@ -1,12 +1,13 @@
 import Logo from '@common/components/Logo';
 import { FormLabel } from '@common/components/ui/Form';
+import type { ChangeEvent } from 'react';
 import type { EventFormData } from '../utils/eventFormHelpers';
 import type { Competition } from '@/types/competition';
 
 export interface EventLogoProps {
   formData: EventFormData;
   receivedComp: Competition | null;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function EventLogo({ formData, receivedComp, onFileChange }: EventLogoProps) {

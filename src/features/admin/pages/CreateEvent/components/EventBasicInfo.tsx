@@ -10,6 +10,7 @@ import {
   Text,
   ShieldCheck,
 } from 'lucide-react';
+import type { ChangeEvent, ChangeEventHandler } from 'react';
 import type { EventFormData } from '../utils/eventFormHelpers';
 
 interface TagOption {
@@ -24,8 +25,8 @@ interface CurrencyOption {
 
 export interface EventBasicInfoProps {
   formData: EventFormData;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; value: boolean } }) => void;
-  onTitleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; value: boolean } }) => void;
+  onTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   tagList: TagOption[];
   currencyList: CurrencyOption[];
 }
@@ -91,7 +92,7 @@ export function EventBasicInfo({
               type="text"
               name="location"
               value={formData.location}
-              onChange={onInputChange as React.ChangeEventHandler<HTMLInputElement>}
+              onChange={onInputChange as ChangeEventHandler<HTMLInputElement>}
               placeholder="Es: Milano, Via Roma 123"
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -107,7 +108,7 @@ export function EventBasicInfo({
               type="text"
               name="pathS3"
               value={formData.pathS3}
-              onChange={onInputChange as React.ChangeEventHandler<HTMLInputElement>}
+              onChange={onInputChange as ChangeEventHandler<HTMLInputElement>}
               placeholder="percorso/cartella/s3"
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -122,7 +123,7 @@ export function EventBasicInfo({
             <select
               name="tagId"
               value={formData.tagId}
-              onChange={onInputChange as React.ChangeEventHandler<HTMLSelectElement>}
+              onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             >
@@ -144,7 +145,7 @@ export function EventBasicInfo({
             <select
               name="currencyId"
               value={formData.currencyId}
-              onChange={onInputChange as React.ChangeEventHandler<HTMLSelectElement>}
+              onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
             >
@@ -167,7 +168,7 @@ export function EventBasicInfo({
               type="text"
               name="emoji"
               value={formData.emoji}
-              onChange={onInputChange as React.ChangeEventHandler<HTMLInputElement>}
+              onChange={onInputChange as ChangeEventHandler<HTMLInputElement>}
               placeholder="🚴 🏃 ⚽"
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-xl
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -182,7 +183,7 @@ export function EventBasicInfo({
             <textarea
               name="description"
               value={formData.description}
-              onChange={onInputChange as React.ChangeEventHandler<HTMLTextAreaElement>}
+              onChange={onInputChange as ChangeEventHandler<HTMLTextAreaElement>}
               placeholder="Inserisci una descrizione dettagliata dell'evento..."
               rows={4}
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
