@@ -16,7 +16,6 @@
    - [DELETE /event/:eventId](#43-delete-eventseventid)
 5. [Location evento](#5-location-evento)
    - [GET /event/:eventId/locations](#51-get-eventseventidlocations)
-   - [POST /event/:eventId/locations](#52-post-eventseventidlocations)
 6. [Listini evento](#6-listini-evento)
    - [POST /event-list/create](#61-post-eventsevent-listcreate)
    - [PUT /event-list/:eventListId](#62-put-eventsevent-listeventlistid)
@@ -425,73 +424,6 @@ Authorization: Bearer <token>
 | Codice | Causa |
 |---|---|
 | 204 | L'evento non appartiene all'organizzazione dell'utente |
-
----
-
-### 5.2 POST /events/event/:eventId/locations 🔒
-
-Crea una nuova location su Stripe, la salva nel database e la associa all'evento in un'unica operazione.
-
-**Request**
-```
-POST /events/event/42/locations
-Authorization: Bearer <token>
-Content-Type: application/json
-```
-
-```json
-{
-  "displayName": "Sede Milano",
-  "address": {
-    "line1": "Via Roma 10",
-    "city": "Milano",
-    "state": null,
-    "country": "IT",
-    "postalCode": "20100"
-  }
-}
-```
-
-| Campo | Tipo | Obbligatorio | Note |
-|---|---|---|---|
-| `displayName` | string | ✅ | Nome visualizzato della location |
-| `address.line1` | string | ✅ | Via e numero civico |
-| `address.city` | string | ✅ | Città |
-| `address.country` | string | ✅ | Codice paese ISO 3166-1 alpha-2 (es. `IT`) |
-| `address.postalCode` | string | ✅ | CAP |
-| `address.state` | string | ❌ | Provincia / Stato (opzionale) |
-
-**Response 200**
-```json
-{
-  "status": 200,
-  "message": "Location creata e associata all'evento:42",
-  "data": {
-    "location": {
-      "id": 3,
-      "stripeLocationId": "tml_yyy",
-      "displayName": "Sede Milano",
-      "addressLine1": "Via Roma 10",
-      "city": "Milano",
-      "state": null,
-      "country": "IT",
-      "postalCode": "20100",
-      "hide": false,
-      "createdAt": "2025-06-01T09:00:00.000Z",
-      "updatedAt": "2025-06-01T09:00:00.000Z"
-    }
-  }
-}
-```
-
-> La location viene creata su Stripe, salvata nel DB e automaticamente associata all'evento specificato nel path.
-
-**Errori**
-
-| Codice | Causa |
-|---|---|
-| 204 | L'evento non appartiene all'organizzazione dell'utente |
-| 500 | Errore nella creazione della location su Stripe |
 
 ---
 
