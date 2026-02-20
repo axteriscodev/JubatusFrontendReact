@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { calculatePrice } from "@common/utils/best-price-calculator";
+import type { CartState, CartItem, CartProduct, PreorderPack, PriceItem } from "@/types/cart";
 
-const initialState = {
+const initialState: CartState = {
   id: 0,
   userEmail: "",
   fullName: "",
@@ -29,44 +29,44 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    updateOrderId(state, action) {
+    updateOrderId(state, action: PayloadAction<number>) {
       state.id = action.payload;
     },
-    updateUserId(state, action) {
+    updateUserId(state, action: PayloadAction<number>) {
       state.userId = action.payload;
     },
-    updateUserEmail(state, action) {
+    updateUserEmail(state, action: PayloadAction<string>) {
       state.userEmail = action.payload;
     },
-    updateUserName(state, action) {
+    updateUserName(state, action: PayloadAction<string>) {
       state.fullName = action.payload;
     },
-    updateEventId(state, action) {
+    updateEventId(state, action: PayloadAction<number>) {
       state.eventId = action.payload;
     },
-    updateSearchId(state, action) {
+    updateSearchId(state, action: PayloadAction<number>) {
       state.searchId = action.payload;
     },
-    updateProducts(state, action) {
+    updateProducts(state, action: PayloadAction<CartProduct[]>) {
       state.products = [...action.payload];
     },
-    updatePriceList(state, action) {
+    updatePriceList(state, action: PayloadAction<PriceItem[]>) {
       state.prices = [...action.payload];
     },
-    updatePreviousAllPhotosPurchase(state, action) {
+    updatePreviousAllPhotosPurchase(state, action: PayloadAction<boolean>) {
       state.previousAllPhotosPurchase = action.payload;
     },
-    updateHasPhoto(state, action) {
+    updateHasPhoto(state, action: PayloadAction<boolean>) {
       state.hasPhoto = action.payload;
     },
-    updateHasVideo(state, action) {
+    updateHasVideo(state, action: PayloadAction<boolean>) {
       state.hasVideo = action.payload;
     },
-    updateHasClip(state, action) {
+    updateHasClip(state, action: PayloadAction<boolean>) {
       state.hasClip = action.payload;
     },
 
-    addItemToCart(state, action) {
+    addItemToCart(state, action: PayloadAction<string>) {
       const product = state.products.find(
         (item) => item.keyOriginal === action.payload,
       );
@@ -84,7 +84,7 @@ const cartSlice = createSlice({
       performRecalculate(state);
     },
 
-    removeItemFromCart(state, action) {
+    removeItemFromCart(state, action: PayloadAction<string>) {
       const itemToRemove = action.payload;
       state.totalQuantity = Math.max(0, state.totalQuantity - 1);
       state.items = state.items.filter(
@@ -94,8 +94,8 @@ const cartSlice = createSlice({
       performRecalculate(state);
     },
 
-    addAllItems(state, action) {
-      const itemToBuy = state.products
+    addAllItems(state) {
+      const itemToBuy: CartItem[] = state.products
         .filter((p) => p.purchased !== true)
         .map((p) => ({
           keyPreview: p.keyPreview,
@@ -114,7 +114,7 @@ const cartSlice = createSlice({
       }
     },
 
-    selectPreorder(state, action) {
+    selectPreorder(state, action: PayloadAction<PreorderPack>) {
       state.selectedPreorder = action.payload;
       state.allPhotos = action.payload.quantityPhoto === -1;
       state.video = action.payload.quantityVideo !== 0;
@@ -123,13 +123,13 @@ const cartSlice = createSlice({
       if (action.payload.discount) {
         const discountPrice =
           action.payload.price * (1 - action.payload.discount / 100);
-        state.totalPrice = (Math.ceil(discountPrice * 100) / 100).toFixed(2);
+        state.totalPrice = Math.ceil(discountPrice * 100) / 100;
       } else {
         state.totalPrice = action.payload.price;
       }
     },
 
-    unSelectPreorder(state, action) {
+    unSelectPreorder(state) {
       state.selectedPreorder = null;
       performRecalculate(state);
     },
@@ -150,7 +150,7 @@ const cartSlice = createSlice({
       state.eventId = eventId;
     },
 
-    updatePurchasedItem(state, action) {
+    updatePurchasedItem(state, action: PayloadAction<Partial<CartProduct> & { keyOriginal: string }>) {
       const updated = action.payload;
       const index = state.purchased.findIndex(
         (img) => img.keyOriginal === updated.keyOriginal,
@@ -162,17 +162,20 @@ const cartSlice = createSlice({
   },
 });
 
-/**
- * Calcolatore logico
- */
-function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
+function packageCalculator(
+  items: CartItem[],
+  prices: PriceItem[],
+  previousAllPhotosPurchase = false,
+): number {
   const photosCount = items.filter((item) => item.fileTypeId === 1).length;
   const videosCount = items.filter((item) => item.fileTypeId === 2).length;
   const clipsCount = items.filter((item) => item.fileTypeId === 3).length;
 
   const formattedPrices = prices.map((p) => ({
-    ...p,
-    quantityClip: p.quantityClip ?? 0,
+    quantityPhoto: p.quantityPhoto as number,
+    quantityVideo: p.quantityVideo as number,
+    quantityClip: (p.quantityClip as number) ?? 0,
+    price: p.price as number,
   }));
 
   let basePrice = calculatePrice(
@@ -189,17 +192,17 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   ) {
     const photoPackPrice =
       prices.find((p) => p.quantityPhoto === -1 && p.quantityVideo === 0)
-        ?.price ?? 0;
+        ?.price as number ?? 0;
     const completePackPrice =
       prices.find((p) => p.quantityPhoto === -1 && p.quantityVideo === 1)
-        ?.price ?? 0;
+        ?.price as number ?? 0;
 
     if (photoPackPrice > 0 && completePackPrice > 0) {
       const upgradeDiff = completePackPrice - photoPackPrice;
       const singleVideoPrice =
         prices.find(
           (item) => item.quantityPhoto === 0 && item.quantityVideo === 1,
-        )?.price ?? 0;
+        )?.price as number ?? 0;
 
       if (videosCount >= 1) {
         const priceWithUpgrade = basePrice - singleVideoPrice + upgradeDiff;
@@ -211,36 +214,32 @@ function packageCalculator(items, prices, previousAllPhotosPurchase = false) {
   return basePrice;
 }
 
-/**
- * Funzione di utilità esterna per ricalcolare i totali (evita ripetizioni)
- */
-const performRecalculate = (state) => {
-  let totalPrice = packageCalculator(
+const performRecalculate = (state: CartState): void => {
+  const totalPrice = packageCalculator(
     state.items,
     state.prices,
     state.previousAllPhotosPurchase,
   );
 
   const photoPrice =
-    state.prices.find((item) => item.quantityPhoto === 1)?.price ?? 0;
+    (state.prices.find((item) => item.quantityPhoto === 1)?.price as number) ?? 0;
   const photoPackPrice =
-    state.prices.find(
+    (state.prices.find(
       (item) =>
         item.quantityPhoto === -1 &&
         item.quantityVideo === 0 &&
         (item.quantityClip === 0 || item.quantityClip === -1),
-    )?.price ?? 0;
+    )?.price as number) ?? 0;
   const completePackPrice =
-    state.prices.find(
+    (state.prices.find(
       (item) => item.quantityPhoto === -1 && item.quantityVideo === 1,
-    )?.price ?? 0;
+    )?.price as number) ?? 0;
 
   state.hasPhoto = state.items.some((item) => item.fileTypeId === 1);
   state.hasVideo = state.items.some((item) => item.fileTypeId === 2);
   state.hasClip = state.items.some((item) => item.fileTypeId === 3);
   state.video = state.hasVideo;
 
-  // Alert Pack logic
   state.alertPack =
     totalPrice + photoPrice >= photoPackPrice && totalPrice < photoPackPrice;
 

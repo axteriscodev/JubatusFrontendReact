@@ -6,7 +6,7 @@ import { apiRequest } from "@common/services/api-services";
 import { cartActions } from "../store/cart-slice";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import MailForm from "@common/components/MailForm";
-import FormErrors from "@common/models/form-errors";
+import { createFormErrors } from "@common/models/form-errors";
 import { useLanguage } from "@common/i18n/LanguageContext";
 import { FormLabel } from "@common/components/ui/Form";
 import Input from "@common/components/ui/Input";
@@ -24,7 +24,7 @@ export default function PayAtCounter() {
   const fullName = useSelector((state) => state.cart.fullName);
   const eventSlug = useSelector((state) => state.competition.slug);
 
-  const [formErrors, setFormErrors] = useState(new FormErrors());
+  const [formErrors, setFormErrors] = useState(createFormErrors());
   const [name, setName] = useState(fullName ?? "");
   const [nameError, setNameError] = useState(false);
 
@@ -32,7 +32,7 @@ export default function PayAtCounter() {
     event.preventDefault();
     try {
       const { email } = data;
-      let errors = new FormErrors();
+      let errors = createFormErrors();
 
       errors.emailError = !validator.isEmail(email);
       const isNameValid = name && name.trim() !== "";

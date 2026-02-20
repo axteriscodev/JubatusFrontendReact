@@ -1,15 +1,15 @@
 import { getAuthToken } from "../utils/auth";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+import type { ApiRequestParams } from "@/types/api";
 
 /**
  * @deprecated - Metodo deprecato, usare apiRequest
- *
- * @param {*} api - URL dell'API
- * @param {*} method - metodo di richiesta (GET, POST, PUT, DELETE)
- * @param {*} body - body della richiesta
- * @returns
  */
-export async function sendRequest(api, method, body) {
+export async function sendRequest(
+  api: string,
+  method: string,
+  body?: BodyInit,
+): Promise<Response> {
   const token = getAuthToken();
 
   const response = await fetch(api, {
@@ -28,23 +28,13 @@ export async function sendRequest(api, method, body) {
   return response;
 }
 
-/**
- * Metodo per invio richieste API
- *
- * @param {*} api - endpoint api
- * @param {*} method - metodo di richiesta (GET, POST, PUT, DELETE)
- * @param {*} body - body della richiesta
- * @param {*} needAuth - se la richiesta necessita di autenticazione
- * @param {*} contentType - tipo di contenuto della richiesta
- * @returns
- */
 export async function apiRequest({
   api,
   method = "GET",
   body,
   needAuth = false,
   contentType = "application/json",
-}) {
+}: ApiRequestParams): Promise<Response> {
   const token = getAuthToken();
   const headers = new Headers();
 
@@ -70,14 +60,11 @@ export async function apiRequest({
   return response;
 }
 
-/**
- * Metodo per ascolto di eventi SSE
- * @param {*} api - URL dell'API
- * @param {*} callbackMessage - funzione di callback per la ricezione dei messaggi
- * @param {*} onerror - funzione di callback per la gestione degli errori
- */
-export async function listenSSE(api, callbackMessage, callbackError) {
-  // Nomi diversi per i parametri
+export async function listenSSE(
+  api: string,
+  callbackMessage: (data: string) => void,
+  callbackError: (err: unknown) => void,
+): Promise<void> {
   const token = getAuthToken();
   const headers = {
     Accept: "text/event-stream",
@@ -89,7 +76,7 @@ export async function listenSSE(api, callbackMessage, callbackError) {
     async onmessage(msg) {
       if (msg.event === "message" || !msg.event) {
         console.log("Dati ricevuti:", msg.data);
-        callbackMessage(msg.data); // Usa il nome corretto della callback
+        callbackMessage(msg.data);
       }
     },
     onerror(err) {

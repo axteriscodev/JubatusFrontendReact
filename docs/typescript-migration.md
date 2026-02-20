@@ -7,8 +7,8 @@
 | Fase | Descrizione | Stato |
 |------|-------------|-------|
 | 0 | Tooling e configurazione | ✅ Completata |
-| 1 | Utils e services | ⏳ Da fare |
-| 2 | Redux store | ⏳ Da fare |
+| 1 | Utils e services | ✅ Completata |
+| 2 | Redux store | ✅ Completata |
 | 3 | Context i18n | ⏳ Da fare |
 | 4 | Componenti UI atomici | ⏳ Da fare |
 | 5 | Componenti condivisi e pagine comuni | ⏳ Da fare |

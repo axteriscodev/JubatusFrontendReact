@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import validator from "validator";
-import FormErrors from "@common/models/form-errors";
+import { createFormErrors } from "@common/models/form-errors";
 
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
@@ -24,7 +24,7 @@ export default function UploadSelfie() {
 
   const [selfie, setSelfie] = useState({ image: null, bibNumber: "" });
 
-  const [formErrors, setFormErrors] = useState(new FormErrors());
+  const [formErrors, setFormErrors] = useState(createFormErrors());
 
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
@@ -62,7 +62,7 @@ export default function UploadSelfie() {
   async function handleSubmit(event, data) {
     event.preventDefault();
 
-    let formErrors = new FormErrors();
+    let formErrors = createFormErrors();
 
     console.log(data.email);
     console.log(data.privacy);

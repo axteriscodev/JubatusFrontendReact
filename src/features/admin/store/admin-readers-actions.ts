@@ -1,14 +1,10 @@
 import { adminReadersActions } from "./admin-readers-slice";
 import { apiRequest } from "@common/services/api-services";
+import type { AppDispatch } from "@common/store/store";
+import type { Reader } from "@/types/admin";
 
-/**
- * Associa un reader a un evento
- *
- * @param {number} readerId - ID del reader
- * @param {number} eventId - ID dell'evento
- */
-export const associateReaderToEvent = (readerId, eventId) => {
-  return async (dispatch) => {
+export const associateReaderToEvent = (readerId: number, eventId: number) => {
+  return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
         // TODO: sostituire con endpoint corretto
@@ -32,14 +28,8 @@ export const associateReaderToEvent = (readerId, eventId) => {
   };
 };
 
-/**
- * Attiva o disattiva un reader
- *
- * @param {number} readerId - ID del reader
- * @param {boolean} active - nuovo stato
- */
-export const toggleReaderActive = (readerId, active) => {
-  return async (dispatch) => {
+export const toggleReaderActive = (readerId: number, active: boolean) => {
+  return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
         // TODO: sostituire con endpoint corretto
@@ -63,15 +53,8 @@ export const toggleReaderActive = (readerId, active) => {
   };
 };
 
-/**
- * Aggiorna la label di un reader
- *
- * @param {number} readerId - ID del reader
- * @param {string} label - nuova label
- * @param {object} currentReader - dati attuali del reader (per merge locale)
- */
-export const updateReaderLabel = (readerId, label, currentReader) => {
-  return async (dispatch) => {
+export const updateReaderLabel = (readerId: number, label: string, currentReader: Reader) => {
+  return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
         api:
@@ -97,11 +80,8 @@ export const updateReaderLabel = (readerId, label, currentReader) => {
   };
 };
 
-/**
- * Fetch della lista di reader POS con i relativi eventi
- */
 export const fetchReaders = () => {
-  return async (dispatch) => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     const fetchData = async () => {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/terminal/readers/with-events",

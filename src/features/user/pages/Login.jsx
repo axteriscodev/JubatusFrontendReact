@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { userActions } from "../store/user-slice";
 import validator from "validator";
 import MailForm from "@common/components/MailForm";
-import FormErrors from "@common/models/form-errors";
+import { createFormErrors } from "@common/models/form-errors";
 import { resetHeaderData } from "@common/utils/graphics";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import LanguageSelect from "@common/components/LanguageSelect";
@@ -19,7 +19,7 @@ import { ROUTES } from "@/routes";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [formErrors, setFormErrors] = useState(new FormErrors());
+  const [formErrors, setFormErrors] = useState(createFormErrors());
 
   // Testi in lingua
   const { t, currentLanguage } = useTranslations();
@@ -36,7 +36,7 @@ export default function Login() {
   async function handleSubmit(event, data) {
     event.preventDefault();
 
-    let formErrors = new FormErrors();
+    let formErrors = createFormErrors();
 
     console.log(data.email);
 

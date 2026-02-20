@@ -1,14 +1,12 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
-import { getAuthToken } from "@common/utils/auth";
 import { objectToFormData } from "@common/utils/form-data-converters";
 import { apiRequest } from "@common/services/api-services";
+import type { AppDispatch } from "@common/store/store";
+import type { Competition } from "@/types/competition";
+import type { ActionResult } from "@/types/api";
 
-/**
- * Fetch delle competizioni
- *
- */
 export const fetchCompetitions = () => {
-  return async (dispatch) => {
+  return async (dispatch: AppDispatch) => {
     const fetchData = async () => {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/fetch",
@@ -33,19 +31,14 @@ export const fetchCompetitions = () => {
   };
 };
 
-/**
- * Aggiunta di una competizione
- *
- * @param {*} competition - competizione da aggiungere
- */
-export const addCompetition = (competition) => {
-  return async (dispatch) => {
+export const addCompetition = (competition: Partial<Competition>) => {
+  return async (dispatch: AppDispatch): Promise<ActionResult<Competition>> => {
     const sendRequest = async () => {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/create",
         method: "POST",
         needAuth: true,
-        body: objectToFormData(competition),
+        body: objectToFormData(competition as unknown as Parameters<typeof objectToFormData>[0]),
       });
 
       if (!response.ok) {
@@ -71,18 +64,14 @@ export const addCompetition = (competition) => {
   };
 };
 
-/**
- * Modifica di una competizione
- * @param {*} competition - competizione da modificare
- */
-export const editCompetition = (competition) => {
-  return async (dispatch) => {
+export const editCompetition = (competition: Competition) => {
+  return async (dispatch: AppDispatch): Promise<ActionResult<Competition>> => {
     const sendRequest = async () => {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/event/" + competition.id,
         method: "PUT",
         needAuth: true,
-        body: objectToFormData(competition),
+        body: objectToFormData(competition as unknown as Parameters<typeof objectToFormData>[0]),
       });
 
       if (!response.ok) {
@@ -101,18 +90,13 @@ export const editCompetition = (competition) => {
   };
 };
 
-/**
- * Cancellazione di una competizione
- * @param {*} competition - competizione da cancellare
- */
-export const deleteCompetition = (competition) => {
-  return async (dispatch) => {
+export const deleteCompetition = (competition: Pick<Competition, "id">) => {
+  return async (dispatch: AppDispatch): Promise<void> => {
     const sendRequest = async () => {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/event/" + competition.id,
         method: "DELETE",
         needAuth: true,
-        body: objectToFormData(competition),
       });
 
       if (!response.ok) {
@@ -129,13 +113,8 @@ export const deleteCompetition = (competition) => {
   };
 };
 
-/**
- * Fetch di una singola competizione per ID
- *
- * @param {number} eventId - ID dell'evento
- */
-export const fetchCompetitionById = (eventId) => {
-  return async () => {
+export const fetchCompetitionById = (eventId: number) => {
+  return async (): Promise<ActionResult<{ eventData: unknown; externalPayment: unknown } | null>> => {
     const fetchData = async () => {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/event/" + eventId,
@@ -168,13 +147,8 @@ export const fetchCompetitionById = (eventId) => {
   };
 };
 
-/**
- * Aggiunta di un listino prezzi per una competizione
- * @param {number} eventId - ID dell'evento padre
- * @param {object} priceList - listino da aggiungere
- */
-export const addListToCompetition = (eventId, priceList) => {
-  return async () => {
+export const addListToCompetition = (eventId: number, priceList: unknown) => {
+  return async (): Promise<ActionResult<unknown>> => {
     try {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/event-list/create",
@@ -196,14 +170,8 @@ export const addListToCompetition = (eventId, priceList) => {
   };
 };
 
-/**
- * Modifica di un listino prezzi per una competizione
- * @param {number} eventListId - ID del listino da modificare
- * @param {number} eventId - ID dell'evento padre
- * @param {object} priceList - listino aggiornato
- */
-export const editListForCompetition = (eventListId, eventId, priceList) => {
-  return async () => {
+export const editListForCompetition = (eventListId: number, eventId: number, priceList: unknown) => {
+  return async (): Promise<ActionResult<unknown>> => {
     try {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/event-list/" + eventListId,
@@ -225,12 +193,8 @@ export const editListForCompetition = (eventListId, eventId, priceList) => {
   };
 };
 
-/**
- * Cancellazione di un listino prezzi per una competizione
- * @param {number} eventListId - ID del listino da eliminare
- */
-export const deleteListForCompetition = (eventListId) => {
-  return async () => {
+export const deleteListForCompetition = (eventListId: number) => {
+  return async (): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/events/event-list/" + eventListId,

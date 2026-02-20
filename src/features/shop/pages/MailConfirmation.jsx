@@ -6,7 +6,7 @@ import { apiRequest } from "@common/services/api-services";
 import { cartActions } from "../store/cart-slice";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import MailForm from "@common/components/MailForm";
-import FormErrors from "@common/models/form-errors";
+import { createFormErrors } from "@common/models/form-errors";
 import { useLanguage } from "@common/i18n/LanguageContext";
 import parse from "html-react-parser";
 import { FormLabel } from "@common/components/ui/Form";
@@ -22,7 +22,7 @@ export default function MailConfirmation() {
   const fullName = useSelector((state) => state.cart.fullName);
   //const userSurname = useSelector((state) => state.cart.userSurname);
   const { currentLanguage } = useLanguage();
-  const [formErrors, setFormErrors] = useState(new FormErrors());
+  const [formErrors, setFormErrors] = useState(createFormErrors());
   const [name, setName] = useState(fullName ?? "");
   //const [surname, setSurname] = useState(userSurname ?? "");
   const [nameError, setNameError] = useState(false);
@@ -39,7 +39,7 @@ export default function MailConfirmation() {
     event.preventDefault();
     try {
       const { email } = data;
-      let formErrors = new FormErrors();
+      let formErrors = createFormErrors();
 
       console.log(data.email);
       console.log(name);

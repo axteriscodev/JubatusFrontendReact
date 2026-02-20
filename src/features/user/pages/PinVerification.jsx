@@ -2,13 +2,13 @@ import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { setAuthToken, setLevel } from "@common/utils/auth";
 import PinForm from "../components/PinForm";
-import FormErrors from "@common/models/form-errors";
+import { createFormErrors } from "@common/models/form-errors";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import { ROUTES } from "@/routes";
 
 export default function PinVerification() {
   const navigate = useNavigate();
-  //const [formErrors, setFormErrors] = useState(new FormErrors());
+  //const [formErrors, setFormErrors] = useState(createFormErrors());
   const userPin = useParams();
   const { t } = useTranslations();
 
@@ -36,7 +36,7 @@ export default function PinVerification() {
         navigate(ROUTES.HOME);
       } else {
         if (response.status === 401) {
-          let formErrors = new FormErrors();
+          let formErrors = createFormErrors();
           formErrors.pinError = true;
           return;
         }

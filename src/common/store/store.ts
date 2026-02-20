@@ -21,7 +21,7 @@ import adminReadersSlice from "@features/admin/store/admin-readers-slice";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cart", "competition"]
+  whitelist: ["cart", "competition"],
 };
 
 const rootReducer = combineReducers({
@@ -33,7 +33,7 @@ const rootReducer = combineReducers({
   adminReaders: adminReadersSlice.reducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer) as unknown as typeof rootReducer;
 
 export const store = configureStore({
   reducer: persistedReducer,
@@ -46,3 +46,6 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+export type RootState = ReturnType<typeof rootReducer>;
+export type AppDispatch = typeof store.dispatch;
