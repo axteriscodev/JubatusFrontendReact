@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { RefreshCw, Inbox, CheckCircle, CreditCard, Monitor, AlertCircle } from "lucide-react";
+import { RefreshCw, Inbox, CheckCircle } from "lucide-react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { apiRequest } from "@common/services/api-services";
 import { getAuthToken } from "@common/utils/auth";
@@ -7,8 +7,9 @@ import Spinner from "@common/components/ui/Spinner";
 import EmptyState from "@common/components/ui/EmptyState";
 import LoadingState from "@common/components/ui/LoadingState";
 import Alert from "@common/components/ui/Alert";
-import Modal from "@common/components/ui/Modal";
 import Pagination from "@common/components/ui/Pagination";
+import ConfirmPaymentModal from "./ConfirmPaymentModal";
+import POSModal from "./POSModal";
 
 interface FileTypeCount {
   count: number;
@@ -594,313 +595,30 @@ export default function PendingPayments({
         </div>
       )}
 
-      <Modal
-        show={!!confirmPayment}
+      <ConfirmPaymentModal
+        payment={confirmPayment}
+        discountPercent={discountPercent}
+        markingPaid={markingPaid}
         onHide={handleCloseModal}
-        centered
-        size="xl"
-      >
-        <Modal.Header closeButton onHide={handleCloseModal}>
-          <Modal.Title>Conferma pagamento</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {confirmPayment && (
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium text-gray-600">Ordine</span>
-                <span className="text-gray-900">{confirmPayment.idOrdine}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium text-gray-600">Email</span>
-                <span className="text-gray-900">
-                  {confirmPayment.email || "—"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium text-gray-600">Importo</span>
-                <span className="text-gray-900">
-                  {getCurrencySymbol(confirmPayment.currency)}
-                  {confirmPayment.amount?.toFixed(2) ?? "—"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium text-gray-600">Contenuti</span>
-                <span className="text-gray-900">
-                  {formatFileTypeCounts(confirmPayment.fileTypeCounts)}
-                </span>
-              </div>
-              <div className="pt-2 border-t border-gray-100 space-y-2">
-                <div className="flex justify-between items-center">
-                  <label className="font-medium text-gray-600">
-                    Sconto (%)
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {[5, 10, 15, 20].map((preset) => (
-                        <button
-                          key={preset}
-                          type="button"
-                          onClick={() =>
-                            setDiscountPercent(
-                              discountPercent === preset ? 0 : preset,
-                            )
-                          }
-                          className={`px-2 py-0.5 text-xs rounded border transition-colors ${
-                            discountPercent === preset
-                              ? "bg-green-600 text-white border-green-600"
-                              : "border-gray-300 text-gray-600 hover:border-green-500 hover:text-green-600"
-                          }`}
-                        >
-                          {preset}%
-                        </button>
-                      ))}
-                    </div>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value={discountPercent}
-                      onChange={(e) =>
-                        setDiscountPercent(
-                          Math.min(100, Math.max(0, Number(e.target.value))),
-                        )
-                      }
-                      className="w-20 px-2 py-1 border border-gray-300 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-              </div>
-              {discountPercent > 0 && (
-                <>
-                  <div className="flex justify-between items-center pt-1 text-green-700 font-semibold">
-                    <span>Importo finale</span>
-                    <span>
-                      {getCurrencySymbol(confirmPayment.currency)}
-                      {(
-                        confirmPayment.amount *
-                        (1 - discountPercent / 100)
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm text-green-600">
-                    <span>Risparmio</span>
-                    <span>
-                      -{getCurrencySymbol(confirmPayment.currency)}
-                      {(
-                        confirmPayment.amount *
-                        (discountPercent / 100)
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type="button"
-            onClick={handleCloseModal}
-            className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            Annulla
-          </button>
-          <button
-            type="button"
-            onClick={handleOpenPOS}
-            disabled={markingPaid === confirmPayment?.idOrdine}
-            className="px-4 py-2 text-sm border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <CreditCard size={14} className="inline mr-1" />
-            Paga POS
-          </button>
-          <button
-            type="button"
-            onClick={confirmMarkPaid}
-            disabled={markingPaid === confirmPayment?.idOrdine}
-            className="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {markingPaid === confirmPayment?.idOrdine ? (
-              <>
-                <Spinner size="sm" className="inline mr-1" />
-                Conferma...
-              </>
-            ) : (
-              <>
-                <CheckCircle size={14} className="inline mr-1" />
-                Pagato cash
-              </>
-            )}
-          </button>
-        </Modal.Footer>
-      </Modal>
-      {/* POS Modal */}
-      <Modal
-        show={posStep > 0}
-        onHide={handleClosePOS}
-        centered
-        size="xl"
-      >
-        {/* Step 1 — Selezione reader */}
-        {posStep === 1 && (
-          <>
-            <Modal.Header closeButton onHide={handleClosePOS}>
-              <Modal.Title>
-                <CreditCard size={16} className="inline mr-2" />
-                Pagamento POS — Seleziona reader
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {posError && (
-                <Alert variant="danger" onDismiss={() => setPosError(null)}>
-                  {posError}
-                </Alert>
-              )}
-              {loadingReaders && <LoadingState message="Caricamento reader disponibili..." />}
-              {!loadingReaders && readers.length === 0 && !posError && (
-                <EmptyState
-                  icon={Monitor}
-                  title="Nessun reader disponibile"
-                  subtitle="Non ci sono reader attivi da selezionare"
-                />
-              )}
-              {!loadingReaders && readers.length > 0 && (
-                <div className="space-y-2">
-                  {posPayment && (
-                    <p className="text-sm text-gray-500 mb-3">
-                      Importo da addebitare:{" "}
-                      <span className="font-semibold text-gray-800">
-                        {getCurrencySymbol(posPayment.currency)}
-                        {posAmount.toFixed(2)}
-                      </span>
-                    </p>
-                  )}
-                  {readers.map((reader) => (
-                    <button
-                      key={reader.id}
-                      type="button"
-                      onClick={() => handleSelectReader(reader)}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
-                    >
-                      <Monitor size={20} className="text-blue-600 shrink-0" />
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">{reader.label}</p>
-                        {reader.location && (
-                          <p className="text-xs text-gray-500">
-                            {reader.location.displayName} — {reader.location.city}
-                          </p>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              <button
-                type="button"
-                onClick={handleClosePOS}
-                className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-              >
-                Annulla
-              </button>
-            </Modal.Footer>
-          </>
-        )}
+        onDiscountChange={setDiscountPercent}
+        onConfirm={confirmMarkPaid}
+        onOpenPOS={handleOpenPOS}
+      />
 
-        {/* Step 2 — Invio in corso */}
-        {posStep === 2 && (
-          <>
-            <Modal.Header>
-              <Modal.Title>
-                <CreditCard size={16} className="inline mr-2" />
-                Pagamento POS — Invio in corso
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="flex flex-col items-center gap-4 py-6">
-                <Spinner size="lg" />
-                <p className="text-sm text-gray-600 text-center">
-                  Invio pagamento al reader{" "}
-                  <span className="font-semibold">{selectedReader?.label}</span>
-                  ...
-                </p>
-              </div>
-            </Modal.Body>
-          </>
-        )}
-
-        {/* Step 3 — In attesa / risultato */}
-        {posStep === 3 && (
-          <>
-            <Modal.Header closeButton={posSuccess || !!posError} onHide={handleClosePOS}>
-              <Modal.Title>
-                <CreditCard size={16} className="inline mr-2" />
-                {posSuccess
-                  ? "Pagamento POS — Completato"
-                  : posError
-                    ? "Pagamento POS — Errore"
-                    : "Pagamento POS — In attesa..."}
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {!posSuccess && !posError && (
-                <div className="flex flex-col items-center gap-4 py-6">
-                  <Spinner size="lg" />
-                  <p className="text-sm text-gray-600 text-center">
-                    In attesa di conferma dal reader{" "}
-                    <span className="font-semibold">{selectedReader?.label}</span>
-                    .<br />
-                    Il cliente può presentare la carta.
-                  </p>
-                </div>
-              )}
-              {posSuccess && (
-                <div className="flex flex-col items-center gap-3 py-6">
-                  <CheckCircle size={48} className="text-green-500" />
-                  <p className="text-base font-semibold text-green-700">Pagamento riuscito!</p>
-                </div>
-              )}
-              {posError && (
-                <div className="flex flex-col items-center gap-3 py-6">
-                  <AlertCircle size={48} className="text-red-500" />
-                  <p className="text-sm text-red-700 text-center">{posError}</p>
-                </div>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              {posSuccess && (
-                <button
-                  type="button"
-                  onClick={handleClosePOS}
-                  className="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                >
-                  Chiudi
-                </button>
-              )}
-              {posError && (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleClosePOS}
-                    className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
-                  >
-                    Annulla
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handlePOSRetry}
-                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Riprova
-                  </button>
-                </>
-              )}
-            </Modal.Footer>
-          </>
-        )}
-      </Modal>
+      <POSModal
+        posStep={posStep}
+        posPayment={posPayment}
+        posAmount={posAmount}
+        readers={readers}
+        loadingReaders={loadingReaders}
+        selectedReader={selectedReader}
+        posError={posError}
+        posSuccess={posSuccess}
+        onClose={handleClosePOS}
+        onSelectReader={handleSelectReader}
+        onRetry={handlePOSRetry}
+        onDismissError={() => setPosError(null)}
+      />
     </div>
   );
 }
