@@ -19,6 +19,7 @@ export interface ConfirmPaymentModalProps {
   payment: Payment | null;
   discountPercent: number;
   markingPaid: number | null;
+  hasReaders: boolean;
   onHide: () => void;
   onDiscountChange: (value: number) => void;
   onConfirm: () => void;
@@ -45,6 +46,7 @@ export default function ConfirmPaymentModal({
   payment,
   discountPercent,
   markingPaid,
+  hasReaders,
   onHide,
   onDiscountChange,
   onConfirm,
@@ -148,15 +150,17 @@ export default function ConfirmPaymentModal({
         >
           Annulla
         </button>
-        <button
-          type="button"
-          onClick={onOpenPOS}
-          disabled={markingPaid === payment?.idOrdine}
-          className="px-4 py-2 text-sm border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <CreditCard size={14} className="inline mr-1" />
-          Paga POS
-        </button>
+        {hasReaders && (
+          <button
+            type="button"
+            onClick={onOpenPOS}
+            disabled={markingPaid === payment?.idOrdine}
+            className="px-4 py-2 text-sm border border-blue-600 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <CreditCard size={14} className="inline mr-1" />
+            Paga POS
+          </button>
+        )}
         <button
           type="button"
           onClick={onConfirm}

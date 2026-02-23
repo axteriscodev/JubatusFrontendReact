@@ -70,6 +70,19 @@ export default function PendingPayments({
   const [filterEmail, setFilterEmail] = useState("");
   const [filterAmount, setFilterAmount] = useState("");
 
+  const [hasReaders, setHasReaders] = useState(false);
+
+  useEffect(() => {
+    apiRequest({
+      api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/has-readers`,
+      method: "GET",
+      needAuth: true,
+    })
+      .then((res) => res.json())
+      .then((data: { hasReaders: boolean }) => setHasReaders(data.hasReaders))
+      .catch(() => setHasReaders(false));
+  }, [eventId]);
+
   // POS state
   const [posStep, setPosStep] = useState<0 | 1 | 2 | 3>(0);
   const [posPayment, setPosPayment] = useState<Payment | null>(null);
@@ -636,6 +649,7 @@ export default function PendingPayments({
         payment={confirmPayment}
         discountPercent={discountPercent}
         markingPaid={markingPaid}
+        hasReaders={hasReaders}
         onHide={handleCloseModal}
         onDiscountChange={setDiscountPercent}
         onConfirm={confirmMarkPaid}
