@@ -13,13 +13,13 @@ export interface Reader {
   id: number;
   stripeReaderId: string;
   label: string;
+  registrationCode?: string | null;
+  active: boolean;
   terminalLocationId: number;
   hide: boolean;
   location?: {
     id: number;
     displayName: string;
-    city: string;
-    country: string;
   };
 }
 
@@ -35,6 +35,7 @@ export interface POSModalProps {
   onClose: () => void;
   onSelectReader: (reader: Reader) => void;
   onRetry: () => void;
+  onCancel: () => void;
   onDismissError: () => void;
 }
 
@@ -56,6 +57,7 @@ export default function POSModal({
   onClose,
   onSelectReader,
   onRetry,
+  onCancel,
   onDismissError,
 }: POSModalProps) {
   return (
@@ -110,7 +112,7 @@ export default function POSModal({
                       </p>
                       {reader.location && (
                         <p className="text-xs text-gray-500">
-                          {reader.location.displayName} — {reader.location.city}
+                          {reader.location.displayName}
                         </p>
                       )}
                     </div>
@@ -194,6 +196,15 @@ export default function POSModal({
             )}
           </Modal.Body>
           <Modal.Footer>
+            {!posSuccess && !posError && (
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                Annulla pagamento
+              </button>
+            )}
             {posSuccess && (
               <button
                 type="button"

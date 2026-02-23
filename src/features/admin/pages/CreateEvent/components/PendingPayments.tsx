@@ -9,7 +9,7 @@ import LoadingState from "@common/components/ui/LoadingState";
 import Alert from "@common/components/ui/Alert";
 import Pagination from "@common/components/ui/Pagination";
 import ConfirmPaymentModal from "./ConfirmPaymentModal";
-import POSModal from "./POSModal";
+import POSModal, { type Reader } from "./POSModal";
 
 interface FileTypeCount {
   count: number;
@@ -34,20 +34,6 @@ interface PaginationData {
 interface InitialPayments {
   data: Payment[];
   pagination?: PaginationData;
-}
-
-interface Reader {
-  id: number;
-  stripeReaderId: string;
-  label: string;
-  terminalLocationId: number;
-  hide: boolean;
-  location?: {
-    id: number;
-    displayName: string;
-    city: string;
-    country: string;
-  };
 }
 
 export interface PendingPaymentsProps {
@@ -91,10 +77,11 @@ export default function PendingPayments({
   const [readers, setReaders] = useState<Reader[]>([]);
   const [loadingReaders, setLoadingReaders] = useState(false);
   const [selectedReader, setSelectedReader] = useState<Reader | null>(null);
-  const [posLoading, setPosLoading] = useState(false);
+  const [posDiscountPercent, setPosDiscountPercent] = useState(0);
   const [posError, setPosError] = useState<string | null>(null);
   const [posSuccess, setPosSuccess] = useState(false);
-  const sseControllerRef = useRef<AbortController | null>(null);
+  const [posPaymentIntentId, setPosPaymentIntentId] = useState<string | null>(null);
+  const sseAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (initialPayments) {
@@ -245,11 +232,14 @@ export default function PendingPayments({
 
     const finalAmount =
       discountPercent > 0
-        ? Number((confirmPayment.amount * (1 - discountPercent / 100)).toFixed(2))
+        ? Number(
+            (confirmPayment.amount * (1 - discountPercent / 100)).toFixed(2),
+          )
         : confirmPayment.amount;
 
     setPosPayment(confirmPayment);
     setPosAmount(finalAmount);
+    setPosDiscountPercent(discountPercent);
     handleCloseModal();
     setPosStep(1);
     setSelectedReader(null);
@@ -259,7 +249,7 @@ export default function PendingPayments({
     setLoadingReaders(true);
     try {
       const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/terminal/readers`,
+        api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/readers`,
         method: "GET",
         needAuth: true,
       });
@@ -267,45 +257,66 @@ export default function PendingPayments({
         data: { readers: Reader[] };
         message?: string;
       };
-      if (!response.ok) throw new Error(data.message || "Errore nel caricamento dei reader");
+      if (!response.ok)
+        throw new Error(data.message || "Errore nel caricamento dei reader");
       setReaders(data.data.readers || []);
     } catch (err) {
-      setPosError(err instanceof Error ? err.message : "Impossibile caricare i reader disponibili");
+      setPosError(
+        err instanceof Error
+          ? err.message
+          : "Impossibile caricare i reader disponibili",
+      );
       setReaders([]);
     } finally {
       setLoadingReaders(false);
     }
   };
 
-  const startSSEListening = (intentId: string, payment: Payment) => {
+  const stopSSE = () => {
+    if (sseAbortRef.current) {
+      sseAbortRef.current.abort();
+      sseAbortRef.current = null;
+    }
+  };
+
+  const startSSEResult = (payment: Payment) => {
     const controller = new AbortController();
-    sseControllerRef.current = controller;
+    sseAbortRef.current = controller;
     const token = getAuthToken();
 
-    // TODO: endpoint SSE da definire — placeholder: /terminal/payment/:id/status
     fetchEventSource(
-      `${import.meta.env.VITE_API_URL}/terminal/payment/${intentId}/status`,
+      `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/reader-result`,
       {
-        signal: controller.signal,
+        method: "POST",
         headers: {
           Accept: "text/event-stream",
           Authorization: token ? `Bearer ${token}` : "",
         },
+        signal: controller.signal,
         async onmessage(msg) {
-          if (controller.signal.aborted) return;
           try {
-            const data = JSON.parse(msg.data) as { status: string };
-            if (data.status === "succeeded") {
+            const data = JSON.parse(msg.data) as {
+              status?: string;
+              success?: boolean;
+            };
+            const succeeded =
+              data.status === "succeeded" || data.success === true;
+            const failed =
+              data.status === "failed" ||
+              data.status === "canceled" ||
+              data.success === false;
+
+            if (succeeded) {
+              stopSSE();
               setPayments((prev) =>
                 prev.filter((p) => p.idOrdine !== payment.idOrdine),
               );
               setTotalItems((prev) => Math.max(0, prev - 1));
               setPosSuccess(true);
-              controller.abort();
-            } else if (data.status === "failed" || data.status === "canceled") {
+            } else if (failed) {
+              stopSSE();
               setPosError("Pagamento non riuscito. Riprova.");
               setPosStep(1);
-              controller.abort();
             }
           } catch {
             /* ignora errori di parsing */
@@ -313,8 +324,8 @@ export default function PendingPayments({
         },
         onerror(err) {
           if (controller.signal.aborted) return;
-          console.error("SSE error:", err);
-          setPosError("Errore durante l'attesa del risultato del pagamento.");
+          console.error("Errore SSE reader-result:", err);
+          setPosError("Errore nella connessione al reader.");
           setPosStep(1);
           throw err;
         },
@@ -325,50 +336,76 @@ export default function PendingPayments({
   const handleSelectReader = async (reader: Reader) => {
     setSelectedReader(reader);
     setPosStep(2);
-    setPosLoading(true);
     setPosError(null);
 
     try {
-      const amountCents = Math.round(posAmount * 100);
       const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/terminal/payment`,
+        api: `${import.meta.env.VITE_API_URL}/orders/order/${posPayment?.idOrdine}/reader-payment`,
         method: "POST",
         needAuth: true,
-        body: JSON.stringify({ readerId: reader.id, amountCents, currency: "eur" }),
+        body: JSON.stringify({
+          amount: posPayment?.amount,
+          discountPercent: posDiscountPercent,
+          discountedAmount: posAmount,
+          readerId: reader.id,
+        }),
       });
       const data = (await response.json()) as {
         message?: string;
-        data: { paymentIntentId: string };
+        data: { paymentIntentId: string; readerState: unknown };
       };
       if (!response.ok) {
-        throw new Error(data.message || "Errore durante l'invio del pagamento al reader");
+        throw new Error(
+          data.message || "Errore durante l'invio del pagamento al reader",
+        );
       }
+      setPosPaymentIntentId(data.data.paymentIntentId);
       setPosStep(3);
-      if (posPayment) startSSEListening(data.data.paymentIntentId, posPayment);
+      if (posPayment) startSSEResult(posPayment);
     } catch (err) {
       setPosError(
         err instanceof Error ? err.message : "Errore di connessione al reader",
       );
       setPosStep(1);
-    } finally {
-      setPosLoading(false);
     }
   };
 
   const handleClosePOS = () => {
-    sseControllerRef.current?.abort();
+    stopSSE();
     setPosStep(0);
     setPosPayment(null);
     setPosError(null);
     setPosSuccess(false);
     setSelectedReader(null);
+    setPosPaymentIntentId(null);
   };
 
   const handlePOSRetry = () => {
-    sseControllerRef.current?.abort();
+    stopSSE();
     setPosError(null);
     setPosSuccess(false);
     setSelectedReader(null);
+    setPosPaymentIntentId(null);
+    setPosStep(1);
+  };
+
+  const handlePOSCancel = async () => {
+    stopSSE();
+    if (posPayment && posPaymentIntentId) {
+      try {
+        await apiRequest({
+          api: `${import.meta.env.VITE_API_URL}/orders/order/${posPayment.idOrdine}/payment/${posPaymentIntentId}`,
+          method: "DELETE",
+          needAuth: true,
+        });
+      } catch {
+        /* il pagamento viene annullato lato UI comunque */
+      }
+    }
+    setPosError(null);
+    setPosSuccess(false);
+    setSelectedReader(null);
+    setPosPaymentIntentId(null);
     setPosStep(1);
   };
 
@@ -617,6 +654,7 @@ export default function PendingPayments({
         onClose={handleClosePOS}
         onSelectReader={handleSelectReader}
         onRetry={handlePOSRetry}
+        onCancel={handlePOSCancel}
         onDismissError={() => setPosError(null)}
       />
     </div>
