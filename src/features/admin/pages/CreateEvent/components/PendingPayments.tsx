@@ -95,7 +95,9 @@ export default function PendingPayments({
   const [posDiscountPercent, setPosDiscountPercent] = useState(0);
   const [posError, setPosError] = useState<string | null>(null);
   const [posSuccess, setPosSuccess] = useState(false);
-  const [posPaymentIntentId, setPosPaymentIntentId] = useState<string | null>(null);
+  const [posPaymentIntentId, setPosPaymentIntentId] = useState<string | null>(
+    null,
+  );
   const sseAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -107,6 +109,11 @@ export default function PendingPayments({
       setPageSize(initialPayments.pagination?.limit || 10);
     }
   }, [initialPayments]);
+
+  useEffect(() => {
+    fetchPendingPayments(1, "", "", pageSize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchPendingPayments = async (
     page = currentPage,
@@ -313,6 +320,7 @@ export default function PendingPayments({
             const data = JSON.parse(msg.data) as {
               status?: string;
               success?: boolean;
+              failureMessage?: string;
             };
             const succeeded =
               data.status === "succeeded" || data.success === true;
@@ -330,8 +338,9 @@ export default function PendingPayments({
               setPosSuccess(true);
             } else if (failed) {
               stopSSE();
-              setPosError("Pagamento non riuscito. Riprova.");
-              setPosStep(1);
+              setPosError(
+                "Pagamento non riuscito. " + (data.failureMessage || ""),
+              );
             }
           } catch {
             /* ignora errori di parsing */
@@ -341,7 +350,6 @@ export default function PendingPayments({
           if (controller.signal.aborted) return;
           console.error("Errore SSE reader-result:", err);
           setPosError("Errore nella connessione al reader.");
-          setPosStep(1);
           throw err;
         },
       },
@@ -381,7 +389,7 @@ export default function PendingPayments({
       setPosError(
         err instanceof Error ? err.message : "Errore di connessione al reader",
       );
-      setPosStep(1);
+      setPosStep(3);
     }
   };
 
