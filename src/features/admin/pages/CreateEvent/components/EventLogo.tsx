@@ -1,8 +1,8 @@
-import Logo from '@common/components/Logo';
-import { FormLabel } from '@common/components/ui/Form';
-import type { ChangeEvent } from 'react';
-import type { EventFormData } from '../utils/eventFormHelpers';
-import type { Competition } from '@/types/competition';
+import Logo from "@common/components/Logo";
+import { FormLabel } from "@common/components/ui/Form";
+import type { ChangeEvent } from "react";
+import type { EventFormData } from "../utils/eventFormHelpers";
+import type { Competition } from "@/types/competition";
 
 export interface EventLogoProps {
   formData: EventFormData;
@@ -10,7 +10,11 @@ export interface EventLogoProps {
   onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function EventLogo({ formData, receivedComp, onFileChange }: EventLogoProps) {
+export function EventLogo({
+  formData,
+  receivedComp,
+  onFileChange,
+}: EventLogoProps) {
   const getLogoSrc = (): string => {
     if (formData.logo && formData.logo instanceof File) {
       return URL.createObjectURL(formData.logo);
@@ -18,7 +22,7 @@ export function EventLogo({ formData, receivedComp, onFileChange }: EventLogoPro
     if (receivedComp?.logo) {
       return `${import.meta.env.VITE_API_URL}/${receivedComp.logo}`;
     }
-    return '/public/images/noimage.jpg';
+    return "/public/images/noimage.jpg";
   };
 
   return (
