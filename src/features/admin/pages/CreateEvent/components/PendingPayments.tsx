@@ -79,7 +79,9 @@ export default function PendingPayments({
       needAuth: true,
     })
       .then((res) => res.json())
-      .then((data: { hasReaders: boolean }) => setHasReaders(data.hasReaders))
+      .then((data: { hasReaders?: boolean; data?: { hasReaders?: boolean } }) =>
+        setHasReaders(data?.hasReaders ?? data?.data?.hasReaders ?? false),
+      )
       .catch(() => setHasReaders(false));
   }, [eventId]);
 
