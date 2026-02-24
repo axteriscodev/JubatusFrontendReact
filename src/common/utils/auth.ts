@@ -32,6 +32,18 @@ export function logOut(): void {
   localStorage.removeItem("level");
 }
 
+export function isOrganizationAdmin(): boolean {
+  const token = getAuthToken();
+  if (!token) return false;
+
+  try {
+    const decoded = jwtDecode<{ user: { organizations: { organizationAdmin: boolean }[] } }>(token);
+    return decoded.user.organizations[0]?.organizationAdmin === true;
+  } catch {
+    return false;
+  }
+}
+
 function isValid(token: string | null): boolean {
   if (!token) return false;
 
