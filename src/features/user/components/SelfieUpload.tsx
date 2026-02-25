@@ -16,9 +16,14 @@ interface SelfieData {
 interface SelfieUploadProps {
   onDataChange: (data: SelfieData) => void;
   onError?: boolean;
+  description?: string;
 }
 
-export default function SelfieUpload({ onDataChange, onError = false }: SelfieUploadProps) {
+export default function SelfieUpload({
+  onDataChange,
+  onError = false,
+  description,
+}: SelfieUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -86,6 +91,16 @@ export default function SelfieUpload({ onDataChange, onError = false }: SelfieUp
   return (
     <div>
       <h3>{t("SELFIE_TITLE")}</h3>
+      {description && (
+        <div className="flex justify-center my-2">
+          <h4
+            className="text-center"
+            dangerouslySetInnerHTML={{
+              __html: description.replace(/\r\n|\r|\n/g, "<br>"),
+            }}
+          />
+        </div>
+      )}
       <p className="my-10 text-secondary">{t("SELFIE_UPLOAD")}</p>
       <div
         className={`${styles.avatar} ${!imageUrl && !loading ? styles.add : ""}`}

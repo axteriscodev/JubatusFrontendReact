@@ -101,7 +101,7 @@ export default function CreateEvent() {
       <div className="container mx-auto px-4 text-left">
         <h1 className="text-2xl font-bold mb-4">Gestione evento</h1>
         <p className="text-red-500">Errore nel caricamento dell&apos;evento.</p>
-        <Button onClick={() => navigate(ROUTES.ADMIN)} variant="outline">
+        <Button onClick={() => navigate(ROUTES.ADMIN_EVENTS)} variant="outline">
           Torna alla lista
         </Button>
       </div>
@@ -113,18 +113,31 @@ export default function CreateEvent() {
 
     let result;
     if (submitData.id) {
-      result = await dispatch(editCompetition(submitData as unknown as Competition));
+      result = await dispatch(
+        editCompetition(submitData as unknown as Competition),
+      );
     } else {
-      result = await dispatch(addCompetition(submitData as unknown as Partial<Competition>));
+      result = await dispatch(
+        addCompetition(submitData as unknown as Partial<Competition>),
+      );
     }
 
     if (result.success) {
       successToast("Info evento salvate con successo!");
       console.log("[CreateEvent] result dopo creazione:", result);
-      if (!submitData.id && result.data && (result.data as Competition & { data?: { id: number } }).data?.id) {
-        navigate(ROUTES.ADMIN_EVENT((result.data as Competition & { data: { id: number } }).data.id), {
-          replace: true,
-        });
+      if (
+        !submitData.id &&
+        result.data &&
+        (result.data as Competition & { data?: { id: number } }).data?.id
+      ) {
+        navigate(
+          ROUTES.ADMIN_EVENT(
+            (result.data as Competition & { data: { id: number } }).data.id,
+          ),
+          {
+            replace: true,
+          },
+        );
       }
     } else {
       errorToast("Si è verificato un errore durante il salvataggio");
@@ -141,9 +154,15 @@ export default function CreateEvent() {
     const currentLists = priceListHandlers.priceLists;
 
     const originalIds = new Set(
-      (eventData?.lists ?? []).map((l) => l.id).filter((id): id is number => id !== undefined),
+      (eventData?.lists ?? [])
+        .map((l) => l.id)
+        .filter((id): id is number => id !== undefined),
     );
-    const currentIds = new Set(currentLists.map((l) => l.id).filter((id): id is number => id !== undefined));
+    const currentIds = new Set(
+      currentLists
+        .map((l) => l.id)
+        .filter((id): id is number => id !== undefined),
+    );
     const idsToDelete = [...originalIds].filter((id) => !currentIds.has(id));
 
     const promises = [
@@ -178,7 +197,7 @@ export default function CreateEvent() {
   };
 
   const handleReturnToList = () => {
-    navigate("/admin");
+    navigate(ROUTES.ADMIN_EVENTS);
   };
 
   const tabs: Tab[] = [
@@ -236,7 +255,9 @@ export default function CreateEvent() {
             <div>
               <EventBasicInfo
                 formData={formData}
-                onInputChange={handleInputChange as EventBasicInfoProps["onInputChange"]}
+                onInputChange={
+                  handleInputChange as EventBasicInfoProps["onInputChange"]
+                }
                 onTitleChange={handleTitleChange}
                 tagList={tagList}
                 currencyList={currencyList}
@@ -301,8 +322,15 @@ export default function CreateEvent() {
           {activeTab === "orders" && (formData.id || readOnly) && (
             <div>
               <PendingPayments
-                eventId={(formData.id ?? (eventId ? Number(eventId) : 0)) as PendingPaymentsProps["eventId"]}
-                initialPayments={externalPayment as PendingPaymentsProps["initialPayments"]}
+                eventId={
+                  (formData.id ??
+                    (eventId
+                      ? Number(eventId)
+                      : 0)) as PendingPaymentsProps["eventId"]
+                }
+                initialPayments={
+                  externalPayment as PendingPaymentsProps["initialPayments"]
+                }
               />
             </div>
           )}

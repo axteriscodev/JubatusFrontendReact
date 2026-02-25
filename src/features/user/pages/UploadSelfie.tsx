@@ -132,14 +132,10 @@ export default function UploadSelfie() {
           css="mb-10"
         />
       </div>
-      {description && (
-        <div className="flex justify-center my-2">
-          <h3 className="text-center">{description}</h3>
-        </div>
-      )}
       <SelfieUpload
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
+        description={description}
       />
       <MailForm
         submitHandle={handleSubmit}
