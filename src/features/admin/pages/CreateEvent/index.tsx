@@ -37,6 +37,7 @@ import {
   prepareEventInfoData,
   getDefaultPriceLists,
 } from "./utils/eventFormHelpers";
+import { isOrganizationAdmin } from "@common/utils/auth";
 import { ROUTES } from "@/routes";
 import type { PriceList } from "@/types/cart";
 import type { Competition } from "@/types/competition";
@@ -203,7 +204,7 @@ export default function CreateEvent() {
     ...(!readOnly && formData.id
       ? [{ key: "priceLists" as TabKey, label: "Listini prezzi" }]
       : []),
-    ...(!readOnly && formData.id
+    ...(!readOnly && formData.id && isOrganizationAdmin()
       ? [{ key: "locations" as TabKey, label: "Location / POS" }]
       : []),
     ...(formData.id && formData.verifiedAttendanceEvent
