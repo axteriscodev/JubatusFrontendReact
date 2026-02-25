@@ -61,6 +61,7 @@ export interface CartState {
   hasVideo: boolean;
   hasClip: boolean;
   allPhotos: boolean;
+  allClips: boolean;
   video: boolean;
   previousAllPhotosPurchase: boolean;
 }
