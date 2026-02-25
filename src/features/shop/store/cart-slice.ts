@@ -21,6 +21,7 @@ const initialState: CartState = {
   hasVideo: false,
   hasClip: false,
   allPhotos: false,
+  allClips: false,
   video: false,
   previousAllPhotosPurchase: false,
 };
@@ -117,6 +118,7 @@ const cartSlice = createSlice({
     selectPreorder(state, action: PayloadAction<PreorderPack>) {
       state.selectedPreorder = action.payload;
       state.allPhotos = action.payload.quantityPhoto === -1;
+      state.allClips = action.payload.quantityClip === -1;
       state.video = action.payload.quantityVideo !== 0;
       state.hasClip = action.payload.quantityClip !== 0;
 
@@ -139,6 +141,7 @@ const cartSlice = createSlice({
       state.totalQuantity = 0;
       state.totalPrice = 0;
       state.allPhotos = false;
+      state.allClips = false;
       state.video = false;
       state.hasClip = false;
       state.selectedPreorder = null;
@@ -238,6 +241,13 @@ const performRecalculate = (state: CartState): void => {
     (state.prices.find(
       (item) => item.quantityPhoto === -1 && item.quantityVideo === 1,
     )?.price as number) ?? 0;
+  const clipPackPrice =
+    (state.prices.find(
+      (item) =>
+        item.quantityClip === -1 &&
+        item.quantityPhoto === 0 &&
+        item.quantityVideo === 0,
+    )?.price as number) ?? 0;
 
   state.hasPhoto = state.items.some((item) => item.fileTypeId === 1);
   state.hasVideo = state.items.some((item) => item.fileTypeId === 2);
@@ -252,6 +262,8 @@ const performRecalculate = (state: CartState): void => {
   } else {
     state.allPhotos = totalPrice >= photoPackPrice && photoPackPrice > 0;
   }
+
+  state.allClips = totalPrice >= clipPackPrice && clipPackPrice > 0;
 
   state.totalPrice = totalPrice;
 };

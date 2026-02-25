@@ -41,6 +41,7 @@ export default function TotalShopButton({ onButtonClick = null }: TotalShopButto
             eventId: cart.eventId,
             searchId: cart.searchId,
             allPhotos: cart.allPhotos,
+            allClips: cart.allClips,
             video: cart.video,
             amount: cart.totalPrice,
             items: isPhotoFullPackEligible(cart.totalPrice, cart.prices)
