@@ -1,0 +1,342 @@
+{
+    "message": "Evento id:15",
+    "data": {
+        "eventData": {
+            "id": 15,
+            "slug": "demo-evento",
+            "backgroundColor": "#000000",
+            "primaryColor": "#ffffff",
+            "secondaryColor": "#ff2e2e",
+            "logo": "",
+            "aspectRatio": "1:1",
+            "dateEvent": "2025-11-12T00:00:00.000Z",
+            "datePreorderStart": null,
+            "datePreorderExpiry": null,
+            "dateStart": "2025-11-12T00:00:00.000Z",
+            "dateExpiry": "2026-11-12T00:00:00.000Z",
+            "pathS3": "/corsa-acqua",
+            "verifiedAttendanceEvent": false,
+            "dateIns": "2025-11-12T11:54:14.000Z",
+            "dateUpd": "2026-02-10T15:46:17.000Z",
+            "dateDel": null,
+            "active": true,
+            "hide": false,
+            "tagId": 2,
+            "currencyId": 1,
+            "languages": [
+                {
+                    "title": "demo-evento",
+                    "location": "Forli",
+                    "description": "",
+                    "emoji": ""
+                }
+            ],
+            "tag": {
+                "tag": "sport-vehicle",
+                "bibNumber": true
+            },
+            "currency": {
+                "currency": "EUR",
+                "symbol": "€"
+            },
+            "lists": [
+                {
+                    "id": 125,
+                    "dateStart": "2026-01-15",
+                    "dateExpiry": "2026-11-12",
+                    "active": true,
+                    "items": [
+                        {
+                            "id": 282,
+                            "quantityPhoto": 1,
+                            "quantityVideo": 0,
+                            "quantityClip": 0,
+                            "price": 10,
+                            "discount": 0,
+                            "bestOffer": false,
+                            "labelId": 1,
+                            "itemsLanguages": [
+                                {
+                                    "title": "<strong>1</strong> foto",
+                                    "subTitle": ""
+                                }
+                            ],
+                            "title": "<strong>1</strong> foto",
+                            "subTitle": null
+                        },
+                        {
+                            "id": 283,
+                            "quantityPhoto": 0,
+                            "quantityVideo": 1,
+                            "quantityClip": 0,
+                            "price": 20,
+                            "discount": 0,
+                            "bestOffer": false,
+                            "labelId": 21,
+                            "itemsLanguages": [
+                                {
+                                    "title": "<strong>1</strong> video",
+                                    "subTitle": ""
+                                }
+                            ],
+                            "title": "<strong>1</strong> video",
+                            "subTitle": null
+                        }
+                    ]
+                }
+            ]
+        },
+        "externalPayment": [
+            {
+                "idOrdine": 192,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 193,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 194,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 195,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 196,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 197,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 198,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 199,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 202,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            },
+            {
+                "idOrdine": 203,
+                "email": null,
+                "amount": 10,
+                "currency": null,
+                "payment": null,
+                "state": null,
+                "fileTypeCounts": [
+                    {
+                        "fileTypeId": 1,
+                        "fileTypeName": "Foto",
+                        "count": 1
+                    },
+                    {
+                        "fileTypeId": 2,
+                        "fileTypeName": "Reel",
+                        "count": 0
+                    },
+                    {
+                        "fileTypeId": 3,
+                        "fileTypeName": "Clip",
+                        "count": 0
+                    }
+                ]
+            }
+        ]
+    }
+}

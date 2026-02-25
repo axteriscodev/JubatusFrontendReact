@@ -22,16 +22,12 @@
    - [GET /terminal/events/:eventId/locations](#31-get-terminaleventseventidlocations)
    - [POST /terminal/events/:eventId/locations/:locationId](#32-post-terminaleventseventidlocationslocationid)
    - [DELETE /terminal/events/:eventId/locations/:locationId](#33-delete-terminaleventseventidlocationslocationid)
-4. [Associazione Evento ↔ Reader](#4-associazione-evento--reader)
-   - [GET /terminal/events/:eventId/readers](#41-get-terminaleventseventidreaders)
-   - [POST /terminal/events/:eventId/readers/:readerId](#42-post-terminaleventseventidreadersreaderid)
-   - [DELETE /terminal/events/:eventId/readers/:readerId](#43-delete-terminaleventseventidreadersreaderid)
-5. [Pagamento POS](#5-pagamento-pos)
-   - [POST /terminal/payment](#51-post-terminalpayment)
-   - [POST /terminal/payment/:paymentIntentId/capture](#52-post-terminalpaymentpaymentintentidcapture)
-   - [DELETE /terminal/payment/:paymentIntentId](#53-delete-terminalpaymentpaymentintentid)
-6. [Simulazione (solo sviluppo)](#6-simulazione-solo-sviluppo)
-   - [POST /terminal/readers/:readerId/simulate-card](#61-post-terminalreadersreaderidsimulate-card)
+4. [Pagamento POS](#4-pagamento-pos)
+   - [POST /terminal/payment](#41-post-terminalpayment)
+   - [POST /terminal/payment/:paymentIntentId/capture](#42-post-terminalpaymentpaymentintentidcapture)
+   - [DELETE /terminal/payment/:paymentIntentId](#43-delete-terminalpaymentpaymentintentid)
+5. [Simulazione (solo sviluppo)](#5-simulazione-solo-sviluppo)
+   - [POST /terminal/readers/:readerId/simulate-card](#51-post-terminalreadersreaderidsimulate-card)
 
 ---
 
@@ -39,7 +35,7 @@
 
 ### 1.1 GET /terminal/locations
 
-Restituisce tutte le location attive con i rispettivi reader associati.
+Restituisce tutte le location attive con i rispettivi reader associati e l'eventuale evento collegato.
 
 **Request**
 ```
@@ -75,18 +71,27 @@ Authorization: Bearer <token>
             "terminalLocationId": 1,
             "hide": false
           }
-        ]
+        ],
+        "event": {
+          "id": 42,
+          "slug": "concerto-estate-2025",
+          "dateEvent": "2025-07-15T20:00:00.000Z",
+          "dateStart": "2025-07-15T18:00:00.000Z",
+          "dateExpiry": "2025-07-15T23:00:00.000Z"
+        }
       }
     ]
   }
 }
 ```
 
+> Se la location non è associata a nessun evento, `event` è `null`.
+
 ---
 
 ### 1.2 POST /terminal/locations
 
-Crea una nuova location su Stripe e la salva nel database.
+Crea una nuova location su Stripe e la salva nel database. Può essere immediatamente associata a un evento tramite `eventId`.
 
 **Request**
 ```
@@ -104,7 +109,8 @@ Content-Type: application/json
     "state": null,
     "country": "IT",
     "postalCode": "20100"
-  }
+  },
+  "eventId": 42
 }
 ```
 
@@ -116,6 +122,7 @@ Content-Type: application/json
 | `address.country` | string | ✅ | Codice paese ISO 3166-1 alpha-2 (es. `IT`) |
 | `address.postalCode` | string | ✅ | CAP |
 | `address.state` | string | ❌ | Provincia / Stato (opzionale) |
+| `eventId` | integer | ❌ | ID dell'evento a cui associare la location (deve appartenere all'organizzazione) |
 
 **Response 200**
 ```json
@@ -549,113 +556,7 @@ Authorization: Bearer <token>
 
 ---
 
-## 4. Associazione Evento ↔ Reader
-
-> **Nota:** un reader può essere associato a **un solo evento alla volta**. Assegnare un reader già associato a un nuovo evento rimuove automaticamente l'associazione precedente.
-
-### 4.1 GET /terminal/events/:eventId/readers
-
-Restituisce tutti i reader associati a un determinato evento.
-
-**Request**
-```
-GET /terminal/events/42/readers
-Authorization: Bearer <token>
-```
-
-**Response 200**
-```json
-{
-  "status": 200,
-  "message": "Reader dell'evento",
-  "data": {
-    "readers": [
-      {
-        "id": 1,
-        "label": "Cassa 1",
-        "stripeReaderId": "tmr_xxx",
-        "location": {
-          "id": 1,
-          "displayName": "Sede Milano"
-        }
-      }
-    ]
-  }
-}
-```
-
-**Errori**
-
-| Codice | Causa |
-|---|---|
-| 204 | L'evento non appartiene all'organizzazione dell'utente autenticato |
-
----
-
-### 4.2 POST /terminal/events/:eventId/readers/:readerId
-
-Associa un reader a un evento. Se il reader era già associato a un altro evento, quella associazione viene rimossa.
-
-**Request**
-```
-POST /terminal/events/42/readers/1
-Authorization: Bearer <token>
-```
-
-> Nessun body richiesto.
-
-**Response 200**
-```json
-{
-  "status": 200,
-  "message": "Reader associato all'evento",
-  "data": {
-    "eventId": "42",
-    "readerId": "1"
-  }
-}
-```
-
-**Errori**
-
-| Codice | Causa |
-|---|---|
-| 204 | L'evento non appartiene all'organizzazione dell'utente |
-| 404 | `readerId` non trovato nel database |
-
----
-
-### 4.3 DELETE /terminal/events/:eventId/readers/:readerId
-
-Rimuove l'associazione tra un reader e un evento.
-
-**Request**
-```
-DELETE /terminal/events/42/readers/1
-Authorization: Bearer <token>
-```
-
-**Response 200**
-```json
-{
-  "status": 200,
-  "message": "Reader rimosso dall'evento",
-  "data": {
-    "eventId": "42",
-    "readerId": "1"
-  }
-}
-```
-
-**Errori**
-
-| Codice | Causa |
-|---|---|
-| 204 | L'evento non appartiene all'organizzazione dell'utente |
-
----
-
-## 5. Pagamento POS
+## 4. Pagamento POS
 
 ### Flusso tipico
 
@@ -669,7 +570,7 @@ Per annullare in qualsiasi momento prima della capture: `DELETE /terminal/paymen
 
 ---
 
-### 5.1 POST /terminal/payment
+### 4.1 POST /terminal/payment
 
 Crea un `PaymentIntent` su Stripe e lo invia al reader specificato. Il reader mostrerà la schermata di pagamento al cliente.
 
@@ -726,7 +627,7 @@ Content-Type: application/json
 
 ---
 
-### 5.2 POST /terminal/payment/:paymentIntentId/capture
+### 4.2 POST /terminal/payment/:paymentIntentId/capture
 
 Cattura un `PaymentIntent` già autorizzato dal reader (il cliente ha presentato la carta con successo).
 
@@ -758,7 +659,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 5.3 DELETE /terminal/payment/:paymentIntentId
+### 4.3 DELETE /terminal/payment/:paymentIntentId
 
 Annulla un `PaymentIntent`. Può essere chiamato prima della presentazione della carta o dopo una presentazione fallita.
 
@@ -782,11 +683,11 @@ Authorization: Bearer <token>
 
 ---
 
-## 6. Simulazione (solo sviluppo)
+## 5. Simulazione (solo sviluppo)
 
 > ⚠️ **Questa API funziona esclusivamente in ambiente di test Stripe. Non usarla in produzione.**
 
-### 6.1 POST /terminal/readers/:readerId/simulate-card
+### 5.1 POST /terminal/readers/:readerId/simulate-card
 
 Simula la presentazione di una carta al reader (utile per test automatici senza hardware fisico).
 

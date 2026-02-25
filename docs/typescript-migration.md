@@ -1,8 +1,20 @@
 # Piano di Migrazione a TypeScript
 
-**Versione:** 1.0
-**Data:** 2026-02-19
-**Stato:** Bozza
+**Versione:** 1.2
+**Data:** 2026-02-20
+**Stato:** ✅ Completata
+
+| Fase | Descrizione | Stato |
+|------|-------------|-------|
+| 0 | Tooling e configurazione | ✅ Completata |
+| 1 | Utils e services | ✅ Completata |
+| 2 | Redux store | ✅ Completata |
+| 3 | Context i18n | ✅ Completata |
+| 4 | Componenti UI atomici | ✅ Completata |
+| 5 | Componenti condivisi e pagine comuni | ✅ Completata |
+| 6 | Feature: admin | ✅ Completata |
+| 7 | Feature: shop e user | ✅ Completata |
+| 8 | Entry point e router | ✅ Completata |
 
 ---
 
@@ -460,7 +472,7 @@ export interface UserState {
 
 La migrazione segue un ordine **bottom-up**: si parte dai moduli senza dipendenze interne (utils) e si sale verso i componenti e le pagine. Questo garantisce che, al momento di tipare un componente, tutti i suoi import siano già tipati.
 
-### Fase 0 — Tooling e configurazione (Stimato: 1–2 ore)
+### Fase 0 — Tooling e configurazione ✅ COMPLETATA (2026-02-19)
 
 **Obiettivo:** repository compilante con la nuova configurazione, senza ancora rinominare file.
 
@@ -529,7 +541,7 @@ src/common/store/hooks.ts  (nuovo — hook tipati useAppDispatch/useAppSelector)
 
 ---
 
-### Fase 3 — Context i18n (Stimato: 3–4 ore)
+### Fase 3 — Context i18n ✅ COMPLETATA (2026-02-20)
 
 I due context wrappano l'intera app e sono usati da molti componenti.
 
@@ -540,7 +552,7 @@ src/common/i18n/TranslationProvider.jsx → .tsx
 
 ---
 
-### Fase 4 — Componenti UI atomici (Stimato: 1–2 giorni)
+### Fase 4 — Componenti UI atomici ✅ COMPLETATA (2026-02-20)
 
 I componenti UI in `src/common/components/ui/` sono foglie dell'albero di dipendenze. Migrarli crea un effetto a cascata positivo.
 
@@ -577,7 +589,7 @@ src/common/components/ui/index.js              → .ts   (barrel re-export)
 
 ---
 
-### Fase 5 — Componenti condivisi e pagine comuni (Stimato: 1 giorno)
+### Fase 5 — Componenti condivisi e pagine comuni ✅ COMPLETATA (2026-02-20)
 
 ```
 src/common/components/RouterWrapper.jsx     → .tsx
@@ -599,7 +611,7 @@ src/common/pages/WorkInProgress.jsx         → .tsx
 
 ---
 
-### Fase 6 — Feature: admin (Stimato: 3–4 giorni)
+### Fase 6 — Feature: admin ✅ COMPLETATA (2026-02-20)
 
 La feature admin è la più complessa (7 hook, form di creazione evento, loader). Va migrata con ordine bottom-up rigoroso.
 
@@ -634,7 +646,7 @@ La feature admin è la più complessa (7 hook, form di creazione evento, loader)
 
 ---
 
-### Fase 7 — Feature: shop e user (Stimato: 2–3 giorni)
+### Fase 7 — Feature: shop e user ✅ COMPLETATA (2026-02-20)
 
 **Shop:**
 ```
@@ -653,7 +665,7 @@ src/features/user/pages/*.jsx                      → .tsx  (10 pagine)
 
 ---
 
-### Fase 8 — Entry point e router (Stimato: 3–4 ore)
+### Fase 8 — Entry point e router ✅ COMPLETATA (2026-02-20)
 
 ```
 src/App.jsx   → .tsx
@@ -661,6 +673,8 @@ src/main.jsx  → .tsx
 ```
 
 A questo punto tutti i file in `src/` devono essere `.ts`/`.tsx`. Eseguire `npm run typecheck` per la verifica finale completa.
+
+**Risultato finale:** `npm run typecheck` → 0 errori. `npm run build` → build completato con successo.
 
 ---
 
