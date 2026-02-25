@@ -1,0 +1,70 @@
+@import "tailwindcss";
+body.admin {
+  --bg-color: #ffffff;
+  --bg-event-color: #ffffff;
+  --primary-color: #000000;
+  --primary-event-color: #000000;
+}
+table {
+    @apply min-w-full text-gray-800;
+}
+table > thead:not(.sticky) {
+    @apply bg-gray-600 text-white;
+}
+table > thead.sticky {
+    @apply sticky top-0 z-10 bg-gray-900/60 backdrop-blur-sm backdrop-filter border-b border-gray-300 text-white;
+}
+table > thead > tr > th:first-child {
+    @apply py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-4;
+}
+table > thead > tr > th:not(:first-child):not(:last-child) {
+    @apply py-3.5 px-2 text-left text-sm font-semibold;
+}
+table > thead > tr > th:last-child:not(:first-child) {
+    @apply relative py-3.5 pr-4 pl-3 text-left text-sm font-semibold sm:pr-4;
+}
+table > tbody {
+    @apply divide-y divide-gray-200 bg-white;
+}
+table:not(.no-striped) > tbody > tr {
+    @apply odd:bg-white even:bg-gray-50 even:hover:bg-gray-100 hover:bg-gray-100;
+}
+table.no-striped > tbody > tr {
+    @apply bg-white hover:bg-gray-100;
+}
+table > tbody > tr > td:first-child {
+    @apply py-2 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-4;
+}
+table > tbody > tr > td:not(:first-child):not(:last-child) {
+    @apply py-2 px-2 text-sm whitespace-nowrap text-gray-500;
+}
+table > tbody > tr > td:last-child:not(:first-child) {
+    @apply relative py-2 pr-4 pl-3 text-sm whitespace-nowrap sm:pr-4;
+}
+.button-group button {
+    @apply relative inline-flex items-center rounded-lg;
+}
+.button-group button:first-child:not(:last-child),
+.button-group *:first-child:not(:last-child) button {
+    @apply rounded-r-none;
+}
+.button-group button:last-child:not(:first-child),
+.button-group *:last-child:not(:first-child) button {
+    @apply rounded-l-none;
+}
+.button-group button:first-child:not(:last-child),
+.button-group *:first-child:not(:last-child) button {
+    @apply rounded-r-none;
+}
+.button-group button:not(:last-child):not(:first-child),
+.button-group *:not(:last-child):not(:first-child) button {
+    @apply rounded-l-none rounded-r-none;
+}
+
+/* Admin layout overrides */
+html:has(body.admin) {
+  font-size: 18px; /* scale all rem-based Tailwind utilities (~+12.5%) */
+}
+body.admin .container {
+  max-width: 96rem; /* 1536px instead of default 1280px */
+}

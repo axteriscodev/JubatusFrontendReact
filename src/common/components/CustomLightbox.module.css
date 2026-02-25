@@ -1,0 +1,4 @@
+@import "tailwindcss";
+.thunbnail{
+    @apply w-full h-full object-cover block;
+}
