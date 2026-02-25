@@ -197,7 +197,9 @@ export default function CreateEvent() {
     }
   };
 
-  const handleReturnToList = () => {};
+  const handleReturnToList = () => {
+    navigate(ROUTES.ADMIN_EVENTS);
+  };
 
   const tabs: Tab[] = [
     ...(!readOnly ? [{ key: "info" as TabKey, label: "Info evento" }] : []),
