@@ -1,0 +1,78 @@
+API Terminal — Documentazione per il Client
+Base URL: /terminal
+Autenticazione: Bearer Token (Admin JWT) nell'header Authorization.
+
+1. GET /terminal/events/:eventId/readers — Ottieni i reader di un evento
+Restituisce tutti i reader associati a un dato evento.
+
+Header richiesti:
+
+Header	Valore
+Authorization	Bearer <adminToken>
+Path parameters:
+
+Parametro	Tipo	Descrizione
+eventId	string	ID (DB) dell'evento
+Esempio di chiamata (fetch):
+
+
+const response = await fetch(`/terminal/events/${eventId}/readers`, {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${adminToken}`,
+  },
+});
+const data = await response.json();
+// data.readers → array di reader associati all'evento
+Risposta di successo:
+
+
+{
+  "readers": [
+    {
+      "id": "...",
+      "label": "Cassa 1",
+      "stripeReaderId": "tmr_xxx",
+      "locationId": "..."
+    }
+  ]
+}
+Possibili errori:
+
+204 / No Content — l'evento non appartiene all'organizzazione dell'utente autenticato.
+2. POST /terminal/events/:eventId/readers/:readerId — Associa un reader a un evento
+Associa un reader esistente (già registrato nel DB) a un evento specifico.
+
+Header richiesti:
+
+Header	Valore
+Authorization	Bearer <adminToken>
+Path parameters:
+
+Parametro	Tipo	Descrizione
+eventId	string	ID (DB) dell'evento
+readerId	string	ID (DB) del reader
+Body: nessuno (tutti i parametri sono nel path).
+
+Esempio di chiamata (fetch):
+
+
+const response = await fetch(`/terminal/events/${eventId}/readers/${readerId}`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${adminToken}`,
+  },
+});
+const data = await response.json();
+// data.eventId, data.readerId → conferma dell'associazione
+Risposta di successo:
+
+
+{
+  "eventId": "...",
+  "readerId": "..."
+}
+Possibili errori:
+
+204 / No Content — l'evento non appartiene all'organizzazione dell'utente autenticato.
+404 — il reader con readerId non esiste nel DB.
