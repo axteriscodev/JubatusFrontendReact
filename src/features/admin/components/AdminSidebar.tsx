@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { LayoutDashboard, CalendarDays, CreditCard, MapPin, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { ROUTES } from "@/routes";
-import { logOut } from "@common/utils/auth";
+import { logOut, isOrganizationAdmin } from "@common/utils/auth";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -12,15 +12,21 @@ interface NavItem {
   end?: boolean;
 }
 
-const NAV_ITEMS: NavItem[] = [
+
+const ALL_NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", to: ROUTES.ADMIN, icon: LayoutDashboard, end: true },
   { label: "Elenco eventi", to: ROUTES.ADMIN_EVENTS, icon: CalendarDays },
   { label: "Elenco reader", to: ROUTES.ADMIN_READERS, icon: CreditCard },
   { label: "Elenco location", to: ROUTES.ADMIN_LOCATIONS, icon: MapPin },
 ];
 
+const RESTRICTED_NAV_ITEMS: NavItem[] = [
+  { label: "Elenco eventi", to: ROUTES.ADMIN_EVENTS, icon: CalendarDays },
+];
+
 export default function AdminSidebar() {
   const navigate = useNavigate();
+  const navItems = isOrganizationAdmin() ? ALL_NAV_ITEMS : RESTRICTED_NAV_ITEMS;
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem("adminSidebarCollapsed") === "true"
   );
@@ -58,7 +64,7 @@ export default function AdminSidebar() {
 
       {/* Nav */}
       <nav className="flex-1 py-3">
-        {NAV_ITEMS.map(({ label, to, icon: Icon, end }) => (
+        {navItems.map(({ label, to, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}

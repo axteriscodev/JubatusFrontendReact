@@ -39,6 +39,7 @@ export default function UploadSelfie() {
     userHash?: string;
   }>();
   const showBibNumber = useAppSelector((state) => state.competition?.bibNumber);
+  const description = useAppSelector((state) => state.competition?.description);
 
   const [selfie, setSelfie] = useState<SelfieData>({
     image: null,
@@ -83,9 +84,7 @@ export default function UploadSelfie() {
   };
 
   //invio del selfie
-  async function handleSubmit(
-    data: { email: string; privacy?: boolean },
-  ) {
+  async function handleSubmit(data: { email: string; privacy?: boolean }) {
     let errors = createFormErrors();
 
     console.log(data.email);
@@ -133,6 +132,11 @@ export default function UploadSelfie() {
           css="mb-10"
         />
       </div>
+      {description && (
+        <div className="flex justify-center my-2">
+          <h3 className="text-center">{description}</h3>
+        </div>
+      )}
       <SelfieUpload
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
