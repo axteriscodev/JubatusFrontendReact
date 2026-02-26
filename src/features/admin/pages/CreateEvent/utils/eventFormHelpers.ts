@@ -76,9 +76,9 @@ export const getInitialFormData = (receivedComp: Competition | null): EventFormD
 export const createEmptyPriceItem = (): PriceItem => ({
   labelId: null,
   bestOffer: false,
-  quantityPhoto: '',
-  quantityClip: '',
-  quantityVideo: '',
+  quantityPhoto: 0,
+  quantityClip: 0,
+  quantityVideo: 0,
   price: '',
   discount: '',
 });

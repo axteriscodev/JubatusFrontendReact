@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@common/store/hooks";
 import {
@@ -17,6 +17,7 @@ import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
 import { useCurrencies } from "./hooks/useCurrencies";
 import { useEventData } from "./hooks/useEventData";
+import { useFormValidation } from "./hooks/useFormValidation";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -66,9 +67,18 @@ export default function CreateEvent() {
   const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
 
   const [activeTab, setActiveTab] = useState<TabKey>("info");
+  const justCreatedRef = useRef(false);
 
   const { formData, handleInputChange, handleTitleChange, handleFileChange } =
     useEventForm(eventData);
+
+  const { errors, validateForm, clearFieldError } = useFormValidation();
+
+  const handleValidatedInputChange: typeof handleInputChange = (e) => {
+    const name = (e as { target: { name: string } }).target.name;
+    clearFieldError(name as Parameters<typeof clearFieldError>[0]);
+    handleInputChange(e);
+  };
 
   const initialPriceLists = useMemo<PriceList[]>(
     () => eventData?.lists ?? getDefaultPriceLists(),
@@ -80,10 +90,13 @@ export default function CreateEvent() {
   const { currencyList } = useCurrencies();
 
   useEffect(() => {
-    if (readOnly) {
+    if (readOnly && !justCreatedRef.current) {
       setActiveTab("orders");
     }
-  }, [readOnly]);
+    if (!readOnly && eventData) {
+      justCreatedRef.current = false;
+    }
+  }, [readOnly, eventData]);
 
   // Sopprime warning di variabile inutilizzata — tagsLoading usato per futura UI
   void tagsLoading;
@@ -110,6 +123,8 @@ export default function CreateEvent() {
   }
 
   const handleSubmitEventInfo = async () => {
+    if (!validateForm(formData)) return;
+
     const submitData = prepareEventInfoData(formData);
 
     let result;
@@ -131,6 +146,7 @@ export default function CreateEvent() {
         result.data &&
         (result.data as Competition & { data?: { id: number } }).data?.id
       ) {
+        justCreatedRef.current = true;
         navigate(
           ROUTES.ADMIN_EVENT(
             (result.data as Competition & { data: { id: number } }).data.id,
@@ -193,7 +209,7 @@ export default function CreateEvent() {
     );
     if (confirmDelete && eventData) {
       dispatch(deleteCompetition(eventData));
-      navigate(ROUTES.ADMIN);
+      navigate(ROUTES.ADMIN_EVENTS);
     }
   };
 
@@ -220,13 +236,33 @@ export default function CreateEvent() {
   return (
     <div className="container mx-auto px-4 text-left">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Gestione evento</h1>
+        <h1 className="text-2xl font-bold">
+          Gestione evento
+          {formData.title && ` : ${formData.title}`}
+        </h1>
         <FormActions
           readOnly={readOnly}
           onDelete={handleDelete}
           onCancel={handleReturnToList}
         />
       </div>
+
+      {formData.id && priceListHandlers.priceLists.length === 0 && (
+        <div className="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg border border-yellow-300 bg-yellow-50 text-yellow-800 text-sm">
+          <span>⚠️</span>
+          <span>
+            Nessun listino prezzi configurato. Vai alla tab{" "}
+            <button
+              type="button"
+              className="font-semibold underline"
+              onClick={() => setActiveTab("priceLists")}
+            >
+              Listini prezzi
+            </button>{" "}
+            per impostarli.
+          </span>
+        </div>
+      )}
 
       <form>
         <div className="border-b border-gray-200 mb-3">
@@ -257,15 +293,20 @@ export default function CreateEvent() {
               <EventBasicInfo
                 formData={formData}
                 onInputChange={
-                  handleInputChange as EventBasicInfoProps["onInputChange"]
+                  handleValidatedInputChange as EventBasicInfoProps["onInputChange"]
                 }
-                onTitleChange={handleTitleChange}
+                onTitleChange={(e) => {
+                  clearFieldError("title");
+                  handleTitleChange(e);
+                }}
                 tagList={tagList}
                 currencyList={currencyList}
+                errors={errors}
               />
               <EventDates
                 formData={formData}
-                onInputChange={handleInputChange}
+                onInputChange={handleValidatedInputChange}
+                errors={errors}
               />
               <EventColors
                 formData={formData}

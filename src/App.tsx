@@ -13,9 +13,9 @@ import PinVerification from "@features/user/pages/PinVerification";
 import PersonalArea from "@features/user/pages/PersonalArea";
 import { loader as personalLoader } from "@features/user/pages/PersonalArea.loader";
 import PersonalEventDetail from "@features/user/pages/PersonalEventDetail";
-import UploadSelfie from "@features/user/pages/UploadSelfie";
-import { loader as updateSelfieLoader } from "@features/user/pages/UploadSelfie.loader";
-import ProcessingSelfie from "@features/user/pages/ProcessingSelfie";
+import UploadSelfie from "@features/shop/pages/UploadSelfie";
+import { loader as updateSelfieLoader } from "@features/shop/pages/UploadSelfie.loader";
+import ProcessingSelfie from "@features/shop/pages/ProcessingSelfie";
 import ContentUnavailable from "@common/pages/ContentUnavailable";
 
 import PreOrder from "@features/shop/pages/PreOrder";
@@ -24,7 +24,8 @@ import ImageShop from "@features/shop/pages/ImageShop";
 import Purchased from "@features/shop/pages/Purchased";
 import Checkout from "@features/shop/pages/Checkout";
 import CheckoutOutcome from "@features/shop/pages/CheckoutOutcome";
-import ProcessingPhotos from "@features/user/pages/ProcessingPhotos";
+import ProcessingPhotos from "@features/shop/pages/ProcessingPhotos";
+import ShopLayout from "@features/shop/components/ShopLayout";
 import AdminLayout from "@features/admin/components/AdminLayout";
 import AdminDashboard from "@features/admin/pages/AdminDashboard";
 import AdminEvents from "@features/admin/pages/AdminEvents";
@@ -46,7 +47,7 @@ import RouterWrapper from "@common/components/RouterWrapper";
 import ChoosePayment from "@features/shop/pages/ChoosePayment";
 import PayAtCounter from "@features/shop/pages/PayAtCounter";
 import { ROUTES } from "./routes";
-import NewErrorPage from "./common/pages/newErrorPage";
+import NewErrorPage from "./common/pages/NewErrorPage";
 
 function HomeRoute() {
   if (isAdmin()) return <Navigate to={ROUTES.ADMIN} replace />;
@@ -62,7 +63,7 @@ function App() {
         errorElement: <NewErrorPage />,
         children: [
           { path: ROUTES.WORK_IN_PROGRESS, element: <WorkInProgress /> },
-         
+
           {
             path: ROUTES.HOME,
             element: <HomeRoute />,
@@ -86,50 +87,60 @@ function App() {
             loader: personalLoader,
           },
           {
-            path: ROUTES.EVENT(":eventSlug"),
-            element: <UploadSelfie />,
-            loader: updateSelfieLoader,
+            element: <ShopLayout />,
+            children: [
+              {
+                path: ROUTES.EVENT(":eventSlug"),
+                element: <UploadSelfie />,
+                loader: updateSelfieLoader,
+              },
+              {
+                path: ROUTES.EVENT_WITH_HASH(":eventSlug", ":userHash"),
+                element: <UploadSelfie />,
+                loader: updateSelfieLoader,
+              },
+              { path: ROUTES.PROCESSING_SELFIE, element: <ProcessingSelfie /> },
+              {
+                path: ROUTES.CONTENT_UNAVAILABLE,
+                element: <ContentUnavailable />,
+              },
+              {
+                path: ROUTES.PRE_ORDER,
+                element: <PreOrder />,
+              },
+              {
+                path: ROUTES.PRE_ORDER_PURCHASED,
+                element: <PreOrderPurchased />,
+              },
+              {
+                path: ROUTES.IMAGE_SHOP,
+                element: <ImageShop />,
+              },
+              { path: ROUTES.CHOOSE_PAYMENT, element: <ChoosePayment /> },
+              { path: ROUTES.PAY_AT_COUNTER, element: <PayAtCounter /> },
+              { path: ROUTES.CHECKOUT, element: <Checkout /> },
+              {
+                path: ROUTES.CHECKOUT_OUTCOME,
+                element: <CheckoutOutcome />,
+              },
+              //Conferma dell email post acquisto
+              {
+                path: ROUTES.MAIL_CONFIRMATION,
+                element: <MailConfirmation />,
+              },
+              //pagina di ringraziamenti
+              {
+                path: ROUTES.THANK_YOU,
+                element: <ThankYou />,
+              },
+              {
+                path: ROUTES.PURCHASED,
+                element: <Purchased />,
+              },
+              { path: ROUTES.PROCESSING_PHOTOS, element: <ProcessingPhotos /> },
+              { path: ROUTES.CONTENT_ERROR, element: <ContentError /> },
+            ],
           },
-          {
-            path: ROUTES.EVENT_WITH_HASH(":eventSlug", ":userHash"),
-            element: <UploadSelfie />,
-            loader: updateSelfieLoader,
-          },
-          { path: ROUTES.PROCESSING_SELFIE, element: <ProcessingSelfie /> },
-          { path: ROUTES.CONTENT_UNAVAILABLE, element: <ContentUnavailable /> },
-          {
-            path: ROUTES.PRE_ORDER,
-            element: <PreOrder />,
-          },
-          { path: ROUTES.PRE_ORDER_PURCHASED, element: <PreOrderPurchased /> },
-          {
-            path: ROUTES.IMAGE_SHOP,
-            element: <ImageShop />,
-          },
-          { path: ROUTES.CHOOSE_PAYMENT, element: <ChoosePayment /> },
-          { path: ROUTES.PAY_AT_COUNTER, element: <PayAtCounter /> },
-          { path: ROUTES.CHECKOUT, element: <Checkout /> },
-          {
-            path: ROUTES.CHECKOUT_OUTCOME,
-            element: <CheckoutOutcome />,
-          },
-          //Conferma dell email post acquisto
-          {
-            path: ROUTES.MAIL_CONFIRMATION,
-            element: <MailConfirmation />,
-          },
-          //pagina di ringraziamenti
-          {
-            path: ROUTES.THANK_YOU,
-            element: <ThankYou />,
-          },
-          {
-            path: ROUTES.PURCHASED,
-            element: <Purchased />,
-          },
-          { path: ROUTES.PROCESSING_PHOTOS, element: <ProcessingPhotos /> },
-          { path: ROUTES.CONTENT_ERROR, element: <ContentError /> },
-          { path: "*", element: <NewErrorPage /> },
           {
             element: <AdminLayout />,
             children: [

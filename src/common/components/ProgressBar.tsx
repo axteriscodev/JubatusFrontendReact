@@ -23,17 +23,19 @@ export default function ProgressBar() {
   }, []);
 
   return (
-    <>
+    <div className="mt-20 px-4">
       <div
-        className="progress mt-20"
+        className="w-full bg-gray-200 rounded-full h-4 overflow-hidden"
         role="progressbar"
-        aria-label="Basic example"
         aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+        <div
+          className="progress-bar h-full transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
-    </>
+    </div>
   );
 }
