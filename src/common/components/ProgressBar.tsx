@@ -24,9 +24,6 @@ export default function ProgressBar() {
 
   return (
     <div className="mt-20 px-4">
-      {/* Contenitore: Tailwind dà l'altezza (h-4) e lo sfondo grigio.
-          Senza h-4 o bg-gray-200, il contenitore è invisibile.
-      */}
       <div
         className="w-full bg-gray-200 rounded-full h-4 overflow-hidden"
         role="progressbar"
@@ -34,9 +31,6 @@ export default function ProgressBar() {
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        {/* Barra: Manteniamo 'progress-bar' per il tuo colore CSS.
-            Aggiungiamo 'h-full' per riempire l'altezza del genitore.
-        */}
         <div
           className="progress-bar h-full transition-all duration-500 ease-out"
           style={{ width: `${progress}%` }}

@@ -326,7 +326,14 @@ export function PriceListItem({
               Prezzo
             </label>
             <div className="flex shadow-sm">
-              <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md font-medium">
+              <span
+                className="inline-flex items-center px-3 bg-white rounded-l-md font-medium"
+                style={
+                  item.price === '' || item.price === null
+                    ? { borderTop: '3px solid #ef4444', borderBottom: '3px solid #ef4444', borderLeft: '3px solid #ef4444', color: '#ef4444' }
+                    : { borderTop: '2px solid #d1d5db', borderBottom: '2px solid #d1d5db', borderLeft: '2px solid #d1d5db' }
+                }
+              >
                 {currencySymbol}
               </span>
               <input
@@ -336,8 +343,12 @@ export function PriceListItem({
                 onChange={(e) => onUpdate(formIndex, rowIndex, 'price', e.target.value)}
                 placeholder="0.00"
                 step="0.01"
-                className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 text-[0.95rem]
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="flex-1 rounded-r-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 focus:z-10 focus:ring-blue-500"
+                style={
+                  item.price === '' || item.price === null
+                    ? { borderTop: '3px solid #ef4444', borderBottom: '3px solid #ef4444', borderRight: '3px solid #ef4444' }
+                    : { borderTop: '2px solid #d1d5db', borderBottom: '2px solid #d1d5db', borderRight: '2px solid #d1d5db' }
+                }
               />
             </div>
           </div>
