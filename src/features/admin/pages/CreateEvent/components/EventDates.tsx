@@ -9,12 +9,31 @@ import {
 import type { ChangeEvent } from 'react';
 import type { EventFormData } from '../utils/eventFormHelpers';
 
+export interface EventDatesErrors {
+  dateEvent?: string;
+  dateStart?: string;
+  dateExpiry?: string;
+}
+
 export interface EventDatesProps {
   formData: EventFormData;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  errors?: EventDatesErrors;
 }
 
-export function EventDates({ formData, onInputChange }: EventDatesProps) {
+const dateInputClass = (hasError: boolean) =>
+  `flex-1 border-2 border-l-0 rounded-r-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 ${
+    hasError
+      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+  }`;
+
+const dateAddonClass = (hasError: boolean) =>
+  `inline-flex items-center px-3 bg-white border-2 border-r-0 rounded-l-md ${
+    hasError ? 'border-red-500' : 'border-gray-300'
+  }`;
+
+export function EventDates({ formData, onInputChange, errors = {} }: EventDatesProps) {
   return (
     <div className="shadow-sm rounded-lg bg-white mb-4">
       <div className="p-4">
@@ -41,7 +60,7 @@ export function EventDates({ formData, onInputChange }: EventDatesProps) {
               Data evento
             </label>
             <div className="flex shadow-sm">
-              <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+              <span className={dateAddonClass(!!errors.dateEvent)}>
                 <Calendar size={16} className="text-blue-600" />
               </span>
               <input
@@ -50,10 +69,10 @@ export function EventDates({ formData, onInputChange }: EventDatesProps) {
                 value={formData.dateEvent}
                 onChange={onInputChange}
                 placeholder="Data evento"
-                className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 text-[0.95rem]
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={dateInputClass(!!errors.dateEvent)}
               />
             </div>
+            {errors.dateEvent && <p className="text-red-500 text-xs mt-1">{errors.dateEvent}</p>}
           </div>
 
           <div className="col-span-12 md:col-span-4">
@@ -62,7 +81,7 @@ export function EventDates({ formData, onInputChange }: EventDatesProps) {
               Data pubblicazione
             </label>
             <div className="flex shadow-sm">
-              <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+              <span className={dateAddonClass(!!errors.dateStart)}>
                 <Calendar size={16} className="text-green-500" />
               </span>
               <input
@@ -71,10 +90,10 @@ export function EventDates({ formData, onInputChange }: EventDatesProps) {
                 value={formData.dateStart}
                 onChange={onInputChange}
                 placeholder="Data pubblicazione"
-                className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 text-[0.95rem]
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={dateInputClass(!!errors.dateStart)}
               />
             </div>
+            {errors.dateStart && <p className="text-red-500 text-xs mt-1">{errors.dateStart}</p>}
           </div>
 
           <div className="col-span-12 md:col-span-4">
@@ -83,7 +102,7 @@ export function EventDates({ formData, onInputChange }: EventDatesProps) {
               Data scadenza
             </label>
             <div className="flex shadow-sm">
-              <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+              <span className={dateAddonClass(!!errors.dateExpiry)}>
                 <Calendar size={16} className="text-red-500" />
               </span>
               <input
@@ -92,15 +111,15 @@ export function EventDates({ formData, onInputChange }: EventDatesProps) {
                 value={formData.dateExpiry}
                 onChange={onInputChange}
                 placeholder="Data scadenza"
-                className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2 text-[0.95rem]
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={dateInputClass(!!errors.dateExpiry)}
               />
             </div>
+            {errors.dateExpiry && <p className="text-red-500 text-xs mt-1">{errors.dateExpiry}</p>}
           </div>
 
           <div className="col-span-12 mt-4">
             <div className="border-l-4 border-yellow-500 pl-3 mb-3">
-              <h6 className="text-yellow-600 font-semibold mb-0">Periodo Preordini</h6>
+              <h6 className="text-yellow-600 font-semibold mb-0">Periodo Preordini (da compilare solo se l'evento prevede preordini)</h6>
             </div>
           </div>
 
