@@ -15,7 +15,6 @@ import { loader as personalLoader } from "@features/user/pages/PersonalArea.load
 import PersonalEventDetail from "@features/user/pages/PersonalEventDetail";
 import UploadSelfie from "@features/shop/pages/UploadSelfie";
 import { loader as updateSelfieLoader } from "@features/shop/pages/UploadSelfie.loader";
-import ErrorPage from "@common/pages/ErrorPage";
 import ProcessingSelfie from "@features/shop/pages/ProcessingSelfie";
 import ContentUnavailable from "@common/pages/ContentUnavailable";
 
@@ -48,7 +47,7 @@ import RouterWrapper from "@common/components/RouterWrapper";
 import ChoosePayment from "@features/shop/pages/ChoosePayment";
 import PayAtCounter from "@features/shop/pages/PayAtCounter";
 import { ROUTES } from "./routes";
-import NewErrorPage from "./common/pages/newErrorPage";
+import NewErrorPage from "./common/pages/NewErrorPage";
 
 function HomeRoute() {
   if (isAdmin()) return <Navigate to={ROUTES.ADMIN} replace />;
