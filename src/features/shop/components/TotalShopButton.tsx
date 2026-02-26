@@ -51,8 +51,16 @@ export default function TotalShopButton({
                   ...cart.products.filter(
                     (item) => item.fileTypeId === 1 && item.purchased !== true,
                   ),
-                  ...cart.items.filter((item) => item.fileTypeId === 2),
-                  ...cart.items.filter((item) => item.fileTypeId === 3),
+                  ...(cart.allPhotos && cart.hasVideo
+                    ? cart.products.filter(
+                        (item) => item.fileTypeId === 2 && item.purchased !== true,
+                      )
+                    : cart.items.filter((item) => item.fileTypeId === 2)),
+                  ...(cart.allClips
+                    ? cart.products.filter(
+                        (item) => item.fileTypeId === 3 && item.purchased !== true,
+                      )
+                    : cart.items.filter((item) => item.fileTypeId === 3)),
                 ]
               : cart.items,
           },
