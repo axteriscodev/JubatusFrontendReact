@@ -12,7 +12,9 @@ interface TotalShopButtonProps {
   onButtonClick?: (() => void) | null;
 }
 
-export default function TotalShopButton({ onButtonClick = null }: TotalShopButtonProps) {
+export default function TotalShopButton({
+  onButtonClick = null,
+}: TotalShopButtonProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cart);
@@ -49,9 +51,8 @@ export default function TotalShopButton({ onButtonClick = null }: TotalShopButto
                   ...cart.products.filter(
                     (item) => item.fileTypeId === 1 && item.purchased !== true,
                   ),
-                  ...cart.items.filter(
-                    (item) => item.fileTypeId === 2,
-                  ),
+                  ...cart.items.filter((item) => item.fileTypeId === 2),
+                  ...cart.items.filter((item) => item.fileTypeId === 3),
                 ]
               : cart.items,
           },
@@ -100,7 +101,7 @@ export default function TotalShopButton({ onButtonClick = null }: TotalShopButto
     <button
       className="my-button w-3/4 fixed-bottom mx-auto mb-10"
       disabled={isLoading}
-      onClick={totalItems === 0 ? onButtonClick ?? undefined : handleCheckout}
+      onClick={totalItems === 0 ? (onButtonClick ?? undefined) : handleCheckout}
     >
       {totalItems === 0 ? (
         <>{t("CHECKOUT_SELECT")}</>
