@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@common/store/hooks";
 import {
@@ -67,6 +67,7 @@ export default function CreateEvent() {
   const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
 
   const [activeTab, setActiveTab] = useState<TabKey>("info");
+  const justCreatedRef = useRef(false);
 
   const { formData, handleInputChange, handleTitleChange, handleFileChange } =
     useEventForm(eventData);
@@ -89,10 +90,13 @@ export default function CreateEvent() {
   const { currencyList } = useCurrencies();
 
   useEffect(() => {
-    if (readOnly) {
+    if (readOnly && !justCreatedRef.current) {
       setActiveTab("orders");
     }
-  }, [readOnly]);
+    if (!readOnly && eventData) {
+      justCreatedRef.current = false;
+    }
+  }, [readOnly, eventData]);
 
   // Sopprime warning di variabile inutilizzata — tagsLoading usato per futura UI
   void tagsLoading;
@@ -142,6 +146,7 @@ export default function CreateEvent() {
         result.data &&
         (result.data as Competition & { data?: { id: number } }).data?.id
       ) {
+        justCreatedRef.current = true;
         navigate(
           ROUTES.ADMIN_EVENT(
             (result.data as Competition & { data: { id: number } }).data.id,
