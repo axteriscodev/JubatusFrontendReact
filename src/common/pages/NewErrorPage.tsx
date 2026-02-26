@@ -1,4 +1,10 @@
+import { useTranslations } from "../i18n/TranslationProvider";
+import parse from "html-react-parser";
+
 export default function NewErrorPage() {
+
+    const { t } = useTranslations();
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-linear-to-br from-slate-50 via-gray-100 to-stone-200">
       <div
@@ -19,13 +25,13 @@ export default function NewErrorPage() {
         {/* Testo */}
         <div className="w-full lg:w-auto flex flex-col gap-2 items-center lg:items-start text-center lg:text-left">
           <h1 id="error-title" className="text-xl md:text-2xl font-bold text-slate-900! whitespace-nowrap">
-            OPS qualcosa è andato storto!
+            {parse(t("ERROR_PAGE_TITLE"))}
           </h1>
           <p id="error-desc" className="md:text-lg text-slate-700!">
-            Ma sei nel posto giusto per ripartire:
+            {parse(t("ERROR_PAGE_SUBTITLE"))}
           </p>
           <p className="md:text-lg text-slate-700!">
-            contattaci al{" "}
+           {parse(t("ERROR_PAGE_CONTACTS"))}
             <a
               href="mailto:info@jubatus.it"
               aria-label="Invia una email a info@jubatus.it"
@@ -33,7 +39,7 @@ export default function NewErrorPage() {
             >
               info@jubatus.it
             </a>{" "}
-            oppure torna alla{" "}
+           {parse(t("ERROR_PAGE_HP"))}
             <a
               href="/mymemories.it"
               aria-label="Torna alla homepage"
