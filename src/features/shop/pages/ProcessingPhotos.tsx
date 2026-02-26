@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { cartActions } from "@features/shop/store/cart-slice";
 import { setUiPreset } from "@common/utils/graphics";
 import { listenSSE } from "@common/services/api-services";
-import { personalActions } from "../store/personal-slice";
 import ProgressBar from "@common/components/ProgressBar";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import parse from 'html-react-parser';
 import { ROUTES } from "@/routes";
+import { personalActions } from "@/features/user/store/personal-slice";
 
 export default function ProcessingPhotos() {
   const eventPreset = useAppSelector((state) => state.competition);
