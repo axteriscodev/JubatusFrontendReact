@@ -15,7 +15,6 @@ import { loader as personalLoader } from "@features/user/pages/PersonalArea.load
 import PersonalEventDetail from "@features/user/pages/PersonalEventDetail";
 import UploadSelfie from "@features/shop/pages/UploadSelfie";
 import { loader as updateSelfieLoader } from "@features/shop/pages/UploadSelfie.loader";
-import ErrorPage from "@common/pages/ErrorPage";
 import ProcessingSelfie from "@features/shop/pages/ProcessingSelfie";
 import ContentUnavailable from "@common/pages/ContentUnavailable";
 
@@ -48,6 +47,7 @@ import RouterWrapper from "@common/components/RouterWrapper";
 import ChoosePayment from "@features/shop/pages/ChoosePayment";
 import PayAtCounter from "@features/shop/pages/PayAtCounter";
 import { ROUTES } from "./routes";
+import NewErrorPage from "./common/pages/NewErrorPage";
 
 function HomeRoute() {
   if (isAdmin()) return <Navigate to={ROUTES.ADMIN} replace />;
@@ -60,8 +60,10 @@ function App() {
     return createBrowserRouter([
       {
         element: <RouterWrapper />,
+        errorElement: <NewErrorPage />,
         children: [
           { path: ROUTES.WORK_IN_PROGRESS, element: <WorkInProgress /> },
+
           {
             path: ROUTES.HOME,
             element: <HomeRoute />,
@@ -91,26 +93,28 @@ function App() {
                 path: ROUTES.EVENT(":eventSlug"),
                 element: <UploadSelfie />,
                 loader: updateSelfieLoader,
-                errorElement: <ErrorPage />,
               },
               {
                 path: ROUTES.EVENT_WITH_HASH(":eventSlug", ":userHash"),
                 element: <UploadSelfie />,
                 loader: updateSelfieLoader,
-                errorElement: <ErrorPage />,
               },
               { path: ROUTES.PROCESSING_SELFIE, element: <ProcessingSelfie /> },
-              { path: ROUTES.CONTENT_UNAVAILABLE, element: <ContentUnavailable /> },
+              {
+                path: ROUTES.CONTENT_UNAVAILABLE,
+                element: <ContentUnavailable />,
+              },
               {
                 path: ROUTES.PRE_ORDER,
                 element: <PreOrder />,
-                errorElement: <ErrorPage />,
               },
-              { path: ROUTES.PRE_ORDER_PURCHASED, element: <PreOrderPurchased /> },
+              {
+                path: ROUTES.PRE_ORDER_PURCHASED,
+                element: <PreOrderPurchased />,
+              },
               {
                 path: ROUTES.IMAGE_SHOP,
                 element: <ImageShop />,
-                errorElement: <ErrorPage />,
               },
               { path: ROUTES.CHOOSE_PAYMENT, element: <ChoosePayment /> },
               { path: ROUTES.PAY_AT_COUNTER, element: <PayAtCounter /> },
@@ -118,7 +122,6 @@ function App() {
               {
                 path: ROUTES.CHECKOUT_OUTCOME,
                 element: <CheckoutOutcome />,
-                errorElement: <ErrorPage />,
               },
               //Conferma dell email post acquisto
               {
