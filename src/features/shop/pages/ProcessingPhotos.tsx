@@ -43,7 +43,7 @@ export default function ProcessingPhotos() {
   useEffect(() => {
     const timeOut = setInterval(() => {
       navigate("/content-error");
-    }, 60000);
+    }, 6000);
 
     // cleanup function
     return () => clearInterval(timeOut);
@@ -54,7 +54,7 @@ export default function ProcessingPhotos() {
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
-        css="mb-10"
+        css="mx-auto mb-10"
       />
       <h2>
         {parse(t("PROCESSING_TITLE"))}
