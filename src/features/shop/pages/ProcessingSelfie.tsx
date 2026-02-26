@@ -128,13 +128,13 @@ export default function ProcessingSelfie() {
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setInterval(() => {
+    const timeOut = setTimeout(() => {
       errorToast("Si è verificato un errore");
       navigate("/event/" + eventPreset.slug, { replace: true });
-    }, 6000000);
+    }, 8000);
 
     // cleanup function
-    return () => clearInterval(timeOut);
+    return () => clearTimeout(timeOut);
   }, []);
 
   return (
@@ -142,7 +142,7 @@ export default function ProcessingSelfie() {
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
-        css="mb-10"
+        css="mx-auto mb-10"
       />
       {parse(t("WAITING_SEARCH"))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>

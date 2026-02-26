@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { cartActions } from "@features/shop/store/cart-slice";
 import { setUiPreset } from "@common/utils/graphics";
 import { listenSSE } from "@common/services/api-services";
-import { personalActions } from "../store/personal-slice";
 import ProgressBar from "@common/components/ProgressBar";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import parse from 'html-react-parser';
 import { ROUTES } from "@/routes";
+import { personalActions } from "@/features/user/store/personal-slice";
 
 export default function ProcessingPhotos() {
   const eventPreset = useAppSelector((state) => state.competition);
@@ -41,12 +41,12 @@ export default function ProcessingPhotos() {
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setInterval(() => {
+    const timeOut = setTimeout(() => {
       navigate("/content-error");
-    }, 60000);
+    }, 8000);
 
     // cleanup function
-    return () => clearInterval(timeOut);
+    return () => clearTimeout(timeOut);
   }, []);
 
   return (
@@ -54,7 +54,7 @@ export default function ProcessingPhotos() {
       <Logo
         src={import.meta.env.VITE_API_URL + "/" + eventPreset.logo}
         size="logo-sm"
-        css="mb-10"
+        css="mx-auto mb-10"
       />
       <h2>
         {parse(t("PROCESSING_TITLE"))}

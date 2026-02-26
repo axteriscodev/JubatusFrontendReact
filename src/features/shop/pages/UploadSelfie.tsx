@@ -5,16 +5,16 @@ import { createFormErrors } from "@common/models/form-errors";
 
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 
-import SelfieUpload from "../components/SelfieUpload";
 import MailForm from "@common/components/MailForm";
 import Logo from "@common/components/Logo";
 import { cartActions } from "@features/shop/store/cart-slice";
-import { competitionsActions } from "../store/competitions-slice";
 import { setUiPreset, setHeaderData } from "@common/utils/graphics";
 import LanguageSelect from "@common/components/LanguageSelect";
 import { ROUTES } from "@/routes";
 
 import type { Competition } from "@/types/competition";
+import { competitionsActions } from "@/features/shop/store/competitions-slice";
+import SelfieUpload from "@/features/shop/components/SelfieUpload";
 
 interface EventData {
   data: Partial<Competition> & {

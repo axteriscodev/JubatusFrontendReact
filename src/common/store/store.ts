@@ -14,7 +14,7 @@ import storage from "redux-persist/lib/storage";
 import userSlice from "@features/user/store/user-slice";
 import cartSlice from "@features/shop/store/cart-slice";
 import personalSlice from "@features/user/store/personal-slice";
-import competitionsSlice from "@features/user/store/competitions-slice";
+import competitionsSlice from "@/features/shop/store/competitions-slice";
 import adminCompetitionsSlice from "@features/admin/store/admin-competitions-slice";
 import adminReadersSlice from "@features/admin/store/admin-readers-slice";
 
@@ -33,7 +33,10 @@ const rootReducer = combineReducers({
   adminReaders: adminReadersSlice.reducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer) as unknown as typeof rootReducer;
+const persistedReducer = persistReducer(
+  persistConfig,
+  rootReducer,
+) as unknown as typeof rootReducer;
 
 export const store = configureStore({
   reducer: persistedReducer,
