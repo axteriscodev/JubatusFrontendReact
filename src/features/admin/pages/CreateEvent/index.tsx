@@ -17,6 +17,7 @@ import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
 import { useCurrencies } from "./hooks/useCurrencies";
 import { useEventData } from "./hooks/useEventData";
+import { useFormValidation } from "./hooks/useFormValidation";
 
 // Componenti
 import { EventBasicInfo } from "./components/EventBasicInfo";
@@ -70,6 +71,14 @@ export default function CreateEvent() {
   const { formData, handleInputChange, handleTitleChange, handleFileChange } =
     useEventForm(eventData);
 
+  const { errors, validateForm, clearFieldError } = useFormValidation();
+
+  const handleValidatedInputChange: typeof handleInputChange = (e) => {
+    const name = (e as { target: { name: string } }).target.name;
+    clearFieldError(name as Parameters<typeof clearFieldError>[0]);
+    handleInputChange(e);
+  };
+
   const initialPriceLists = useMemo<PriceList[]>(
     () => eventData?.lists ?? getDefaultPriceLists(),
     [eventData],
@@ -110,6 +119,8 @@ export default function CreateEvent() {
   }
 
   const handleSubmitEventInfo = async () => {
+    if (!validateForm(formData)) return;
+
     const submitData = prepareEventInfoData(formData);
 
     let result;
@@ -277,15 +288,20 @@ export default function CreateEvent() {
               <EventBasicInfo
                 formData={formData}
                 onInputChange={
-                  handleInputChange as EventBasicInfoProps["onInputChange"]
+                  handleValidatedInputChange as EventBasicInfoProps["onInputChange"]
                 }
-                onTitleChange={handleTitleChange}
+                onTitleChange={(e) => {
+                  clearFieldError("title");
+                  handleTitleChange(e);
+                }}
                 tagList={tagList}
                 currencyList={currencyList}
+                errors={errors}
               />
               <EventDates
                 formData={formData}
-                onInputChange={handleInputChange}
+                onInputChange={handleValidatedInputChange}
+                errors={errors}
               />
               <EventColors
                 formData={formData}

@@ -23,13 +23,30 @@ interface CurrencyOption {
   currency: string;
 }
 
+export interface EventBasicInfoErrors {
+  title?: string;
+  pathS3?: string;
+  tagId?: string;
+  currencyId?: string;
+}
+
 export interface EventBasicInfoProps {
   formData: EventFormData;
   onInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; value: boolean } }) => void;
   onTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   tagList: TagOption[];
   currencyList: CurrencyOption[];
+  errors?: EventBasicInfoErrors;
 }
+
+const inputClass = (hasError: boolean) =>
+  `w-full border-2 rounded-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 ${
+    hasError
+      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+  }`;
+
+const selectClass = (hasError: boolean) => `${inputClass(hasError)} bg-white`;
 
 export function EventBasicInfo({
   formData,
@@ -37,6 +54,7 @@ export function EventBasicInfo({
   onTitleChange,
   tagList,
   currencyList,
+  errors = {},
 }: EventBasicInfoProps) {
   return (
     <div className="shadow-sm rounded-lg bg-white mb-4">
@@ -62,9 +80,9 @@ export function EventBasicInfo({
               placeholder="Inserisci il titolo dell'evento"
               value={formData.title}
               onChange={onTitleChange}
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={inputClass(!!errors.title)}
             />
+            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
           </div>
 
           <div>
@@ -94,8 +112,7 @@ export function EventBasicInfo({
               value={formData.location}
               onChange={onInputChange as ChangeEventHandler<HTMLInputElement>}
               placeholder="Es: Milano, Via Roma 123"
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={inputClass(false)}
             />
           </div>
 
@@ -110,9 +127,9 @@ export function EventBasicInfo({
               value={formData.pathS3}
               onChange={onInputChange as ChangeEventHandler<HTMLInputElement>}
               placeholder="percorso/cartella/s3"
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className={inputClass(!!errors.pathS3)}
             />
+            {errors.pathS3 && <p className="text-red-500 text-xs mt-1">{errors.pathS3}</p>}
           </div>
 
           <div>
@@ -124,8 +141,7 @@ export function EventBasicInfo({
               name="tagId"
               value={formData.tagId}
               onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              className={selectClass(!!errors.tagId)}
             >
               <option value="">Seleziona una tipologia</option>
               {Array.isArray(tagList) &&
@@ -135,6 +151,7 @@ export function EventBasicInfo({
                   </option>
                 ))}
             </select>
+            {errors.tagId && <p className="text-red-500 text-xs mt-1">{errors.tagId}</p>}
           </div>
 
           <div>
@@ -146,8 +163,7 @@ export function EventBasicInfo({
               name="currencyId"
               value={formData.currencyId}
               onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
-              className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+              className={selectClass(!!errors.currencyId)}
             >
               <option value="">Seleziona una valuta</option>
               {Array.isArray(currencyList) &&
@@ -157,6 +173,7 @@ export function EventBasicInfo({
                   </option>
                 ))}
             </select>
+            {errors.currencyId && <p className="text-red-500 text-xs mt-1">{errors.currencyId}</p>}
           </div>
 
           <div>
