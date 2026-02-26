@@ -193,7 +193,7 @@ export default function CreateEvent() {
     );
     if (confirmDelete && eventData) {
       dispatch(deleteCompetition(eventData));
-      navigate(ROUTES.ADMIN);
+      navigate(ROUTES.ADMIN_EVENTS);
     }
   };
 
