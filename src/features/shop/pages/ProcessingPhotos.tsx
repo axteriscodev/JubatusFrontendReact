@@ -43,10 +43,10 @@ export default function ProcessingPhotos() {
   useEffect(() => {
     const timeOut = setTimeout(() => {
       navigate("/content-error");
-    }, 6000);
+    }, 8000);
 
     // cleanup function
-    return () => clearInterval(timeOut);
+    return () => clearTimeout(timeOut);
   }, []);
 
   return (

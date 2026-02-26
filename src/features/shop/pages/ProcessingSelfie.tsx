@@ -131,10 +131,10 @@ export default function ProcessingSelfie() {
     const timeOut = setTimeout(() => {
       errorToast("Si è verificato un errore");
       navigate("/event/" + eventPreset.slug, { replace: true });
-    }, 6000);
+    }, 8000);
 
     // cleanup function
-    return () => clearInterval(timeOut);
+    return () => clearTimeout(timeOut);
   }, []);
 
   return (
