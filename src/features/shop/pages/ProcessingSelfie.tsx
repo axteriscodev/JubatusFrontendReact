@@ -128,7 +128,7 @@ export default function ProcessingSelfie() {
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setInterval(() => {
+    const timeOut = setTimeout(() => {
       errorToast("Si è verificato un errore");
       navigate("/event/" + eventPreset.slug, { replace: true });
     }, 6000);

@@ -41,7 +41,7 @@ export default function ProcessingPhotos() {
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setInterval(() => {
+    const timeOut = setTimeout(() => {
       navigate("/content-error");
     }, 6000);
 
