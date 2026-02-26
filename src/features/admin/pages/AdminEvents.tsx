@@ -4,11 +4,12 @@ import ButtonGroup from "@common/components/ui/ButtonGroup";
 import Table from "@common/components/ui/Table";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatDate } from "@common/utils/data-formatter";
 import { ROUTES } from "@/routes";
 import { fetchCompetitions } from "@features/admin/store/admin-competitions-actions";
 import type { Competition } from "@/types/competition";
+import LoadingState from "@common/components/ui/LoadingState";
 
 export default function AdminEvents() {
   const navigate = useNavigate();
@@ -16,9 +17,11 @@ export default function AdminEvents() {
   const competitions = useAppSelector(
     (state) => state.adminCompetitions.competitions,
   );
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(fetchCompetitions());
+    setLoading(true);
+    dispatch(fetchCompetitions()).finally(() => setLoading(false));
   }, [dispatch]);
 
   const handleCreateCompetition = () => navigate(ROUTES.ADMIN_CREATE_EVENT);
@@ -35,6 +38,9 @@ export default function AdminEvents() {
   return (
     <div className="container text-left">
       <h1 className="mb-10">Elenco eventi</h1>
+      {loading ? (
+        <LoadingState message="Caricamento eventi..." />
+      ) : (
       <Table className="my-10 table-auto">
         <thead>
           <tr>
@@ -65,8 +71,8 @@ export default function AdminEvents() {
                   <img src={`${import.meta.env.VITE_API_URL}/${competition.logo}`} alt="" className="h-8 w-auto" />
                 )}
               </td>
-              <td>{competition.languages[0].title}</td>
-              <td>{competition.languages[0].location}</td>
+              <td>{competition.languages?.[0]?.title}</td>
+              <td>{competition.languages?.[0]?.location}</td>
               <td>{formatDate(competition.dateEvent, 'it-IT')}</td>
               <td>{formatDate(competition.dateStart, 'it-IT')}</td>
               <td>{formatDate(competition.dateExpiry, 'it-IT')}</td>
@@ -94,6 +100,7 @@ export default function AdminEvents() {
           ))}
         </tbody>
       </Table>
+      )}
     </div>
   );
 }
