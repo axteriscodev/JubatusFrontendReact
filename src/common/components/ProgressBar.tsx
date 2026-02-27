@@ -5,27 +5,24 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ duration = 10000 }: ProgressBarProps) {
-  // Stato per il progresso della barra (da 0 a 100)
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Funzione che incrementa il progresso
-    const interval = setInterval(
-      () => {
-        setProgress((prevProgress) => {
-          const newValue = prevProgress + 100 / 6;
-          if (newValue >= 100) {
-            clearInterval(interval);
-            return 100;
-          }
-          return newValue;
-        });
-      },
-      Math.floor(duration / 6),
-    );
+    let startTime: number | null = null;
+    let rafId: number;
 
-    // cleanup function
-    return () => clearInterval(interval);
+    const animate = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(newProgress);
+      if (newProgress < 100) {
+        rafId = requestAnimationFrame(animate);
+      }
+    };
+
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, [duration]);
 
   return (
@@ -38,7 +35,7 @@ export default function ProgressBar({ duration = 10000 }: ProgressBarProps) {
         aria-valuemax={100}
       >
         <div
-          className="progress-bar h-full transition-all duration-500 ease-out"
+          className="progress-bar h-full transition-none"
           style={{ width: `${progress}%` }}
         ></div>
       </div>
