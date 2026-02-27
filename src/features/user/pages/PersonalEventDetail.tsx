@@ -31,6 +31,8 @@ interface EventData {
   aspectRatio?: string;
   status: string;
   items: EventItem[];
+  preOrder?: boolean;
+  allPhotos?: boolean;
 }
 
 export default function PersonalEventDetail() {
@@ -174,7 +176,14 @@ export default function PersonalEventDetail() {
           </>
         ) : (
           <>
-            <h2 className="my-10">{t("PERSONAL_NOTHING")}</h2>
+            {eventData?.preOrder && eventData?.allPhotos ? (
+              <>
+                <h2 className="my-10">{t("PERSONAL_SOON_TITLE")}</h2>
+                <p className="text-white">{t("PERSONAL_SOON_BODY")}</p>
+              </>
+            ) : (
+              <h2 className="my-10">{t("PERSONAL_NOTHING")}</h2>
+            )}
           </>
         )}
         {purchasedItems?.length > 0 && (
