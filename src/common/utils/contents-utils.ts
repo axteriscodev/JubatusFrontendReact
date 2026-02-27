@@ -36,6 +36,8 @@ interface RawEventItem {
   status: string;
   items?: RawContentItem[];
   totalItems?: number;
+  preOrder?: boolean;
+  allPhotos?: boolean;
 }
 
 export interface NormalizedContent {
@@ -60,6 +62,8 @@ export interface PersonalEventGallery {
   status: string;
   images: NormalizedContent[];
   totalImages: number;
+  preOrder: boolean;
+  allPhotos: boolean;
 }
 
 export const getPersonalEventGalleries = (
@@ -79,6 +83,8 @@ export const getPersonalEventGalleries = (
     status: event.status,
     images: getEventContents(event.items || [], true),
     totalImages: event.totalItems || 0,
+    preOrder: event.preOrder ?? false,
+    allPhotos: event.allPhotos ?? false,
   }));
 };
 
