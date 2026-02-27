@@ -1,26 +1,32 @@
 import { useEffect, useState } from "react";
 
-export default function ProgressBar() {
+interface ProgressBarProps {
+  duration?: number; // total duration in ms
+}
+
+export default function ProgressBar({ duration = 10000 }: ProgressBarProps) {
   // Stato per il progresso della barra (da 0 a 100)
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     // Funzione che incrementa il progresso
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 99) {
-          clearInterval(interval);
-          return 99;
-        }
-        const newValue = prevProgress + 100 / 6;
-
-        return newValue < 99 ? newValue : 99;
-      });
-    }, 1000);
+    const interval = setInterval(
+      () => {
+        setProgress((prevProgress) => {
+          const newValue = prevProgress + 100 / 6;
+          if (newValue >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return newValue;
+        });
+      },
+      Math.floor(duration / 6),
+    );
 
     // cleanup function
     return () => clearInterval(interval);
-  }, []);
+  }, [duration]);
 
   return (
     <div className="mt-20 px-4">
