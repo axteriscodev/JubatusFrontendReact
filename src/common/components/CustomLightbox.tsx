@@ -6,6 +6,7 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Video from "yet-another-react-lightbox/plugins/video";
 import styles from "./CustomLightbox.module.css";
 import { useTranslations } from "../i18n/TranslationProvider";
+import { apiRequest } from "../services/api-services";
 import { getEventContents, NormalizedContent } from "../utils/contents-utils";
 
 export interface CustomLightboxProps {
@@ -74,14 +75,12 @@ export default function CustomLightbox({
 
   const handleFavouriteClick = async () => {
     const rq = { contentId: currentImage.id };
-    const response = await fetch(
-      import.meta.env.VITE_API_URL + "/utility/my-like",
-      {
-        headers: { "content-type": "application/json" },
-        method: "POST",
-        body: JSON.stringify(rq),
-      },
-    );
+    const response = await apiRequest({
+      api: import.meta.env.VITE_API_URL + "/utility/my-like",
+      method: "POST",
+      body: JSON.stringify(rq),
+      needAuth: true,
+    });
     const data = await response.json();
 
     // Aggiorna lo slide corrente via callback
