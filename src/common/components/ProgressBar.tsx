@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 
-export default function ProgressBar() {
-  // Stato per il progresso della barra (da 0 a 100)
+interface ProgressBarProps {
+  duration?: number; // total duration in ms
+}
+
+export default function ProgressBar({ duration = 10000 }: ProgressBarProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Funzione che incrementa il progresso
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 99) {
-          clearInterval(interval);
-          return 99;
-        }
-        const newValue = prevProgress + 100 / 6;
+    let startTime: number | null = null;
+    let rafId: number;
 
-        return newValue < 99 ? newValue : 99;
-      });
-    }, 1000);
+    const animate = (timestamp: number) => {
+      if (startTime === null) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
+      setProgress(newProgress);
+      if (newProgress < 100) {
+        rafId = requestAnimationFrame(animate);
+      }
+    };
 
-    // cleanup function
-    return () => clearInterval(interval);
-  }, []);
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
+  }, [duration]);
 
   return (
     <div className="mt-20 px-4">
@@ -32,7 +35,7 @@ export default function ProgressBar() {
         aria-valuemax={100}
       >
         <div
-          className="progress-bar h-full transition-all duration-500 ease-out"
+          className="progress-bar h-full transition-none"
           style={{ width: `${progress}%` }}
         ></div>
       </div>

@@ -31,12 +31,15 @@ interface EventData {
   aspectRatio?: string;
   status: string;
   items: EventItem[];
+  preOrder?: boolean;
+  allPhotos?: boolean;
 }
 
 export default function PersonalEventDetail() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const purchasedItems = useAppSelector((state) => state.personal.purchased) ?? [];
+  const purchasedItems =
+    useAppSelector((state) => state.personal.purchased) ?? [];
   const { slug } = useParams<{ slug: string }>();
 
   const [open, setOpen] = useState(false);
@@ -140,33 +143,41 @@ export default function PersonalEventDetail() {
             <div className="px-30">
               <Carousel>
                 {purchasedItems.map((img, i) => {
-                  const image = img as { fileTypeId?: number; urlCover?: string; urlThumbnail?: string; url?: string; keyThumbnail?: string };
+                  const image = img as {
+                    fileTypeId?: number;
+                    urlCover?: string;
+                    urlThumbnail?: string;
+                    url?: string;
+                    keyThumbnail?: string;
+                  };
                   return (
-                  <Carousel.Item
-                    key={`carousel_${Date.now()}_${
-                      image.keyThumbnail || i
-                    }_${i}`}
-                  >
-                    <div
-                      className={`carousel-square flex justify-center items-center ${
-                        image.fileTypeId == 2 && image.urlCover ? "video" : ""
-                      }`}
-                      onClick={() =>
-                        openLightbox(purchasedItems, i, false, true, true)
-                      }
+                    <Carousel.Item
+                      key={`carousel_${Date.now()}_${
+                        image.keyThumbnail || i
+                      }_${i}`}
                     >
-                      <img
-                        src={
-                          !image.fileTypeId || image.fileTypeId == 1
-                            ? image.urlThumbnail || image.url
-                            : image.urlCover || "/images/play-icon.webp"
+                      <div
+                        className={`carousel-square flex justify-center items-center ${
+                          image.fileTypeId == 2 && image.urlCover ? "video" : ""
+                        }`}
+                        onClick={() =>
+                          openLightbox(purchasedItems, i, false, true, true)
                         }
-                        className="img-fluid"
-                        loading="lazy"
-                        alt="..."
-                      />
-                    </div>
-                  </Carousel.Item>
+                      >
+                        <img
+                          src={
+                            !image.fileTypeId || image.fileTypeId == 1
+                              ? image.urlThumbnail || image.url
+                              : image.urlThumbnail ||
+                                image.urlCover ||
+                                "/images/play-icon.webp"
+                          }
+                          className="img-fluid"
+                          loading="lazy"
+                          alt="..."
+                        />
+                      </div>
+                    </Carousel.Item>
                   );
                 })}
               </Carousel>
@@ -174,7 +185,14 @@ export default function PersonalEventDetail() {
           </>
         ) : (
           <>
-            <h2 className="my-10">{t("PERSONAL_NOTHING")}</h2>
+            {eventData?.preOrder && eventData?.allPhotos ? (
+              <>
+                <h2 className="my-10">{t("PERSONAL_SOON_TITLE")}</h2>
+                <p className="text-white">{t("PERSONAL_SOON_BODY")}</p>
+              </>
+            ) : (
+              <h2 className="my-10">{t("PERSONAL_NOTHING")}</h2>
+            )}
           </>
         )}
         {purchasedItems?.length > 0 && (
@@ -241,13 +259,26 @@ export default function PersonalEventDetail() {
           select={select}
           actions={actions}
           addToCart={false}
+          isPersonalArea={true}
           onClose={() => setOpen(false)}
           onUpdateSlide={(i, updatedSlide) => {
             // Aggiorna Redux
             if (personalSlice) {
-              dispatch(personalActions.updatePersonalItem(updatedSlide as Parameters<typeof personalActions.updatePersonalItem>[0]));
+              dispatch(
+                personalActions.updatePersonalItem(
+                  updatedSlide as Parameters<
+                    typeof personalActions.updatePersonalItem
+                  >[0],
+                ),
+              );
             } else {
-              dispatch(cartActions.updatePurchasedItem(updatedSlide as Parameters<typeof cartActions.updatePurchasedItem>[0]));
+              dispatch(
+                cartActions.updatePurchasedItem(
+                  updatedSlide as Parameters<
+                    typeof cartActions.updatePurchasedItem
+                  >[0],
+                ),
+              );
             }
             // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
             setSlides((prev) => {

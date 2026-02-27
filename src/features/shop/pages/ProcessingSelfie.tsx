@@ -31,6 +31,8 @@ export default function ProcessingSelfie() {
 
   //upload della foto
   useEffect(() => {
+    let abortSSE: (() => void) | null = null;
+
     async function ProcessSelfie() {
       let response: Response;
 
@@ -81,7 +83,7 @@ export default function ProcessingSelfie() {
           navigate(ROUTES.PRE_ORDER, { replace: true });
         } else {
           //sezione elaborazione selfie e attesa risposte dal server S3
-          listenSSE(
+          abortSSE = listenSSE(
             import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
             (data) => {
               const jsonData = JSON.parse(data);
@@ -124,14 +126,21 @@ export default function ProcessingSelfie() {
 
     ProcessSelfie();
     setUiPreset(eventPreset);
+
+    return () => {
+      abortSSE?.();
+    };
   }, []);
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setTimeout(() => {
-      errorToast("Si è verificato un errore");
-      navigate("/event/" + eventPreset.slug, { replace: true });
-    }, 8000);
+    const timeOut = setTimeout(
+      () => {
+        errorToast("Si è verificato un errore");
+        navigate("/event/" + eventPreset.slug, { replace: true });
+      },
+      Number(import.meta.env.VITE_PROCESSING_SELFIE_TIMEOUT) || 12000,
+    );
 
     // cleanup function
     return () => clearTimeout(timeOut);
@@ -146,7 +155,11 @@ export default function ProcessingSelfie() {
       />
       {parse(t("WAITING_SEARCH"))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
-      <ProgressBar />
+      <ProgressBar
+        duration={
+          Number(import.meta.env.VITE_PROCESSING_SELFIE_LOADING) || 10000
+        }
+      />
       {t("PROCESSING_LOADING")}
     </div>
   );

@@ -23,6 +23,8 @@ interface GalleryItem {
   status: string;
   slug: string;
   hashId: string;
+  preOrder: boolean;
+  allPhotos: boolean;
 }
 
 interface LogoutButtonProps {
@@ -94,6 +96,10 @@ export default function PersonalArea() {
     const event = galleries.find((item) => item.id === id);
 
     if (event) {
+      if (event.preOrder && event.allPhotos) {
+        navigate(ROUTES.PERSONAL_EVENT(event.slug));
+        return;
+      }
       switch (event.status) {
         case EventStatus.ONLY_PURCHASED:
         case EventStatus.MIXED:
