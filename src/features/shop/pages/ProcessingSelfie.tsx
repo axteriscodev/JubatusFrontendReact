@@ -128,10 +128,13 @@ export default function ProcessingSelfie() {
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setTimeout(() => {
-      errorToast("Si è verificato un errore");
-      navigate("/event/" + eventPreset.slug, { replace: true });
-    }, 8000);
+    const timeOut = setTimeout(
+      () => {
+        errorToast("Si è verificato un errore");
+        navigate("/event/" + eventPreset.slug, { replace: true });
+      },
+      Number(import.meta.env.VITE_PROCESSING_SELFIE_TIMEOUT) || 12000,
+    );
 
     // cleanup function
     return () => clearTimeout(timeOut);
@@ -146,7 +149,11 @@ export default function ProcessingSelfie() {
       />
       {parse(t("WAITING_SEARCH"))}
       <h2>{eventPreset.emoji ?? "🚴 📸 🏃"}</h2>
-      <ProgressBar />
+      <ProgressBar
+        duration={
+          Number(import.meta.env.VITE_PROCESSING_SELFIE_LOADING) || 10000
+        }
+      />
       {t("PROCESSING_LOADING")}
     </div>
   );
