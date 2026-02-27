@@ -23,7 +23,7 @@ export default function ProcessingPhotos() {
     setUiPreset(eventPreset);
 
     //sse elaborazione dati
-    listenSSE(
+    const abortSSE = listenSSE(
       import.meta.env.VITE_API_URL + "/shop/purchased-contents/" + orderId,
 
       (data) => {
@@ -37,6 +37,10 @@ export default function ProcessingPhotos() {
         navigate(ROUTES.CONTENT_ERROR);
       }
     );
+
+    return () => {
+      abortSSE();
+    };
   }, []);
 
   //pagina timeout

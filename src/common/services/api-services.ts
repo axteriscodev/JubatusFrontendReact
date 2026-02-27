@@ -60,19 +60,20 @@ export async function apiRequest({
   return response;
 }
 
-export async function listenSSE(
+export function listenSSE(
   api: string,
   callbackMessage: (data: string) => void,
   callbackError: (err: unknown) => void,
-): Promise<void> {
+): () => void {
+  const controller = new AbortController();
   const token = getAuthToken();
-  const headers = {
-    Accept: "text/event-stream",
-    Authorization: token ? `Bearer ${token}` : "",
-  };
 
-  await fetchEventSource(api, {
-    headers: headers,
+  fetchEventSource(api, {
+    signal: controller.signal,
+    headers: {
+      Accept: "text/event-stream",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
     async onmessage(msg) {
       if (msg.event === "message" || !msg.event) {
         console.log("Dati ricevuti:", msg.data);
@@ -80,9 +81,12 @@ export async function listenSSE(
       }
     },
     onerror(err) {
+      if ((err as Error)?.name === "AbortError") return;
       console.error("Errore SSE:", err);
       callbackError(err);
       throw err;
     },
   });
+
+  return () => controller.abort();
 }

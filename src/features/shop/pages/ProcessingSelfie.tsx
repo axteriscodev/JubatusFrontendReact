@@ -31,6 +31,8 @@ export default function ProcessingSelfie() {
 
   //upload della foto
   useEffect(() => {
+    let abortSSE: (() => void) | null = null;
+
     async function ProcessSelfie() {
       let response: Response;
 
@@ -81,7 +83,7 @@ export default function ProcessingSelfie() {
           navigate(ROUTES.PRE_ORDER, { replace: true });
         } else {
           //sezione elaborazione selfie e attesa risposte dal server S3
-          listenSSE(
+          abortSSE = listenSSE(
             import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
             (data) => {
               const jsonData = JSON.parse(data);
@@ -124,6 +126,10 @@ export default function ProcessingSelfie() {
 
     ProcessSelfie();
     setUiPreset(eventPreset);
+
+    return () => {
+      abortSSE?.();
+    };
   }, []);
 
   //pagina timeout
