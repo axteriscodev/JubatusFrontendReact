@@ -55,6 +55,7 @@ export interface CartState {
   purchased: CartProduct[];
   totalQuantity: number;
   totalPrice: number; // sempre number — usare .toFixed(2) solo alla visualizzazione
+  usedPriceItems: PriceItem[];
   selectedPreorder: PreorderPack | null;
   alertPack: boolean;
   hasPhoto: boolean;

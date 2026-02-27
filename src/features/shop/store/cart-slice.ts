@@ -15,6 +15,7 @@ const initialState: CartState = {
   purchased: [],
   totalQuantity: 0,
   totalPrice: 0,
+  usedPriceItems: [],
   selectedPreorder: null,
   alertPack: false,
   hasPhoto: false,
@@ -140,6 +141,7 @@ const cartSlice = createSlice({
       state.items = [];
       state.totalQuantity = 0;
       state.totalPrice = 0;
+      state.usedPriceItems = [];
       state.allPhotos = false;
       state.allClips = false;
       state.video = false;
@@ -173,7 +175,7 @@ function packageCalculator(
   items: CartItem[],
   prices: PriceItem[],
   previousAllPhotosPurchase = false,
-): number {
+): { price: number; usedPriceItems: PriceItem[] } {
   const photosCount = items.filter((item) => item.fileTypeId === 1).length;
   const videosCount = items.filter((item) => item.fileTypeId === 2).length;
   const clipsCount = items.filter((item) => item.fileTypeId === 3).length;
@@ -185,12 +187,24 @@ function packageCalculator(
     price: p.price as number,
   }));
 
-  let basePrice = calculatePrice(
+  const { price: basePrice, usedPackages } = calculatePrice(
     formattedPrices,
     photosCount,
     videosCount,
     clipsCount,
   );
+
+  const usedPriceItems: PriceItem[] = usedPackages.map((pkg) =>
+    prices.find(
+      (p) =>
+        (p.price as number) === pkg.price &&
+        (p.quantityPhoto as number) === pkg.quantityPhoto &&
+        (p.quantityVideo as number) === pkg.quantityVideo &&
+        ((p.quantityClip as number) ?? 0) === pkg.quantityClip,
+    )!,
+  );
+
+  let finalPrice = basePrice;
 
   if (
     previousAllPhotosPurchase &&
@@ -212,17 +226,17 @@ function packageCalculator(
         )?.price as number ?? 0;
 
       if (videosCount >= 1) {
-        const priceWithUpgrade = basePrice - singleVideoPrice + upgradeDiff;
-        basePrice = Math.min(basePrice, priceWithUpgrade);
+        const priceWithUpgrade = finalPrice - singleVideoPrice + upgradeDiff;
+        finalPrice = Math.min(finalPrice, priceWithUpgrade);
       }
     }
   }
 
-  return basePrice;
+  return { price: finalPrice, usedPriceItems };
 }
 
 const performRecalculate = (state: CartState): void => {
-  const totalPrice = packageCalculator(
+  const { price: totalPrice, usedPriceItems } = packageCalculator(
     state.items,
     state.prices,
     state.previousAllPhotosPurchase,
@@ -266,6 +280,7 @@ const performRecalculate = (state: CartState): void => {
   state.allClips = totalPrice >= clipPackPrice && clipPackPrice > 0;
 
   state.totalPrice = totalPrice;
+  state.usedPriceItems = usedPriceItems;
 };
 
 export const cartActions = cartSlice.actions;
