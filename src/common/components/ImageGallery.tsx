@@ -44,10 +44,10 @@ export default function ImageGallery({
   isShop = false,
 }: ImageGalleryProps) {
   // Recupera i contenuti degli eventi personali dalle immagini
-  const data: NormalizedContent[] = getEventContents(images);
+  const data: NormalizedContent[] = getEventContents(images, personalSlice);
 
   // Recupera le foto attualmente selezionate per evidenziarle nella galleria
-  const currentPhotoItems: NormalizedContent[] = getEventContents(photoItems || []);
+  const currentPhotoItems: NormalizedContent[] = getEventContents(photoItems || [], personalSlice);
 
   // Hook per le traduzioni
   const { t } = useTranslations();
