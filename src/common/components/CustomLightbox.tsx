@@ -22,6 +22,7 @@ export interface CustomLightboxProps {
   onImageClick?: ((key: string) => void) | null;
   photoItems?: NormalizedContent[] | null;
   shopMode?: boolean;
+  isPersonalArea?: boolean;
 }
 
 export default function CustomLightbox({
@@ -38,6 +39,7 @@ export default function CustomLightbox({
   onImageClick = null,
   photoItems = null,
   shopMode = false,
+  isPersonalArea = false,
 }: CustomLightboxProps) {
   const { t } = useTranslations();
 
@@ -63,7 +65,7 @@ export default function CustomLightbox({
           ]
         : [];
 
-  const normalizedSlides = getEventContents(effectiveSlides);
+  const normalizedSlides = getEventContents(effectiveSlides, isPersonalArea);
 
   const currentImage: Partial<NormalizedContent> =
     normalizedSlides[index] ?? normalizedSlides[0] ?? {};

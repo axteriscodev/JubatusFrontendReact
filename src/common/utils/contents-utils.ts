@@ -62,7 +62,9 @@ export interface PersonalEventGallery {
   totalImages: number;
 }
 
-export const getPersonalEventGalleries = (data: unknown): PersonalEventGallery[] => {
+export const getPersonalEventGalleries = (
+  data: unknown,
+): PersonalEventGallery[] => {
   if (!Array.isArray(data)) {
     console.error("Expected array but received:", typeof data, data);
     return [];
@@ -75,27 +77,38 @@ export const getPersonalEventGalleries = (data: unknown): PersonalEventGallery[]
     title: event.title || "",
     logo: event.logo || "",
     status: event.status,
-    images: getEventContents(event.items || []),
+    images: getEventContents(event.items || [], true),
     totalImages: event.totalItems || 0,
   }));
 };
 
-export const getEventContents = (data: unknown): NormalizedContent[] => {
+export const getEventContents = (
+  data: unknown,
+  isPersonalArea = false,
+): NormalizedContent[] => {
   if (!Array.isArray(data)) {
     console.error("Expected array but received:", typeof data, data);
     return [];
   }
 
-  const result = (data as RawContentItem[]).map(NormalizeContent);
+  const result = (data as RawContentItem[]).map((item) =>
+    NormalizeContent(item, isPersonalArea),
+  );
 
   const order: Record<number, number> = { 3: 0, 2: 1, 1: 2 };
-  result.sort((a, b) => (order[a.fileTypeId] ?? 3) - (order[b.fileTypeId] ?? 3));
+  result.sort(
+    (a, b) => (order[a.fileTypeId] ?? 3) - (order[b.fileTypeId] ?? 3),
+  );
 
   return result;
 };
 
-export const NormalizeContent = (item: RawContentItem): NormalizedContent => {
-  const isVideo = item.fileTypeId === FileType.VIDEO || item.fileTypeId === FileType.CLIP;
+export const NormalizeContent = (
+  item: RawContentItem,
+  isPersonalArea = false,
+): NormalizedContent => {
+  const isVideo =
+    item.fileTypeId === FileType.VIDEO || item.fileTypeId === FileType.CLIP;
 
   let src: string | undefined;
   let srcThumbnail: string | undefined;
@@ -103,8 +116,12 @@ export const NormalizeContent = (item: RawContentItem): NormalizedContent => {
 
   if (isVideo) {
     src = item.urlOriginal || item.urlPreview;
-    srcThumbnail = item.urlCover || "/images/play-icon.webp";
-    srcTiny = item.urlCover || "/images/play-icon.webp";
+    srcThumbnail =
+      (isPersonalArea ? item.urlThumbnail : item.urlCover) ||
+      "/images/play-icon.webp";
+    srcTiny =
+      (isPersonalArea ? item.urlThumbnail : item.urlCover) ||
+      "/images/play-icon.webp";
   } else {
     if (item.isPurchased) {
       src = item.urlThumbnail || item.urlPreview;
