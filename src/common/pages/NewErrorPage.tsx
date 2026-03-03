@@ -14,7 +14,7 @@ export default function NewErrorPage() {
         className="bg-white/5 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-[2.6px] border border-white/30 flex flex-col lg:flex-row items-center gap-4 py-6 px-6 max-w-6xl w-full"
       >
         {/* Immagine */}
-        <div className="w-1/2 mx-auto rounded-lg overflow-hidden" aria-hidden="true">
+        <div className="w-full aspect-4/3 lg:w-1/2 lg:aspect-auto lg:mx-5 rounded-lg overflow-hidden" aria-hidden="true">
           <img
             src="/nuvoletta_trasparente.png"
             alt=""
@@ -23,14 +23,14 @@ export default function NewErrorPage() {
         </div>
 
         {/* Testo */}
-        <div className="w-full lg:w-auto flex flex-col gap-2 items-center lg:items-start text-center lg:text-left">
-          <h1 id="error-title" className="text-xl md:text-2xl font-bold text-slate-900! whitespace-nowrap">
+        <div className="w-full lg:w-auto flex flex-col gap-2  items-center lg:items-start text-center lg:text-left">
+          <h1 id="error-title" className="text-2xl! md:text-3xl! font-bold text-slate-900!">
             {parse(t("ERROR_PAGE_TITLE"))}
           </h1>
-          <p id="error-desc" className="md:text-lg text-slate-700!">
+          <p id="error-desc" className="md:text-lg! text-slate-900!">
             {parse(t("ERROR_PAGE_SUBTITLE"))}
           </p>
-          <p className="md:text-lg text-slate-700!">
+          <p className="flex gap-1 items-center md:text-lg! text-slate-700!">
            {parse(t("ERROR_PAGE_CONTACTS"))}
             <a
               href="mailto:info@jubatus.it"
@@ -39,6 +39,8 @@ export default function NewErrorPage() {
             >
               info@jubatus.it
             </a>{" "}
+            </p>
+          <p className="flex items-center flex-wrap gap-1 md:text-lg! text-slate-700!">
            {parse(t("ERROR_PAGE_HP"))}
             <a
               href="/mymemories.it"
