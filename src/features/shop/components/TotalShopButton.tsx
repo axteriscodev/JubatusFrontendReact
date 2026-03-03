@@ -135,7 +135,7 @@ export default function TotalShopButton({
 
   return (
     <button
-      className="my-button w-3/4 fixed-bottom mx-auto mb-10"
+      className="my-button w-3/4 fixed bottom-10 left-1/2 -translate-x-1/2"
       disabled={isLoading}
       onClick={totalItems === 0 ? (onButtonClick ?? undefined) : handleCheckout}
     >
