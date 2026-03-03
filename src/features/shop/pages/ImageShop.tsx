@@ -30,7 +30,7 @@ interface CompetitionPreset {
 }
 
 function getPriceListEntry(pricePack: PricePack, eventPreset: CompetitionPreset) {
-  const safeHTML = DOMPurify.sanitize(pricePack.itemsLanguages[0].title);
+  const safeHTML = DOMPurify.sanitize(pricePack.itemsLanguages?.[0]?.title ?? "");
 
   return (
     <>
