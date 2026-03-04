@@ -110,3 +110,24 @@ export const prepareSubmitData = (formData: EventFormData, priceLists: PriceList
   lists: priceLists,
   verifiedAttendanceEvent: formData.verifiedAttendanceEvent,
 });
+
+export const validatePriceLists = (priceLists: PriceList[]): string[] => {
+  const errors: string[] = [];
+
+  priceLists.forEach((list, listIndex) => {
+    const listNum = listIndex + 1;
+    if (!list.dateStart) {
+      errors.push(`Listino #${listNum}: data di inizio mancante`);
+    }
+    if (!list.dateExpiry) {
+      errors.push(`Listino #${listNum}: data di fine mancante`);
+    }
+    list.items.forEach((item, itemIndex) => {
+      if (!item.labelId) {
+        errors.push(`Listino #${listNum}, pacchetto #${itemIndex + 1}: label non selezionata`);
+      }
+    });
+  });
+
+  return errors;
+};

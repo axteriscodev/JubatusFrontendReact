@@ -37,6 +37,7 @@ import Button from "@common/components/ui/Button";
 import {
   prepareEventInfoData,
   getDefaultPriceLists,
+  validatePriceLists,
 } from "./utils/eventFormHelpers";
 import { isOrganizationAdmin } from "@common/utils/auth";
 import { ROUTES } from "@/routes";
@@ -164,6 +165,12 @@ export default function CreateEvent() {
   const handleSubmitPriceLists = async () => {
     if (!formData.id) {
       errorToast("Salva prima le info evento prima di poter gestire i listini");
+      return;
+    }
+
+    const priceListErrors = validatePriceLists(priceListHandlers.priceLists);
+    if (priceListErrors.length > 0) {
+      priceListErrors.forEach((msg) => errorToast(msg));
       return;
     }
 
