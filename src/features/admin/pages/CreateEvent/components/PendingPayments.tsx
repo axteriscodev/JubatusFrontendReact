@@ -696,7 +696,7 @@ export default function PendingPayments({
               {payments.map((payment, index) => (
                 <tr
                   key={payment.idOrdine}
-                  className="hover:bg-gray-50 transition-colors even:bg-gray-50 h-13.25"
+                  className="hover:bg-gray-50 transition-colors even:bg-gray-50"
                 >
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {(currentPage - 1) * pageSize + index + 1}
@@ -717,32 +717,32 @@ export default function PendingPayments({
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {formatFileTypeCounts(payment.fileTypeCounts)}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-center h-10.5">
-                    {payment.state?.id !==
-                      Number(
-                        import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS,
-                      ) &&
-                      payment.state?.id !==
-                        Number(import.meta.env.VITE_ORDER_STATE_COMPLETED) && (
-                        <button
-                          type="button"
-                          onClick={() => setConfirmPayment(payment)}
-                          disabled={markingPaid === payment.idOrdine}
-                          title="Segna come pagato"
-                          className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
-                                   hover:bg-green-600 hover:text-white transition-colors
-                                   disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {markingPaid === payment.idOrdine ? (
-                            <Spinner size="sm" />
-                          ) : (
-                            <>
-                              <CheckCircle size={14} className="inline mr-1" />
-                              Gestisci
-                            </>
-                          )}
-                        </button>
+                  <td className="px-4 py-3 whitespace-nowrap text-center">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmPayment(payment)}
+                      disabled={markingPaid === payment.idOrdine}
+                      title="Segna come pagato"
+                      style={{
+                        visibility:
+                          payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS) ||
+                          payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
+                            ? "hidden"
+                            : "visible",
+                      }}
+                      className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
+                                 hover:bg-green-600 hover:text-white transition-colors
+                                 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {markingPaid === payment.idOrdine ? (
+                        <Spinner size="sm" />
+                      ) : (
+                        <>
+                          <CheckCircle size={14} className="inline mr-1" />
+                          Gestisci
+                        </>
                       )}
+                    </button>
                   </td>
                 </tr>
               ))}
