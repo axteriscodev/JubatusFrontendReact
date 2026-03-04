@@ -31,7 +31,9 @@ export default function TotalShopButton({
     if (usedPriceItems.length === 0) return cart.items;
 
     const items: (CartItem | CartProduct)[] = [];
-    let photosHandled = false, videosHandled = false, clipsHandled = false;
+    let photosHandled = false,
+      videosHandled = false,
+      clipsHandled = false;
 
     for (const priceItem of usedPriceItems) {
       const qP = priceItem.quantityPhoto as number;
@@ -39,7 +41,9 @@ export default function TotalShopButton({
       const qC = priceItem.quantityClip as number;
 
       if (!photosHandled && qP === -1) {
-        items.push(...cart.products.filter((p) => p.fileTypeId === 1 && !p.purchased));
+        items.push(
+          ...cart.products.filter((p) => p.fileTypeId === 1 && !p.purchased),
+        );
         photosHandled = true;
       } else if (!photosHandled && qP > 0) {
         items.push(...cart.items.filter((i) => i.fileTypeId === 1));
@@ -47,7 +51,9 @@ export default function TotalShopButton({
       }
 
       if (!videosHandled && qV === -1) {
-        items.push(...cart.products.filter((p) => p.fileTypeId === 2 && !p.purchased));
+        items.push(
+          ...cart.products.filter((p) => p.fileTypeId === 2 && !p.purchased),
+        );
         videosHandled = true;
       } else if (!videosHandled && qV > 0) {
         items.push(...cart.items.filter((i) => i.fileTypeId === 2));
@@ -55,7 +61,9 @@ export default function TotalShopButton({
       }
 
       if (!clipsHandled && qC === -1) {
-        items.push(...cart.products.filter((p) => p.fileTypeId === 3 && !p.purchased));
+        items.push(
+          ...cart.products.filter((p) => p.fileTypeId === 3 && !p.purchased),
+        );
         clipsHandled = true;
       } else if (!clipsHandled && qC > 0) {
         items.push(...cart.items.filter((i) => i.fileTypeId === 3));
@@ -63,9 +71,12 @@ export default function TotalShopButton({
       }
     }
 
-    if (!photosHandled) items.push(...cart.items.filter((i) => i.fileTypeId === 1));
-    if (!videosHandled) items.push(...cart.items.filter((i) => i.fileTypeId === 2));
-    if (!clipsHandled)  items.push(...cart.items.filter((i) => i.fileTypeId === 3));
+    if (!photosHandled)
+      items.push(...cart.items.filter((i) => i.fileTypeId === 1));
+    if (!videosHandled)
+      items.push(...cart.items.filter((i) => i.fileTypeId === 2));
+    if (!clipsHandled)
+      items.push(...cart.items.filter((i) => i.fileTypeId === 3));
 
     return items;
   }
@@ -135,7 +146,7 @@ export default function TotalShopButton({
 
   return (
     <button
-      className="my-button w-3/4 fixed-bottom mx-auto mb-10"
+      className="my-button w-3/4 fixed bottom-10 left-1/2 -translate-x-1/2 container z-50"
       disabled={isLoading}
       onClick={totalItems === 0 ? (onButtonClick ?? undefined) : handleCheckout}
     >
