@@ -69,6 +69,8 @@ export default function PendingPayments({
 
   const [filterEmail, setFilterEmail] = useState("");
   const [filterAmount, setFilterAmount] = useState("");
+  const [filterStatus, setFilterStatus] = useState<number | null>(1);
+  const [filterPaymentId, setFilterPaymentId] = useState<number | null>(null);
 
   const [hasReaders, setHasReaders] = useState(false);
 
@@ -120,22 +122,25 @@ export default function PendingPayments({
     email = filterEmail,
     amount = filterAmount,
     limit = pageSize,
+    status = filterStatus,
+    paymentId = filterPaymentId,
   ) => {
     setLoading(true);
     setError(null);
 
     try {
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-      });
-      if (email) params.append("email", email);
-      if (amount !== "") params.append("amount", amount);
-
       const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/payments?${params}`,
-        method: "GET",
+        api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/payments/search`,
+        method: "POST",
         needAuth: true,
+        body: JSON.stringify({
+          page,
+          limit,
+          ...(email ? { email } : {}),
+          ...(amount !== "" ? { amount } : {}),
+          stateId: status,
+          paymentId: paymentId,
+        }),
       });
 
       const responseData = (await response.json()) as {
@@ -219,25 +224,27 @@ export default function PendingPayments({
 
   const handleApplyFilters = () => {
     setCurrentPage(1);
-    fetchPendingPayments(1, filterEmail, filterAmount, pageSize);
+    fetchPendingPayments(1, filterEmail, filterAmount, pageSize, filterStatus, filterPaymentId);
   };
 
   const handleResetFilters = () => {
     setFilterEmail("");
     setFilterAmount("");
+    setFilterStatus(1);
+    setFilterPaymentId(null);
     setCurrentPage(1);
-    fetchPendingPayments(1, "", "", pageSize);
+    fetchPendingPayments(1, "", "", pageSize, 1, null);
   };
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-    fetchPendingPayments(newPage, filterEmail, filterAmount, pageSize);
+    fetchPendingPayments(newPage, filterEmail, filterAmount, pageSize, filterStatus, filterPaymentId);
   };
 
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize);
     setCurrentPage(1);
-    fetchPendingPayments(1, filterEmail, filterAmount, newSize);
+    fetchPendingPayments(1, filterEmail, filterAmount, newSize, filterStatus, filterPaymentId);
   };
 
   const handleCloseModal = () => {
@@ -246,7 +253,7 @@ export default function PendingPayments({
   };
 
   const handleRefresh = () => {
-    fetchPendingPayments(currentPage, filterEmail, filterAmount, pageSize);
+    fetchPendingPayments(currentPage, filterEmail, filterAmount, pageSize, filterStatus, filterPaymentId);
   };
 
   const handleOpenPOS = async () => {
@@ -483,6 +490,44 @@ export default function PendingPayments({
 
       <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
         <div className="flex flex-col sm:flex-row gap-3 items-end">
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Stato
+            </label>
+            <select
+              value={filterStatus === null ? "null" : String(filterStatus)}
+              onChange={(e) => {
+                const val =
+                  e.target.value === "null" ? null : Number(e.target.value);
+                setFilterStatus(val);
+              }}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="null">Tutti</option>
+              <option value="1">Da Pagare</option>
+              <option value="2">Pagati</option>
+            </select>
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Metodo di pagamento
+            </label>
+            <select
+              value={filterPaymentId === null ? "null" : String(filterPaymentId)}
+              onChange={(e) => {
+                const val =
+                  e.target.value === "null" ? null : Number(e.target.value);
+                setFilterPaymentId(val);
+              }}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="null">Tutti</option>
+              <option value="1">Stripe</option>
+              <option value="2">Contanti / POS</option>
+            </select>
+          </div>
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Email
