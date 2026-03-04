@@ -8,6 +8,7 @@ import EmptyState from "@common/components/ui/EmptyState";
 import LoadingState from "@common/components/ui/LoadingState";
 import Alert from "@common/components/ui/Alert";
 import Pagination from "@common/components/ui/Pagination";
+import Badge from "@common/components/ui/Badge";
 import ConfirmPaymentModal from "./ConfirmPaymentModal";
 import POSModal, { type Reader } from "./POSModal";
 
@@ -16,11 +17,24 @@ interface FileTypeCount {
   fileTypeName: string;
 }
 
+interface OrderState {
+  id: number;
+  value: string;
+}
+
+interface PaymentMethod {
+  payment: string;
+}
+
 interface Payment {
   idOrdine: number;
   email?: string;
+  firstname?: string | null;
+  lastname?: string | null;
   amount: number;
-  currency?: { symbol: string } | string;
+  currency?: { currency: string; symbol: string } | string;
+  payment?: PaymentMethod;
+  state?: OrderState;
   fileTypeCounts?: FileTypeCount[];
 }
 
@@ -224,7 +238,14 @@ export default function PendingPayments({
 
   const handleApplyFilters = () => {
     setCurrentPage(1);
-    fetchPendingPayments(1, filterEmail, filterAmount, pageSize, filterStatus, filterPaymentId);
+    fetchPendingPayments(
+      1,
+      filterEmail,
+      filterAmount,
+      pageSize,
+      filterStatus,
+      filterPaymentId,
+    );
   };
 
   const handleResetFilters = () => {
@@ -238,13 +259,27 @@ export default function PendingPayments({
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-    fetchPendingPayments(newPage, filterEmail, filterAmount, pageSize, filterStatus, filterPaymentId);
+    fetchPendingPayments(
+      newPage,
+      filterEmail,
+      filterAmount,
+      pageSize,
+      filterStatus,
+      filterPaymentId,
+    );
   };
 
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize);
     setCurrentPage(1);
-    fetchPendingPayments(1, filterEmail, filterAmount, newSize, filterStatus, filterPaymentId);
+    fetchPendingPayments(
+      1,
+      filterEmail,
+      filterAmount,
+      newSize,
+      filterStatus,
+      filterPaymentId,
+    );
   };
 
   const handleCloseModal = () => {
@@ -253,7 +288,14 @@ export default function PendingPayments({
   };
 
   const handleRefresh = () => {
-    fetchPendingPayments(currentPage, filterEmail, filterAmount, pageSize, filterStatus, filterPaymentId);
+    fetchPendingPayments(
+      currentPage,
+      filterEmail,
+      filterAmount,
+      pageSize,
+      filterStatus,
+      filterPaymentId,
+    );
   };
 
   const handleOpenPOS = async () => {
@@ -439,6 +481,26 @@ export default function PendingPayments({
     setPosStep(1);
   };
 
+  const getStateBadge = (state?: OrderState) => {
+    if (!state) return <Badge bg="secondary">—</Badge>;
+
+    const id = state.id;
+    const SUSPENDED = Number(import.meta.env.VITE_ORDER_STATE_SUSPENDED);
+    const SEND = Number(import.meta.env.VITE_ORDER_STATE_SEND);
+    const SUCCESS = Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS);
+    const FAILED = Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_FAILED);
+    const COMPLETED = Number(import.meta.env.VITE_ORDER_STATE_COMPLETED);
+    const CANCELED = Number(import.meta.env.VITE_ORDER_STATE_CANCELED);
+
+    if (id === SUSPENDED) return <Badge bg="warning">Sospeso</Badge>;
+    if (id === SEND) return <Badge bg="info">Inviato</Badge>;
+    if (id === SUCCESS) return <Badge bg="success">Pagato</Badge>;
+    if (id === FAILED) return <Badge bg="danger">Fallito</Badge>;
+    if (id === COMPLETED) return <Badge bg="success">Completato</Badge>;
+    if (id === CANCELED) return <Badge bg="secondary">Annullato</Badge>;
+    return <Badge bg="secondary">{state.value}</Badge>;
+  };
+
   const formatFileTypeCounts = (fileTypeCounts?: FileTypeCount[]): string => {
     if (!fileTypeCounts || fileTypeCounts.length === 0) return "—";
     return (
@@ -460,9 +522,9 @@ export default function PendingPayments({
       <div className="mb-3">
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="text-xl font-bold">Pagamenti in sospeso</h4>
+            <h4 className="text-xl font-bold">Pagamenti</h4>
             <p className="text-gray-500 mb-0">
-              Ordini in attesa di conferma pagamento
+              Stato di pagamento degli ordini
             </p>
           </div>
           <button
@@ -514,7 +576,9 @@ export default function PendingPayments({
               Metodo di pagamento
             </label>
             <select
-              value={filterPaymentId === null ? "null" : String(filterPaymentId)}
+              value={
+                filterPaymentId === null ? "null" : String(filterPaymentId)
+              }
               onChange={(e) => {
                 const val =
                   e.target.value === "null" ? null : Number(e.target.value);
@@ -618,6 +682,9 @@ export default function PendingPayments({
                   Importo
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Stato
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Contenuti
                 </th>
                 <th className="w-35 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">
@@ -629,7 +696,7 @@ export default function PendingPayments({
               {payments.map((payment, index) => (
                 <tr
                   key={payment.idOrdine}
-                  className="hover:bg-gray-50 transition-colors even:bg-gray-50"
+                  className="hover:bg-gray-50 transition-colors even:bg-gray-50 h-13.25"
                 >
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {(currentPage - 1) * pageSize + index + 1}
@@ -644,28 +711,38 @@ export default function PendingPayments({
                     {getCurrencySymbol(payment.currency)}
                     {payment.amount?.toFixed(2) ?? "—"}
                   </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {getStateBadge(payment.state)}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {formatFileTypeCounts(payment.fileTypeCounts)}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-center">
-                    <button
-                      type="button"
-                      onClick={() => setConfirmPayment(payment)}
-                      disabled={markingPaid === payment.idOrdine}
-                      title="Segna come pagato"
-                      className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
-                                 hover:bg-green-600 hover:text-white transition-colors
-                                 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {markingPaid === payment.idOrdine ? (
-                        <Spinner size="sm" />
-                      ) : (
-                        <>
-                          <CheckCircle size={14} className="inline mr-1" />
-                          Gestisci
-                        </>
+                  <td className="px-4 py-3 whitespace-nowrap text-center h-10.5">
+                    {payment.state?.id !==
+                      Number(
+                        import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS,
+                      ) &&
+                      payment.state?.id !==
+                        Number(import.meta.env.VITE_ORDER_STATE_COMPLETED) && (
+                        <button
+                          type="button"
+                          onClick={() => setConfirmPayment(payment)}
+                          disabled={markingPaid === payment.idOrdine}
+                          title="Segna come pagato"
+                          className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
+                                   hover:bg-green-600 hover:text-white transition-colors
+                                   disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {markingPaid === payment.idOrdine ? (
+                            <Spinner size="sm" />
+                          ) : (
+                            <>
+                              <CheckCircle size={14} className="inline mr-1" />
+                              Gestisci
+                            </>
+                          )}
+                        </button>
                       )}
-                    </button>
                   </td>
                 </tr>
               ))}
