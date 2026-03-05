@@ -236,7 +236,7 @@ export default function CreateEvent() {
       ? [{ key: "participants" as TabKey, label: "Partecipanti" }]
       : []),
     ...(externalPayment !== null && (formData.id || readOnly)
-      ? [{ key: "orders" as TabKey, label: "Pagamenti in sospeso" }]
+      ? [{ key: "orders" as TabKey, label: "Pagamenti" }]
       : []),
   ];
 
