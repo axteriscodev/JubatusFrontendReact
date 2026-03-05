@@ -215,7 +215,7 @@ function packageCalculator(
       prices.find((p) => p.quantityPhoto === -1 && p.quantityVideo === 0)
         ?.price as number ?? 0;
     const completePackPrice =
-      prices.find((p) => p.quantityPhoto === -1 && p.quantityVideo === 1)
+      prices.find((p) => p.quantityPhoto === -1 && (p.quantityVideo === 1 || p.quantityVideo === -1))
         ?.price as number ?? 0;
 
     if (photoPackPrice > 0 && completePackPrice > 0) {
@@ -253,7 +253,7 @@ const performRecalculate = (state: CartState): void => {
     )?.price as number) ?? 0;
   const completePackPrice =
     (state.prices.find(
-      (item) => item.quantityPhoto === -1 && item.quantityVideo === 1,
+      (item) => item.quantityPhoto === -1 && (item.quantityVideo === 1 || item.quantityVideo === -1),
     )?.price as number) ?? 0;
   const clipPackPrice =
     (state.prices.find(
