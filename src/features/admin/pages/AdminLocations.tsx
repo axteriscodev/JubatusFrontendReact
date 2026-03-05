@@ -74,7 +74,7 @@ export default function AdminLocations() {
                 <td>{loc.city}</td>
                 <td>{loc.country}</td>
                 <td>{loc.event?.title || "-"}</td>
-                <td>{loc.isDefault ? "Si" : "No"}</td>
+                <td>{loc.defaultLocation ? "Si" : "No"}</td>
                 <td>{loc.readers?.length ?? 0}</td>
                 <td></td>
               </tr>

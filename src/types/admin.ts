@@ -27,6 +27,6 @@ export interface StripeLocation {
   city: string;
   country: string;
   readers?: unknown[];
-  isDefault: boolean;
+  defaultLocation: boolean;
   event: { id: number; title: string };
 }
