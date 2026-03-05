@@ -85,7 +85,7 @@ export default function PendingPayments({
   const [filterAmount, setFilterAmount] = useState("");
   const [filterStatus, setFilterStatus] = useState<number | null>(1);
   const [filterPaymentId, setFilterPaymentId] = useState<number | null>(null);
-  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | null>(null);
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | null>("DESC");
 
   const [hasReaders, setHasReaders] = useState(false);
 
@@ -257,9 +257,9 @@ export default function PendingPayments({
     setFilterAmount("");
     setFilterStatus(1);
     setFilterPaymentId(null);
-    setSortOrder(null);
+    setSortOrder("DESC");
     setCurrentPage(1);
-    fetchPendingPayments(1, "", "", pageSize, 1, null, null);
+    fetchPendingPayments(1, "", "", pageSize, 1, null, "DESC");
   };
 
   const handlePageChange = (newPage: number) => {
@@ -562,6 +562,20 @@ export default function PendingPayments({
         <div className="flex flex-col sm:flex-row gap-3 items-end">
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-600 mb-1">
+              Ordina per data
+            </label>
+            <select
+              value={sortOrder ?? "DESC"}
+              onChange={(e) => setSortOrder(e.target.value as "ASC" | "DESC")}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="DESC">Più recenti</option>
+              <option value="ASC">Meno recenti</option>
+            </select>
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
               Stato
             </label>
             <select
@@ -598,27 +612,6 @@ export default function PendingPayments({
               <option value="null">Tutti</option>
               <option value="1">Stripe</option>
               <option value="2">Contanti / POS</option>
-            </select>
-          </div>
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-gray-600 mb-1">
-              Ordina per data
-            </label>
-            <select
-              value={sortOrder === null ? "null" : sortOrder}
-              onChange={(e) => {
-                const val =
-                  e.target.value === "null"
-                    ? null
-                    : (e.target.value as "ASC" | "DESC");
-                setSortOrder(val);
-              }}
-              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="null">—</option>
-              <option value="DESC">Più recenti</option>
-              <option value="ASC">Meno recenti</option>
             </select>
           </div>
           <div className="flex-1">
