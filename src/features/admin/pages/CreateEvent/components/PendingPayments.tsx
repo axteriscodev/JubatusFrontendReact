@@ -36,6 +36,8 @@ interface Payment {
   payment?: PaymentMethod;
   state?: OrderState;
   fileTypeCounts?: FileTypeCount[];
+  paymentDate?: string | null;
+  dateReg?: string | null;
 }
 
 interface PaginationData {
@@ -85,6 +87,7 @@ export default function PendingPayments({
   const [filterAmount, setFilterAmount] = useState("");
   const [filterStatus, setFilterStatus] = useState<number | null>(1);
   const [filterPaymentId, setFilterPaymentId] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | null>(null);
 
   const [hasReaders, setHasReaders] = useState(false);
 
@@ -138,6 +141,7 @@ export default function PendingPayments({
     limit = pageSize,
     status = filterStatus,
     paymentId = filterPaymentId,
+    sort = sortOrder,
   ) => {
     setLoading(true);
     setError(null);
@@ -154,6 +158,7 @@ export default function PendingPayments({
           ...(amount !== "" ? { amount } : {}),
           stateId: status,
           paymentId: paymentId,
+          ...(sort ? { sortOrder: sort } : {}),
         }),
       });
 
@@ -245,6 +250,7 @@ export default function PendingPayments({
       pageSize,
       filterStatus,
       filterPaymentId,
+      sortOrder,
     );
   };
 
@@ -253,8 +259,9 @@ export default function PendingPayments({
     setFilterAmount("");
     setFilterStatus(1);
     setFilterPaymentId(null);
+    setSortOrder(null);
     setCurrentPage(1);
-    fetchPendingPayments(1, "", "", pageSize, 1, null);
+    fetchPendingPayments(1, "", "", pageSize, 1, null, null);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -266,6 +273,7 @@ export default function PendingPayments({
       pageSize,
       filterStatus,
       filterPaymentId,
+      sortOrder,
     );
   };
 
@@ -279,6 +287,7 @@ export default function PendingPayments({
       newSize,
       filterStatus,
       filterPaymentId,
+      sortOrder,
     );
   };
 
@@ -295,6 +304,7 @@ export default function PendingPayments({
       pageSize,
       filterStatus,
       filterPaymentId,
+      sortOrder,
     );
   };
 
@@ -594,6 +604,27 @@ export default function PendingPayments({
           </div>
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-600 mb-1">
+              Ordina per data
+            </label>
+            <select
+              value={sortOrder === null ? "null" : sortOrder}
+              onChange={(e) => {
+                const val =
+                  e.target.value === "null"
+                    ? null
+                    : (e.target.value as "ASC" | "DESC");
+                setSortOrder(val);
+              }}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="null">—</option>
+              <option value="DESC">Più recenti</option>
+              <option value="ASC">Meno recenti</option>
+            </select>
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
               Email
             </label>
             <input
@@ -676,6 +707,9 @@ export default function PendingPayments({
                   Ordine
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Data ordine
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Email
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
@@ -686,6 +720,9 @@ export default function PendingPayments({
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Contenuti
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Data pagamento
                 </th>
                 <th className="w-35 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">
                   Azioni
@@ -705,6 +742,11 @@ export default function PendingPayments({
                     {payment.idOrdine}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {payment.dateReg
+                      ? new Date(payment.dateReg).toLocaleString("it-IT")
+                      : "—"}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {payment.email || "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
@@ -716,6 +758,11 @@ export default function PendingPayments({
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {formatFileTypeCounts(payment.fileTypeCounts)}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {payment.paymentDate
+                      ? new Date(payment.paymentDate).toLocaleString("it-IT")
+                      : "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-center">
                     <button
