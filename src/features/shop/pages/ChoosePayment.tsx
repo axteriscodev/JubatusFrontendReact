@@ -45,7 +45,7 @@ export default function ChoosePayment() {
     <div className="form-sm justify-center gap-4 px-6">
       {/* TODO: aggiungere chiave di traduzione per "Scegli metodo di pagamento" */}
       <p className="text-center text-xl font-semibold mb-2">
-        Scegli come pagare
+        {t('CHOOSE_PAYMENT_TITLE')}
       </p>
 
       {/* TODO: iterare dinamicamente su paymentMethods quando la struttura sarà nota */}
@@ -54,7 +54,7 @@ export default function ChoosePayment() {
         onClick={() => handleSelect(paymentMethods[0].id)}
       >
         {/* TODO: usare la chiave di traduzione corretta */}
-        Paga con Stripe
+        {t('CHOOSE_PAYMENT_STRIPE')}
       </button>
 
       <button
@@ -62,7 +62,7 @@ export default function ChoosePayment() {
         onClick={() => handleSelect(paymentMethods[1].id)}
       >
         {/* TODO: usare la chiave di traduzione corretta */}
-        Paga alla cassa
+        {t('CHOOSE_PAYMENT_CASH')}
       </button>
     </div>
   );

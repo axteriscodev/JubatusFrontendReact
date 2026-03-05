@@ -2,6 +2,8 @@ import {
   Info,
   Pencil,
   Link,
+  Copy,
+  Check,
   MapPin,
   CloudUpload,
   Tag,
@@ -10,7 +12,7 @@ import {
   Text,
   ShieldCheck,
 } from 'lucide-react';
-import type { ChangeEvent, ChangeEventHandler } from 'react';
+import { useMemo, useState, type ChangeEvent, type ChangeEventHandler } from 'react';
 import type { EventFormData } from '../utils/eventFormHelpers';
 
 interface TagOption {
@@ -56,6 +58,35 @@ export function EventBasicInfo({
   currencyList,
   errors = {},
 }: EventBasicInfoProps) {
+  const [copied, setCopied] = useState(false);
+
+  const fullSlugUrl = useMemo(() => {
+    const appDomain = String(import.meta.env.VITE_APP_DOMAIN ?? '').trim();
+    const normalizedDomain = appDomain.replace(/\/+$/, '');
+    const rawSlug = String(formData.slug ?? '').trim();
+    const slugWithoutDomain =
+      normalizedDomain && rawSlug.startsWith(normalizedDomain)
+        ? rawSlug.slice(normalizedDomain.length)
+        : rawSlug;
+    const normalizedSlug = slugWithoutDomain.replace(/^\/+/, '');
+
+    if (!normalizedSlug) return '';
+    if (!normalizedDomain) return normalizedSlug;
+
+    return `${normalizedDomain}/${normalizedSlug}`;
+  }, [formData.slug]);
+
+  const handleCopySlug = () => {
+    if (!fullSlugUrl) return;
+
+    void navigator.clipboard.writeText(fullSlugUrl).then(() => {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    }).catch(() => {
+      setCopied(false);
+    });
+  };
+
   return (
     <div className="shadow-sm rounded-lg bg-white mb-4">
       <div className="p-4">
@@ -90,15 +121,28 @@ export function EventBasicInfo({
               <Link size={14} className="inline mr-2" />
               URL
             </label>
-            <input
-              type="text"
-              placeholder="URL generato automaticamente"
-              value={formData.slug}
-              disabled
-              readOnly
-              className="w-full bg-gray-100 border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="URL generato automaticamente"
+                value={fullSlugUrl}
+                disabled
+                readOnly
+                className="w-full bg-gray-100 border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
                          text-gray-500 cursor-not-allowed"
-            />
+              />
+              <button
+                type="button"
+                onClick={handleCopySlug}
+                disabled={!fullSlugUrl}
+                className="inline-flex items-center justify-center px-3 border-2 border-gray-300 rounded-md
+                           text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Copia URL evento"
+                title="Copia URL evento"
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+              </button>
+            </div>
           </div>
 
           <div>
