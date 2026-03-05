@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Star,
   Trash2,
@@ -17,10 +17,10 @@ import {
   Euro,
   Percent,
   Calculator,
-} from 'lucide-react';
-import Collapse from '@common/components/ui/Collapse';
-import type { PriceItem } from '@/types/cart';
-import type { ListItemLabel } from '../../hooks/useListItemLabels';
+} from "lucide-react";
+import Collapse from "@common/components/ui/Collapse";
+import type { PriceItem } from "@/types/cart";
+import type { ListItemLabel } from "../../hooks/useListItemLabels";
 
 interface LabelLanguage {
   title: string;
@@ -42,8 +42,18 @@ export interface PriceListItemProps {
   item: PriceItemWithLegacy;
   formIndex: number;
   rowIndex: number;
-  onUpdate: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
-  onUpdateWithLanguage: (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemInputValue) => void;
+  onUpdate: (
+    formIndex: number,
+    rowIndex: number,
+    field: keyof PriceItem,
+    value: PriceItemInputValue,
+  ) => void;
+  onUpdateWithLanguage: (
+    formIndex: number,
+    rowIndex: number,
+    field: keyof PriceItem,
+    value: PriceItemInputValue,
+  ) => void;
   onRemove: (formIndex: number, rowIndex: number) => void;
   canRemove: boolean;
   currencySymbol?: string;
@@ -58,12 +68,14 @@ export function PriceListItem({
   onUpdateWithLanguage,
   onRemove,
   canRemove,
-  currencySymbol = '€',
+  currencySymbol = "€",
   labelList = [],
 }: PriceListItemProps) {
   const [showTranslations, setShowTranslations] = useState(false);
 
-  const selectedLabel = labelList.find((label) => label.id === item.labelId) as LabelWithTranslations | undefined;
+  const selectedLabel = labelList.find((label) => label.id === item.labelId) as
+    | LabelWithTranslations
+    | undefined;
 
   const hasLegacyTexts =
     !item.labelId &&
@@ -107,12 +119,12 @@ export function PriceListItem({
             </label>
             <select
               id={`f${formIndex}-r${rowIndex}-labelId`}
-              value={item.labelId ?? ''}
+              value={item.labelId ?? ""}
               onChange={(e) =>
                 onUpdate(
                   formIndex,
                   rowIndex,
-                  'labelId',
+                  "labelId",
                   e.target.value ? parseInt(e.target.value) : null,
                 )
               }
@@ -127,39 +139,46 @@ export function PriceListItem({
               ))}
             </select>
 
-            {selectedLabel && selectedLabel.labelsLanguages && selectedLabel.labelsLanguages.length > 0 && (
-              <div className="mt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowTranslations(!showTranslations)}
-                  className="text-blue-600 text-sm font-semibold hover:text-blue-800 transition-colors"
-                >
-                  {showTranslations ? (
-                    <ChevronUp size={14} className="inline mr-1" />
-                  ) : (
-                    <ChevronDown size={14} className="inline mr-1" />
-                  )}
-                  <Languages size={14} className="inline mr-1" />
-                  Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
-                </button>
-                <Collapse in={showTranslations}>
-                  <div className="mt-2 p-2 bg-gray-100 rounded-lg border flex flex-col gap-2">
-                    {selectedLabel.labelsLanguages.map((lang, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-white border rounded px-2 py-1"
-                        style={{ fontSize: '0.85rem' }}
-                      >
-                        <span className="font-semibold text-blue-600">{lang.title}</span>
-                        {lang.subtitle && (
-                          <span className="text-gray-500"> - {lang.subtitle}</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </Collapse>
-              </div>
-            )}
+            {selectedLabel &&
+              selectedLabel.labelsLanguages &&
+              selectedLabel.labelsLanguages.length > 0 && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowTranslations(!showTranslations)}
+                    className="text-blue-600 text-sm font-semibold hover:text-blue-800 transition-colors"
+                  >
+                    {showTranslations ? (
+                      <ChevronUp size={14} className="inline mr-1" />
+                    ) : (
+                      <ChevronDown size={14} className="inline mr-1" />
+                    )}
+                    <Languages size={14} className="inline mr-1" />
+                    Mostra testi ({selectedLabel.labelsLanguages.length} lingue)
+                  </button>
+                  <Collapse in={showTranslations}>
+                    <div className="mt-2 p-2 bg-gray-100 rounded-lg border flex flex-col gap-2">
+                      {selectedLabel.labelsLanguages.map((lang, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-white border rounded px-2 py-1"
+                          style={{ fontSize: "0.85rem" }}
+                        >
+                          <span className="font-semibold text-blue-600">
+                            {lang.title}
+                          </span>
+                          {lang.subtitle && (
+                            <span className="text-gray-500">
+                              {" "}
+                              - {lang.subtitle}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </Collapse>
+                </div>
+              )}
 
             {hasLegacyTexts && (
               <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500 rounded-lg">
@@ -178,9 +197,14 @@ export function PriceListItem({
                     <input
                       type="text"
                       id={`f${formIndex}-r${rowIndex}-title`}
-                      value={item.itemsLanguages?.[0]?.title ?? ''}
+                      value={item.itemsLanguages?.[0]?.title ?? ""}
                       onChange={(e) =>
-                        onUpdateWithLanguage(formIndex, rowIndex, 'price', e.target.value)
+                        onUpdateWithLanguage(
+                          formIndex,
+                          rowIndex,
+                          "price",
+                          e.target.value,
+                        )
                       }
                       placeholder="Titolo pacchetto"
                       className="w-full border border-gray-300 rounded px-2 py-1 text-sm
@@ -197,9 +221,14 @@ export function PriceListItem({
                     <input
                       type="text"
                       id={`f${formIndex}-r${rowIndex}-subTitle`}
-                      value={item.itemsLanguages?.[0]?.subTitle ?? ''}
+                      value={item.itemsLanguages?.[0]?.subTitle ?? ""}
                       onChange={(e) =>
-                        onUpdateWithLanguage(formIndex, rowIndex, 'price', e.target.value)
+                        onUpdateWithLanguage(
+                          formIndex,
+                          rowIndex,
+                          "price",
+                          e.target.value,
+                        )
                       }
                       placeholder="Sottotitolo pacchetto"
                       className="w-full border border-gray-300 rounded px-2 py-1 text-sm
@@ -219,6 +248,9 @@ export function PriceListItem({
             <label className="block font-semibold text-gray-600 text-sm mb-2">
               <Star size={14} className="inline mr-2" />
               Opzioni
+              <span className="ml-2 text-xs font-normal text-gray-400">
+                (solo pre-ordine)
+              </span>
             </label>
             <div className="bg-gray-100 border-0 rounded-md p-2">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -226,7 +258,9 @@ export function PriceListItem({
                   type="checkbox"
                   id={`f${formIndex}-r${rowIndex}-bestOffer`}
                   checked={item.bestOffer}
-                  onChange={(e) => onUpdate(formIndex, rowIndex, 'bestOffer', e.target.checked)}
+                  onChange={(e) =>
+                    onUpdate(formIndex, rowIndex, "bestOffer", e.target.checked)
+                  }
                   className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                 />
                 <span className="font-semibold text-sm">Migliore offerta</span>
@@ -243,6 +277,12 @@ export function PriceListItem({
               <Box size={14} className="inline mr-2" />
               QUANTITÀ E PREZZI
             </small>
+            <p className="text-xs text-gray-400 mt-1">
+              Imposta <strong>-1</strong> per includere tutti i contenuti di
+              quella tipologia senza limite. Es. pacchetto completo: Foto{" "}
+              <strong>-1</strong>, Clip <strong>-1</strong>, Video{" "}
+              <strong>-1</strong>.
+            </p>
           </div>
 
           <div className="col-span-6 md:col-span-3">
@@ -258,7 +298,9 @@ export function PriceListItem({
                 type="number"
                 id={`f${formIndex}-r${rowIndex}-quantityPhoto`}
                 value={item.quantityPhoto}
-                onChange={(e) => onUpdate(formIndex, rowIndex, 'quantityPhoto', e.target.value)}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "quantityPhoto", e.target.value)
+                }
                 placeholder="0"
                 className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
@@ -282,7 +324,9 @@ export function PriceListItem({
                 type="number"
                 id={`f${formIndex}-r${rowIndex}-quantityClip`}
                 value={item.quantityClip}
-                onChange={(e) => onUpdate(formIndex, rowIndex, 'quantityClip', e.target.value)}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "quantityClip", e.target.value)
+                }
                 placeholder="0"
                 className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
@@ -306,7 +350,9 @@ export function PriceListItem({
                 type="number"
                 id={`f${formIndex}-r${rowIndex}-quantityVideo`}
                 value={item.quantityVideo}
-                onChange={(e) => onUpdate(formIndex, rowIndex, 'quantityVideo', e.target.value)}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "quantityVideo", e.target.value)
+                }
                 placeholder="0"
                 className="flex-1 border-2 border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-[0.95rem]
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
@@ -324,14 +370,24 @@ export function PriceListItem({
             >
               <Euro size={14} className="inline mr-2" />
               Prezzo
+              <span className="ml-2 text-xs font-normal text-gray-400">(0 = gratuito)</span>
             </label>
             <div className="flex shadow-sm">
               <span
                 className="inline-flex items-center px-3 bg-white rounded-l-md font-medium"
                 style={
-                  item.price === '' || item.price === null
-                    ? { borderTop: '3px solid #ef4444', borderBottom: '3px solid #ef4444', borderLeft: '3px solid #ef4444', color: '#ef4444' }
-                    : { borderTop: '2px solid #d1d5db', borderBottom: '2px solid #d1d5db', borderLeft: '2px solid #d1d5db' }
+                  item.price === "" || item.price === null
+                    ? {
+                        borderTop: "3px solid #ef4444",
+                        borderBottom: "3px solid #ef4444",
+                        borderLeft: "3px solid #ef4444",
+                        color: "#ef4444",
+                      }
+                    : {
+                        borderTop: "2px solid #d1d5db",
+                        borderBottom: "2px solid #d1d5db",
+                        borderLeft: "2px solid #d1d5db",
+                      }
                 }
               >
                 {currencySymbol}
@@ -340,14 +396,24 @@ export function PriceListItem({
                 type="number"
                 id={`f${formIndex}-r${rowIndex}-price`}
                 value={item.price}
-                onChange={(e) => onUpdate(formIndex, rowIndex, 'price', e.target.value)}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "price", e.target.value)
+                }
                 placeholder="0.00"
                 step="0.01"
                 className="flex-1 rounded-r-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 focus:z-10 focus:ring-blue-500"
                 style={
-                  item.price === '' || item.price === null
-                    ? { borderTop: '3px solid #ef4444', borderBottom: '3px solid #ef4444', borderRight: '3px solid #ef4444' }
-                    : { borderTop: '2px solid #d1d5db', borderBottom: '2px solid #d1d5db', borderRight: '2px solid #d1d5db' }
+                  item.price === "" || item.price === null
+                    ? {
+                        borderTop: "3px solid #ef4444",
+                        borderBottom: "3px solid #ef4444",
+                        borderRight: "3px solid #ef4444",
+                      }
+                    : {
+                        borderTop: "2px solid #d1d5db",
+                        borderBottom: "2px solid #d1d5db",
+                        borderRight: "2px solid #d1d5db",
+                      }
                 }
               />
             </div>
@@ -359,14 +425,19 @@ export function PriceListItem({
               className="block font-semibold text-gray-600 text-sm mb-2"
             >
               <Percent size={14} className="inline mr-2" />
-              Sconto
+              Sconto{" "}
+              <span className="ml-2 text-xs font-normal text-gray-400">
+                (solo pre-ordine)
+              </span>
             </label>
             <div className="flex shadow-sm">
               <input
                 type="number"
                 id={`f${formIndex}-r${rowIndex}-discount`}
                 value={item.discount}
-                onChange={(e) => onUpdate(formIndex, rowIndex, 'discount', e.target.value)}
+                onChange={(e) =>
+                  onUpdate(formIndex, rowIndex, "discount", e.target.value)
+                }
                 placeholder="0"
                 min="0"
                 max="100"
@@ -404,7 +475,9 @@ export function PriceListItem({
                   ).toFixed(2)}
                 </span>
                 {Number(item.discount) > 0 && (
-                  <small className="text-green-600 ml-2">(-{item.discount}%)</small>
+                  <small className="text-green-600 ml-2">
+                    (-{item.discount}%)
+                  </small>
                 )}
               </div>
             </div>

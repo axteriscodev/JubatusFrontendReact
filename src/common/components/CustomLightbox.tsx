@@ -44,6 +44,10 @@ export default function CustomLightbox({
 }: CustomLightboxProps) {
   const { t } = useTranslations();
 
+  const isAutoplay = import.meta.env.VITE_VIDEO_AUTOPLAY === "true";
+  const isMuted = import.meta.env.VITE_VIDEO_MUTED === "true";
+  const isLoop = import.meta.env.VITE_VIDEO_LOOP === "true";
+
   const effectiveSlides =
     slides && slides.length > 0
       ? slides
@@ -125,6 +129,7 @@ export default function CustomLightbox({
           const playingVideo = document.querySelector("video");
           if (playingVideo && !playingVideo.paused) {
             playingVideo.pause();
+            playingVideo.currentTime = 0;
           }
           setIndex?.(newIndex);
         },
@@ -137,6 +142,11 @@ export default function CustomLightbox({
           const typedSlide = s as NormalizedContent;
           const media = typedSlide.isVideo ? (
             <video
+              key={typedSlide.src}
+              autoPlay={isAutoplay}
+              muted={isMuted}
+              loop={isLoop}
+              playsInline
               controls
               controlsList="nodownload"
               className="max-w-full max-h-full mx-auto"

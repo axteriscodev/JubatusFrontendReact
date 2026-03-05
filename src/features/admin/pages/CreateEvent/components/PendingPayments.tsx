@@ -8,6 +8,7 @@ import EmptyState from "@common/components/ui/EmptyState";
 import LoadingState from "@common/components/ui/LoadingState";
 import Alert from "@common/components/ui/Alert";
 import Pagination from "@common/components/ui/Pagination";
+import Badge from "@common/components/ui/Badge";
 import ConfirmPaymentModal from "./ConfirmPaymentModal";
 import POSModal, { type Reader } from "./POSModal";
 
@@ -16,12 +17,27 @@ interface FileTypeCount {
   fileTypeName: string;
 }
 
+interface OrderState {
+  id: number;
+  value: string;
+}
+
+interface PaymentMethod {
+  payment: string;
+}
+
 interface Payment {
   idOrdine: number;
   email?: string;
+  firstname?: string | null;
+  lastname?: string | null;
   amount: number;
-  currency?: { symbol: string } | string;
+  currency?: { currency: string; symbol: string } | string;
+  payment?: PaymentMethod;
+  state?: OrderState;
   fileTypeCounts?: FileTypeCount[];
+  paymentDate?: string | null;
+  dateReg?: string | null;
 }
 
 interface PaginationData {
@@ -57,9 +73,7 @@ export default function PendingPayments({
   const [currentPage, setCurrentPage] = useState(
     initialPayments?.pagination?.page || 1,
   );
-  const [pageSize, setPageSize] = useState(
-    initialPayments?.pagination?.limit || 10,
-  );
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(
     initialPayments?.pagination?.totalPages || 1,
   );
@@ -69,6 +83,9 @@ export default function PendingPayments({
 
   const [filterEmail, setFilterEmail] = useState("");
   const [filterAmount, setFilterAmount] = useState("");
+  const [filterStatus, setFilterStatus] = useState<number | null>(1);
+  const [filterPaymentId, setFilterPaymentId] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | null>(null);
 
   const [hasReaders, setHasReaders] = useState(false);
 
@@ -120,22 +137,27 @@ export default function PendingPayments({
     email = filterEmail,
     amount = filterAmount,
     limit = pageSize,
+    status = filterStatus,
+    paymentId = filterPaymentId,
+    sort = sortOrder,
   ) => {
     setLoading(true);
     setError(null);
 
     try {
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(limit),
-      });
-      if (email) params.append("email", email);
-      if (amount !== "") params.append("amount", amount);
-
       const response = await apiRequest({
-        api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/payments?${params}`,
-        method: "GET",
+        api: `${import.meta.env.VITE_API_URL}/events/event/${eventId}/payments/search`,
+        method: "POST",
         needAuth: true,
+        body: JSON.stringify({
+          page,
+          limit,
+          ...(email ? { email } : {}),
+          ...(amount !== "" ? { amount } : {}),
+          stateId: status,
+          paymentId: paymentId,
+          ...(sort ? { sortOrder: sort } : {}),
+        }),
       });
 
       const responseData = (await response.json()) as {
@@ -219,25 +241,52 @@ export default function PendingPayments({
 
   const handleApplyFilters = () => {
     setCurrentPage(1);
-    fetchPendingPayments(1, filterEmail, filterAmount, pageSize);
+    fetchPendingPayments(
+      1,
+      filterEmail,
+      filterAmount,
+      pageSize,
+      filterStatus,
+      filterPaymentId,
+      sortOrder,
+    );
   };
 
   const handleResetFilters = () => {
     setFilterEmail("");
     setFilterAmount("");
+    setFilterStatus(1);
+    setFilterPaymentId(null);
+    setSortOrder(null);
     setCurrentPage(1);
-    fetchPendingPayments(1, "", "", pageSize);
+    fetchPendingPayments(1, "", "", pageSize, 1, null, null);
   };
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
-    fetchPendingPayments(newPage, filterEmail, filterAmount, pageSize);
+    fetchPendingPayments(
+      newPage,
+      filterEmail,
+      filterAmount,
+      pageSize,
+      filterStatus,
+      filterPaymentId,
+      sortOrder,
+    );
   };
 
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize);
     setCurrentPage(1);
-    fetchPendingPayments(1, filterEmail, filterAmount, newSize);
+    fetchPendingPayments(
+      1,
+      filterEmail,
+      filterAmount,
+      newSize,
+      filterStatus,
+      filterPaymentId,
+      sortOrder,
+    );
   };
 
   const handleCloseModal = () => {
@@ -246,7 +295,15 @@ export default function PendingPayments({
   };
 
   const handleRefresh = () => {
-    fetchPendingPayments(currentPage, filterEmail, filterAmount, pageSize);
+    fetchPendingPayments(
+      currentPage,
+      filterEmail,
+      filterAmount,
+      pageSize,
+      filterStatus,
+      filterPaymentId,
+      sortOrder,
+    );
   };
 
   const handleOpenPOS = async () => {
@@ -414,10 +471,10 @@ export default function PendingPayments({
 
   const handlePOSCancel = async () => {
     stopSSE();
-    if (posPayment && posPaymentIntentId) {
+    if (posPayment && posPaymentIntentId && selectedReader) {
       try {
         await apiRequest({
-          api: `${import.meta.env.VITE_API_URL}/orders/order/${posPayment.idOrdine}/payment/${posPaymentIntentId}`,
+          api: `${import.meta.env.VITE_API_URL}/orders/order/${posPayment.idOrdine}/payment/${posPaymentIntentId}/reader/${selectedReader.id}`,
           method: "DELETE",
           needAuth: true,
         });
@@ -430,6 +487,26 @@ export default function PendingPayments({
     setSelectedReader(null);
     setPosPaymentIntentId(null);
     setPosStep(1);
+  };
+
+  const getStateBadge = (state?: OrderState) => {
+    if (!state) return <Badge bg="secondary">—</Badge>;
+
+    const id = state.id;
+    const SUSPENDED = Number(import.meta.env.VITE_ORDER_STATE_SUSPENDED);
+    const SEND = Number(import.meta.env.VITE_ORDER_STATE_SEND);
+    const SUCCESS = Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS);
+    const FAILED = Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_FAILED);
+    const COMPLETED = Number(import.meta.env.VITE_ORDER_STATE_COMPLETED);
+    const CANCELED = Number(import.meta.env.VITE_ORDER_STATE_CANCELED);
+
+    if (id === SUSPENDED) return <Badge bg="warning">Sospeso</Badge>;
+    if (id === SEND) return <Badge bg="info">Inviato</Badge>;
+    if (id === SUCCESS) return <Badge bg="success">Pagato</Badge>;
+    if (id === FAILED) return <Badge bg="danger">Fallito</Badge>;
+    if (id === COMPLETED) return <Badge bg="success">Completato</Badge>;
+    if (id === CANCELED) return <Badge bg="secondary">Annullato</Badge>;
+    return <Badge bg="secondary">{state.value}</Badge>;
   };
 
   const formatFileTypeCounts = (fileTypeCounts?: FileTypeCount[]): string => {
@@ -453,9 +530,9 @@ export default function PendingPayments({
       <div className="mb-3">
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="text-xl font-bold">Pagamenti in sospeso</h4>
+            <h4 className="text-xl font-bold">Pagamenti</h4>
             <p className="text-gray-500 mb-0">
-              Ordini in attesa di conferma pagamento
+              Stato di pagamento degli ordini
             </p>
           </div>
           <button
@@ -483,6 +560,67 @@ export default function PendingPayments({
 
       <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
         <div className="flex flex-col sm:flex-row gap-3 items-end">
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Stato
+            </label>
+            <select
+              value={filterStatus === null ? "null" : String(filterStatus)}
+              onChange={(e) => {
+                const val =
+                  e.target.value === "null" ? null : Number(e.target.value);
+                setFilterStatus(val);
+              }}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="null">Tutti</option>
+              <option value="1">Da Pagare</option>
+              <option value="2">Pagati</option>
+            </select>
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Metodo di pagamento
+            </label>
+            <select
+              value={
+                filterPaymentId === null ? "null" : String(filterPaymentId)
+              }
+              onChange={(e) => {
+                const val =
+                  e.target.value === "null" ? null : Number(e.target.value);
+                setFilterPaymentId(val);
+              }}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="null">Tutti</option>
+              <option value="1">Stripe</option>
+              <option value="2">Contanti / POS</option>
+            </select>
+          </div>
+          <div className="flex-1">
+            <label className="block text-xs font-medium text-gray-600 mb-1">
+              Ordina per data
+            </label>
+            <select
+              value={sortOrder === null ? "null" : sortOrder}
+              onChange={(e) => {
+                const val =
+                  e.target.value === "null"
+                    ? null
+                    : (e.target.value as "ASC" | "DESC");
+                setSortOrder(val);
+              }}
+              className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
+                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="null">—</option>
+              <option value="DESC">Più recenti</option>
+              <option value="ASC">Meno recenti</option>
+            </select>
+          </div>
           <div className="flex-1">
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Email
@@ -567,13 +705,22 @@ export default function PendingPayments({
                   Ordine
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Data ordine
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Email
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Importo
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Stato
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                   Contenuti
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  Data pagamento
                 </th>
                 <th className="w-35 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">
                   Azioni
@@ -593,14 +740,27 @@ export default function PendingPayments({
                     {payment.idOrdine}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {payment.dateReg
+                      ? new Date(payment.dateReg).toLocaleString("it-IT")
+                      : "—"}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {payment.email || "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {getCurrencySymbol(payment.currency)}
                     {payment.amount?.toFixed(2) ?? "—"}
                   </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {getStateBadge(payment.state)}
+                  </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {formatFileTypeCounts(payment.fileTypeCounts)}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    {payment.paymentDate
+                      ? new Date(payment.paymentDate).toLocaleString("it-IT")
+                      : "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-center">
                     <button
@@ -608,6 +768,13 @@ export default function PendingPayments({
                       onClick={() => setConfirmPayment(payment)}
                       disabled={markingPaid === payment.idOrdine}
                       title="Segna come pagato"
+                      style={{
+                        visibility:
+                          payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS) ||
+                          payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
+                            ? "hidden"
+                            : "visible",
+                      }}
                       className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
                                  hover:bg-green-600 hover:text-white transition-colors
                                  disabled:opacity-50 disabled:cursor-not-allowed"

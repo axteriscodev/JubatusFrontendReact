@@ -28,7 +28,7 @@ import { PriceListSection } from "./components/PriceListSection";
 import { FormActions } from "./components/FormActions";
 import { ParticipantsUpload } from "./components/ParticipantsUpload";
 import { PartecipantsTable } from "./components/PartecipantsTable";
-import { EventLocations } from "./components/EventLocations";
+import { EventReaders } from "./components/EventReaders";
 import PendingPayments from "./components/PendingPayments";
 import LoadingState from "@common/components/ui/LoadingState";
 import Button from "@common/components/ui/Button";
@@ -46,7 +46,7 @@ import type { Competition } from "@/types/competition";
 import type { EventBasicInfoProps } from "./components/EventBasicInfo";
 import type { PendingPaymentsProps } from "./components/PendingPayments";
 
-type TabKey = "info" | "priceLists" | "locations" | "participants" | "orders";
+type TabKey = "info" | "priceLists" | "readers" | "participants" | "orders";
 
 interface Tab {
   key: TabKey;
@@ -230,13 +230,13 @@ export default function CreateEvent() {
       ? [{ key: "priceLists" as TabKey, label: "Listini prezzi" }]
       : []),
     ...(!readOnly && formData.id && isOrganizationAdmin()
-      ? [{ key: "locations" as TabKey, label: "Location / POS" }]
+      ? [{ key: "readers" as TabKey, label: "POS / Reader" }]
       : []),
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants" as TabKey, label: "Partecipanti" }]
       : []),
     ...(externalPayment !== null && (formData.id || readOnly)
-      ? [{ key: "orders" as TabKey, label: "Pagamenti in sospeso" }]
+      ? [{ key: "orders" as TabKey, label: "Pagamenti" }]
       : []),
   ];
 
@@ -354,8 +354,8 @@ export default function CreateEvent() {
             </div>
           )}
 
-          {activeTab === "locations" && formData.id && !readOnly && (
-            <EventLocations eventId={formData.id} />
+          {activeTab === "readers" && formData.id && !readOnly && (
+            <EventReaders eventId={formData.id} />
           )}
 
           {activeTab === "participants" &&
