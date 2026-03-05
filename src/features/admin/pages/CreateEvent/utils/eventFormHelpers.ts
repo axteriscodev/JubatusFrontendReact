@@ -98,14 +98,26 @@ export const buildLanguageObject = (formData: EventFormData) => ({
   emoji: formData.emoji,
 });
 
+const stripDomainFromSlug = (slug: string): string => {
+  const rawSlug = String(slug ?? '').trim();
+  const appDomain = String(import.meta.env.VITE_APP_DOMAIN ?? '').trim().replace(/\/+$/, '');
+
+  if (!appDomain) return rawSlug.replace(/^\/+/, '');
+  if (!rawSlug.startsWith(appDomain)) return rawSlug.replace(/^\/+/, '');
+
+  return rawSlug.slice(appDomain.length).replace(/^\/+/, '');
+};
+
 export const prepareEventInfoData = (formData: EventFormData) => ({
   ...formData,
+  slug: stripDomainFromSlug(formData.slug),
   languages: [buildLanguageObject(formData)],
   verifiedAttendanceEvent: formData.verifiedAttendanceEvent,
 });
 
 export const prepareSubmitData = (formData: EventFormData, priceLists: PriceList[]) => ({
   ...formData,
+  slug: stripDomainFromSlug(formData.slug),
   languages: [buildLanguageObject(formData)],
   lists: priceLists,
   verifiedAttendanceEvent: formData.verifiedAttendanceEvent,

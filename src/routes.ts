@@ -27,5 +27,4 @@ export const ROUTES = {
   ADMIN_EVENT: (eventId: string | number) => `/admin/event/${eventId}`,
   ADMIN_READERS: "/admin/readers",
   ADMIN_READER: (readerId: string | number) => `/admin/readers/${readerId}`,
-  ADMIN_LOCATIONS: "/admin/locations",
 };

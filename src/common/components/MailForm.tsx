@@ -71,6 +71,7 @@ export default function MailForm({
         value={emailValue}
         onChange={(e) => setEmailValue(e.target.value)}
         placeholder={t("EMAIL_ENTER")}
+        className="py-1 sm:py-2"
         error={
           onErrors.emailError ||
           onErrors.emailNotPresent ||
@@ -84,7 +85,7 @@ export default function MailForm({
       {onErrors.emailDuplicated && (
         <p className="on-error">{t("EMAIL_DUPLICATED")}</p>
       )}
-      <div className="my-5">
+      <div className="my-2 sm:my-5">
         {showPrivacy && (
           <>
             <div className="flex items-center gap-2 mb-2">
@@ -154,7 +155,7 @@ export default function MailForm({
       </div>
       <button
         type="submit"
-        className="my-button w-full mt-10"
+        className="my-button w-full mt-3 sm:mt-4 !text-base sm:!text-xl"
       >
         {externalPayment
           ? parse(t("EXTERNAL_PAYMENT_BUTTON"))
