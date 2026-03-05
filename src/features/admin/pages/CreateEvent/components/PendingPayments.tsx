@@ -473,10 +473,10 @@ export default function PendingPayments({
 
   const handlePOSCancel = async () => {
     stopSSE();
-    if (posPayment && posPaymentIntentId) {
+    if (posPayment && posPaymentIntentId && selectedReader) {
       try {
         await apiRequest({
-          api: `${import.meta.env.VITE_API_URL}/orders/order/${posPayment.idOrdine}/payment/${posPaymentIntentId}`,
+          api: `${import.meta.env.VITE_API_URL}/orders/order/${posPayment.idOrdine}/payment/${posPaymentIntentId}/reader/${selectedReader.id}`,
           method: "DELETE",
           needAuth: true,
         });
