@@ -73,9 +73,7 @@ export default function PendingPayments({
   const [currentPage, setCurrentPage] = useState(
     initialPayments?.pagination?.page || 1,
   );
-  const [pageSize, setPageSize] = useState(
-    initialPayments?.pagination?.limit || 10,
-  );
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(
     initialPayments?.pagination?.totalPages || 1,
   );

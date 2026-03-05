@@ -34,8 +34,6 @@ import AdminReaders from "@features/admin/pages/AdminReaders";
 import { loader as adminReadersLoader } from "@features/admin/pages/AdminReaders.loader";
 import AdminReaderDetail from "@features/admin/pages/AdminReaderDetail";
 import { loader as adminReaderDetailLoader } from "@features/admin/pages/AdminReaderDetail.loader";
-import AdminLocations from "@features/admin/pages/AdminLocations";
-import { loader as adminLocationsLoader } from "@features/admin/pages/AdminLocations.loader";
 import CreateEvent from "@features/admin/pages/CreateEvent";
 import { loader as createEventLoader } from "@features/admin/pages/CreateEvent/CreateEvent.loader";
 import ContentError from "@common/pages/ContentError";
@@ -163,11 +161,6 @@ function App() {
                 path: ROUTES.ADMIN_READER(":readerId"),
                 element: <AdminReaderDetail />,
                 loader: adminReaderDetailLoader,
-              },
-              {
-                path: ROUTES.ADMIN_LOCATIONS,
-                element: <AdminLocations />,
-                loader: adminLocationsLoader,
               },
               {
                 path: ROUTES.ADMIN_CREATE_EVENT,

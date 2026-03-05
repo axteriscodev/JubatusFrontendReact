@@ -37,7 +37,12 @@ export default function AdminEvents() {
 
   return (
     <div className="container text-left">
-      <h1 className="mb-10">Elenco eventi</h1>
+      <div className="mb-6">
+        <h1 className="mb-1">Elenco eventi</h1>
+        <p className="text-sm text-gray-500">
+          Visualizza e gestisci tutti gli eventi fotografici. Da qui puoi creare nuovi eventi, modificarne la configurazione e accedere alla pagina pubblica.
+        </p>
+      </div>
       {loading ? (
         <LoadingState message="Caricamento eventi..." />
       ) : (
