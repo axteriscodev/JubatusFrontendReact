@@ -11,9 +11,12 @@ export default function ThankYouCash() {
 
   //pagina timeout
   useEffect(() => {
-    const timeOut = setTimeout(() => {
-      navigate("/event/" + eventPreset.slug, { replace: true });
-    }, 10000);
+    const timeOut = setTimeout(
+      () => {
+        navigate("/event/" + eventPreset.slug, { replace: true });
+      },
+      Number(import.meta.env.VITE_THANKYOU_CASH_TIMEOUT) || 8000,
+    );
 
     // cleanup function
     return () => clearTimeout(timeOut);
