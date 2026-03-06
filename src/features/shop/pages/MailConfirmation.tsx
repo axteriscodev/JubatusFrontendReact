@@ -99,13 +99,13 @@ export default function MailConfirmation() {
       <div className="my-20 text-left">
         {isEmailEmpty || isNameEmpty ? (
           <>
-            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
+            <h2 className="mb-10">{t(isCash ? "ORDER_DETAILS" : "PAYMENT_COMPLETED")}</h2>
             <h4 className="">{t("EMAIL_ENTER")}</h4>
             <p>{t("EMAIL_AREA")}</p>
           </>
         ) : (
           <>
-            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
+            <h2 className="mb-10">{t(isCash ? "ORDER_DETAILS" : "PAYMENT_COMPLETED")}</h2>
             <p>
               {parse(t("PAYMENT_ACCESS").replace("$email", userEmail))} <br />
               {t("PAYMENT_CORRECT")}
