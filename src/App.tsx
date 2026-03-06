@@ -46,6 +46,7 @@ import ChoosePayment from "@features/shop/pages/ChoosePayment";
 import PayAtCounter from "@features/shop/pages/PayAtCounter";
 import { ROUTES } from "./routes";
 import NewErrorPage from "./common/pages/NewErrorPage";
+import ThankYouCash from "./features/shop/pages/ThankYouCash";
 
 function HomeRoute() {
   if (isAdmin()) return <Navigate to={ROUTES.ADMIN} replace />;
@@ -130,6 +131,11 @@ function App() {
               {
                 path: ROUTES.THANK_YOU,
                 element: <ThankYou />,
+              },
+              //pagina di ringraziamenti per pagamento in cassa
+              {
+                path: ROUTES.THANK_YOU_CASH,
+                element: <ThankYouCash />,
               },
               {
                 path: ROUTES.PURCHASED,
