@@ -49,6 +49,7 @@ export default function PersonalEventDetail() {
   const [index, setIndex] = useState(0);
   const [slides, setSlides] = useState<unknown[]>([]);
   const [eventData, setEventData] = useState<EventData | null>(null);
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslations();
 
   useEffect(() => {
@@ -77,6 +78,8 @@ export default function PersonalEventDetail() {
         }
       } catch (err) {
         console.error("Errore nel caricamento:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -137,7 +140,11 @@ export default function PersonalEventDetail() {
             <LogOut size={16} className="inline" /> Logout
           </Button>
         </div>
-        {purchasedItems?.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center my-10">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white" />
+          </div>
+        ) : purchasedItems?.length > 0 ? (
           <>
             <h2 className="my-10">{t("PERSONAL_PURCHASE")}</h2>
             <div className="px-30">
