@@ -237,7 +237,7 @@ export default function PersonalEventDetail() {
               <ImageGallery
                 images={unpurchasedItems}
                 select={false}
-                actions={true}
+                actions={false}
                 highLightFavourite={false}
                 highLightPurchased={false}
                 personalSlice={false}
