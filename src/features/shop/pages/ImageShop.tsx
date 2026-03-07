@@ -157,7 +157,7 @@ export default function ImageShop() {
           )}
 
           {/* Combinazioni Miste */}
-          {hasPhoto && (hasVideo || hasClip) && (
+          {hasPhoto && hasVideo && (
             <>
               <p>{t("CART_PHOTOVIDEO")}</p>
               {numVideo === 0 && <h4>{parse(t("REEL_RESULT"))}</h4>}
