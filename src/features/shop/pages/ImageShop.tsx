@@ -160,11 +160,10 @@ export default function ImageShop() {
           {hasPhoto && (hasVideo || hasClip) && (
             <>
               <p>{t("CART_PHOTOVIDEO")}</p>
-              {numVideo === 0 && <h4>{t("REEL_RESULT")}</h4>}
+              {numVideo === 0 && <h4>{parse(t("REEL_RESULT"))}</h4>}
             </>
           )}
         </div>
-
         {imagesList?.length > 0 && (
           <>
             <ImageGallery
