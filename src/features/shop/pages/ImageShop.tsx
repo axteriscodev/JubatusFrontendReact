@@ -29,8 +29,13 @@ interface CompetitionPreset {
   currencySymbol: string;
 }
 
-function getPriceListEntry(pricePack: PricePack, eventPreset: CompetitionPreset) {
-  const safeHTML = DOMPurify.sanitize(pricePack.itemsLanguages?.[0]?.title ?? "");
+function getPriceListEntry(
+  pricePack: PricePack,
+  eventPreset: CompetitionPreset,
+) {
+  const safeHTML = DOMPurify.sanitize(
+    pricePack.itemsLanguages?.[0]?.title ?? "",
+  );
 
   return (
     <>
@@ -82,7 +87,13 @@ export default function ImageShop() {
     dispatch(cartActions.addAllItems());
   };
 
-  const openLightbox = (images: unknown[], startIndex = 0, select: boolean, actions: boolean, _personalSlice?: boolean) => {
+  const openLightbox = (
+    images: unknown[],
+    startIndex = 0,
+    select: boolean,
+    actions: boolean,
+    _personalSlice?: boolean,
+  ) => {
     setIndex(startIndex);
     setOpen(true);
     setSlides(images);
@@ -112,7 +123,12 @@ export default function ImageShop() {
           <div>
             <div className="price-list-container">
               {pricesList.map((pricePack, i) => (
-                <div key={i}>{getPriceListEntry(pricePack as unknown as PricePack, eventPreset as unknown as CompetitionPreset)}</div>
+                <div key={i}>
+                  {getPriceListEntry(
+                    pricePack as unknown as PricePack,
+                    eventPreset as unknown as CompetitionPreset,
+                  )}
+                </div>
               ))}
             </div>
           </div>
@@ -144,12 +160,7 @@ export default function ImageShop() {
           {hasPhoto && (hasVideo || hasClip) && (
             <>
               <p>{t("CART_PHOTOVIDEO")}</p>
-              {(numVideo === 0 || numClips === 0) && (
-                <h4>
-                  i tuoi <strong>video/clips</strong> sono in preparazione:
-                  riceverai una mail per vederli appena pronti 🎥🏃‍♂️🔥
-                </h4>
-              )}
+              {numVideo === 0 && <h4>{t("REEL_RESULT")}</h4>}
             </>
           )}
         </div>
