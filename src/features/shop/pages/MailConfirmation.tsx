@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import validator from "validator";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import { apiRequest } from "@common/services/api-services";
@@ -16,6 +16,8 @@ import { ROUTES } from "@/routes";
 export default function MailConfirmation() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isCash = (location.state as { isCash?: boolean } | null)?.isCash === true;
   const userId = useAppSelector((state) => state.cart.userId);
   const orderId = useAppSelector((state) => state.cart.id);
   const userEmail = useAppSelector((state) => state.cart.userEmail);
@@ -85,7 +87,7 @@ export default function MailConfirmation() {
           dispatch(cartActions.updateUserName(name.trim()));
         }
 
-        navigate(ROUTES.THANK_YOU);
+        navigate(isCash ? ROUTES.THANK_YOU_CASH : ROUTES.THANK_YOU);
       }
     } catch (err) {
       console.error(`Errore invio aggiornamento dati: ${err}`);
@@ -97,13 +99,13 @@ export default function MailConfirmation() {
       <div className="my-20 text-left">
         {isEmailEmpty || isNameEmpty ? (
           <>
-            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
+            <h2 className="mb-10">{t(isCash ? "ORDER_DETAILS" : "PAYMENT_COMPLETED")}</h2>
             <h4 className="">{t("EMAIL_ENTER")}</h4>
             <p>{t("EMAIL_AREA")}</p>
           </>
         ) : (
           <>
-            <h2 className="mb-10">{t("PAYMENT_COMPLETED")}</h2>
+            <h2 className="mb-10">{t(isCash ? "ORDER_DETAILS" : "PAYMENT_COMPLETED")}</h2>
             <p>
               {parse(t("PAYMENT_ACCESS").replace("$email", userEmail))} <br />
               {t("PAYMENT_CORRECT")}

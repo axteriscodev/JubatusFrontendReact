@@ -17,6 +17,7 @@ export const ROUTES = {
   CHECKOUT: "/checkout",
   CHECKOUT_OUTCOME: "/checkout-outcome",
   MAIL_CONFIRMATION: "/mail-confirmation",
+  THANK_YOU_CASH: "/thank-you-cash",
   THANK_YOU: "/thank-you",
   PURCHASED: "/purchased",
   PROCESSING_PHOTOS: "/processing-photos",

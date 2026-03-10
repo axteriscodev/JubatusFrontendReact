@@ -114,22 +114,19 @@ export default function TotalShopButton({
       const result = await res.json();
       const { orderId, isFree, payments } = result.data;
 
-      // TODO: adattare il nome del campo quando la struttura della risposta server sarà definita
-      const paymentMethods = result.data.payments; // TODO: placeholder
-
       dispatch(cartActions.updateOrderId(orderId));
 
       if (isFree) {
         // Caso 3: ordine gratuito → vai direttamente alla conferma email
         navigate(ROUTES.MAIL_CONFIRMATION, { replace: true });
-      } else if (paymentMethods && paymentMethods.length > 1) {
-        // Caso 2: più metodi di pagamento → scegli come pagare
-        navigate(ROUTES.CHOOSE_PAYMENT, {
+      } else if (payments?.some((p: { id: number }) => p.id === 2)) {
+        // Caso 2: pagamento in cassa (id 2) → conferma email poi thank-you-cash
+        navigate(ROUTES.MAIL_CONFIRMATION, {
           replace: true,
-          state: { payments, orderId },
+          state: { isCash: true, orderId },
         });
       } else {
-        // Caso 1: un solo metodo di pagamento (Stripe) → vai al checkout
+        // Caso 1: pagamento Stripe → vai al checkout
         navigate(ROUTES.CHECKOUT, {
           replace: true,
           state: { paymentId: payments[0].id, orderId },

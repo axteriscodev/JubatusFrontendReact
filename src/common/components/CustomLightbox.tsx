@@ -1,13 +1,57 @@
+import { useRef, useEffect } from "react";
 import { Trash2, ShoppingCart, Heart, Download } from "lucide-react";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import Video from "yet-another-react-lightbox/plugins/video";
 import styles from "./CustomLightbox.module.css";
 import { useTranslations } from "../i18n/TranslationProvider";
 import { apiRequest } from "../services/api-services";
 import { getEventContents, NormalizedContent } from "../utils/contents-utils";
+
+function VideoSlideContent({
+  src,
+  offset,
+  isAutoplay,
+  isMuted,
+  isLoop,
+  label,
+}: {
+  src: string;
+  offset: number;
+  isAutoplay: boolean;
+  isMuted: boolean;
+  isLoop: boolean;
+  label: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (offset === 0 && isAutoplay) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }, [offset, isAutoplay]);
+
+  return (
+    <video
+      ref={videoRef}
+      muted={isMuted}
+      loop={isLoop}
+      playsInline
+      controls
+      controlsList="nodownload"
+      className="max-w-full max-h-full mx-auto"
+    >
+      <source src={src} type="video/mp4" />
+      {label}
+    </video>
+  );
+}
 
 export interface CustomLightboxProps {
   open: boolean;
@@ -125,35 +169,32 @@ export default function CustomLightbox({
       index={index}
       on={{
         view: ({ index: newIndex }) => {
-          // Pausa eventuale video prima del cambio slide
-          const playingVideo = document.querySelector("video");
-          if (playingVideo && !playingVideo.paused) {
-            playingVideo.pause();
-            playingVideo.currentTime = 0;
-          }
+          // Pausa tutti i video prima del cambio slide
+          document.querySelectorAll("video").forEach((v) => {
+            if (!v.paused) {
+              v.pause();
+              v.currentTime = 0;
+            }
+          });
           setIndex?.(newIndex);
         },
       }}
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       slides={normalizedSlides as any}
-      plugins={normalizedSlides.length > 1 ? [Thumbnails, Video] : [Video]}
+      plugins={normalizedSlides.length > 1 ? [Thumbnails] : []}
       render={{
-        slide: ({ slide: s }) => {
+        slide: ({ slide: s, offset }) => {
           const typedSlide = s as NormalizedContent;
           const media = typedSlide.isVideo ? (
-            <video
+            <VideoSlideContent
               key={typedSlide.src}
-              autoPlay={isAutoplay}
-              muted={isMuted}
-              loop={isLoop}
-              playsInline
-              controls
-              controlsList="nodownload"
-              className="max-w-full max-h-full mx-auto"
-            >
-              <source src={typedSlide.src} type="video/mp4" />
-              {t("LIGHTBOX_SUPPORT")}
-            </video>
+              src={typedSlide.src!}
+              offset={offset}
+              isAutoplay={isAutoplay}
+              isMuted={isMuted}
+              isLoop={isLoop}
+              label={t("LIGHTBOX_SUPPORT")}
+            />
           ) : (
             <img
               src={typedSlide.src}
