@@ -1,0 +1,566 @@
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Save, Inbox } from "lucide-react";
+import { apiRequest, listenSSE } from "@common/services/api-services";
+import { getPreferredLanguage } from "@common/utils/language-utils";
+import { calculatePrice } from "@common/utils/best-price-calculator";
+import Modal from "@common/components/ui/Modal";
+import Spinner from "@common/components/ui/Spinner";
+import Alert from "@common/components/ui/Alert";
+import LoadingState from "@common/components/ui/LoadingState";
+import EmptyState from "@common/components/ui/EmptyState";
+import ImageGallery from "@common/components/ImageGallery";
+import CustomLightbox from "@common/components/CustomLightbox";
+import type { CartProduct, PriceItem } from "@/types/cart";
+
+interface Payment {
+  idOrdine: number;
+  email?: string;
+  amount: number;
+  currency?: { currency: string; symbol: string } | string;
+}
+
+export interface OrderContentsModalProps {
+  payment: Payment | null;
+  eventId: string | number;
+  onHide: () => void;
+  onSaved: () => void;
+}
+
+type LoadPhase = "idle" | "loading" | "ready" | "error";
+
+function getCurrencySymbol(currency?: Payment["currency"]): string {
+  if (!currency) return "€";
+  if (typeof currency === "string") return currency;
+  return currency.symbol;
+}
+
+export default function OrderContentsModal({
+  payment,
+  eventId,
+  onHide,
+  onSaved,
+}: OrderContentsModalProps) {
+  const [phase, setPhase] = useState<LoadPhase>("idle");
+  const [phaseError, setPhaseError] = useState<string | null>(null);
+  const [allContents, setAllContents] = useState<CartProduct[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [originalKeys, setOriginalKeys] = useState<Set<string>>(new Set());
+  const [pricePackages, setPricePackages] = useState<PriceItem[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const sseCleanupRef = useRef<(() => void) | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!payment) {
+      sseCleanupRef.current?.();
+      sseCleanupRef.current = null;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      setPhase("idle");
+      setAllContents([]);
+      setSelectedKeys(new Set());
+      setOriginalKeys(new Set());
+      setPricePackages([]);
+      setSaveError(null);
+      setRetryCount(0);
+      return;
+    }
+
+    setPhase("loading");
+    setPhaseError(null);
+    setAllContents([]);
+    setSelectedKeys(new Set());
+    setOriginalKeys(new Set());
+
+    const orderId = payment.idOrdine;
+    const currentLanguage = getPreferredLanguage();
+
+    let cancelled = false;
+
+    async function loadContents() {
+      try {
+        const [searchInfoRes, priceRes] = await Promise.all([
+          apiRequest({
+            api: `${import.meta.env.VITE_API_URL}/orders/order/${orderId}/search-info`,
+            method: "GET",
+            needAuth: true,
+          }),
+          fetch(
+            `${import.meta.env.VITE_API_URL}/contents/event-list/${eventId}/${currentLanguage.acronym}`,
+          ),
+        ]);
+
+        if (priceRes.ok) {
+          const priceJson = (await priceRes.json()) as {
+            data: { items: PriceItem[] };
+          };
+          if (!cancelled) setPricePackages(priceJson.data?.items || []);
+        }
+
+        const searchInfoData = (await searchInfoRes.json()) as {
+          message?: string;
+          data?: { searchHash?: string; orderItemKeys?: string[] };
+        };
+
+        if (!searchInfoRes.ok) {
+          throw new Error(
+            searchInfoData.message ||
+              "Errore nel caricamento delle informazioni dell'ordine",
+          );
+        }
+
+        const { searchHash, orderItemKeys = [] } = searchInfoData.data ?? {};
+
+        if (!searchHash) {
+          throw new Error(
+            "Nessuna ricerca associata a questo ordine. Impossibile caricare i contenuti.",
+          );
+        }
+
+        const hashRes = await apiRequest({
+          api: `${import.meta.env.VITE_API_URL}/contents/fetch-hash`,
+          method: "POST",
+          needAuth: true,
+          body: JSON.stringify({ hashId: searchHash }),
+        });
+
+        const hashData = (await hashRes.json()) as {
+          message?: string;
+          data?: number;
+        };
+
+        if (!hashRes.ok) {
+          throw new Error(
+            hashData.message || "Errore nel caricamento della ricerca",
+          );
+        }
+
+        const searchId = hashData.data;
+
+        if (cancelled) return;
+
+        timeoutRef.current = setTimeout(() => {
+          sseCleanupRef.current?.();
+          sseCleanupRef.current = null;
+          if (!cancelled) {
+            setPhase("error");
+            setPhaseError(
+              "Timeout nel caricamento dei contenuti. Riprova.",
+            );
+          }
+        }, 15000);
+
+        const cleanup = listenSSE(
+          `${import.meta.env.VITE_API_URL}/contents/sse/${searchId}`,
+          (data: string) => {
+            try {
+              const jsonData = JSON.parse(data) as {
+                contents?: CartProduct[];
+              };
+              const contents = jsonData.contents || [];
+
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+              }
+
+              if (!cancelled) {
+                const keys = new Set(orderItemKeys);
+                setAllContents(contents);
+                setSelectedKeys(new Set(keys));
+                setOriginalKeys(new Set(keys));
+                setPhase("ready");
+              }
+            } catch {
+              /* ignore parse errors */
+            }
+          },
+          () => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              timeoutRef.current = null;
+            }
+            if (!cancelled) {
+              setPhase("error");
+              setPhaseError(
+                "Errore nel caricamento dei contenuti. Riprova.",
+              );
+            }
+          },
+        );
+
+        sseCleanupRef.current = cleanup;
+      } catch (err) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        if (!cancelled) {
+          setPhase("error");
+          setPhaseError(
+            err instanceof Error ? err.message : "Errore nel caricamento",
+          );
+        }
+      }
+    }
+
+    loadContents();
+
+    return () => {
+      cancelled = true;
+      sseCleanupRef.current?.();
+      sseCleanupRef.current = null;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payment, retryCount]);
+
+  const handleToggleItem = (key: string) => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    setSelectedKeys(new Set(allContents.map((c) => c.keyOriginal)));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedKeys(new Set());
+  };
+
+  const hasChanges = useMemo(() => {
+    if (selectedKeys.size !== originalKeys.size) return true;
+    for (const key of selectedKeys) {
+      if (!originalKeys.has(key)) return true;
+    }
+    return false;
+  }, [selectedKeys, originalKeys]);
+
+  const computedPrice = useMemo(() => {
+    if (!pricePackages.length || !selectedKeys.size) return null;
+    const selected = allContents.filter((c) => selectedKeys.has(c.keyOriginal));
+    const photos = selected.filter((c) => c.fileTypeId === 1).length;
+    const videos = selected.filter((c) => c.fileTypeId === 2).length;
+    const clips = selected.filter((c) => c.fileTypeId === 3).length;
+
+    const packages = pricePackages
+      .filter(
+        (p) =>
+          p.price !== "" &&
+          p.quantityPhoto !== "" &&
+          p.quantityVideo !== "" &&
+          p.quantityClip !== "",
+      )
+      .map((p) => ({
+        quantityPhoto: p.quantityPhoto as number,
+        quantityVideo: p.quantityVideo as number,
+        quantityClip: p.quantityClip as number,
+        price: p.price as number,
+      }));
+
+    if (!packages.length) return null;
+    const result = calculatePrice(packages, photos, videos, clips);
+    return result.price === -1 ? null : result.price;
+  }, [selectedKeys, allContents, pricePackages]);
+
+  const addedCount = useMemo(() => {
+    let count = 0;
+    for (const key of selectedKeys) {
+      if (!originalKeys.has(key)) count++;
+    }
+    return count;
+  }, [selectedKeys, originalKeys]);
+
+  const removedCount = useMemo(() => {
+    let count = 0;
+    for (const key of originalKeys) {
+      if (!selectedKeys.has(key)) count++;
+    }
+    return count;
+  }, [selectedKeys, originalKeys]);
+
+  // Map CartProduct → RawContentItem shape expected by ImageGallery / getEventContents
+  const imagesForGallery = useMemo(
+    () =>
+      allContents.map((c) => ({
+        id: 0,
+        fileTypeId: c.fileTypeId,
+        keyOriginal: c.keyOriginal,
+        isPurchased: false, // force false so selection circles appear on all items
+        urlPreview: c.keyPreview,
+        urlThumbnail: c.keyThumbnail,
+        urlCover: c.keyCover ?? c.keyThumbnail,
+      })),
+    [allContents],
+  );
+
+  const photoItemsForGallery = useMemo(
+    () =>
+      allContents
+        .filter((c) => selectedKeys.has(c.keyOriginal))
+        .map((c) => ({
+          id: 0,
+          fileTypeId: c.fileTypeId,
+          keyOriginal: c.keyOriginal,
+          isPurchased: false,
+          urlPreview: c.keyPreview,
+          urlThumbnail: c.keyThumbnail,
+          urlCover: c.keyCover ?? c.keyThumbnail,
+        })),
+    [allContents, selectedKeys],
+  );
+
+  const handleOpenLightbox = (
+    _images: unknown[],
+    index: number,
+  ) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const handleSave = async () => {
+    if (!payment) return;
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      const response = await apiRequest({
+        api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/items`,
+        method: "PUT",
+        needAuth: true,
+        body: JSON.stringify({
+          selectedKeys: Array.from(selectedKeys),
+          newAmount: computedPrice ?? payment.amount,
+        }),
+      });
+
+      const data = (await response.json()) as {
+        message?: string;
+        data?: { success: boolean };
+      };
+
+      if (!response.ok) {
+        throw new Error(data.message || "Errore durante il salvataggio");
+      }
+
+      onSaved();
+    } catch (err) {
+      setSaveError(
+        err instanceof Error ? err.message : "Errore durante il salvataggio",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const currencySymbol = payment ? getCurrencySymbol(payment.currency) : "€";
+
+  return (
+    <>
+      <Modal
+        show={!!payment}
+        onHide={onHide}
+        centered
+        size="xl"
+        className="!max-w-5xl"
+      >
+        <Modal.Header closeButton onHide={onHide}>
+          <Modal.Title>
+            Contenuti ordine #{payment?.idOrdine}
+            {payment?.email && (
+              <span className="text-sm font-normal text-gray-500 ml-2">
+                — {payment.email}
+              </span>
+            )}
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body className="p-0 overflow-y-auto max-h-[75vh]">
+          {phase === "loading" && (
+            <div className="px-6 py-4">
+              <LoadingState message="Caricamento contenuti..." />
+            </div>
+          )}
+
+          {phase === "error" && (
+            <div className="px-6 py-4 space-y-3">
+              <Alert variant="danger">{phaseError}</Alert>
+              <button
+                type="button"
+                onClick={() => setRetryCount((c) => c + 1)}
+                className="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                Riprova
+              </button>
+            </div>
+          )}
+
+          {phase === "ready" && allContents.length === 0 && (
+            <div className="px-6 py-4">
+              <EmptyState
+                icon={Inbox}
+                title="Nessun contenuto trovato"
+                subtitle="La ricerca associata a questo ordine non ha prodotto risultati"
+              />
+            </div>
+          )}
+
+          {phase === "ready" && allContents.length > 0 && (
+            <>
+              {/* Summary bar */}
+              <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-2 flex flex-wrap items-center gap-3 text-sm">
+                <span className="text-gray-600">
+                  <span className="font-semibold">{selectedKeys.size}</span>{" "}
+                  selezionati
+                  <span className="text-gray-400 ml-1">
+                    / {allContents.length} totali
+                  </span>
+                </span>
+                {addedCount > 0 && (
+                  <span className="text-green-600 font-medium">
+                    +{addedCount} aggiunti
+                  </span>
+                )}
+                {removedCount > 0 && (
+                  <span className="text-red-600 font-medium">
+                    -{removedCount} rimossi
+                  </span>
+                )}
+                <div className="flex gap-2 ml-auto">
+                  <button
+                    type="button"
+                    onClick={handleSelectAll}
+                    className="px-2 py-1 text-xs border border-gray-300 text-gray-600 rounded hover:bg-gray-100 transition-colors"
+                  >
+                    Seleziona tutti
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeselectAll}
+                    className="px-2 py-1 text-xs border border-gray-300 text-gray-600 rounded hover:bg-gray-100 transition-colors"
+                  >
+                    Deseleziona tutti
+                  </button>
+                </div>
+              </div>
+
+              {saveError && (
+                <div className="px-6 pt-3">
+                  <Alert variant="danger" onDismiss={() => setSaveError(null)}>
+                    {saveError}
+                  </Alert>
+                </div>
+              )}
+
+              <div className="px-6 py-4">
+                <ImageGallery
+                  images={imagesForGallery}
+                  select={true}
+                  actions={false}
+                  highLightPurchased={true}
+                  onOpenLightbox={handleOpenLightbox}
+                  onImageClick={handleToggleItem}
+                  photoItems={photoItemsForGallery}
+                  aspectRatio="1:1"
+                  isShop={false}
+                />
+              </div>
+            </>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer className="justify-between">
+          <div className="text-sm text-gray-600">
+            {phase === "ready" && (
+              <>
+                {computedPrice !== null ? (
+                  <>
+                    Importo stimato:{" "}
+                    <strong>
+                      {currencySymbol}
+                      {computedPrice.toFixed(2)}
+                    </strong>
+                    {payment && computedPrice !== payment.amount && (
+                      <span className="text-xs text-gray-400 ml-2">
+                        (originale: {currencySymbol}
+                        {payment.amount.toFixed(2)})
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span>{selectedKeys.size} elementi selezionati</span>
+                )}
+              </>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onHide}
+              disabled={saving}
+              className="px-4 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-colors disabled:opacity-50"
+            >
+              Annulla
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={
+                saving ||
+                !hasChanges ||
+                phase !== "ready" ||
+                selectedKeys.size === 0
+              }
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? (
+                <>
+                  <Spinner size="sm" className="inline mr-1" />
+                  Salvataggio...
+                </>
+              ) : (
+                <>
+                  <Save size={14} className="inline mr-1" />
+                  Salva modifiche
+                </>
+              )}
+            </button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      {lightboxOpen && (
+        <CustomLightbox
+          open={lightboxOpen}
+          slides={imagesForGallery as never}
+          index={lightboxIndex}
+          setIndex={setLightboxIndex}
+          select={true}
+          actions={false}
+          addToCart={true}
+          onClose={() => setLightboxOpen(false)}
+          onImageClick={handleToggleItem}
+          photoItems={photoItemsForGallery as never}
+          shopMode={false}
+        />
+      )}
+    </>
+  );
+}
