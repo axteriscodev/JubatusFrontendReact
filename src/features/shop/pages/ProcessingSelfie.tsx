@@ -98,6 +98,17 @@ export default function ProcessingSelfie() {
                 ),
               );
 
+              if (jsonData.shopUrl && receivedData.eventSlug) {
+                const relativePath = jsonData.shopUrl.replace(
+                  import.meta.env.VITE_APP_DOMAIN,
+                  "",
+                );
+                localStorage.setItem(
+                  `lastShopUrl_${receivedData.eventSlug}`,
+                  relativePath,
+                );
+              }
+
               if (jsonData.contents.length > 0 || jsonData.hasVideo) {
                 navigate(ROUTES.IMAGE_SHOP, { replace: true });
               } else {

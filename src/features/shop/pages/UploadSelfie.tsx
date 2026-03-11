@@ -15,6 +15,7 @@ import { ROUTES } from "@/routes";
 import type { Competition } from "@/types/competition";
 import { competitionsActions } from "@/features/shop/store/competitions-slice";
 import SelfieUpload from "@/features/shop/components/SelfieUpload";
+import { useTranslations } from "@common/i18n/TranslationProvider";
 
 interface EventData {
   data: Partial<Competition> & {
@@ -40,12 +41,14 @@ export default function UploadSelfie() {
   }>();
   const showBibNumber = useAppSelector((state) => state.competition?.bibNumber);
   const description = useAppSelector((state) => state.competition?.description);
+  const { t } = useTranslations();
 
   const [selfie, setSelfie] = useState<SelfieData>({
     image: null,
     bibNumber: "",
   });
   const [formErrors, setFormErrors] = useState(createFormErrors());
+  const [lastShopUrl, setLastShopUrl] = useState<string | null>(null);
 
   // inserisco l'eventId nello store redux
   dispatch(cartActions.updateEventId(eventData.data.id));
@@ -60,6 +63,8 @@ export default function UploadSelfie() {
   useEffect(() => {
     setUiPreset(eventData.data as unknown as Competition);
     setHeaderData(eventData.data as unknown as Competition);
+    const savedUrl = localStorage.getItem(`lastShopUrl_${eventSlug}`);
+    if (savedUrl) setLastShopUrl(savedUrl);
   }, []);
 
   //se l'utente ha già fatto una ricerca precedente ed aspetta solo il video
@@ -132,6 +137,7 @@ export default function UploadSelfie() {
           css="mb-3 sm:mb-10"
         />
       </div>
+
       <SelfieUpload
         onDataChange={handleSelfieFromChild}
         onError={formErrors.imageError}
@@ -143,6 +149,18 @@ export default function UploadSelfie() {
         onErrors={formErrors}
         externalPayment={false}
       />
+      {lastShopUrl && (
+        <div className="mt-5">
+          <button
+            className="my-button w-full mb-4"
+            onClick={() => {
+              window.location.href = lastShopUrl;
+            }}
+          >
+            {t("LAST_SEARCH") || "Torna all'ultima ricerca"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
