@@ -11,9 +11,14 @@ import {
   Smile,
   Text,
   ShieldCheck,
-} from 'lucide-react';
-import { useMemo, useState, type ChangeEvent, type ChangeEventHandler } from 'react';
-import type { EventFormData } from '../utils/eventFormHelpers';
+} from "lucide-react";
+import {
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type ChangeEventHandler,
+} from "react";
+import type { EventFormData } from "../utils/eventFormHelpers";
 
 interface TagOption {
   id: number;
@@ -34,7 +39,11 @@ export interface EventBasicInfoErrors {
 
 export interface EventBasicInfoProps {
   formData: EventFormData;
-  onInputChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | { target: { name: string; value: boolean } }) => void;
+  onInputChange: (
+    e:
+      | ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+      | { target: { name: string; value: boolean } },
+  ) => void;
   onTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   tagList: TagOption[];
   currencyList: CurrencyOption[];
@@ -44,8 +53,8 @@ export interface EventBasicInfoProps {
 const inputClass = (hasError: boolean) =>
   `w-full border-2 rounded-md px-3 py-2 text-[0.95rem] focus:outline-none focus:ring-2 ${
     hasError
-      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+      : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
   }`;
 
 const selectClass = (hasError: boolean) => `${inputClass(hasError)} bg-white`;
@@ -61,30 +70,33 @@ export function EventBasicInfo({
   const [copied, setCopied] = useState(false);
 
   const fullSlugUrl = useMemo(() => {
-    const appDomain = String(import.meta.env.VITE_APP_DOMAIN ?? '').trim();
-    const normalizedDomain = appDomain.replace(/\/+$/, '');
-    const rawSlug = String(formData.slug ?? '').trim();
+    const appDomain = String(import.meta.env.VITE_APP_DOMAIN ?? "").trim();
+    const normalizedDomain = appDomain.replace(/\/+$/, "");
+    const rawSlug = String(formData.slug ?? "").trim();
     const slugWithoutDomain =
       normalizedDomain && rawSlug.startsWith(normalizedDomain)
         ? rawSlug.slice(normalizedDomain.length)
         : rawSlug;
-    const normalizedSlug = slugWithoutDomain.replace(/^\/+/, '');
+    const normalizedSlug = slugWithoutDomain.replace(/^\/+/, "");
 
-    if (!normalizedSlug) return '';
+    if (!normalizedSlug) return "";
     if (!normalizedDomain) return normalizedSlug;
 
-    return `${normalizedDomain}/${normalizedSlug}`;
+    return `${normalizedDomain}/event/${normalizedSlug}`;
   }, [formData.slug]);
 
   const handleCopySlug = () => {
     if (!fullSlugUrl) return;
 
-    void navigator.clipboard.writeText(fullSlugUrl).then(() => {
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
-    }).catch(() => {
-      setCopied(false);
-    });
+    void navigator.clipboard
+      .writeText(fullSlugUrl)
+      .then(() => {
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      })
+      .catch(() => {
+        setCopied(false);
+      });
   };
 
   return (
@@ -96,7 +108,9 @@ export function EventBasicInfo({
           </div>
           <div>
             <h5 className="mb-1 font-bold text-lg">Informazioni Base</h5>
-            <p className="text-gray-500 mb-0 text-sm">Dettagli principali dell'evento</p>
+            <p className="text-gray-500 mb-0 text-sm">
+              Dettagli principali dell'evento
+            </p>
           </div>
         </div>
 
@@ -113,7 +127,9 @@ export function EventBasicInfo({
               onChange={onTitleChange}
               className={inputClass(!!errors.title)}
             />
-            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
+            {errors.title && (
+              <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+            )}
           </div>
 
           <div>
@@ -173,7 +189,9 @@ export function EventBasicInfo({
               placeholder="percorso/cartella/s3"
               className={inputClass(!!errors.pathS3)}
             />
-            {errors.pathS3 && <p className="text-red-500 text-xs mt-1">{errors.pathS3}</p>}
+            {errors.pathS3 && (
+              <p className="text-red-500 text-xs mt-1">{errors.pathS3}</p>
+            )}
           </div>
 
           <div>
@@ -195,7 +213,9 @@ export function EventBasicInfo({
                   </option>
                 ))}
             </select>
-            {errors.tagId && <p className="text-red-500 text-xs mt-1">{errors.tagId}</p>}
+            {errors.tagId && (
+              <p className="text-red-500 text-xs mt-1">{errors.tagId}</p>
+            )}
           </div>
 
           <div>
@@ -217,7 +237,9 @@ export function EventBasicInfo({
                   </option>
                 ))}
             </select>
-            {errors.currencyId && <p className="text-red-500 text-xs mt-1">{errors.currencyId}</p>}
+            {errors.currencyId && (
+              <p className="text-red-500 text-xs mt-1">{errors.currencyId}</p>
+            )}
           </div>
 
           <div>
@@ -244,7 +266,9 @@ export function EventBasicInfo({
             <textarea
               name="description"
               value={formData.description}
-              onChange={onInputChange as ChangeEventHandler<HTMLTextAreaElement>}
+              onChange={
+                onInputChange as ChangeEventHandler<HTMLTextAreaElement>
+              }
               placeholder="Inserisci una descrizione dettagliata dell'evento..."
               rows={4}
               className="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem]
@@ -263,7 +287,7 @@ export function EventBasicInfo({
                   onChange={(e) =>
                     onInputChange({
                       target: {
-                        name: 'verifiedAttendanceEvent',
+                        name: "verifiedAttendanceEvent",
                         value: e.target.checked,
                       },
                     })
@@ -272,11 +296,15 @@ export function EventBasicInfo({
                 />
                 <div>
                   <span className="font-semibold">
-                    <ShieldCheck size={16} className="inline mr-2 text-blue-600" />
+                    <ShieldCheck
+                      size={16}
+                      className="inline mr-2 text-blue-600"
+                    />
                     Evento con partecipanti verificati
                   </span>
                   <div className="text-gray-500 text-sm mt-1">
-                    Abilita la gestione dei partecipanti con caricamento Excel (numero chiuso)
+                    Abilita la gestione dei partecipanti con caricamento Excel
+                    (numero chiuso)
                   </div>
                 </div>
               </label>
