@@ -45,7 +45,7 @@ function VideoSlideContent({
       playsInline
       controls
       controlsList="nodownload"
-      className="max-w-full max-h-full mx-auto"
+      className="w-full h-full object-contain"
     >
       <source src={src} type="video/mp4" />
       {label}
