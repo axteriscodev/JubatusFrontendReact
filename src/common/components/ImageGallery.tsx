@@ -120,12 +120,12 @@ export default function ImageGallery({
                       }}
                     />
                   )}
-                </div>
 
-                {/* Badge "NUOVO": visibile se il contenuto non era nell'ordine */}
-                {newItemKeys?.size && newItemKeys.has(image.key) ? (
-                  <div className={styles.newBadge}>NUOVO</div>
-                ) : null}
+                  {/* Badge "NUOVO": visibile se il contenuto non era nell'ordine */}
+                  {newItemKeys?.size && newItemKeys.has(image.key) ? (
+                    <div className={styles.newBadge}>NUOVO</div>
+                  ) : null}
+                </div>
 
                 {/* Icona zoom per aprire il lightbox */}
                 <div

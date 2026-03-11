@@ -124,7 +124,13 @@ export default function OrderContentsModal({
           );
         }
 
-        const { searchHash, orderItemKeys = [] } = searchInfoData.data ?? {};
+        const {
+          searchHash,
+          orderItemKeys = [],
+          allPhotos: orderAllPhotos = false,
+          allVideos: orderAllVideos = false,
+          allClips: orderAllClips = false,
+        } = searchInfoData.data ?? {};
 
         if (!searchHash) {
           throw new Error(
@@ -183,8 +189,14 @@ export default function OrderContentsModal({
                 const keys = new Set(orderItemKeys);
                 const newKeys = new Set(
                   contents
-                    .map((c) => c.keyOriginal)
-                    .filter((k) => !keys.has(k)),
+                    .filter(
+                      (c) =>
+                        !keys.has(c.keyOriginal) &&
+                        ((c.fileTypeId === 1 && orderAllPhotos) ||
+                          (c.fileTypeId === 2 && orderAllVideos) ||
+                          (c.fileTypeId === 3 && orderAllClips)),
+                    )
+                    .map((c) => c.keyOriginal),
                 );
                 setAllContents(contents);
                 setSelectedKeys(new Set(keys));
@@ -267,7 +279,7 @@ export default function OrderContentsModal({
     return false;
   }, [selectedKeys, originalKeys]);
 
-  const computedPrice = useMemo(() => {
+  const priceResult = useMemo(() => {
     if (!pricePackages.length || !selectedKeys.size) return null;
     const selected = allContents.filter((c) => selectedKeys.has(c.keyOriginal));
     const photos = selected.filter((c) => c.fileTypeId === 1).length;
@@ -291,7 +303,14 @@ export default function OrderContentsModal({
 
     if (!packages.length) return null;
     const result = calculatePrice(packages, photos, videos, clips);
-    return result.price === -1 ? null : result.price;
+    if (result.price === -1) return null;
+
+    return {
+      price: result.price,
+      allPhotos: result.usedPackages.some((p) => p.quantityPhoto === -1),
+      allVideos: result.usedPackages.some((p) => p.quantityVideo === -1),
+      allClips: result.usedPackages.some((p) => p.quantityClip === -1),
+    };
   }, [selectedKeys, allContents, pricePackages]);
 
   const addedCount = useMemo(() => {
@@ -374,13 +393,39 @@ export default function OrderContentsModal({
     setSaveError(null);
 
     try {
+      const flags = {
+        allPhotos: priceResult?.allPhotos ?? false,
+        allVideos: priceResult?.allVideos ?? false,
+        allClips: priceResult?.allClips ?? false,
+      };
+
+      const effectiveKeys = new Set(selectedKeys);
+      if (flags.allPhotos) {
+        allContents
+          .filter((c) => c.fileTypeId === 1)
+          .forEach((c) => effectiveKeys.add(c.keyOriginal));
+      }
+      if (flags.allVideos) {
+        allContents
+          .filter((c) => c.fileTypeId === 2)
+          .forEach((c) => effectiveKeys.add(c.keyOriginal));
+      }
+      if (flags.allClips) {
+        allContents
+          .filter((c) => c.fileTypeId === 3)
+          .forEach((c) => effectiveKeys.add(c.keyOriginal));
+      }
+
       const response = await apiRequest({
         api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/items`,
         method: "PUT",
         needAuth: true,
         body: JSON.stringify({
-          selectedKeys: Array.from(selectedKeys),
-          newAmount: computedPrice ?? payment.amount,
+          selectedKeys: Array.from(effectiveKeys),
+          newAmount: priceResult?.price ?? payment.amount,
+          allPhotos: flags.allPhotos,
+          allVideos: flags.allVideos,
+          allClips: flags.allClips,
         }),
       });
 
@@ -550,14 +595,14 @@ export default function OrderContentsModal({
           <div className="text-sm text-gray-600">
             {phase === "ready" && (
               <>
-                {computedPrice !== null ? (
+                {priceResult !== null ? (
                   <>
                     Importo stimato:{" "}
                     <strong>
                       {currencySymbol}
-                      {computedPrice.toFixed(2)}
+                      {priceResult.price.toFixed(2)}
                     </strong>
-                    {payment && computedPrice !== payment.amount && (
+                    {payment && priceResult.price !== payment.amount && (
                       <span className="text-xs text-gray-400 ml-2">
                         (originale: {currencySymbol}
                         {payment.amount.toFixed(2)})
