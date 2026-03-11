@@ -50,6 +50,7 @@ export default function OrderContentsModal({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [newContentKeys, setNewContentKeys] = useState<Set<string>>(new Set());
   const [retryCount, setRetryCount] = useState(0);
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
@@ -67,6 +68,7 @@ export default function OrderContentsModal({
       setAllContents([]);
       setSelectedKeys(new Set());
       setOriginalKeys(new Set());
+      setNewContentKeys(new Set());
       setPricePackages([]);
       setSaveError(null);
       setRetryCount(0);
@@ -106,7 +108,13 @@ export default function OrderContentsModal({
 
         const searchInfoData = (await searchInfoRes.json()) as {
           message?: string;
-          data?: { searchHash?: string; orderItemKeys?: string[] };
+          data?: {
+            searchHash?: string;
+            orderItemKeys?: string[];
+            allPhotos?: number;
+            allVideos?: number;
+            allClips?: number;
+          };
         };
 
         if (!searchInfoRes.ok) {
@@ -173,9 +181,15 @@ export default function OrderContentsModal({
 
               if (!cancelled) {
                 const keys = new Set(orderItemKeys);
+                const newKeys = new Set(
+                  contents
+                    .map((c) => c.keyOriginal)
+                    .filter((k) => !keys.has(k)),
+                );
                 setAllContents(contents);
                 setSelectedKeys(new Set(keys));
                 setOriginalKeys(new Set(keys));
+                setNewContentKeys(newKeys);
                 setPhase("ready");
               }
             } catch {
@@ -295,6 +309,25 @@ export default function OrderContentsModal({
     }
     return count;
   }, [selectedKeys, originalKeys]);
+
+  const newContentCounts = useMemo(() => {
+    if (!newContentKeys.size) return null;
+    const items = allContents.filter((c) => newContentKeys.has(c.keyOriginal));
+    return {
+      total: items.length,
+      photos: items.filter((c) => c.fileTypeId === 1).length,
+      videos: items.filter((c) => c.fileTypeId === 2).length,
+      clips: items.filter((c) => c.fileTypeId === 3).length,
+    };
+  }, [newContentKeys, allContents]);
+
+  const handleAddNewContents = () => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      for (const key of newContentKeys) next.add(key);
+      return next;
+    });
+  };
 
   // Map CartProduct → RawContentItem shape expected by ImageGallery / getEventContents
   const imagesForGallery = useMemo(
@@ -469,6 +502,32 @@ export default function OrderContentsModal({
                 </div>
               )}
 
+              {newContentCounts && (
+                <div className="px-6 pt-3">
+                  <Alert variant="warning">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <span>
+                        <strong>{newContentCounts.total} nuovi contenuti</strong>{" "}
+                        disponibili dalla ricerca ma non nell&apos;ordine
+                        {newContentCounts.photos > 0 &&
+                          ` · ${newContentCounts.photos} foto`}
+                        {newContentCounts.videos > 0 &&
+                          ` · ${newContentCounts.videos} video`}
+                        {newContentCounts.clips > 0 &&
+                          ` · ${newContentCounts.clips} clip`}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleAddNewContents}
+                        className="shrink-0 px-3 py-1 text-xs font-medium bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors"
+                      >
+                        Aggiungi tutti
+                      </button>
+                    </div>
+                  </Alert>
+                </div>
+              )}
+
               <div className="px-6 py-4">
                 <ImageGallery
                   images={imagesForGallery}
@@ -480,6 +539,7 @@ export default function OrderContentsModal({
                   photoItems={photoItemsForGallery}
                   aspectRatio="1:1"
                   isShop={false}
+                  newItemKeys={newContentKeys}
                 />
               </div>
             </>

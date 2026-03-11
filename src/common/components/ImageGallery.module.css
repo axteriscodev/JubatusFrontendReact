@@ -111,6 +111,21 @@
   object-position: center;
   display: block;
 }
+.newBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #f59e0b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: var(--border-radius);
+  z-index: 4;
+  pointer-events: none;
+  line-height: 1.4;
+}
 .contentTypeBadge {
     position: absolute;
     top: 8px;
