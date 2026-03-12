@@ -81,10 +81,10 @@
   justify-content: center;
   color: white;
 }
-.picture.selected + * + .circle {
+.picture.inCart + * + .circle {
   background-color: #007ef9;
 }
-.picture.selected {
+.picture.inCart.dim {
   opacity: 0.5;
 }
 .purchased {

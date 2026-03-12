@@ -641,6 +641,7 @@ export default function OrderContentsModal({
                 photoItems={photoItemsForGallery}
                 aspectRatio="1:1"
                 isShop={false}
+                dimSelected={false}
                 newItemKeys={newContentKeys}
               />
             </div>
