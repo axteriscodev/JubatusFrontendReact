@@ -373,9 +373,9 @@ export default function OrderContentsModal({
         fileTypeId: c.fileTypeId,
         keyOriginal: c.keyOriginal,
         isPurchased: false, // force false so selection circles appear on all items
-        urlPreview: c.keyPreview,
-        urlThumbnail: c.keyThumbnail,
-        urlCover: c.keyCover ?? c.keyThumbnail,
+        urlPreview: c.urlPreview ?? c.keyPreview,
+        urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
+        urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
     [allContents],
   );
@@ -389,9 +389,9 @@ export default function OrderContentsModal({
           fileTypeId: c.fileTypeId,
           keyOriginal: c.keyOriginal,
           isPurchased: false,
-          urlPreview: c.keyPreview,
-          urlThumbnail: c.keyThumbnail,
-          urlCover: c.keyCover ?? c.keyThumbnail,
+          urlPreview: c.urlPreview ?? c.keyPreview,
+          urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
+          urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
         })),
     [allContents, selectedKeys],
   );
