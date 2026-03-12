@@ -23,6 +23,9 @@ export interface CartProduct {
   keyCover?: string;
   fileTypeId: 1 | 2 | 3; // 1=foto, 2=video, 3=clip
   purchased?: boolean;
+  urlPreview?: string;
+  urlThumbnail?: string;
+  urlCover?: string;
 }
 
 export interface CartItem {

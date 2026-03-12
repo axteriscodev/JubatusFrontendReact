@@ -373,9 +373,9 @@ export default function OrderContentsModal({
         fileTypeId: c.fileTypeId,
         keyOriginal: c.keyOriginal,
         isPurchased: false, // force false so selection circles appear on all items
-        urlPreview: c.keyPreview,
-        urlThumbnail: c.keyThumbnail,
-        urlCover: c.keyCover ?? c.keyThumbnail,
+        urlPreview: c.urlPreview ?? c.keyPreview,
+        urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
+        urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
     [allContents],
   );
@@ -389,9 +389,9 @@ export default function OrderContentsModal({
           fileTypeId: c.fileTypeId,
           keyOriginal: c.keyOriginal,
           isPurchased: false,
-          urlPreview: c.keyPreview,
-          urlThumbnail: c.keyThumbnail,
-          urlCover: c.keyCover ?? c.keyThumbnail,
+          urlPreview: c.urlPreview ?? c.keyPreview,
+          urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
+          urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
         })),
     [allContents, selectedKeys],
   );
@@ -475,7 +475,7 @@ export default function OrderContentsModal({
         onHide={onHide}
         centered
         size="xl"
-        className="!max-w-5xl"
+        className="!max-w-5xl flex flex-col max-h-[90vh]"
       >
         <Modal.Header closeButton onHide={onHide}>
           <Modal.Title>
@@ -488,7 +488,118 @@ export default function OrderContentsModal({
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body className="p-0 overflow-y-auto max-h-[75vh]">
+        {phase === "ready" && allContents.length > 0 && (
+          <>
+            {/* Summary bar — outside scroll area */}
+            <div className="border-b border-gray-200 px-6 py-2 flex flex-wrap items-center gap-3 text-sm">
+              <span className="text-gray-600">
+                <span className="font-semibold">{selectedKeys.size}</span>{" "}
+                selezionati
+                <span className="text-gray-400 ml-1">
+                  / {allContents.length} totali
+                </span>
+              </span>
+              {addedCount > 0 && (
+                <span className="text-green-600 font-medium">
+                  +{addedCount} aggiunti
+                </span>
+              )}
+              {removedCount > 0 && (
+                <span className="text-red-600 font-medium">
+                  -{removedCount} rimossi
+                </span>
+              )}
+              <div className="flex gap-2 ml-auto">
+                {pricePackages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPriceList((v) => !v)}
+                    className="px-2 py-1 text-xs border border-blue-300 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center gap-1"
+                  >
+                    Listino
+                    {showPriceList ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSelectAll}
+                  className="px-2 py-1 text-xs border border-gray-300 text-gray-600 rounded hover:bg-gray-100 transition-colors"
+                >
+                  Seleziona tutti
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeselectAll}
+                  className="px-2 py-1 text-xs border border-gray-300 text-gray-600 rounded hover:bg-gray-100 transition-colors"
+                >
+                  Deseleziona tutti
+                </button>
+              </div>
+            </div>
+
+            {showPriceList && (
+              <div className="px-6 py-3 border-b border-gray-100 bg-gray-50">
+                <ul className="flex flex-wrap gap-2">
+                  {pricePackages.map((p, i) => {
+                    const safeTitle = DOMPurify.sanitize(p.itemsLanguages?.[0]?.title ?? "");
+                    const priceStr = formatPrice(p.price, currencySymbol, currencyCode);
+                    return (
+                      <li
+                        key={i}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs ${
+                          p.bestOffer
+                            ? "bg-blue-50 border-blue-300 text-blue-700 font-semibold"
+                            : "bg-white border-gray-300 text-gray-700"
+                        }`}
+                      >
+                        {safeTitle && (
+                          <span dangerouslySetInnerHTML={{ __html: safeTitle }} />
+                        )}
+                        <span className="font-medium">{priceStr}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {saveError && (
+              <div className="px-6 pt-3">
+                <Alert variant="danger" onDismiss={() => setSaveError(null)}>
+                  {saveError}
+                </Alert>
+              </div>
+            )}
+
+            {newContentCounts && (
+              <div className="px-6 pt-3">
+                <Alert variant="warning">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      <strong>{newContentCounts.total} nuovi contenuti</strong>{" "}
+                      disponibili dalla ricerca ma non nell&apos;ordine
+                      {newContentCounts.photos > 0 &&
+                        ` · ${newContentCounts.photos} foto`}
+                      {newContentCounts.videos > 0 &&
+                        ` · ${newContentCounts.videos} video`}
+                      {newContentCounts.clips > 0 &&
+                        ` · ${newContentCounts.clips} clip`}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleAddNewContents}
+                      className="shrink-0 px-3 py-1 text-xs font-medium bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors"
+                    >
+                      Aggiungi tutti
+                    </button>
+                  </div>
+                </Alert>
+              </div>
+            )}
+          </>
+        )}
+
+        <Modal.Body className="p-0 overflow-y-auto flex-1 min-h-0">
           {phase === "loading" && (
             <div className="px-6 py-4">
               <LoadingState message="Caricamento contenuti..." />
@@ -519,129 +630,20 @@ export default function OrderContentsModal({
           )}
 
           {phase === "ready" && allContents.length > 0 && (
-            <>
-              {/* Summary bar */}
-              <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-2 flex flex-wrap items-center gap-3 text-sm">
-                <span className="text-gray-600">
-                  <span className="font-semibold">{selectedKeys.size}</span>{" "}
-                  selezionati
-                  <span className="text-gray-400 ml-1">
-                    / {allContents.length} totali
-                  </span>
-                </span>
-                {addedCount > 0 && (
-                  <span className="text-green-600 font-medium">
-                    +{addedCount} aggiunti
-                  </span>
-                )}
-                {removedCount > 0 && (
-                  <span className="text-red-600 font-medium">
-                    -{removedCount} rimossi
-                  </span>
-                )}
-                <div className="flex gap-2 ml-auto">
-                  {pricePackages.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setShowPriceList((v) => !v)}
-                      className="px-2 py-1 text-xs border border-blue-300 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center gap-1"
-                    >
-                      Listino
-                      {showPriceList ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleSelectAll}
-                    className="px-2 py-1 text-xs border border-gray-300 text-gray-600 rounded hover:bg-gray-100 transition-colors"
-                  >
-                    Seleziona tutti
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDeselectAll}
-                    className="px-2 py-1 text-xs border border-gray-300 text-gray-600 rounded hover:bg-gray-100 transition-colors"
-                  >
-                    Deseleziona tutti
-                  </button>
-                </div>
-              </div>
-
-              {showPriceList && pricePackages.length > 0 && (
-                <div className="px-6 py-3 border-b border-gray-100 bg-gray-50">
-                  <ul className="flex flex-wrap gap-2">
-                    {pricePackages.map((p, i) => {
-                      const safeTitle = DOMPurify.sanitize(p.itemsLanguages?.[0]?.title ?? "");
-                      const priceStr = formatPrice(p.price, currencySymbol, currencyCode);
-                      return (
-                        <li
-                          key={i}
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs ${
-                            p.bestOffer
-                              ? "bg-blue-50 border-blue-300 text-blue-700 font-semibold"
-                              : "bg-white border-gray-300 text-gray-700"
-                          }`}
-                        >
-                          {safeTitle && (
-                            <span dangerouslySetInnerHTML={{ __html: safeTitle }} />
-                          )}
-                          <span className="font-medium">{priceStr}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-
-              {saveError && (
-                <div className="px-6 pt-3">
-                  <Alert variant="danger" onDismiss={() => setSaveError(null)}>
-                    {saveError}
-                  </Alert>
-                </div>
-              )}
-
-              {newContentCounts && (
-                <div className="px-6 pt-3">
-                  <Alert variant="warning">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span>
-                        <strong>{newContentCounts.total} nuovi contenuti</strong>{" "}
-                        disponibili dalla ricerca ma non nell&apos;ordine
-                        {newContentCounts.photos > 0 &&
-                          ` · ${newContentCounts.photos} foto`}
-                        {newContentCounts.videos > 0 &&
-                          ` · ${newContentCounts.videos} video`}
-                        {newContentCounts.clips > 0 &&
-                          ` · ${newContentCounts.clips} clip`}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleAddNewContents}
-                        className="shrink-0 px-3 py-1 text-xs font-medium bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors"
-                      >
-                        Aggiungi tutti
-                      </button>
-                    </div>
-                  </Alert>
-                </div>
-              )}
-
-              <div className="px-6 py-4">
-                <ImageGallery
-                  images={imagesForGallery}
-                  select={true}
-                  actions={false}
-                  highLightPurchased={true}
-                  onOpenLightbox={handleOpenLightbox}
-                  onImageClick={handleToggleItem}
-                  photoItems={photoItemsForGallery}
-                  aspectRatio="1:1"
-                  isShop={false}
-                  newItemKeys={newContentKeys}
-                />
-              </div>
-            </>
+            <div className="px-6 py-4">
+              <ImageGallery
+                images={imagesForGallery}
+                select={true}
+                actions={false}
+                highLightPurchased={true}
+                onOpenLightbox={handleOpenLightbox}
+                onImageClick={handleToggleItem}
+                photoItems={photoItemsForGallery}
+                aspectRatio="1:1"
+                isShop={false}
+                newItemKeys={newContentKeys}
+              />
+            </div>
           )}
         </Modal.Body>
 
