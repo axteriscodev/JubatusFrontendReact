@@ -776,8 +776,13 @@ export default function PendingPayments({
                         title="Segna come pagato"
                         style={{
                           visibility:
-                            payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS) ||
-                            payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
+                            payment.state?.id ===
+                              Number(
+                                import.meta.env
+                                  .VITE_ORDER_STATE_PAYMENT_SUCCESS,
+                              ) ||
+                            payment.state?.id ===
+                              Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
                               ? "hidden"
                               : "visible",
                         }}
@@ -863,6 +868,20 @@ export default function PendingPayments({
         onSaved={() => {
           setContentsPayment(null);
           handleRefresh();
+        }}
+        onSavedAndPay={(deltaPayment) => {
+          setContentsPayment(null);
+          handleRefresh();
+          setDiscountPercent(0);
+          setConfirmPayment(
+            contentsPayment
+              ? {
+                  ...contentsPayment,
+                  idOrdine: deltaPayment.idOrdine,
+                  amount: deltaPayment.amount,
+                }
+              : null,
+          );
         }}
       />
     </div>

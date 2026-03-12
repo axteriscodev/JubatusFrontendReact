@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Save, Inbox, ChevronDown, ChevronUp } from "lucide-react";
+import { Save, Inbox, ChevronDown, ChevronUp, AlertTriangle, Plus } from "lucide-react";
 import DOMPurify from "dompurify";
 import { apiRequest, listenSSE } from "@common/services/api-services";
 import { getPreferredLanguage } from "@common/utils/language-utils";
@@ -22,6 +22,7 @@ interface Payment {
   email?: string;
   amount: number;
   currency?: { currency: string; symbol: string } | string;
+  state?: { id: number; value: string };
 }
 
 export interface OrderContentsModalProps {
@@ -29,6 +30,7 @@ export interface OrderContentsModalProps {
   eventId: string | number;
   onHide: () => void;
   onSaved: () => void;
+  onSavedAndPay?: (deltaPayment: Payment) => void;
 }
 
 type LoadPhase = "idle" | "loading" | "ready" | "error";
@@ -55,6 +57,7 @@ export default function OrderContentsModal({
   eventId,
   onHide,
   onSaved,
+  onSavedAndPay,
 }: OrderContentsModalProps) {
   const [phase, setPhase] = useState<LoadPhase>("idle");
   const [phaseError, setPhaseError] = useState<string | null>(null);
@@ -64,6 +67,11 @@ export default function OrderContentsModal({
   const [pricePackages, setPricePackages] = useState<PriceItemWithLabel[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [orderFlags, setOrderFlags] = useState({
+    allPhotos: false,
+    allVideos: false,
+    allClips: false,
+  });
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [newContentKeys, setNewContentKeys] = useState<Set<string>>(new Set());
@@ -88,6 +96,7 @@ export default function OrderContentsModal({
       setNewContentKeys(new Set());
       setPricePackages([]);
       setSaveError(null);
+      setOrderFlags({ allPhotos: false, allVideos: false, allClips: false });
       setRetryCount(0);
       return;
     }
@@ -148,6 +157,14 @@ export default function OrderContentsModal({
           allVideos: orderAllVideos = false,
           allClips: orderAllClips = false,
         } = searchInfoData.data ?? {};
+
+        if (!cancelled) {
+          setOrderFlags({
+            allPhotos: Boolean(orderAllPhotos),
+            allVideos: Boolean(orderAllVideos),
+            allClips: Boolean(orderAllClips),
+          });
+        }
 
         if (!searchHash) {
           throw new Error(
@@ -346,6 +363,31 @@ export default function OrderContentsModal({
     return count;
   }, [selectedKeys, originalKeys]);
 
+  const isPaid = useMemo(() => {
+    const successId = Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS);
+    const completedId = Number(import.meta.env.VITE_ORDER_STATE_COMPLETED);
+    return (
+      payment?.state?.id === successId || payment?.state?.id === completedId
+    );
+  }, [payment]);
+
+  const hasAllFlags =
+    orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
+
+  const addedKeys = useMemo(() => {
+    const added = new Set<string>();
+    for (const key of selectedKeys) {
+      if (!originalKeys.has(key)) added.add(key);
+    }
+    return added;
+  }, [selectedKeys, originalKeys]);
+
+  const deltaPrice = useMemo(() => {
+    if (!priceResult || !payment) return null;
+    const delta = priceResult.price - payment.amount;
+    return delta > 0 ? delta : null;
+  }, [priceResult, payment]);
+
   const newContentCounts = useMemo(() => {
     if (!newContentKeys.size) return null;
     const items = allContents.filter((c) => newContentKeys.has(c.keyOriginal));
@@ -404,17 +446,20 @@ export default function OrderContentsModal({
     setLightboxOpen(true);
   };
 
+  // For not-paid orders OR paid orders with -1 flags: update existing order
   const handleSave = async () => {
     if (!payment) return;
     setSaving(true);
     setSaveError(null);
 
     try {
-      const flags = {
-        allPhotos: priceResult?.allPhotos ?? false,
-        allVideos: priceResult?.allVideos ?? false,
-        allClips: priceResult?.allClips ?? false,
-      };
+      const flags = isPaid
+        ? orderFlags
+        : {
+            allPhotos: priceResult?.allPhotos ?? false,
+            allVideos: priceResult?.allVideos ?? false,
+            allClips: priceResult?.allClips ?? false,
+          };
 
       const effectiveKeys = new Set(selectedKeys);
       if (flags.allPhotos) {
@@ -433,13 +478,17 @@ export default function OrderContentsModal({
           .forEach((c) => effectiveKeys.add(c.keyOriginal));
       }
 
+      const newAmount = isPaid
+        ? payment.amount
+        : (priceResult?.price ?? payment.amount);
+
       const response = await apiRequest({
         api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/items`,
         method: "PUT",
         needAuth: true,
         body: JSON.stringify({
           selectedKeys: Array.from(effectiveKeys),
-          newAmount: priceResult?.price ?? payment.amount,
+          newAmount,
           allPhotos: flags.allPhotos,
           allVideos: flags.allVideos,
           allClips: flags.allClips,
@@ -459,6 +508,57 @@ export default function OrderContentsModal({
     } catch (err) {
       setSaveError(
         err instanceof Error ? err.message : "Errore durante il salvataggio",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // For paid orders without -1 flags: create a new supplemental order for added contents
+  const handleCreateAdditionalOrder = async () => {
+    if (!payment || !deltaPrice) return;
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      const response = await apiRequest({
+        api: `${import.meta.env.VITE_API_URL}/orders/admin/create`,
+        method: "POST",
+        needAuth: true,
+        body: JSON.stringify({
+          originalOrderId: payment.idOrdine,
+          selectedKeys: Array.from(addedKeys),
+          amount: deltaPrice,
+          allPhotos: false,
+          allVideos: false,
+          allClips: false,
+        }),
+      });
+
+      const data = (await response.json()) as {
+        message?: string;
+        data?: { orderId: number };
+      };
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Errore durante la creazione dell'ordine",
+        );
+      }
+
+      const newOrderId = data.data!.orderId;
+      onSavedAndPay?.({
+        idOrdine: newOrderId,
+        amount: deltaPrice,
+        email: payment.email,
+        currency: payment.currency,
+      });
+      onSaved();
+    } catch (err) {
+      setSaveError(
+        err instanceof Error
+          ? err.message
+          : "Errore durante la creazione dell'ordine",
       );
     } finally {
       setSaving(false);
@@ -487,6 +587,15 @@ export default function OrderContentsModal({
             )}
           </Modal.Title>
         </Modal.Header>
+
+        {isPaid && (
+          <div className="px-6 py-2 bg-amber-50 border-b border-amber-200 flex items-center gap-2 text-sm text-amber-800">
+            <AlertTriangle size={14} className="shrink-0" />
+            {hasAllFlags
+              ? "Ordine già pagato — i nuovi contenuti verranno aggiunti all'ordine esistente."
+              : "Ordine già pagato — per aggiungere contenuti verrà creato un nuovo ordine aggiuntivo."}
+          </div>
+        )}
 
         {phase === "ready" && allContents.length > 0 && (
           <>
@@ -541,8 +650,14 @@ export default function OrderContentsModal({
               <div className="px-6 py-3 border-b border-gray-100 bg-gray-50">
                 <ul className="flex flex-wrap gap-2">
                   {pricePackages.map((p, i) => {
-                    const safeTitle = DOMPurify.sanitize(p.itemsLanguages?.[0]?.title ?? "");
-                    const priceStr = formatPrice(p.price, currencySymbol, currencyCode);
+                    const safeTitle = DOMPurify.sanitize(
+                      p.itemsLanguages?.[0]?.title ?? "",
+                    );
+                    const priceStr = formatPrice(
+                      p.price,
+                      currencySymbol,
+                      currencyCode,
+                    );
                     return (
                       <li
                         key={i}
@@ -652,7 +767,24 @@ export default function OrderContentsModal({
           <div className="text-sm text-gray-600">
             {phase === "ready" && (
               <>
-                {priceResult !== null ? (
+                {isPaid && !hasAllFlags ? (
+                  addedKeys.size > 0 && deltaPrice ? (
+                    <span>
+                      Importo aggiuntivo:{" "}
+                      <strong>
+                        {currencySymbol}
+                        {deltaPrice.toFixed(2)}
+                      </strong>
+                      <span className="text-gray-400 ml-1">
+                        (+{addedKeys.size} contenuti)
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="text-gray-400">
+                      Seleziona nuovi contenuti per creare un ordine aggiuntivo
+                    </span>
+                  )
+                ) : priceResult !== null ? (
                   <>
                     Importo stimato:{" "}
                     <strong>
@@ -681,29 +813,58 @@ export default function OrderContentsModal({
             >
               Annulla
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={
-                saving ||
-                !hasChanges ||
-                phase !== "ready" ||
-                selectedKeys.size === 0
-              }
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? (
-                <>
-                  <Spinner size="sm" className="inline mr-1" />
-                  Salvataggio...
-                </>
-              ) : (
-                <>
-                  <Save size={14} className="inline mr-1" />
-                  Salva modifiche
-                </>
-              )}
-            </button>
+            {isPaid && !hasAllFlags ? (
+              <button
+                type="button"
+                onClick={handleCreateAdditionalOrder}
+                disabled={
+                  saving ||
+                  addedKeys.size === 0 ||
+                  !deltaPrice ||
+                  phase !== "ready"
+                }
+                className="px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? (
+                  <>
+                    <Spinner size="sm" className="inline mr-1" />
+                    Creazione...
+                  </>
+                ) : (
+                  <>
+                    <Plus size={14} className="inline mr-1" />
+                    Crea ordine aggiuntivo
+                    {deltaPrice
+                      ? ` (${currencySymbol}${deltaPrice.toFixed(2)})`
+                      : ""}
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={
+                  saving ||
+                  !hasChanges ||
+                  phase !== "ready" ||
+                  selectedKeys.size === 0
+                }
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? (
+                  <>
+                    <Spinner size="sm" className="inline mr-1" />
+                    Salvataggio...
+                  </>
+                ) : (
+                  <>
+                    <Save size={14} className="inline mr-1" />
+                    Salva modifiche
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </Modal.Footer>
       </Modal>
