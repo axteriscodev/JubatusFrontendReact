@@ -529,9 +529,9 @@ export default function OrderContentsModal({
           originalOrderId: payment.idOrdine,
           selectedKeys: Array.from(addedKeys),
           amount: deltaPrice,
-          allPhotos: false,
-          allVideos: false,
-          allClips: false,
+          allPhotos: priceResult?.allPhotos ?? false,
+          allVideos: priceResult?.allVideos ?? false,
+          allClips: priceResult?.allClips ?? false,
         }),
       });
 
