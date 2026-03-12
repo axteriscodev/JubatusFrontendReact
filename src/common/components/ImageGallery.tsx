@@ -27,6 +27,7 @@ export interface ImageGalleryProps {
   personalSlice?: boolean;
   aspectRatio?: string;
   isShop?: boolean;
+  newItemKeys?: Set<string>;
 }
 
 export default function ImageGallery({
@@ -42,6 +43,7 @@ export default function ImageGallery({
   personalSlice = false,
   aspectRatio = "1:1",
   isShop = false,
+  newItemKeys,
 }: ImageGalleryProps) {
   // Recupera i contenuti degli eventi personali dalle immagini
   const data: NormalizedContent[] = getEventContents(images, personalSlice);
@@ -118,6 +120,11 @@ export default function ImageGallery({
                       }}
                     />
                   )}
+
+                  {/* Badge "NUOVO": visibile se il contenuto non era nell'ordine */}
+                  {newItemKeys?.size && newItemKeys.has(image.key) ? (
+                    <div className={styles.newBadge}>NUOVO</div>
+                  ) : null}
                 </div>
 
                 {/* Icona zoom per aprire il lightbox */}
