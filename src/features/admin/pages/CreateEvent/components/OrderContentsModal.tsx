@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Save, Inbox } from "lucide-react";
+import { Save, Inbox, ChevronDown, ChevronUp } from "lucide-react";
+import DOMPurify from "dompurify";
 import { apiRequest, listenSSE } from "@common/services/api-services";
 import { getPreferredLanguage } from "@common/utils/language-utils";
 import { calculatePrice } from "@common/utils/best-price-calculator";
@@ -11,6 +12,10 @@ import EmptyState from "@common/components/ui/EmptyState";
 import ImageGallery from "@common/components/ImageGallery";
 import CustomLightbox from "@common/components/CustomLightbox";
 import type { CartProduct, PriceItem } from "@/types/cart";
+
+interface PriceItemWithLabel extends PriceItem {
+  itemsLanguages?: Array<{ title?: string; subTitle?: string }>;
+}
 
 interface Payment {
   idOrdine: number;
@@ -34,6 +39,17 @@ function getCurrencySymbol(currency?: Payment["currency"]): string {
   return currency.symbol;
 }
 
+function getCurrencyCode(currency?: Payment["currency"]): string {
+  if (!currency || typeof currency === "string") return "EUR";
+  return currency.currency;
+}
+
+function formatPrice(price: PriceItem["price"], symbol: string, code: string): string {
+  const num = Number(price);
+  if (isNaN(num)) return "—";
+  return code === "EUR" ? `${num}${symbol}` : `${symbol}${num}`;
+}
+
 export default function OrderContentsModal({
   payment,
   eventId,
@@ -45,13 +61,14 @@ export default function OrderContentsModal({
   const [allContents, setAllContents] = useState<CartProduct[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [originalKeys, setOriginalKeys] = useState<Set<string>>(new Set());
-  const [pricePackages, setPricePackages] = useState<PriceItem[]>([]);
+  const [pricePackages, setPricePackages] = useState<PriceItemWithLabel[]>([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [newContentKeys, setNewContentKeys] = useState<Set<string>>(new Set());
   const [retryCount, setRetryCount] = useState(0);
+  const [showPriceList, setShowPriceList] = useState(false);
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -449,6 +466,7 @@ export default function OrderContentsModal({
   };
 
   const currencySymbol = payment ? getCurrencySymbol(payment.currency) : "€";
+  const currencyCode = payment ? getCurrencyCode(payment.currency) : "EUR";
 
   return (
     <>
@@ -522,6 +540,16 @@ export default function OrderContentsModal({
                   </span>
                 )}
                 <div className="flex gap-2 ml-auto">
+                  {pricePackages.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPriceList((v) => !v)}
+                      className="px-2 py-1 text-xs border border-blue-300 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center gap-1"
+                    >
+                      Listino
+                      {showPriceList ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={handleSelectAll}
@@ -538,6 +566,32 @@ export default function OrderContentsModal({
                   </button>
                 </div>
               </div>
+
+              {showPriceList && pricePackages.length > 0 && (
+                <div className="px-6 py-3 border-b border-gray-100 bg-gray-50">
+                  <ul className="flex flex-wrap gap-2">
+                    {pricePackages.map((p, i) => {
+                      const safeTitle = DOMPurify.sanitize(p.itemsLanguages?.[0]?.title ?? "");
+                      const priceStr = formatPrice(p.price, currencySymbol, currencyCode);
+                      return (
+                        <li
+                          key={i}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs ${
+                            p.bestOffer
+                              ? "bg-blue-50 border-blue-300 text-blue-700 font-semibold"
+                              : "bg-white border-gray-300 text-gray-700"
+                          }`}
+                        >
+                          {safeTitle && (
+                            <span dangerouslySetInnerHTML={{ __html: safeTitle }} />
+                          )}
+                          <span className="font-medium">{priceStr}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
 
               {saveError && (
                 <div className="px-6 pt-3">
