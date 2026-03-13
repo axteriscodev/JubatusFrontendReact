@@ -39,6 +39,7 @@ interface Payment {
   fileTypeCounts?: FileTypeCount[];
   paymentDate?: string | null;
   dateReg?: string | null;
+  parentOrderId?: number | null;
 }
 
 interface PaginationData {
@@ -732,7 +733,14 @@ export default function PendingPayments({
                     {(currentPage - 1) * pageSize + index + 1}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {payment.idOrdine}
+                    <div>
+                      <span>{payment.idOrdine}</span>
+                      {payment.parentOrderId && (
+                        <span className="block text-xs text-gray-400">
+                          ← da #{payment.parentOrderId}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {payment.dateReg
@@ -776,8 +784,13 @@ export default function PendingPayments({
                         title="Segna come pagato"
                         style={{
                           visibility:
-                            payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS) ||
-                            payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
+                            payment.state?.id ===
+                              Number(
+                                import.meta.env
+                                  .VITE_ORDER_STATE_PAYMENT_SUCCESS,
+                              ) ||
+                            payment.state?.id ===
+                              Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
                               ? "hidden"
                               : "visible",
                         }}
@@ -863,6 +876,20 @@ export default function PendingPayments({
         onSaved={() => {
           setContentsPayment(null);
           handleRefresh();
+        }}
+        onSavedAndPay={(deltaPayment) => {
+          setContentsPayment(null);
+          handleRefresh();
+          setDiscountPercent(0);
+          setConfirmPayment(
+            contentsPayment
+              ? {
+                  ...contentsPayment,
+                  idOrdine: deltaPayment.idOrdine,
+                  amount: deltaPayment.amount,
+                }
+              : null,
+          );
         }}
       />
     </div>

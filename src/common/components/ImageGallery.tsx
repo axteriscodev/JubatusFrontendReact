@@ -28,6 +28,7 @@ export interface ImageGalleryProps {
   aspectRatio?: string;
   isShop?: boolean;
   newItemKeys?: Set<string>;
+  dimSelected?: boolean;
 }
 
 export default function ImageGallery({
@@ -44,6 +45,7 @@ export default function ImageGallery({
   aspectRatio = "1:1",
   isShop = false,
   newItemKeys,
+  dimSelected = true,
 }: ImageGalleryProps) {
   // Recupera i contenuti degli eventi personali dalle immagini
   const data: NormalizedContent[] = getEventContents(images, personalSlice);
@@ -77,7 +79,7 @@ export default function ImageGallery({
                   className={`${styles.picture} ${
                     // Evidenzia l'immagine se è presente nei photoItems selezionati
                     currentPhotoItems?.some((el) => el.key === image.key)
-                      ? styles.selected
+                      ? `${styles.inCart}${dimSelected ? ` ${styles.dim}` : ""}`
                       : ""
                   } ${
                     // Aggiunge classe "video" se l'immagine ha src (logica da verificare)

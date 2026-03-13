@@ -16,6 +16,7 @@ import type { Competition } from "@/types/competition";
 import { competitionsActions } from "@/features/shop/store/competitions-slice";
 import SelfieUpload from "@/features/shop/components/SelfieUpload";
 import { useTranslations } from "@common/i18n/TranslationProvider";
+import { isAdmin } from "@common/utils/auth";
 
 interface EventData {
   data: Partial<Competition> & {
@@ -149,7 +150,7 @@ export default function UploadSelfie() {
         onErrors={formErrors}
         externalPayment={false}
       />
-      {lastShopUrl && (
+      {lastShopUrl && !isAdmin() && (
         <div className="mt-5">
           <button
             className="my-button w-full mb-4"
