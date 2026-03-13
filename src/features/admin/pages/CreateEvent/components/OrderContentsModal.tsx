@@ -80,6 +80,7 @@ export default function OrderContentsModal({
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevPriceFlags = useRef({ allPhotos: false, allVideos: false, allClips: false });
 
   useEffect(() => {
     if (!payment) {
@@ -375,37 +376,42 @@ export default function OrderContentsModal({
     orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
 
   // When priceResult triggers an "all" flag for a content type, auto-select all items
-  // of that type to give visual feedback matching what will actually be saved.
+  // of that type to give visual feedback. Only expands on false→true transition so
+  // that manual deselection by the admin is never overridden.
   useEffect(() => {
-    if (!priceResult || isPaid) return;
+    if (!priceResult || isPaid) {
+      prevPriceFlags.current = { allPhotos: false, allVideos: false, allClips: false };
+      return;
+    }
 
-    setSelectedKeys((prev) => {
-      const next = new Set(prev);
+    const prev = prevPriceFlags.current;
+    prevPriceFlags.current = {
+      allPhotos: priceResult.allPhotos,
+      allVideos: priceResult.allVideos,
+      allClips: priceResult.allClips,
+    };
+
+    setSelectedKeys((prevKeys) => {
+      const next = new Set(prevKeys);
       let changed = false;
 
-      if (priceResult.allPhotos) {
-        allContents
-          .filter((c) => c.fileTypeId === 1)
-          .forEach((c) => {
-            if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
-          });
+      if (priceResult.allPhotos && !prev.allPhotos) {
+        allContents.filter((c) => c.fileTypeId === 1).forEach((c) => {
+          if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
+        });
       }
-      if (priceResult.allVideos) {
-        allContents
-          .filter((c) => c.fileTypeId === 2)
-          .forEach((c) => {
-            if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
-          });
+      if (priceResult.allVideos && !prev.allVideos) {
+        allContents.filter((c) => c.fileTypeId === 2).forEach((c) => {
+          if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
+        });
       }
-      if (priceResult.allClips) {
-        allContents
-          .filter((c) => c.fileTypeId === 3)
-          .forEach((c) => {
-            if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
-          });
+      if (priceResult.allClips && !prev.allClips) {
+        allContents.filter((c) => c.fileTypeId === 3).forEach((c) => {
+          if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
+        });
       }
 
-      return changed ? next : prev;
+      return changed ? next : prevKeys;
     });
   }, [priceResult, allContents, isPaid]);
 
@@ -491,26 +497,28 @@ export default function OrderContentsModal({
       const flags = isPaid
         ? orderFlags
         : {
-            allPhotos: priceResult?.allPhotos ?? false,
-            allVideos: priceResult?.allVideos ?? false,
-            allClips: priceResult?.allClips ?? false,
+            allPhotos:
+              (priceResult?.allPhotos ?? false) &&
+              allContents.filter((c) => c.fileTypeId === 1).every((c) => selectedKeys.has(c.keyOriginal)),
+            allVideos:
+              (priceResult?.allVideos ?? false) &&
+              allContents.filter((c) => c.fileTypeId === 2).every((c) => selectedKeys.has(c.keyOriginal)),
+            allClips:
+              (priceResult?.allClips ?? false) &&
+              allContents.filter((c) => c.fileTypeId === 3).every((c) => selectedKeys.has(c.keyOriginal)),
           };
 
+      // For unpaid orders, selectedKeys already includes all items of flagged types
+      // (auto-selected by useEffect). For paid orders the useEffect doesn't run,
+      // so we expand manually here.
       const effectiveKeys = new Set(selectedKeys);
-      if (flags.allPhotos) {
-        allContents
-          .filter((c) => c.fileTypeId === 1)
-          .forEach((c) => effectiveKeys.add(c.keyOriginal));
-      }
-      if (flags.allVideos) {
-        allContents
-          .filter((c) => c.fileTypeId === 2)
-          .forEach((c) => effectiveKeys.add(c.keyOriginal));
-      }
-      if (flags.allClips) {
-        allContents
-          .filter((c) => c.fileTypeId === 3)
-          .forEach((c) => effectiveKeys.add(c.keyOriginal));
+      if (isPaid) {
+        if (flags.allPhotos)
+          allContents.filter((c) => c.fileTypeId === 1).forEach((c) => effectiveKeys.add(c.keyOriginal));
+        if (flags.allVideos)
+          allContents.filter((c) => c.fileTypeId === 2).forEach((c) => effectiveKeys.add(c.keyOriginal));
+        if (flags.allClips)
+          allContents.filter((c) => c.fileTypeId === 3).forEach((c) => effectiveKeys.add(c.keyOriginal));
       }
 
       const newAmount = isPaid
