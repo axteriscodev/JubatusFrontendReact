@@ -444,12 +444,12 @@ export default function OrderContentsModal({
         id: 0,
         fileTypeId: c.fileTypeId,
         keyOriginal: c.keyOriginal,
-        isPurchased: false, // force false so selection circles appear on all items
+        isPurchased: isPaid && originalKeys.has(c.keyOriginal),
         urlPreview: c.urlPreview ?? c.keyPreview,
         urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
         urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
-    [allContents],
+    [allContents, isPaid, originalKeys],
   );
 
   const photoItemsForGallery = useMemo(
@@ -813,7 +813,7 @@ export default function OrderContentsModal({
                 onImageClick={handleToggleItem}
                 photoItems={photoItemsForGallery}
                 aspectRatio="1:1"
-                isShop={false}
+                isShop={isPaid}
                 dimSelected={false}
                 newItemKeys={newContentKeys}
               />
@@ -937,9 +937,9 @@ export default function OrderContentsModal({
           actions={false}
           addToCart={true}
           onClose={() => setLightboxOpen(false)}
-          onImageClick={handleToggleItem}
+          onImageClick={(key) => { handleToggleItem(key); setLightboxOpen(false); }}
           photoItems={photoItemsForGallery as never}
-          shopMode={false}
+          shopMode={isPaid}
         />
       )}
     </>
