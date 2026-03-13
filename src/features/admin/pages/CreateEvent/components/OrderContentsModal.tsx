@@ -449,7 +449,7 @@ export default function OrderContentsModal({
         urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
         urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
-    [allContents],
+    [allContents, isPaid, originalKeys],
   );
 
   const photoItemsForGallery = useMemo(
