@@ -374,6 +374,41 @@ export default function OrderContentsModal({
   const hasAllFlags =
     orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
 
+  // When priceResult triggers an "all" flag for a content type, auto-select all items
+  // of that type to give visual feedback matching what will actually be saved.
+  useEffect(() => {
+    if (!priceResult || isPaid) return;
+
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+
+      if (priceResult.allPhotos) {
+        allContents
+          .filter((c) => c.fileTypeId === 1)
+          .forEach((c) => {
+            if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
+          });
+      }
+      if (priceResult.allVideos) {
+        allContents
+          .filter((c) => c.fileTypeId === 2)
+          .forEach((c) => {
+            if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
+          });
+      }
+      if (priceResult.allClips) {
+        allContents
+          .filter((c) => c.fileTypeId === 3)
+          .forEach((c) => {
+            if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
+          });
+      }
+
+      return changed ? next : prev;
+    });
+  }, [priceResult, allContents, isPaid]);
+
   const addedKeys = useMemo(() => {
     const added = new Set<string>();
     for (const key of selectedKeys) {
