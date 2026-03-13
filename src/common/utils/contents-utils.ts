@@ -101,11 +101,6 @@ export const getEventContents = (
     NormalizeContent(item, isPersonalArea),
   );
 
-  const order: Record<number, number> = { 3: 0, 2: 1, 1: 2 };
-  result.sort(
-    (a, b) => (order[a.fileTypeId] ?? 3) - (order[b.fileTypeId] ?? 3),
-  );
-
   return result;
 };
 

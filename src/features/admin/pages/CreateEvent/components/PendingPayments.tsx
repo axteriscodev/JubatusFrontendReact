@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { RefreshCw, Inbox, CheckCircle } from "lucide-react";
+import { RefreshCw, Inbox, CheckCircle, Package } from "lucide-react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { apiRequest } from "@common/services/api-services";
 import { getAuthToken } from "@common/utils/auth";
@@ -11,6 +11,7 @@ import Pagination from "@common/components/ui/Pagination";
 import Badge from "@common/components/ui/Badge";
 import ConfirmPaymentModal from "./ConfirmPaymentModal";
 import POSModal, { type Reader } from "./POSModal";
+import OrderContentsModal from "./OrderContentsModal";
 
 interface FileTypeCount {
   count: number;
@@ -23,6 +24,7 @@ interface OrderState {
 }
 
 interface PaymentMethod {
+  id?: number;
   payment: string;
 }
 
@@ -38,6 +40,7 @@ interface Payment {
   fileTypeCounts?: FileTypeCount[];
   paymentDate?: string | null;
   dateReg?: string | null;
+  parentOrderId?: number | null;
 }
 
 interface PaginationData {
@@ -88,6 +91,7 @@ export default function PendingPayments({
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | null>("DESC");
 
   const [hasReaders, setHasReaders] = useState(false);
+  const [contentsPayment, setContentsPayment] = useState<Payment | null>(null);
 
   useEffect(() => {
     apiRequest({
@@ -501,7 +505,7 @@ export default function PendingPayments({
     const CANCELED = Number(import.meta.env.VITE_ORDER_STATE_CANCELED);
 
     if (id === SUSPENDED) return <Badge bg="warning">Sospeso</Badge>;
-    if (id === SEND) return <Badge bg="info">Inviato</Badge>;
+    if (id === SEND) return <Badge bg="info">Non pagato</Badge>;
     if (id === SUCCESS) return <Badge bg="success">Pagato</Badge>;
     if (id === FAILED) return <Badge bg="danger">Fallito</Badge>;
     if (id === COMPLETED) return <Badge bg="success">Completato</Badge>;
@@ -730,7 +734,14 @@ export default function PendingPayments({
                     {(currentPage - 1) * pageSize + index + 1}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {payment.idOrdine}
+                    <div>
+                      <span>{payment.idOrdine}</span>
+                      {payment.parentOrderId && (
+                        <span className="block text-xs text-gray-400">
+                          ← da #{payment.parentOrderId}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                     {payment.dateReg
@@ -755,32 +766,53 @@ export default function PendingPayments({
                       ? new Date(payment.paymentDate).toLocaleString("it-IT")
                       : "—"}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-center">
-                    <button
-                      type="button"
-                      onClick={() => setConfirmPayment(payment)}
-                      disabled={markingPaid === payment.idOrdine}
-                      title="Segna come pagato"
-                      style={{
-                        visibility:
-                          payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_PAYMENT_SUCCESS) ||
-                          payment.state?.id === Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
-                            ? "hidden"
-                            : "visible",
-                      }}
-                      className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
-                                 hover:bg-green-600 hover:text-white transition-colors
-                                 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {markingPaid === payment.idOrdine ? (
-                        <Spinner size="sm" />
-                      ) : (
-                        <>
-                          <CheckCircle size={14} className="inline mr-1" />
-                          Gestisci
-                        </>
-                      )}
-                    </button>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {payment.payment?.id !== 1 && (
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          type="button"
+                          onClick={() => setContentsPayment(payment)}
+                          title="Gestisci contenuti"
+                          className="px-3 py-1.5 text-sm border border-purple-600 text-purple-600 rounded-md
+                                   hover:bg-purple-600 hover:text-white transition-colors"
+                        >
+                          <Package size={14} className="inline mr-1" />
+                          Contenuti
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmPayment(payment)}
+                          disabled={markingPaid === payment.idOrdine}
+                          title="Segna come pagato"
+                          style={{
+                            visibility:
+                              payment.state?.id ===
+                                Number(
+                                  import.meta.env
+                                    .VITE_ORDER_STATE_PAYMENT_SUCCESS,
+                                ) ||
+                              payment.state?.id ===
+                                Number(
+                                  import.meta.env.VITE_ORDER_STATE_COMPLETED,
+                                )
+                                ? "hidden"
+                                : "visible",
+                          }}
+                          className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
+                                   hover:bg-green-600 hover:text-white transition-colors
+                                   disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {markingPaid === payment.idOrdine ? (
+                            <Spinner size="sm" />
+                          ) : (
+                            <>
+                              <CheckCircle size={14} className="inline mr-1" />
+                              Gestisci
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -840,6 +872,30 @@ export default function PendingPayments({
         onRetry={handlePOSRetry}
         onCancel={handlePOSCancel}
         onDismissError={() => setPosError(null)}
+      />
+
+      <OrderContentsModal
+        payment={contentsPayment}
+        eventId={eventId}
+        onHide={() => setContentsPayment(null)}
+        onSaved={() => {
+          setContentsPayment(null);
+          handleRefresh();
+        }}
+        onSavedAndPay={(deltaPayment) => {
+          setContentsPayment(null);
+          handleRefresh();
+          setDiscountPercent(0);
+          setConfirmPayment(
+            contentsPayment
+              ? {
+                  ...contentsPayment,
+                  idOrdine: deltaPayment.idOrdine,
+                  amount: deltaPayment.amount,
+                }
+              : null,
+          );
+        }}
       />
     </div>
   );

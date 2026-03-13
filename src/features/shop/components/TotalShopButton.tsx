@@ -19,7 +19,14 @@ export default function TotalShopButton({
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cart);
   const totalPrice = useAppSelector((state) => state.cart.totalPrice);
-  const totalItems = useAppSelector((state) => state.cart.items.length);
+  const purchasedKeys = new Set(
+    cart.products.filter((p) => p.purchased).map((p) => p.keyOriginal),
+  );
+  const purchasableItemsCount = cart.items.filter(
+    (i) => !purchasedKeys.has(i.keyOriginal),
+  ).length;
+  const allPurchased =
+    cart.products.length > 0 && cart.products.every((p) => p.purchased);
   const usedPriceItems = useAppSelector((state) => state.cart.usedPriceItems);
   const eventPreset = useAppSelector((state) => state.competition);
   const { t } = useTranslations();
@@ -28,7 +35,8 @@ export default function TotalShopButton({
   const [isLoading, setIsLoading] = useState(false);
 
   function buildOrderItems(): (CartItem | CartProduct)[] {
-    if (usedPriceItems.length === 0) return cart.items;
+    if (usedPriceItems.length === 0)
+      return cart.items.filter((i) => !purchasedKeys.has(i.keyOriginal));
 
     const items: (CartItem | CartProduct)[] = [];
     let photosHandled = false,
@@ -144,10 +152,14 @@ export default function TotalShopButton({
   return (
     <button
       className="my-button w-3/4 fixed bottom-10 left-1/2 -translate-x-1/2 container z-50"
-      disabled={isLoading}
-      onClick={totalItems === 0 ? (onButtonClick ?? undefined) : handleCheckout}
+      disabled={isLoading || allPurchased}
+      onClick={
+        purchasableItemsCount === 0
+          ? (onButtonClick ?? undefined)
+          : handleCheckout
+      }
     >
-      {totalItems === 0 ? (
+      {purchasableItemsCount === 0 ? (
         <>{t("CHECKOUT_SELECT")}</>
       ) : (
         `${t("CHECKOUT_TOTAL")}: ${eventPreset.currency === "EUR" ? `${totalPrice.toFixed(2)} ${eventPreset.currencySymbol}` : `${eventPreset.currencySymbol} ${totalPrice.toFixed(2)}`}`
