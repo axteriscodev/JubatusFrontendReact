@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { setAuthToken, setLevel } from "@common/utils/auth";
+import { setAuthToken, setLevel, setRole } from "@common/utils/auth";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import { ROUTES } from "@/routes";
 
@@ -28,6 +28,7 @@ export default function PinVerification() {
         const json = await response.json();
         setAuthToken(json.data.jwt);
         setLevel(json.data.levelId);
+        setRole(json.data.role);
         navigate(ROUTES.HOME);
       } else {
         if (response.status === 401) {
