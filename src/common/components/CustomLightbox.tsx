@@ -119,7 +119,11 @@ export default function CustomLightbox({
   const currentImage: Partial<NormalizedContent> =
     normalizedSlides[index] ?? normalizedSlides[0] ?? {};
 
-  const isSelected = photoItems?.some((el) => el.key === currentImage.key);
+  const isSelected = photoItems?.some(
+    (el) =>
+      el.key === currentImage.key ||
+      (el as unknown as { keyOriginal?: string }).keyOriginal === currentImage.key,
+  );
 
   const handleFavouriteClick = async () => {
     const rq = { contentId: currentImage.id };

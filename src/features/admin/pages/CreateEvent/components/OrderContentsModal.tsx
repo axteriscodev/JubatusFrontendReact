@@ -937,7 +937,7 @@ export default function OrderContentsModal({
           actions={false}
           addToCart={true}
           onClose={() => setLightboxOpen(false)}
-          onImageClick={handleToggleItem}
+          onImageClick={(key) => { handleToggleItem(key); setLightboxOpen(false); }}
           photoItems={photoItemsForGallery as never}
           shopMode={false}
         />
