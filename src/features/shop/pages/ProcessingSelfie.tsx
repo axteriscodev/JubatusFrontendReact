@@ -87,7 +87,7 @@ export default function ProcessingSelfie() {
             import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
             (data) => {
               const jsonData = JSON.parse(data);
-              dispatch(cartActions.updateProducts(jsonData.contents));
+dispatch(cartActions.updateProducts(jsonData.contents));
               dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
               dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
               dispatch(cartActions.updateUserId(jsonData.userId));
