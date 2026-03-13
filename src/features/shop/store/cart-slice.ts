@@ -50,7 +50,10 @@ const cartSlice = createSlice({
       state.searchId = action.payload;
     },
     updateProducts(state, action: PayloadAction<CartProduct[]>) {
-      state.products = [...action.payload];
+      state.products = action.payload.map((p) => {
+        const raw = p as CartProduct & { isPurchased?: boolean };
+        return { ...p, purchased: p.purchased ?? raw.isPurchased };
+      });
     },
     updatePriceList(state, action: PayloadAction<PriceItem[]>) {
       state.prices = [...action.payload];
@@ -72,7 +75,7 @@ const cartSlice = createSlice({
       const product = state.products.find(
         (item) => item.keyOriginal === action.payload,
       );
-      if (!product) return;
+      if (!product || product.purchased) return;
 
       state.totalQuantity++;
       state.items.push({

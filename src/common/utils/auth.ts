@@ -1,5 +1,16 @@
 import { jwtDecode } from "jwt-decode";
 
+export interface UserRole {
+  id: number;
+  level: string;
+  canViewOriginalContent: boolean;
+  canViewExternalPayments: boolean;
+  canManageExternalPayments: boolean;
+  canManagePayments: boolean;
+  canManageEvents: boolean;
+  canManageAllEvents: boolean;
+}
+
 export function getAuthToken(): string | null {
   return localStorage.getItem("jwt");
 }
@@ -27,9 +38,24 @@ export function isAdmin(): boolean {
   return isValid(token) && level !== null && parseInt(level, 10) !== 3;
 }
 
+export function setRole(role: UserRole): void {
+  localStorage.setItem("role", JSON.stringify(role));
+}
+
+export function getRole(): UserRole | null {
+  const raw = localStorage.getItem("role");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as UserRole;
+  } catch {
+    return null;
+  }
+}
+
 export function logOut(): void {
   localStorage.removeItem("jwt");
   localStorage.removeItem("level");
+  localStorage.removeItem("role");
 }
 
 export function isOrganizationAdmin(): boolean {
@@ -37,7 +63,9 @@ export function isOrganizationAdmin(): boolean {
   if (!token) return false;
 
   try {
-    const decoded = jwtDecode<{ user: { organizations: { organizationAdmin: boolean }[] } }>(token);
+    const decoded = jwtDecode<{
+      user: { organizations: { organizationAdmin: boolean }[] };
+    }>(token);
     return decoded.user.organizations[0]?.organizationAdmin === true;
   } catch {
     return false;
