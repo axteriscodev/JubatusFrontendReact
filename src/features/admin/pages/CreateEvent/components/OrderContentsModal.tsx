@@ -497,8 +497,8 @@ export default function OrderContentsModal({
               allContents.filter((c) => c.fileTypeId === 3).every((c) => selectedKeys.has(c.keyOriginal)),
           };
 
-      // For unpaid orders, selectedKeys already includes all items of flagged types
-      // (auto-selected by useEffect). For paid orders the useEffect doesn't run,
+      // For paid orders, selectedKeys may not include all items of flagged types
+      // (flags come from the original order, not from user interaction),
       // so we expand manually here.
       const effectiveKeys = new Set(selectedKeys);
       if (isPaid) {
