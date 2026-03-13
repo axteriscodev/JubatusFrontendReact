@@ -80,7 +80,6 @@ export default function OrderContentsModal({
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prevPriceFlags = useRef({ allPhotos: false, allVideos: false, allClips: false });
 
   useEffect(() => {
     if (!payment) {
@@ -375,45 +374,35 @@ export default function OrderContentsModal({
   const hasAllFlags =
     orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
 
-  // When priceResult triggers an "all" flag for a content type, auto-select all items
-  // of that type to give visual feedback. Only expands on false→true transition so
-  // that manual deselection by the admin is never overridden.
-  useEffect(() => {
-    if (!priceResult || isPaid) {
-      prevPriceFlags.current = { allPhotos: false, allVideos: false, allClips: false };
-      return;
-    }
+  // Items not yet selected that would be covered by the current "-1" package.
+  // Shown in a banner so the admin can opt in explicitly.
+  const pendingAutoSelects = useMemo(() => {
+    if (!priceResult || isPaid) return null;
+    const photos = priceResult.allPhotos
+      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal)).length
+      : 0;
+    const videos = priceResult.allVideos
+      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal)).length
+      : 0;
+    const clips = priceResult.allClips
+      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal)).length
+      : 0;
+    const total = photos + videos + clips;
+    return total > 0 ? { total, photos, videos, clips } : null;
+  }, [priceResult, allContents, selectedKeys, isPaid]);
 
-    const prev = prevPriceFlags.current;
-    prevPriceFlags.current = {
-      allPhotos: priceResult.allPhotos,
-      allVideos: priceResult.allVideos,
-      allClips: priceResult.allClips,
-    };
-
-    setSelectedKeys((prevKeys) => {
-      const next = new Set(prevKeys);
-      let changed = false;
-
-      if (priceResult.allPhotos && !prev.allPhotos) {
-        allContents.filter((c) => c.fileTypeId === 1).forEach((c) => {
-          if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
-        });
-      }
-      if (priceResult.allVideos && !prev.allVideos) {
-        allContents.filter((c) => c.fileTypeId === 2).forEach((c) => {
-          if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
-        });
-      }
-      if (priceResult.allClips && !prev.allClips) {
-        allContents.filter((c) => c.fileTypeId === 3).forEach((c) => {
-          if (!next.has(c.keyOriginal)) { next.add(c.keyOriginal); changed = true; }
-        });
-      }
-
-      return changed ? next : prevKeys;
+  const handleAddPendingAutoSelects = () => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (priceResult?.allPhotos)
+        allContents.filter((c) => c.fileTypeId === 1).forEach((c) => next.add(c.keyOriginal));
+      if (priceResult?.allVideos)
+        allContents.filter((c) => c.fileTypeId === 2).forEach((c) => next.add(c.keyOriginal));
+      if (priceResult?.allClips)
+        allContents.filter((c) => c.fileTypeId === 3).forEach((c) => next.add(c.keyOriginal));
+      return next;
     });
-  }, [priceResult, allContents, isPaid]);
+  };
 
   const addedKeys = useMemo(() => {
     const added = new Set<string>();
@@ -725,6 +714,32 @@ export default function OrderContentsModal({
               <div className="px-6 pt-3">
                 <Alert variant="danger" onDismiss={() => setSaveError(null)}>
                   {saveError}
+                </Alert>
+              </div>
+            )}
+
+            {pendingAutoSelects && (
+              <div className="px-6 pt-3">
+                <Alert variant="info">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      Il pacchetto selezionato include{" "}
+                      {pendingAutoSelects.photos > 0 && "tutte le foto"}
+                      {pendingAutoSelects.videos > 0 &&
+                        `${pendingAutoSelects.photos > 0 ? " e " : ""}tutti i video`}
+                      {pendingAutoSelects.clips > 0 &&
+                        `${pendingAutoSelects.photos + pendingAutoSelects.videos > 0 ? " e " : ""}tutte le clip`}
+                      {" "}—{" "}
+                      <strong>+{pendingAutoSelects.total} non ancora selezionati</strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleAddPendingAutoSelects}
+                      className="shrink-0 px-3 py-1 text-xs font-medium bg-blue-100 border border-blue-400 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
+                    >
+                      Aggiungi tutti
+                    </button>
+                  </div>
                 </Alert>
               </div>
             )}
