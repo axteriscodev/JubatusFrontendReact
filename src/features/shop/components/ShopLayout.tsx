@@ -9,7 +9,7 @@ export default function ShopLayout() {
     <>
       {showOriginalContentBanner && (
         <div className="sticky top-0 z-50 bg-yellow-400 py-1 text-center text-sm font-semibold text-yellow-900">
-          SHOW ORIGINAL CONTENT
+          NAVIGAZIONE TOTEM
         </div>
       )}
       <div className="my-10 px-4 md:px-0">
