@@ -87,6 +87,7 @@ export default function ProcessingSelfie() {
             import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
             (data) => {
               const jsonData = JSON.parse(data);
+              console.log("SSE contents order:", jsonData.contents?.map((c: { fileTypeId: number; keyOriginal: string }) => ({ fileTypeId: c.fileTypeId, key: c.keyOriginal })));
               dispatch(cartActions.updateProducts(jsonData.contents));
               dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
               dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));

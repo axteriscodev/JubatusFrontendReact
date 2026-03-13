@@ -24,6 +24,7 @@ interface OrderState {
 }
 
 interface PaymentMethod {
+  id?: number;
   payment: string;
 }
 
@@ -504,7 +505,7 @@ export default function PendingPayments({
     const CANCELED = Number(import.meta.env.VITE_ORDER_STATE_CANCELED);
 
     if (id === SUSPENDED) return <Badge bg="warning">Sospeso</Badge>;
-    if (id === SEND) return <Badge bg="info">Inviato</Badge>;
+    if (id === SEND) return <Badge bg="info">Non pagato</Badge>;
     if (id === SUCCESS) return <Badge bg="success">Pagato</Badge>;
     if (id === FAILED) return <Badge bg="danger">Fallito</Badge>;
     if (id === COMPLETED) return <Badge bg="success">Completato</Badge>;
@@ -766,48 +767,52 @@ export default function PendingPayments({
                       : "—"}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        type="button"
-                        onClick={() => setContentsPayment(payment)}
-                        title="Gestisci contenuti"
-                        className="px-3 py-1.5 text-sm border border-purple-600 text-purple-600 rounded-md
+                    {payment.payment?.id !== 1 && (
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          type="button"
+                          onClick={() => setContentsPayment(payment)}
+                          title="Gestisci contenuti"
+                          className="px-3 py-1.5 text-sm border border-purple-600 text-purple-600 rounded-md
                                    hover:bg-purple-600 hover:text-white transition-colors"
-                      >
-                        <Package size={14} className="inline mr-1" />
-                        Contenuti
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmPayment(payment)}
-                        disabled={markingPaid === payment.idOrdine}
-                        title="Segna come pagato"
-                        style={{
-                          visibility:
-                            payment.state?.id ===
-                              Number(
-                                import.meta.env
-                                  .VITE_ORDER_STATE_PAYMENT_SUCCESS,
-                              ) ||
-                            payment.state?.id ===
-                              Number(import.meta.env.VITE_ORDER_STATE_COMPLETED)
-                              ? "hidden"
-                              : "visible",
-                        }}
-                        className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
+                        >
+                          <Package size={14} className="inline mr-1" />
+                          Contenuti
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmPayment(payment)}
+                          disabled={markingPaid === payment.idOrdine}
+                          title="Segna come pagato"
+                          style={{
+                            visibility:
+                              payment.state?.id ===
+                                Number(
+                                  import.meta.env
+                                    .VITE_ORDER_STATE_PAYMENT_SUCCESS,
+                                ) ||
+                              payment.state?.id ===
+                                Number(
+                                  import.meta.env.VITE_ORDER_STATE_COMPLETED,
+                                )
+                                ? "hidden"
+                                : "visible",
+                          }}
+                          className="px-3 py-1.5 text-sm border border-green-600 text-green-600 rounded-md
                                    hover:bg-green-600 hover:text-white transition-colors
                                    disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {markingPaid === payment.idOrdine ? (
-                          <Spinner size="sm" />
-                        ) : (
-                          <>
-                            <CheckCircle size={14} className="inline mr-1" />
-                            Gestisci
-                          </>
-                        )}
-                      </button>
-                    </div>
+                        >
+                          {markingPaid === payment.idOrdine ? (
+                            <Spinner size="sm" />
+                          ) : (
+                            <>
+                              <CheckCircle size={14} className="inline mr-1" />
+                              Gestisci
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -374,6 +374,36 @@ export default function OrderContentsModal({
   const hasAllFlags =
     orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
 
+  // Items not yet selected that would be covered by the current "-1" package.
+  // Shown in a banner so the admin can opt in explicitly.
+  const pendingAutoSelects = useMemo(() => {
+    if (!priceResult || isPaid) return null;
+    const photos = priceResult.allPhotos
+      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal)).length
+      : 0;
+    const videos = priceResult.allVideos
+      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal)).length
+      : 0;
+    const clips = priceResult.allClips
+      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal)).length
+      : 0;
+    const total = photos + videos + clips;
+    return total > 0 ? { total, photos, videos, clips } : null;
+  }, [priceResult, allContents, selectedKeys, isPaid]);
+
+  const handleAddPendingAutoSelects = () => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (priceResult?.allPhotos)
+        allContents.filter((c) => c.fileTypeId === 1).forEach((c) => next.add(c.keyOriginal));
+      if (priceResult?.allVideos)
+        allContents.filter((c) => c.fileTypeId === 2).forEach((c) => next.add(c.keyOriginal));
+      if (priceResult?.allClips)
+        allContents.filter((c) => c.fileTypeId === 3).forEach((c) => next.add(c.keyOriginal));
+      return next;
+    });
+  };
+
   const addedKeys = useMemo(() => {
     const added = new Set<string>();
     for (const key of selectedKeys) {
@@ -456,26 +486,28 @@ export default function OrderContentsModal({
       const flags = isPaid
         ? orderFlags
         : {
-            allPhotos: priceResult?.allPhotos ?? false,
-            allVideos: priceResult?.allVideos ?? false,
-            allClips: priceResult?.allClips ?? false,
+            allPhotos:
+              (priceResult?.allPhotos ?? false) &&
+              allContents.filter((c) => c.fileTypeId === 1).every((c) => selectedKeys.has(c.keyOriginal)),
+            allVideos:
+              (priceResult?.allVideos ?? false) &&
+              allContents.filter((c) => c.fileTypeId === 2).every((c) => selectedKeys.has(c.keyOriginal)),
+            allClips:
+              (priceResult?.allClips ?? false) &&
+              allContents.filter((c) => c.fileTypeId === 3).every((c) => selectedKeys.has(c.keyOriginal)),
           };
 
+      // For paid orders, selectedKeys may not include all items of flagged types
+      // (flags come from the original order, not from user interaction),
+      // so we expand manually here.
       const effectiveKeys = new Set(selectedKeys);
-      if (flags.allPhotos) {
-        allContents
-          .filter((c) => c.fileTypeId === 1)
-          .forEach((c) => effectiveKeys.add(c.keyOriginal));
-      }
-      if (flags.allVideos) {
-        allContents
-          .filter((c) => c.fileTypeId === 2)
-          .forEach((c) => effectiveKeys.add(c.keyOriginal));
-      }
-      if (flags.allClips) {
-        allContents
-          .filter((c) => c.fileTypeId === 3)
-          .forEach((c) => effectiveKeys.add(c.keyOriginal));
+      if (isPaid) {
+        if (flags.allPhotos)
+          allContents.filter((c) => c.fileTypeId === 1).forEach((c) => effectiveKeys.add(c.keyOriginal));
+        if (flags.allVideos)
+          allContents.filter((c) => c.fileTypeId === 2).forEach((c) => effectiveKeys.add(c.keyOriginal));
+        if (flags.allClips)
+          allContents.filter((c) => c.fileTypeId === 3).forEach((c) => effectiveKeys.add(c.keyOriginal));
       }
 
       const newAmount = isPaid
@@ -682,6 +714,32 @@ export default function OrderContentsModal({
               <div className="px-6 pt-3">
                 <Alert variant="danger" onDismiss={() => setSaveError(null)}>
                   {saveError}
+                </Alert>
+              </div>
+            )}
+
+            {pendingAutoSelects && (
+              <div className="px-6 pt-3">
+                <Alert variant="info">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      Il pacchetto selezionato include{" "}
+                      {pendingAutoSelects.photos > 0 && "tutte le foto"}
+                      {pendingAutoSelects.videos > 0 &&
+                        `${pendingAutoSelects.photos > 0 ? " e " : ""}tutti i video`}
+                      {pendingAutoSelects.clips > 0 &&
+                        `${pendingAutoSelects.photos + pendingAutoSelects.videos > 0 ? " e " : ""}tutte le clip`}
+                      {" "}—{" "}
+                      <strong>+{pendingAutoSelects.total} non ancora selezionati</strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleAddPendingAutoSelects}
+                      className="shrink-0 px-3 py-1 text-xs font-medium bg-blue-100 border border-blue-400 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
+                    >
+                      Aggiungi tutti
+                    </button>
+                  </div>
                 </Alert>
               </div>
             )}
