@@ -148,6 +148,8 @@ const cartSlice = createSlice({
       state.allPhotos = false;
       state.allClips = false;
       state.video = false;
+      state.hasPhoto = false;
+      state.hasVideo = false;
       state.hasClip = false;
       state.selectedPreorder = null;
     },
