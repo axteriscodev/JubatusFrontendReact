@@ -156,6 +156,9 @@ export default function ImageShop() {
             <p>{numClips > 0 ? t("CART_CLIPS") : t("RESULT_CLIPS")}</p>
           )}
 
+          {/* Nessun contenuto */}
+          {!hasPhoto && !hasVideo && !hasClip && <p>{t("WAITING_NOTHING")}</p>}
+
           {/* Combinazioni Miste */}
           {hasPhoto && hasVideo && (
             <>
