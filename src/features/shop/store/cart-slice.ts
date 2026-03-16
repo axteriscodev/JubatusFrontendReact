@@ -272,7 +272,9 @@ const performRecalculate = (state: CartState): void => {
   state.video = state.hasVideo;
 
   state.alertPack =
-    totalPrice + photoPrice >= photoPackPrice && totalPrice < photoPackPrice;
+    !state.previousAllPhotosPurchase &&
+    totalPrice + photoPrice >= photoPackPrice &&
+    totalPrice < photoPackPrice;
 
   if (state.hasVideo) {
     state.allPhotos = totalPrice >= completePackPrice && completePackPrice > 0;
