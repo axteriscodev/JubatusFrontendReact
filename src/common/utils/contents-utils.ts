@@ -108,14 +108,23 @@ export const NormalizeContent = (
   item: RawContentItem,
   isPersonalArea = false,
 ): NormalizedContent => {
-  const isVideo =
-    item.fileTypeId === FileType.VIDEO || item.fileTypeId === FileType.CLIP;
-
+  const isReel = item.fileTypeId === FileType.VIDEO;
+  const isClip = item.fileTypeId === FileType.CLIP;
   let src: string | undefined;
   let srcThumbnail: string | undefined;
   let srcTiny: string | undefined;
 
-  if (isVideo) {
+  if (isReel) {
+    src = item.urlOriginal || item.urlPreview;
+    srcThumbnail =
+      (isPersonalArea ? item.urlThumbnail : item.urlCover) ||
+      item.urlCover ||
+      "/images/play-icon.webp";
+    srcTiny =
+      (isPersonalArea ? item.urlThumbnail : item.urlCover) ||
+      item.urlCover ||
+      "/images/play-icon.webp";
+  } else if (isClip) {
     src = item.urlOriginal || item.urlPreview;
     srcThumbnail =
       (isPersonalArea ? item.urlThumbnail : item.urlCover) ||
@@ -142,7 +151,7 @@ export const NormalizeContent = (
     srcTiny,
     key: item.keyOriginal,
     favorite: item.favorite ?? false,
-    isVideo,
+    isVideo: isReel,
     isPurchased: item.isPurchased,
     urlOriginal: item.urlOriginal,
     fileTypeId: item.fileTypeId,

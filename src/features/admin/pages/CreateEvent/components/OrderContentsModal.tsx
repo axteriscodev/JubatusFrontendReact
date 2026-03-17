@@ -23,6 +23,8 @@ interface Payment {
   amount: number;
   currency?: { currency: string; symbol: string } | string;
   state?: { id: number; value: string };
+  parentOrderId?: number | null;
+  parentOrderAmount?: number | null;
 }
 
 export interface OrderContentsModalProps {
@@ -77,6 +79,7 @@ export default function OrderContentsModal({
   const [newContentKeys, setNewContentKeys] = useState<Set<string>>(new Set());
   const [retryCount, setRetryCount] = useState(0);
   const [showPriceList, setShowPriceList] = useState(false);
+  const [parentOrderAmount, setParentOrderAmount] = useState<number>(0);
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -97,6 +100,7 @@ export default function OrderContentsModal({
       setPricePackages([]);
       setSaveError(null);
       setOrderFlags({ allPhotos: false, allVideos: false, allClips: false });
+      setParentOrderAmount(0);
       setRetryCount(0);
       return;
     }
@@ -140,6 +144,8 @@ export default function OrderContentsModal({
             allPhotos?: number;
             allVideos?: number;
             allClips?: number;
+            parentOrderId?: number | null;
+            parentOrderAmount?: number;
           };
         };
 
@@ -156,7 +162,10 @@ export default function OrderContentsModal({
           allPhotos: orderAllPhotos = false,
           allVideos: orderAllVideos = false,
           allClips: orderAllClips = false,
+          parentOrderAmount: fetchedParentOrderAmount = 0,
         } = searchInfoData.data ?? {};
+
+        if (!cancelled) setParentOrderAmount(fetchedParentOrderAmount);
 
         if (!cancelled) {
           setOrderFlags({
@@ -414,9 +423,10 @@ export default function OrderContentsModal({
 
   const deltaPrice = useMemo(() => {
     if (!priceResult || !payment) return null;
-    const delta = priceResult.price - payment.amount;
+    const alreadyPaid = parentOrderAmount + payment.amount;
+    const delta = priceResult.price - alreadyPaid;
     return delta > 0 ? delta : null;
-  }, [priceResult, payment]);
+  }, [priceResult, payment, parentOrderAmount]);
 
   const newContentCounts = useMemo(() => {
     if (!newContentKeys.size) return null;
