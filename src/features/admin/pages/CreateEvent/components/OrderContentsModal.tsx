@@ -17,14 +17,17 @@ interface PriceItemWithLabel extends PriceItem {
   itemsLanguages?: Array<{ title?: string; subTitle?: string }>;
 }
 
+interface ParentChainEntry {
+  orderId: number;
+  amount: number;
+}
+
 interface Payment {
   idOrdine: number;
   email?: string;
   amount: number;
   currency?: { currency: string; symbol: string } | string;
   state?: { id: number; value: string };
-  parentOrderId?: number | null;
-  parentOrderAmount?: number | null;
 }
 
 export interface OrderContentsModalProps {
@@ -79,7 +82,8 @@ export default function OrderContentsModal({
   const [newContentKeys, setNewContentKeys] = useState<Set<string>>(new Set());
   const [retryCount, setRetryCount] = useState(0);
   const [showPriceList, setShowPriceList] = useState(false);
-  const [parentOrderAmount, setParentOrderAmount] = useState<number>(0);
+  const [parentChain, setParentChain] = useState<ParentChainEntry[]>([]);
+  const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -100,7 +104,8 @@ export default function OrderContentsModal({
       setPricePackages([]);
       setSaveError(null);
       setOrderFlags({ allPhotos: false, allVideos: false, allClips: false });
-      setParentOrderAmount(0);
+      setParentChain([]);
+      setShowPriceBreakdown(false);
       setRetryCount(0);
       return;
     }
@@ -144,8 +149,7 @@ export default function OrderContentsModal({
             allPhotos?: number;
             allVideos?: number;
             allClips?: number;
-            parentOrderId?: number | null;
-            parentOrderAmount?: number;
+            parentChain?: ParentChainEntry[];
           };
         };
 
@@ -162,10 +166,10 @@ export default function OrderContentsModal({
           allPhotos: orderAllPhotos = false,
           allVideos: orderAllVideos = false,
           allClips: orderAllClips = false,
-          parentOrderAmount: fetchedParentOrderAmount = 0,
+          parentChain: fetchedParentChain = [],
         } = searchInfoData.data ?? {};
 
-        if (!cancelled) setParentOrderAmount(fetchedParentOrderAmount);
+        if (!cancelled) setParentChain(fetchedParentChain);
 
         if (!cancelled) {
           setOrderFlags({
@@ -421,7 +425,12 @@ export default function OrderContentsModal({
     return added;
   }, [selectedKeys, originalKeys]);
 
-  // Prezzo netto da addebitare per questo ordine: sottraiamo quanto già pagato nel padre.
+  const parentOrderAmount = useMemo(
+    () => parentChain.reduce((sum, o) => sum + o.amount, 0),
+    [parentChain],
+  );
+
+  // Prezzo netto da addebitare per questo ordine: sottraiamo quanto già pagato nella chain.
   // Per ordini standalone parentOrderAmount = 0, quindi il comportamento è invariato.
   const priceAfterParentDiscount = useMemo(() => {
     if (!priceResult) return null;
@@ -843,35 +852,76 @@ export default function OrderContentsModal({
               <>
                 {isPaid && !hasAllFlags ? (
                   addedKeys.size > 0 && deltaPrice ? (
-                    <span>
-                      Importo aggiuntivo:{" "}
-                      <strong>
-                        {currencySymbol}
-                        {deltaPrice.toFixed(2)}
-                      </strong>
-                      <span className="text-gray-400 ml-1">
-                        (+{addedKeys.size} contenuti)
+                    // Ordine pagato con nuovi contenuti → risultato + breakdown opzionale
+                    <div className="flex flex-col gap-0.5">
+                      <span className="flex items-center gap-1">
+                        Nuovo ordine:{" "}
+                        <strong>{currencySymbol}{deltaPrice.toFixed(2)}</strong>
+                        <span className="text-gray-400 font-normal">
+                          (+{addedKeys.size} contenuti)
+                        </span>
+                        {(parentChain.length > 0 || isPaid) && priceResult && (
+                          <button
+                            type="button"
+                            onClick={() => setShowPriceBreakdown((v) => !v)}
+                            className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+                            title="Mostra dettaglio calcolo"
+                          >
+                            {showPriceBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                          </button>
+                        )}
                       </span>
-                    </span>
+                      {showPriceBreakdown && priceResult && (
+                        <div className="mt-1 flex flex-col gap-0.5 text-xs text-gray-500 border-l-2 border-gray-200 pl-2">
+                          <span>Totale contenuti: {currencySymbol}{priceResult.price.toFixed(2)}</span>
+                          {parentChain.map((entry) => (
+                            <span key={entry.orderId}>
+                              − Ordine #{entry.orderId}: {currencySymbol}{entry.amount.toFixed(2)}
+                            </span>
+                          ))}
+                          <span>− Questo ordine: {currencySymbol}{payment!.amount.toFixed(2)}</span>
+                          <span className="border-t border-gray-200 pt-0.5 mt-0.5 font-medium text-gray-600">
+                            = {currencySymbol}{deltaPrice.toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <span className="text-gray-400">
                       Seleziona nuovi contenuti per creare un ordine aggiuntivo
                     </span>
                   )
                 ) : priceAfterParentDiscount !== null ? (
-                  <>
-                    Importo stimato:{" "}
-                    <strong>
-                      {currencySymbol}
-                      {priceAfterParentDiscount.toFixed(2)}
-                    </strong>
-                    {payment && priceAfterParentDiscount !== payment.amount && (
-                      <span className="text-xs text-gray-400 ml-2">
-                        (originale: {currencySymbol}
-                        {payment.amount.toFixed(2)})
-                      </span>
+                  // Ordine non pagato (o con flag −1)
+                  <div className="flex flex-col gap-0.5">
+                    <span className="flex items-center gap-1">
+                      Importo stimato:{" "}
+                      <strong>{currencySymbol}{priceAfterParentDiscount.toFixed(2)}</strong>
+                      {parentChain.length > 0 && priceResult && (
+                        <button
+                          type="button"
+                          onClick={() => setShowPriceBreakdown((v) => !v)}
+                          className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          title="Mostra dettaglio calcolo"
+                        >
+                          {showPriceBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
+                      )}
+                    </span>
+                    {showPriceBreakdown && priceResult && (
+                      <div className="mt-1 flex flex-col gap-0.5 text-xs text-gray-500 border-l-2 border-gray-200 pl-2">
+                        <span>Totale contenuti: {currencySymbol}{priceResult.price.toFixed(2)}</span>
+                        {parentChain.map((entry) => (
+                          <span key={entry.orderId}>
+                            − Ordine #{entry.orderId}: {currencySymbol}{entry.amount.toFixed(2)}
+                          </span>
+                        ))}
+                        <span className="border-t border-gray-200 pt-0.5 mt-0.5 font-medium text-gray-600">
+                          = {currencySymbol}{priceAfterParentDiscount.toFixed(2)}
+                        </span>
+                      </div>
                     )}
-                  </>
+                  </div>
                 ) : (
                   <span>{selectedKeys.size} elementi selezionati</span>
                 )}
