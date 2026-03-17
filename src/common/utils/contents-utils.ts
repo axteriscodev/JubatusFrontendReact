@@ -151,7 +151,7 @@ export const NormalizeContent = (
     srcTiny,
     key: item.keyOriginal,
     favorite: item.favorite ?? false,
-    isVideo: isReel,
+    isVideo: isReel || isClip,
     isPurchased: item.isPurchased,
     urlOriginal: item.urlOriginal,
     fileTypeId: item.fileTypeId,
