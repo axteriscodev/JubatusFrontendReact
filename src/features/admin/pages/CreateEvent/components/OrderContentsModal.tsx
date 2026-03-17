@@ -20,6 +20,7 @@ interface PriceItemWithLabel extends PriceItem {
 interface ParentChainEntry {
   orderId: number;
   amount: number;
+  orderItemKeys?: string[];
 }
 
 interface Payment {
@@ -425,23 +426,56 @@ export default function OrderContentsModal({
     return added;
   }, [selectedKeys, originalKeys]);
 
-  const parentOrderAmount = useMemo(
-    () => parentChain.reduce((sum, o) => sum + o.amount, 0),
+  const parentItemKeySet = useMemo(
+    () => new Set(parentChain.flatMap((e) => e.orderItemKeys ?? [])),
     [parentChain],
   );
 
-  // Prezzo netto da addebitare per questo ordine: sottraiamo quanto già pagato nella chain.
-  // Per ordini standalone parentOrderAmount = 0, quindi il comportamento è invariato.
+  // Sconto type-aware: per ogni entry del parent applica il suo amount solo se
+  // c'è overlap tra i tipi di contenuto che copriva e i tipi -1 del pacchetto corrente.
   const priceAfterParentDiscount = useMemo(() => {
     if (!priceResult) return null;
-    return Math.max(0, priceResult.price - parentOrderAmount);
-  }, [priceResult, parentOrderAmount]);
+
+    const parentDiscount = parentChain.reduce((total, entry) => {
+      const keys = new Set(entry.orderItemKeys ?? []);
+      const entryItems = allContents.filter((c) => keys.has(c.keyOriginal));
+
+      const parentCoversPhotos = entryItems.some((c) => c.fileTypeId === 1);
+      const parentCoversVideos = entryItems.some((c) => c.fileTypeId === 2);
+      const parentCoversClips  = entryItems.some((c) => c.fileTypeId === 3);
+
+      const overlaps =
+        (parentCoversPhotos && priceResult.allPhotos) ||
+        (parentCoversVideos && priceResult.allVideos) ||
+        (parentCoversClips  && priceResult.allClips);
+
+      return overlaps ? total + entry.amount : total;
+    }, 0);
+
+    if (parentDiscount === 0) return priceResult.price;
+    return Math.max(0, priceResult.price - parentDiscount);
+  }, [priceResult, parentChain, allContents]);
 
   const deltaPrice = useMemo(() => {
     if (!priceAfterParentDiscount || !payment) return null;
     const delta = priceAfterParentDiscount - payment.amount;
     return delta > 0 ? delta : null;
   }, [priceAfterParentDiscount, payment]);
+
+  // Entries del parentChain che contribuiscono effettivamente allo sconto
+  // (overlap tra tipi coperti dal parent e tipi -1 del pacchetto corrente)
+  const activeParentEntries = useMemo(() => {
+    if (!priceResult) return [];
+    return parentChain.filter((entry) => {
+      const keys = new Set(entry.orderItemKeys ?? []);
+      const items = allContents.filter((c) => keys.has(c.keyOriginal));
+      return (
+        (items.some((c) => c.fileTypeId === 1) && priceResult.allPhotos) ||
+        (items.some((c) => c.fileTypeId === 2) && priceResult.allVideos) ||
+        (items.some((c) => c.fileTypeId === 3) && priceResult.allClips)
+      );
+    });
+  }, [priceResult, parentChain, allContents]);
 
   const newContentCounts = useMemo(() => {
     if (!newContentKeys.size) return null;
@@ -841,6 +875,7 @@ export default function OrderContentsModal({
                 isShop={isPaid}
                 dimSelected={false}
                 newItemKeys={newContentKeys}
+                parentItemKeys={parentItemKeySet}
               />
             </div>
           )}
@@ -860,7 +895,7 @@ export default function OrderContentsModal({
                         <span className="text-gray-400 font-normal">
                           (+{addedKeys.size} contenuti)
                         </span>
-                        {(parentChain.length > 0 || isPaid) && priceResult && (
+                        {isPaid && priceResult && (
                           <button
                             type="button"
                             onClick={() => setShowPriceBreakdown((v) => !v)}
@@ -872,17 +907,25 @@ export default function OrderContentsModal({
                         )}
                       </span>
                       {showPriceBreakdown && priceResult && (
-                        <div className="mt-1 flex flex-col gap-0.5 text-xs text-gray-500 border-l-2 border-gray-200 pl-2">
-                          <span>Totale contenuti: {currencySymbol}{priceResult.price.toFixed(2)}</span>
-                          {parentChain.map((entry) => (
-                            <span key={entry.orderId}>
-                              − Ordine #{entry.orderId}: {currencySymbol}{entry.amount.toFixed(2)}
-                            </span>
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-2 text-xs min-w-[230px] space-y-0.5">
+                          <div className="flex justify-between gap-6 text-gray-500">
+                            <span>Totale contenuti</span>
+                            <span className="tabular-nums">{currencySymbol}{priceResult.price.toFixed(2)}</span>
+                          </div>
+                          {activeParentEntries.map((entry) => (
+                            <div key={entry.orderId} className="flex justify-between gap-6 text-gray-500">
+                              <span>− Ordine #{entry.orderId}</span>
+                              <span className="tabular-nums">−{currencySymbol}{entry.amount.toFixed(2)}</span>
+                            </div>
                           ))}
-                          <span>− Questo ordine: {currencySymbol}{payment!.amount.toFixed(2)}</span>
-                          <span className="border-t border-gray-200 pt-0.5 mt-0.5 font-medium text-gray-600">
-                            = {currencySymbol}{deltaPrice.toFixed(2)}
-                          </span>
+                          <div className="flex justify-between gap-6 text-gray-500">
+                            <span>− Ordine #{payment!.idOrdine} (già pagato)</span>
+                            <span className="tabular-nums">−{currencySymbol}{payment!.amount.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between gap-6 border-t border-gray-200 pt-1 mt-1 font-semibold text-gray-700">
+                            <span>Nuovo ordine</span>
+                            <span className="tabular-nums">{currencySymbol}{deltaPrice.toFixed(2)}</span>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -897,7 +940,7 @@ export default function OrderContentsModal({
                     <span className="flex items-center gap-1">
                       Importo stimato:{" "}
                       <strong>{currencySymbol}{priceAfterParentDiscount.toFixed(2)}</strong>
-                      {parentChain.length > 0 && priceResult && (
+                      {activeParentEntries.length > 0 && priceResult && (
                         <button
                           type="button"
                           onClick={() => setShowPriceBreakdown((v) => !v)}
@@ -909,16 +952,21 @@ export default function OrderContentsModal({
                       )}
                     </span>
                     {showPriceBreakdown && priceResult && (
-                      <div className="mt-1 flex flex-col gap-0.5 text-xs text-gray-500 border-l-2 border-gray-200 pl-2">
-                        <span>Totale contenuti: {currencySymbol}{priceResult.price.toFixed(2)}</span>
-                        {parentChain.map((entry) => (
-                          <span key={entry.orderId}>
-                            − Ordine #{entry.orderId}: {currencySymbol}{entry.amount.toFixed(2)}
-                          </span>
+                      <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-2 text-xs min-w-[230px] space-y-0.5">
+                        <div className="flex justify-between gap-6 text-gray-500">
+                          <span>Totale contenuti</span>
+                          <span className="tabular-nums">{currencySymbol}{priceResult.price.toFixed(2)}</span>
+                        </div>
+                        {activeParentEntries.map((entry) => (
+                          <div key={entry.orderId} className="flex justify-between gap-6 text-gray-500">
+                            <span>− Ordine #{entry.orderId}</span>
+                            <span className="tabular-nums">−{currencySymbol}{entry.amount.toFixed(2)}</span>
+                          </div>
                         ))}
-                        <span className="border-t border-gray-200 pt-0.5 mt-0.5 font-medium text-gray-600">
-                          = {currencySymbol}{priceAfterParentDiscount.toFixed(2)}
-                        </span>
+                        <div className="flex justify-between gap-6 border-t border-gray-200 pt-1 mt-1 font-semibold text-gray-700">
+                          <span>Importo stimato</span>
+                          <span className="tabular-nums">{currencySymbol}{priceAfterParentDiscount.toFixed(2)}</span>
+                        </div>
                       </div>
                     )}
                   </div>
