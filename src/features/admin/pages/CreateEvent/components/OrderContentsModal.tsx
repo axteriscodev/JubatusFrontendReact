@@ -421,12 +421,18 @@ export default function OrderContentsModal({
     return added;
   }, [selectedKeys, originalKeys]);
 
+  // Prezzo netto da addebitare per questo ordine: sottraiamo quanto già pagato nel padre.
+  // Per ordini standalone parentOrderAmount = 0, quindi il comportamento è invariato.
+  const priceAfterParentDiscount = useMemo(() => {
+    if (!priceResult) return null;
+    return Math.max(0, priceResult.price - parentOrderAmount);
+  }, [priceResult, parentOrderAmount]);
+
   const deltaPrice = useMemo(() => {
-    if (!priceResult || !payment) return null;
-    const alreadyPaid = parentOrderAmount + payment.amount;
-    const delta = priceResult.price - alreadyPaid;
+    if (!priceAfterParentDiscount || !payment) return null;
+    const delta = priceAfterParentDiscount - payment.amount;
     return delta > 0 ? delta : null;
-  }, [priceResult, payment, parentOrderAmount]);
+  }, [priceAfterParentDiscount, payment]);
 
   const newContentCounts = useMemo(() => {
     if (!newContentKeys.size) return null;
@@ -522,7 +528,7 @@ export default function OrderContentsModal({
 
       const newAmount = isPaid
         ? payment.amount
-        : (priceResult?.price ?? payment.amount);
+        : (priceAfterParentDiscount ?? payment.amount);
 
       const response = await apiRequest({
         api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/items`,
@@ -852,14 +858,14 @@ export default function OrderContentsModal({
                       Seleziona nuovi contenuti per creare un ordine aggiuntivo
                     </span>
                   )
-                ) : priceResult !== null ? (
+                ) : priceAfterParentDiscount !== null ? (
                   <>
                     Importo stimato:{" "}
                     <strong>
                       {currencySymbol}
-                      {priceResult.price.toFixed(2)}
+                      {priceAfterParentDiscount.toFixed(2)}
                     </strong>
-                    {payment && priceResult.price !== payment.amount && (
+                    {payment && priceAfterParentDiscount !== payment.amount && (
                       <span className="text-xs text-gray-400 ml-2">
                         (originale: {currencySymbol}
                         {payment.amount.toFixed(2)})
