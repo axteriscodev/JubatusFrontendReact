@@ -503,12 +503,12 @@ export default function OrderContentsModal({
         id: 0,
         fileTypeId: c.fileTypeId,
         keyOriginal: c.keyOriginal,
-        isPurchased: isPaid && originalKeys.has(c.keyOriginal),
+        isPurchased: (isPaid && originalKeys.has(c.keyOriginal)) || parentItemKeySet.has(c.keyOriginal),
         urlPreview: c.urlPreview ?? c.keyPreview,
         urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
         urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
-    [allContents, isPaid, originalKeys],
+    [allContents, isPaid, originalKeys, parentItemKeySet],
   );
 
   const photoItemsForGallery = useMemo(
