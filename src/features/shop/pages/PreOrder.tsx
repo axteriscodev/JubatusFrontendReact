@@ -1,7 +1,6 @@
 import { useState, useEffect, type CSSProperties, type MouseEvent } from "react";
 import { LoaderCircle, SquareCheckBig } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
-import { useNavigate } from "react-router-dom";
 import Logo from "@common/components/Logo";
 import CustomLightbox from "@common/components/CustomLightbox";
 import { setUiPreset } from "@common/utils/graphics";
@@ -9,12 +8,11 @@ import { Link } from "react-router-dom";
 import styles from "./PreOrder.module.css";
 import { cartActions } from "../store/cart-slice";
 import { useTranslations } from "@common/i18n/TranslationProvider";
-import { useLanguage } from "@common/i18n/LanguageContext";
-import { apiRequest } from "@common/services/api-services";
 import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 import { ROUTES } from "@/routes";
 import type { PreorderPack } from "@/types/cart";
+import { useCreateOrder } from "../hooks/useCreateOrder";
 
 interface PresaleImage {
   url?: string;
@@ -40,13 +38,11 @@ interface PriceListItem {
 
 export default function PreOrder() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const eventPreset = useAppSelector((state) => state.competition);
-  const cart = useAppSelector((state) => state.cart);
   const pricelist = useAppSelector((state) => state.cart.prices);
   const selectedPreorder = useAppSelector((state) => state.cart.selectedPreorder);
   const { t } = useTranslations();
-  const { currentLanguage } = useLanguage();
+  const { createOrder, isLoading } = useCreateOrder();
 
   const [presaleMedia, setPresaleMedia] = useState<PresaleMedia>({});
   const [loadingGallery, setLoadingGallery] = useState(true);
@@ -106,60 +102,10 @@ export default function PreOrder() {
     else dispatch(cartActions.selectPreorder(list as unknown as PreorderPack));
   }
 
-  const [isLoading, setIsLoading] = useState(false);
-
   async function handlePreorderCheckout(event: MouseEvent) {
     event.preventDefault();
-    if (isLoading || !selectedPreorder) return;
-
-    setIsLoading(true);
-    try {
-      const res = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/shop/create-order",
-        method: "POST",
-        body: JSON.stringify({
-          cart: {
-            userId: cart.userId,
-            eventId: cart.eventId,
-            searchId: cart.searchId,
-            allPhotos: cart.allPhotos,
-            allClips: cart.allClips,
-            video: cart.video,
-            amount: cart.totalPrice,
-            items: [],
-            preorder: selectedPreorder,
-          },
-          lang: currentLanguage.acronym,
-        }),
-        needAuth: true,
-      });
-
-      if (!res.ok) throw new Error("Errore durante la creazione della sessione.");
-
-      const result = await res.json();
-      const { orderId, isFree, payments } = result.data;
-
-      dispatch(cartActions.updateOrderId(orderId));
-
-      if (isFree) {
-        navigate(ROUTES.MAIL_CONFIRMATION, { replace: true });
-      } else if (payments?.some((p: { id: number }) => p.id === 2)) {
-        navigate(ROUTES.MAIL_CONFIRMATION, {
-          replace: true,
-          state: { isCash: true, orderId },
-        });
-      } else {
-        navigate(ROUTES.CHECKOUT, {
-          replace: true,
-          state: { paymentId: payments[0].id, orderId },
-        });
-      }
-    } catch (error) {
-      console.error("Errore:", error);
-      navigate(ROUTES.CHECKOUT);
-    } finally {
-      setIsLoading(false);
-    }
+    if (!selectedPreorder) return;
+    await createOrder({ items: [], preorder: selectedPreorder });
   }
 
   const [open, setOpen] = useState(false);

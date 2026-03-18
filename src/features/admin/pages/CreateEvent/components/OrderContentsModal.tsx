@@ -509,7 +509,7 @@ export default function OrderContentsModal({
         keyOriginal: c.keyOriginal,
         isPurchased: (isPaid && originalKeys.has(c.keyOriginal)) || parentItemKeySet.has(c.keyOriginal),
         urlPreview: c.urlPreview ?? c.keyPreview,
-        urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
+        urlThumbnail: c.urlThumbnail,
         urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
     [allContents, isPaid, originalKeys, parentItemKeySet],
