@@ -17,14 +17,18 @@ interface PriceItemWithLabel extends PriceItem {
   itemsLanguages?: Array<{ title?: string; subTitle?: string }>;
 }
 
+interface ParentChainEntry {
+  orderId: number;
+  amount: number;
+  orderItemKeys?: string[];
+}
+
 interface Payment {
   idOrdine: number;
   email?: string;
   amount: number;
   currency?: { currency: string; symbol: string } | string;
   state?: { id: number; value: string };
-  parentOrderId?: number | null;
-  parentOrderAmount?: number | null;
 }
 
 export interface OrderContentsModalProps {
@@ -79,7 +83,8 @@ export default function OrderContentsModal({
   const [newContentKeys, setNewContentKeys] = useState<Set<string>>(new Set());
   const [retryCount, setRetryCount] = useState(0);
   const [showPriceList, setShowPriceList] = useState(false);
-  const [parentOrderAmount, setParentOrderAmount] = useState<number>(0);
+  const [parentChain, setParentChain] = useState<ParentChainEntry[]>([]);
+  const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
 
   const sseCleanupRef = useRef<(() => void) | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -100,7 +105,8 @@ export default function OrderContentsModal({
       setPricePackages([]);
       setSaveError(null);
       setOrderFlags({ allPhotos: false, allVideos: false, allClips: false });
-      setParentOrderAmount(0);
+      setParentChain([]);
+      setShowPriceBreakdown(false);
       setRetryCount(0);
       return;
     }
@@ -144,8 +150,7 @@ export default function OrderContentsModal({
             allPhotos?: number;
             allVideos?: number;
             allClips?: number;
-            parentOrderId?: number | null;
-            parentOrderAmount?: number;
+            parentChain?: ParentChainEntry[];
           };
         };
 
@@ -162,10 +167,10 @@ export default function OrderContentsModal({
           allPhotos: orderAllPhotos = false,
           allVideos: orderAllVideos = false,
           allClips: orderAllClips = false,
-          parentOrderAmount: fetchedParentOrderAmount = 0,
+          parentChain: fetchedParentChain = [],
         } = searchInfoData.data ?? {};
 
-        if (!cancelled) setParentOrderAmount(fetchedParentOrderAmount);
+        if (!cancelled) setParentChain(fetchedParentChain);
 
         if (!cancelled) {
           setOrderFlags({
@@ -230,11 +235,15 @@ export default function OrderContentsModal({
 
               if (!cancelled) {
                 const keys = new Set(orderItemKeys);
+                const parentKeys = new Set(
+                  fetchedParentChain.flatMap((e) => e.orderItemKeys ?? []),
+                );
                 const newKeys = new Set(
                   contents
                     .filter(
                       (c) =>
                         !keys.has(c.keyOriginal) &&
+                        !parentKeys.has(c.keyOriginal) &&
                         ((c.fileTypeId === 1 && orderAllPhotos) ||
                           (c.fileTypeId === 2 && orderAllVideos) ||
                           (c.fileTypeId === 3 && orderAllClips)),
@@ -383,22 +392,27 @@ export default function OrderContentsModal({
   const hasAllFlags =
     orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
 
+  const parentItemKeySet = useMemo(
+    () => new Set(parentChain.flatMap((e) => e.orderItemKeys ?? [])),
+    [parentChain],
+  );
+
   // Items not yet selected that would be covered by the current "-1" package.
   // Shown in a banner so the admin can opt in explicitly.
   const pendingAutoSelects = useMemo(() => {
     if (!priceResult || isPaid) return null;
     const photos = priceResult.allPhotos
-      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal)).length
+      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
       : 0;
     const videos = priceResult.allVideos
-      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal)).length
+      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
       : 0;
     const clips = priceResult.allClips
-      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal)).length
+      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
       : 0;
     const total = photos + videos + clips;
     return total > 0 ? { total, photos, videos, clips } : null;
-  }, [priceResult, allContents, selectedKeys, isPaid]);
+  }, [priceResult, allContents, selectedKeys, isPaid, parentItemKeySet]);
 
   const handleAddPendingAutoSelects = () => {
     setSelectedKeys((prev) => {
@@ -421,12 +435,51 @@ export default function OrderContentsModal({
     return added;
   }, [selectedKeys, originalKeys]);
 
+  // Sconto type-aware: per ogni entry del parent applica il suo amount solo se
+  // c'è overlap tra i tipi di contenuto che copriva e i tipi -1 del pacchetto corrente.
+  const priceAfterParentDiscount = useMemo(() => {
+    if (!priceResult) return null;
+
+    const parentDiscount = parentChain.reduce((total, entry) => {
+      const keys = new Set(entry.orderItemKeys ?? []);
+      const entryItems = allContents.filter((c) => keys.has(c.keyOriginal));
+
+      const parentCoversPhotos = entryItems.some((c) => c.fileTypeId === 1);
+      const parentCoversVideos = entryItems.some((c) => c.fileTypeId === 2);
+      const parentCoversClips  = entryItems.some((c) => c.fileTypeId === 3);
+
+      const overlaps =
+        (parentCoversPhotos && priceResult.allPhotos) ||
+        (parentCoversVideos && priceResult.allVideos) ||
+        (parentCoversClips  && priceResult.allClips);
+
+      return overlaps ? total + entry.amount : total;
+    }, 0);
+
+    if (parentDiscount === 0) return priceResult.price;
+    return Math.max(0, priceResult.price - parentDiscount);
+  }, [priceResult, parentChain, allContents]);
+
   const deltaPrice = useMemo(() => {
-    if (!priceResult || !payment) return null;
-    const alreadyPaid = parentOrderAmount + payment.amount;
-    const delta = priceResult.price - alreadyPaid;
+    if (!priceAfterParentDiscount || !payment) return null;
+    const delta = priceAfterParentDiscount - payment.amount;
     return delta > 0 ? delta : null;
-  }, [priceResult, payment, parentOrderAmount]);
+  }, [priceAfterParentDiscount, payment]);
+
+  // Entries del parentChain che contribuiscono effettivamente allo sconto
+  // (overlap tra tipi coperti dal parent e tipi -1 del pacchetto corrente)
+  const activeParentEntries = useMemo(() => {
+    if (!priceResult) return [];
+    return parentChain.filter((entry) => {
+      const keys = new Set(entry.orderItemKeys ?? []);
+      const items = allContents.filter((c) => keys.has(c.keyOriginal));
+      return (
+        (items.some((c) => c.fileTypeId === 1) && priceResult.allPhotos) ||
+        (items.some((c) => c.fileTypeId === 2) && priceResult.allVideos) ||
+        (items.some((c) => c.fileTypeId === 3) && priceResult.allClips)
+      );
+    });
+  }, [priceResult, parentChain, allContents]);
 
   const newContentCounts = useMemo(() => {
     if (!newContentKeys.size) return null;
@@ -454,12 +507,12 @@ export default function OrderContentsModal({
         id: 0,
         fileTypeId: c.fileTypeId,
         keyOriginal: c.keyOriginal,
-        isPurchased: isPaid && originalKeys.has(c.keyOriginal),
+        isPurchased: (isPaid && originalKeys.has(c.keyOriginal)) || parentItemKeySet.has(c.keyOriginal),
         urlPreview: c.urlPreview ?? c.keyPreview,
-        urlThumbnail: c.urlThumbnail ?? c.keyThumbnail,
+        urlThumbnail: c.urlThumbnail,
         urlCover: c.urlCover ?? c.keyCover ?? c.keyThumbnail,
       })),
-    [allContents, isPaid, originalKeys],
+    [allContents, isPaid, originalKeys, parentItemKeySet],
   );
 
   const photoItemsForGallery = useMemo(
@@ -522,7 +575,7 @@ export default function OrderContentsModal({
 
       const newAmount = isPaid
         ? payment.amount
-        : (priceResult?.price ?? payment.amount);
+        : (priceAfterParentDiscount ?? payment.amount);
 
       const response = await apiRequest({
         api: `${import.meta.env.VITE_API_URL}/orders/order/${payment.idOrdine}/items`,
@@ -823,9 +876,10 @@ export default function OrderContentsModal({
                 onImageClick={handleToggleItem}
                 photoItems={photoItemsForGallery}
                 aspectRatio="1:1"
-                isShop={isPaid}
+                isShop={true}
                 dimSelected={false}
                 newItemKeys={newContentKeys}
+                parentItemKeys={parentItemKeySet}
               />
             </div>
           )}
@@ -837,35 +891,89 @@ export default function OrderContentsModal({
               <>
                 {isPaid && !hasAllFlags ? (
                   addedKeys.size > 0 && deltaPrice ? (
-                    <span>
-                      Importo aggiuntivo:{" "}
-                      <strong>
-                        {currencySymbol}
-                        {deltaPrice.toFixed(2)}
-                      </strong>
-                      <span className="text-gray-400 ml-1">
-                        (+{addedKeys.size} contenuti)
+                    // Ordine pagato con nuovi contenuti → risultato + breakdown opzionale
+                    <div className="flex flex-col gap-0.5">
+                      <span className="flex items-center gap-1">
+                        Nuovo ordine:{" "}
+                        <strong>{currencySymbol}{deltaPrice.toFixed(2)}</strong>
+                        <span className="text-gray-400 font-normal">
+                          (+{addedKeys.size} contenuti)
+                        </span>
+                        {isPaid && priceResult && (
+                          <button
+                            type="button"
+                            onClick={() => setShowPriceBreakdown((v) => !v)}
+                            className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+                            title="Mostra dettaglio calcolo"
+                          >
+                            {showPriceBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                          </button>
+                        )}
                       </span>
-                    </span>
+                      {showPriceBreakdown && priceResult && (
+                        <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-2 text-xs min-w-[230px] space-y-0.5">
+                          <div className="flex justify-between gap-6 text-gray-500">
+                            <span>Totale contenuti</span>
+                            <span className="tabular-nums">{currencySymbol}{priceResult.price.toFixed(2)}</span>
+                          </div>
+                          {activeParentEntries.map((entry) => (
+                            <div key={entry.orderId} className="flex justify-between gap-6 text-gray-500">
+                              <span>− Ordine #{entry.orderId}</span>
+                              <span className="tabular-nums">−{currencySymbol}{entry.amount.toFixed(2)}</span>
+                            </div>
+                          ))}
+                          <div className="flex justify-between gap-6 text-gray-500">
+                            <span>− Ordine #{payment!.idOrdine} (già pagato)</span>
+                            <span className="tabular-nums">−{currencySymbol}{payment!.amount.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between gap-6 border-t border-gray-200 pt-1 mt-1 font-semibold text-gray-700">
+                            <span>Nuovo ordine</span>
+                            <span className="tabular-nums">{currencySymbol}{deltaPrice.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <span className="text-gray-400">
                       Seleziona nuovi contenuti per creare un ordine aggiuntivo
                     </span>
                   )
-                ) : priceResult !== null ? (
-                  <>
-                    Importo stimato:{" "}
-                    <strong>
-                      {currencySymbol}
-                      {priceResult.price.toFixed(2)}
-                    </strong>
-                    {payment && priceResult.price !== payment.amount && (
-                      <span className="text-xs text-gray-400 ml-2">
-                        (originale: {currencySymbol}
-                        {payment.amount.toFixed(2)})
-                      </span>
+                ) : priceAfterParentDiscount !== null ? (
+                  // Ordine non pagato (o con flag −1)
+                  <div className="flex flex-col gap-0.5">
+                    <span className="flex items-center gap-1">
+                      Importo stimato:{" "}
+                      <strong>{currencySymbol}{priceAfterParentDiscount.toFixed(2)}</strong>
+                      {activeParentEntries.length > 0 && priceResult && (
+                        <button
+                          type="button"
+                          onClick={() => setShowPriceBreakdown((v) => !v)}
+                          className="ml-1 text-gray-400 hover:text-gray-600 transition-colors"
+                          title="Mostra dettaglio calcolo"
+                        >
+                          {showPriceBreakdown ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </button>
+                      )}
+                    </span>
+                    {showPriceBreakdown && priceResult && (
+                      <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-2 text-xs min-w-[230px] space-y-0.5">
+                        <div className="flex justify-between gap-6 text-gray-500">
+                          <span>Totale contenuti</span>
+                          <span className="tabular-nums">{currencySymbol}{priceResult.price.toFixed(2)}</span>
+                        </div>
+                        {activeParentEntries.map((entry) => (
+                          <div key={entry.orderId} className="flex justify-between gap-6 text-gray-500">
+                            <span>− Ordine #{entry.orderId}</span>
+                            <span className="tabular-nums">−{currencySymbol}{entry.amount.toFixed(2)}</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between gap-6 border-t border-gray-200 pt-1 mt-1 font-semibold text-gray-700">
+                          <span>Importo stimato</span>
+                          <span className="tabular-nums">{currencySymbol}{priceAfterParentDiscount.toFixed(2)}</span>
+                        </div>
+                      </div>
                     )}
-                  </>
+                  </div>
                 ) : (
                   <span>{selectedKeys.size} elementi selezionati</span>
                 )}

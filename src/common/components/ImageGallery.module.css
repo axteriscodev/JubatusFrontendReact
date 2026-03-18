@@ -126,6 +126,19 @@
   pointer-events: none;
   line-height: 1.4;
 }
+.parentBadge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+  z-index: 4;
+  pointer-events: none;
+}
 .contentTypeBadge {
     position: absolute;
     top: 8px;

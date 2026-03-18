@@ -1,7 +1,6 @@
 import { useState, useEffect, type CSSProperties, type MouseEvent } from "react";
 import { LoaderCircle, SquareCheckBig } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
-import { useNavigate } from "react-router-dom";
 import Logo from "@common/components/Logo";
 import CustomLightbox from "@common/components/CustomLightbox";
 import { setUiPreset } from "@common/utils/graphics";
@@ -13,6 +12,7 @@ import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 import { ROUTES } from "@/routes";
 import type { PreorderPack } from "@/types/cart";
+import { useCreateOrder } from "../hooks/useCreateOrder";
 
 interface PresaleImage {
   url?: string;
@@ -38,11 +38,11 @@ interface PriceListItem {
 
 export default function PreOrder() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const eventPreset = useAppSelector((state) => state.competition);
   const pricelist = useAppSelector((state) => state.cart.prices);
   const selectedPreorder = useAppSelector((state) => state.cart.selectedPreorder);
   const { t } = useTranslations();
+  const { createOrder, isLoading } = useCreateOrder();
 
   const [presaleMedia, setPresaleMedia] = useState<PresaleMedia>({});
   const [loadingGallery, setLoadingGallery] = useState(true);
@@ -102,12 +102,10 @@ export default function PreOrder() {
     else dispatch(cartActions.selectPreorder(list as unknown as PreorderPack));
   }
 
-  function handlePreorderCheckout(event: MouseEvent) {
+  async function handlePreorderCheckout(event: MouseEvent) {
     event.preventDefault();
-
-    if (selectedPreorder) {
-      navigate(ROUTES.CHECKOUT);
-    }
+    if (!selectedPreorder) return;
+    await createOrder({ items: [], preorder: selectedPreorder });
   }
 
   const [open, setOpen] = useState(false);
@@ -261,9 +259,13 @@ export default function PreOrder() {
         <button
           onClick={handlePreorderCheckout}
           className="my-button w-full mt-10"
-          disabled={!selectedPreorder}
+          disabled={!selectedPreorder || isLoading}
         >
-          Prenota ora
+          {isLoading ? (
+            <LoaderCircle className="inline h-5 w-5 animate-spin" />
+          ) : (
+            "Prenota ora"
+          )}
         </button>
       </div>
       {open && (

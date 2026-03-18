@@ -28,6 +28,7 @@ export interface ImageGalleryProps {
   aspectRatio?: string;
   isShop?: boolean;
   newItemKeys?: Set<string>;
+  parentItemKeys?: Set<string>;
   dimSelected?: boolean;
 }
 
@@ -45,6 +46,7 @@ export default function ImageGallery({
   aspectRatio = "1:1",
   isShop = false,
   newItemKeys,
+  parentItemKeys,
   dimSelected = true,
 }: ImageGalleryProps) {
   // Recupera i contenuti degli eventi personali dalle immagini
@@ -127,6 +129,7 @@ export default function ImageGallery({
                   {newItemKeys?.size && newItemKeys.has(image.key) ? (
                     <div className={styles.newBadge}>NUOVO</div>
                   ) : null}
+
                 </div>
 
                 {/* Icona zoom per aprire il lightbox */}
