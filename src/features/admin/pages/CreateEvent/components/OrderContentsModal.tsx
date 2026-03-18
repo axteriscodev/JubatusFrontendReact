@@ -235,11 +235,15 @@ export default function OrderContentsModal({
 
               if (!cancelled) {
                 const keys = new Set(orderItemKeys);
+                const parentKeys = new Set(
+                  fetchedParentChain.flatMap((e) => e.orderItemKeys ?? []),
+                );
                 const newKeys = new Set(
                   contents
                     .filter(
                       (c) =>
                         !keys.has(c.keyOriginal) &&
+                        !parentKeys.has(c.keyOriginal) &&
                         ((c.fileTypeId === 1 && orderAllPhotos) ||
                           (c.fileTypeId === 2 && orderAllVideos) ||
                           (c.fileTypeId === 3 && orderAllClips)),
@@ -388,22 +392,27 @@ export default function OrderContentsModal({
   const hasAllFlags =
     orderFlags.allPhotos || orderFlags.allVideos || orderFlags.allClips;
 
+  const parentItemKeySet = useMemo(
+    () => new Set(parentChain.flatMap((e) => e.orderItemKeys ?? [])),
+    [parentChain],
+  );
+
   // Items not yet selected that would be covered by the current "-1" package.
   // Shown in a banner so the admin can opt in explicitly.
   const pendingAutoSelects = useMemo(() => {
     if (!priceResult || isPaid) return null;
     const photos = priceResult.allPhotos
-      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal)).length
+      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
       : 0;
     const videos = priceResult.allVideos
-      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal)).length
+      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
       : 0;
     const clips = priceResult.allClips
-      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal)).length
+      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
       : 0;
     const total = photos + videos + clips;
     return total > 0 ? { total, photos, videos, clips } : null;
-  }, [priceResult, allContents, selectedKeys, isPaid]);
+  }, [priceResult, allContents, selectedKeys, isPaid, parentItemKeySet]);
 
   const handleAddPendingAutoSelects = () => {
     setSelectedKeys((prev) => {
@@ -425,11 +434,6 @@ export default function OrderContentsModal({
     }
     return added;
   }, [selectedKeys, originalKeys]);
-
-  const parentItemKeySet = useMemo(
-    () => new Set(parentChain.flatMap((e) => e.orderItemKeys ?? [])),
-    [parentChain],
-  );
 
   // Sconto type-aware: per ogni entry del parent applica il suo amount solo se
   // c'è overlap tra i tipi di contenuto che copriva e i tipi -1 del pacchetto corrente.
