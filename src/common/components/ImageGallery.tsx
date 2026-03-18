@@ -130,10 +130,6 @@ export default function ImageGallery({
                     <div className={styles.newBadge}>NUOVO</div>
                   ) : null}
 
-                  {/* Pallino blu: contenuto acquistato in un ordine precedente della chain */}
-                  {parentItemKeys?.has(image.key) && (
-                    <div className={styles.parentBadge} />
-                  )}
                 </div>
 
                 {/* Icona zoom per aprire il lightbox */}

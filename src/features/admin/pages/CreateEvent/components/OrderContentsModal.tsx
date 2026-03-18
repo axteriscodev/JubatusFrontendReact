@@ -876,7 +876,7 @@ export default function OrderContentsModal({
                 onImageClick={handleToggleItem}
                 photoItems={photoItemsForGallery}
                 aspectRatio="1:1"
-                isShop={isPaid}
+                isShop={true}
                 dimSelected={false}
                 newItemKeys={newContentKeys}
                 parentItemKeys={parentItemKeySet}
