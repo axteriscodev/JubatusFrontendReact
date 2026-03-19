@@ -1,6 +1,7 @@
 import { adminCompetitionsActions } from "./admin-competitions-slice";
 import { objectToFormData } from "@common/utils/form-data-converters";
 import { apiRequest } from "@common/services/api-services";
+import { API } from "@common/services/api-endpoints";
 import type { AppDispatch } from "@common/store/store";
 import type { Competition } from "@/types/competition";
 import type { ActionResult } from "@/types/api";
@@ -9,7 +10,7 @@ export const fetchCompetitions = () => {
   return async (dispatch: AppDispatch) => {
     const fetchData = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/fetch",
+        api: API.EVENTS_FETCH,
         method: "GET",
         needAuth: true,
       });
@@ -35,7 +36,7 @@ export const addCompetition = (competition: Partial<Competition>) => {
   return async (dispatch: AppDispatch): Promise<ActionResult<Competition>> => {
     const sendRequest = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/create",
+        api: API.EVENTS_CREATE,
         method: "POST",
         needAuth: true,
         body: objectToFormData(competition as unknown as Parameters<typeof objectToFormData>[0]),
@@ -68,7 +69,7 @@ export const editCompetition = (competition: Competition) => {
   return async (dispatch: AppDispatch): Promise<ActionResult<Competition>> => {
     const sendRequest = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/event/" + competition.id,
+        api: API.EVENT_BY_ID(competition.id),
         method: "PUT",
         needAuth: true,
         body: objectToFormData(competition as unknown as Parameters<typeof objectToFormData>[0]),
@@ -94,7 +95,7 @@ export const deleteCompetition = (competition: Pick<Competition, "id">) => {
   return async (dispatch: AppDispatch): Promise<void> => {
     const sendRequest = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/event/" + competition.id,
+        api: API.EVENT_BY_ID(competition.id),
         method: "DELETE",
         needAuth: true,
       });
@@ -117,7 +118,7 @@ export const fetchCompetitionById = (eventId: number) => {
   return async (): Promise<ActionResult<{ eventData: unknown; externalPayment: unknown } | null>> => {
     const fetchData = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/event/" + eventId,
+        api: API.EVENT_BY_ID(eventId),
         method: "GET",
         needAuth: true,
       });
@@ -151,7 +152,7 @@ export const addListToCompetition = (eventId: number, priceList: unknown) => {
   return async (): Promise<ActionResult<unknown>> => {
     try {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/event-list/create",
+        api: API.EVENT_LIST_CREATE,
         method: "POST",
         needAuth: true,
         body: JSON.stringify({ id: eventId, list: [priceList] }),
@@ -174,7 +175,7 @@ export const editListForCompetition = (eventListId: number, eventId: number, pri
   return async (): Promise<ActionResult<unknown>> => {
     try {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/event-list/" + eventListId,
+        api: API.EVENT_LIST_BY_ID(eventListId),
         method: "PUT",
         needAuth: true,
         body: JSON.stringify({ id: eventId, list: [priceList] }),
@@ -197,7 +198,7 @@ export const deleteListForCompetition = (eventListId: number) => {
   return async (): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/events/event-list/" + eventListId,
+        api: API.EVENT_LIST_BY_ID(eventListId),
         method: "DELETE",
         needAuth: true,
       });

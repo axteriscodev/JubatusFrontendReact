@@ -1,7 +1,10 @@
-import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useEffect, type SubmitEvent } from "react";
 import Modal from "@common/components/ui/Modal";
 import Form from "@common/components/ui/Form";
 import { apiRequest } from "@common/services/api-services";
+import { useFormState } from "@common/hooks/useFormState";
+import { useAsync } from "@common/hooks/useAsync";
+import { API } from "@common/services/api-endpoints";
 
 interface LocationFormState {
   displayName: string;
@@ -28,24 +31,18 @@ export interface LocationFormModalProps {
 }
 
 export default function LocationFormModal({ show, onHide, onSaved }: LocationFormModalProps) {
-  const [form, setForm] = useState<LocationFormState>(EMPTY_FORM);
-  const [saving, setSaving] = useState(false);
+  const { form, handleChange, resetForm } = useFormState(EMPTY_FORM);
+  const { run, loading: saving } = useAsync<void>();
 
   useEffect(() => {
-    if (show) setForm(EMPTY_FORM);
+    if (show) resetForm();
   }, [show]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleSave = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSaving(true);
-    try {
+    await run(async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/terminal/locations",
+        api: API.TERMINAL_LOCATIONS,
         method: "POST",
         needAuth: true,
         body: JSON.stringify({
@@ -63,11 +60,7 @@ export default function LocationFormModal({ show, onHide, onSaved }: LocationFor
         onSaved?.();
         onHide();
       }
-    } catch {
-      console.error("Errore nel salvataggio della location");
-    } finally {
-      setSaving(false);
-    }
+    });
   };
 
   return (

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,8 +9,9 @@ import Alert from "@common/components/ui/Alert";
 import Button from "@common/components/ui/Button";
 import GalleryCard from "@common/components/GalleryCard";
 import { logOut } from "@common/utils/auth";
-import { apiRequest } from "@common/services/api-services";
 import { useTranslations } from "@common/i18n/TranslationProvider";
+import { useFetchData } from "@common/hooks/useFetchData";
+import { API } from "@common/services/api-endpoints";
 import { ROUTES } from "@/routes";
 
 interface GalleryItem {
@@ -42,49 +42,15 @@ const LogoutButton = ({ onLogout }: LogoutButtonProps) => (
 export default function PersonalArea() {
   const navigate = useNavigate();
   const { t } = useTranslations();
-  const [galleries, setGalleries] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const loadEvents = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const { data: rawData, loading, error, refetch } = useFetchData<unknown[]>(
+    API.LIBRARY,
+    { needAuth: true },
+  );
 
-      const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/library/fetch",
-        method: "GET",
-        needAuth: true,
-      });
-
-      if (!response.ok) {
-        throw new Error("Errore nel caricamento degli eventi");
-      }
-
-      const eventsData = await response.json();
-      prepareContent(eventsData.data);
-    } catch (err) {
-      console.error("Errore nel caricamento:", err);
-      setError(err instanceof Error ? err.message : "Errore sconosciuto");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  const prepareContent = (data: unknown) => {
-    if (!Array.isArray(data)) {
-      console.error("I dati non sono un array:", data);
-      setError("Formato dati non valido");
-      return;
-    }
-
-    const formattedGalleries = getPersonalEventGalleries(data) as GalleryItem[];
-    setGalleries(formattedGalleries);
-  };
+  const galleries: GalleryItem[] = rawData
+    ? (getPersonalEventGalleries(rawData) as GalleryItem[])
+    : [];
 
   const handleLogout = () => {
     logOut();
@@ -140,7 +106,7 @@ export default function PersonalArea() {
           <p>{error}</p>
           <Button
             variant="danger"
-            onClick={loadEvents}
+            onClick={refetch}
           >
             Riprova
           </Button>

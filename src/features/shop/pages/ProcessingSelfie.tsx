@@ -9,6 +9,8 @@ import { fetchPriceList } from "@features/shop/store/cart-actions";
 import ProgressBar from "@common/components/ProgressBar";
 import { errorToast } from "@common/utils/toast-manager";
 import { useTranslations } from "@common/i18n/TranslationProvider";
+import { useTimeoutRedirect } from "@common/hooks/useTimeoutRedirect";
+import { API } from "@common/services/api-endpoints";
 import parse from "html-react-parser";
 import { ROUTES } from "@/routes";
 
@@ -44,7 +46,7 @@ export default function ProcessingSelfie() {
        */
       if (receivedData.userHash) {
         response = await apiRequest({
-          api: import.meta.env.VITE_API_URL + "/contents/fetch-hash",
+          api: API.CONTENTS_FETCH_HASH,
           method: "POST",
           body: JSON.stringify({ hashId: receivedData.userHash }),
           needAuth: true,
@@ -67,7 +69,7 @@ export default function ProcessingSelfie() {
 
         //caricamento selfie
         response = await apiRequest({
-          api: import.meta.env.VITE_API_URL + "/contents/fetch",
+          api: API.CONTENTS_FETCH,
           method: "POST",
           body: formData,
           needAuth: true,
@@ -84,7 +86,7 @@ export default function ProcessingSelfie() {
         } else {
           //sezione elaborazione selfie e attesa risposte dal server S3
           abortSSE = listenSSE(
-            import.meta.env.VITE_API_URL + "/contents/sse/" + json.data,
+            API.CONTENTS_SSE(json.data),
             (data) => {
               const jsonData = JSON.parse(data);
               console.log("SSE contents order:", jsonData.contents?.map((c: { fileTypeId: number; keyOriginal: string }) => ({ fileTypeId: c.fileTypeId, key: c.keyOriginal })));
@@ -144,19 +146,11 @@ export default function ProcessingSelfie() {
     };
   }, []);
 
-  //pagina timeout
-  useEffect(() => {
-    const timeOut = setTimeout(
-      () => {
-        errorToast("Si è verificato un errore");
-        navigate("/event/" + eventPreset.slug, { replace: true });
-      },
-      Number(import.meta.env.VITE_PROCESSING_SELFIE_TIMEOUT) || 12000,
-    );
-
-    // cleanup function
-    return () => clearTimeout(timeOut);
-  }, []);
+  useTimeoutRedirect(
+    "/event/" + eventPreset.slug,
+    Number(import.meta.env.VITE_PROCESSING_SELFIE_TIMEOUT) || 12000,
+    { replace: true, onTimeout: () => errorToast("Si è verificato un errore") },
+  );
 
   return (
     <div className="form-sm">

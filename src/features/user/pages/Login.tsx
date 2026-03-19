@@ -10,6 +10,8 @@ import { useTranslations } from "@common/i18n/TranslationProvider";
 import LanguageSelect from "@common/components/LanguageSelect";
 import parse from "html-react-parser";
 import { ROUTES } from "@/routes";
+import { apiRequest } from "@common/services/api-services";
+import { API } from "@common/services/api-endpoints";
 
 export default function Login() {
   const dispatch = useAppDispatch();
@@ -40,19 +42,14 @@ export default function Login() {
       return;
     }
 
-    const response = await fetch(
-      import.meta.env.VITE_API_URL + "/auth/signin",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          lang: currentLanguage?.acronym ?? "",
-        }),
-      },
-    );
+    const response = await apiRequest({
+      api: API.AUTH_SIGNIN,
+      method: "POST",
+      body: JSON.stringify({
+        email: data.email,
+        lang: currentLanguage?.acronym ?? "",
+      }),
+    });
 
     if (response.ok) {
       dispatch(userActions.updateEmail(data.email));

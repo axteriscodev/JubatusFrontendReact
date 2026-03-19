@@ -6,6 +6,14 @@ export function formatDate(dateToFormat: string | number | Date, locale: string)
   });
 }
 
+export function formatCurrencyPrice(
+  price: number | string,
+  currency: string,
+  symbol: string,
+): string {
+  return currency === "EUR" ? `${price} ${symbol}` : `${symbol} ${price}`;
+}
+
 export function slugify(text: string): string {
   return text
     .toLowerCase()

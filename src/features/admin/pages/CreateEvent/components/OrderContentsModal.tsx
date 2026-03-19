@@ -397,6 +397,31 @@ export default function OrderContentsModal({
     [parentChain],
   );
 
+  const allItemsPriceResult = useMemo(() => {
+    if (!isPaid || hasAllFlags) return null;
+    if (!pricePackages.length) return null;
+
+    const allKeys = new Set([...selectedKeys, ...parentItemKeySet]);
+    const items = allContents.filter((c) => allKeys.has(c.keyOriginal));
+    const photos = items.filter((c) => c.fileTypeId === 1).length;
+    const videos = items.filter((c) => c.fileTypeId === 2).length;
+    const clips  = items.filter((c) => c.fileTypeId === 3).length;
+
+    const packages = pricePackages
+      .filter((p) => p.price !== "" && p.quantityPhoto !== "" && p.quantityVideo !== "" && p.quantityClip !== "")
+      .map((p) => ({
+        quantityPhoto: p.quantityPhoto as number,
+        quantityVideo: p.quantityVideo as number,
+        quantityClip:  p.quantityClip  as number,
+        price: p.price as number,
+      }));
+
+    if (!packages.length) return null;
+    const result = calculatePrice(packages, photos, videos, clips);
+    if (result.price === -1) return null;
+    return result.price;
+  }, [isPaid, hasAllFlags, selectedKeys, parentItemKeySet, allContents, pricePackages]);
+
   // Items not yet selected that would be covered by the current "-1" package.
   // Shown in a banner so the admin can opt in explicitly.
   const pendingAutoSelects = useMemo(() => {
@@ -461,10 +486,19 @@ export default function OrderContentsModal({
   }, [priceResult, parentChain, allContents]);
 
   const deltaPrice = useMemo(() => {
-    if (!priceAfterParentDiscount || !payment) return null;
+    if (!payment) return null;
+
+    if (isPaid && !hasAllFlags) {
+      if (allItemsPriceResult === null) return null;
+      const parentTotal = parentChain.reduce((sum, e) => sum + e.amount, 0);
+      const delta = allItemsPriceResult - payment.amount - parentTotal;
+      return delta > 0 ? delta : null;
+    }
+
+    if (!priceAfterParentDiscount) return null;
     const delta = priceAfterParentDiscount - payment.amount;
     return delta > 0 ? delta : null;
-  }, [priceAfterParentDiscount, payment]);
+  }, [isPaid, hasAllFlags, allItemsPriceResult, priceAfterParentDiscount, payment, parentChain]);
 
   // Entries del parentChain che contribuiscono effettivamente allo sconto
   // (overlap tra tipi coperti dal parent e tipi -1 del pacchetto corrente)
@@ -899,7 +933,7 @@ export default function OrderContentsModal({
                         <span className="text-gray-400 font-normal">
                           (+{addedKeys.size} contenuti)
                         </span>
-                        {isPaid && priceResult && (
+                        {allItemsPriceResult !== null && (
                           <button
                             type="button"
                             onClick={() => setShowPriceBreakdown((v) => !v)}
@@ -910,15 +944,15 @@ export default function OrderContentsModal({
                           </button>
                         )}
                       </span>
-                      {showPriceBreakdown && priceResult && (
+                      {showPriceBreakdown && allItemsPriceResult !== null && (
                         <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-2 text-xs min-w-[230px] space-y-0.5">
                           <div className="flex justify-between gap-6 text-gray-500">
                             <span>Totale contenuti</span>
-                            <span className="tabular-nums">{currencySymbol}{priceResult.price.toFixed(2)}</span>
+                            <span className="tabular-nums">{currencySymbol}{allItemsPriceResult.toFixed(2)}</span>
                           </div>
-                          {activeParentEntries.map((entry) => (
+                          {parentChain.map((entry) => (
                             <div key={entry.orderId} className="flex justify-between gap-6 text-gray-500">
-                              <span>− Ordine #{entry.orderId}</span>
+                              <span>− Ordine #{entry.orderId} (già pagato)</span>
                               <span className="tabular-nums">−{currencySymbol}{entry.amount.toFixed(2)}</span>
                             </div>
                           ))}

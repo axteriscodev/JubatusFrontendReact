@@ -1,13 +1,15 @@
 import Logo from "@common/components/Logo";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cartActions } from "@features/shop/store/cart-slice";
-import { setUiPreset } from "@common/utils/graphics";
-import { listenSSE } from "@common/services/api-services";
+import { setUiPreset, } from "@common/utils/graphics";
 import ProgressBar from "@common/components/ProgressBar";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import parse from 'html-react-parser';
+import { useTimeoutRedirect } from "@common/hooks/useTimeoutRedirect";
+import { useSSEListener } from "@common/hooks/useSSEListener";
+import { useEffect } from "react";
+import { API } from "@common/services/api-endpoints";
 import { ROUTES } from "@/routes";
 import { personalActions } from "@/features/user/store/personal-slice";
 
@@ -19,39 +21,24 @@ export default function ProcessingPhotos() {
   const { t } = useTranslations();
 
   useEffect(() => {
-    //impostazioni evento
     setUiPreset(eventPreset);
-
-    //sse elaborazione dati
-    const abortSSE = listenSSE(
-      import.meta.env.VITE_API_URL + "/shop/purchased-contents/" + orderId,
-
-      (data) => {
-        const jsonData = JSON.parse(data);
-        dispatch(cartActions.setPurchasedItems(jsonData.contents));
-        dispatch(personalActions.updatePurchased(jsonData.otherContents));
-        navigate(ROUTES.PURCHASED, { replace: true });
-      },
-      () => {
-        console.log(`Errore nel recupero dei contenuti ordine: ${orderId}`);
-        navigate(ROUTES.CONTENT_ERROR);
-      }
-    );
-
-    return () => {
-      abortSSE();
-    };
   }, []);
 
-  //pagina timeout
-  useEffect(() => {
-    const timeOut = setTimeout(() => {
-      navigate("/content-error");
-    }, 8000);
+  useSSEListener(
+    API.PURCHASED_CONTENTS(orderId),
+    (data) => {
+      const jsonData = JSON.parse(data);
+      dispatch(cartActions.setPurchasedItems(jsonData.contents));
+      dispatch(personalActions.updatePurchased(jsonData.otherContents));
+      navigate(ROUTES.PURCHASED, { replace: true });
+    },
+    () => {
+      console.log(`Errore nel recupero dei contenuti ordine: ${orderId}`);
+      navigate(ROUTES.CONTENT_ERROR);
+    },
+  );
 
-    // cleanup function
-    return () => clearTimeout(timeOut);
-  }, []);
+  useTimeoutRedirect(ROUTES.CONTENT_ERROR, 8000);
 
   return (
     <div className="form-sm">

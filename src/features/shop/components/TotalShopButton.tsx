@@ -3,6 +3,7 @@ import { useAppSelector } from "@common/store/hooks";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import type { CartItem, CartProduct } from "@/types/cart";
 import { useCreateOrder } from "../hooks/useCreateOrder";
+import { formatCurrencyPrice } from "@common/utils/data-formatter";
 
 interface TotalShopButtonProps {
   onButtonClick?: (() => void) | null;
@@ -99,7 +100,7 @@ export default function TotalShopButton({
       {purchasableItemsCount === 0 ? (
         <>{t("CHECKOUT_SELECT")}</>
       ) : (
-        `${t("CHECKOUT_TOTAL")}: ${eventPreset.currency === "EUR" ? `${totalPrice.toFixed(2)} ${eventPreset.currencySymbol}` : `${eventPreset.currencySymbol} ${totalPrice.toFixed(2)}`}`
+        `${t("CHECKOUT_TOTAL")}: ${formatCurrencyPrice(totalPrice.toFixed(2), eventPreset.currency, eventPreset.currencySymbol)}`
       )}
     </button>
   );

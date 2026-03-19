@@ -13,6 +13,8 @@ import DOMPurify from "dompurify";
 import { ROUTES } from "@/routes";
 import type { PreorderPack } from "@/types/cart";
 import { useCreateOrder } from "../hooks/useCreateOrder";
+import { formatCurrencyPrice } from "@common/utils/data-formatter";
+import { API } from "@common/services/api-endpoints";
 
 interface PresaleImage {
   url?: string;
@@ -57,9 +59,7 @@ export default function PreOrder() {
     const fetchImages = async () => {
       try {
         const response = await fetch(
-          import.meta.env.VITE_API_URL +
-            "/assets/presale?event_id=" +
-            eventPreset.id,
+          API.PRESALE_ASSETS(eventPreset.id),
           {
             method: "GET",
           },
@@ -242,14 +242,10 @@ export default function PreOrder() {
                 </div>
                 <div className="text-right leading-tight">
                   <div className="line-through">
-                    {eventPreset.currency === "EUR"
-                      ? `${list.price} ${eventPreset.currencySymbol}`
-                      : `${eventPreset.currencySymbol} ${list.price}`}
+                    {formatCurrencyPrice(list.price, eventPreset.currency, eventPreset.currencySymbol)}
                   </div>
                   <div className="text-30 font-bold">
-                    {eventPreset.currency === "EUR"
-                      ? `${getFinalPrice(list.price, list.discount)} ${eventPreset.currencySymbol}`
-                      : `${eventPreset.currencySymbol} ${getFinalPrice(list.price, list.discount)}`}
+                    {formatCurrencyPrice(getFinalPrice(list.price, list.discount), eventPreset.currency, eventPreset.currencySymbol)}
                   </div>
                 </div>
               </div>

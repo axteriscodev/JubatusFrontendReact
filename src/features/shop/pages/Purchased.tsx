@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import { setUiPreset } from "@common/utils/graphics";
 
@@ -10,7 +10,9 @@ import CustomLightbox from "@common/components/CustomLightbox";
 import { cartActions } from "../store/cart-slice";
 import { personalActions } from "@features/user/store/personal-slice";
 import { useTranslations } from "@common/i18n/TranslationProvider";
+import { useLightboxState } from "@common/hooks/useLightboxState";
 import parse from "html-react-parser";
+
 export default function Purchased() {
   const dispatch = useAppDispatch();
 
@@ -25,28 +27,8 @@ export default function Purchased() {
   const allPurchasedItems = useAppSelector((state) => state.personal.purchased);
   const eventPreset = useAppSelector((state) => state.competition);
 
-  const [open, setOpen] = useState(false);
-  const [select, setSelect] = useState(false);
-  const [actions, setActions] = useState(false);
-  const [personalSlice, setPersonalSlice] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [slides, setSlides] = useState<unknown[]>([]);
+  const { lightbox, openLightbox, closeLightbox, setIndex, updateSlide } = useLightboxState();
   const { t } = useTranslations();
-
-  const openLightbox = (
-    images: unknown[],
-    startIndex = 0,
-    select: boolean,
-    actions: boolean,
-    personalSlice: boolean,
-  ) => {
-    setIndex(startIndex);
-    setOpen(true);
-    setSlides(images);
-    setSelect(select);
-    setActions(actions);
-    setPersonalSlice(personalSlice);
-  };
 
   useEffect(() => {
     setUiPreset(eventPreset);
@@ -147,28 +129,22 @@ export default function Purchased() {
         )}
       </div>
 
-      {open && (
+      {lightbox.open && (
         <CustomLightbox
-          open={open}
-          slides={slides as never}
-          index={index}
+          open={lightbox.open}
+          slides={lightbox.slides as never}
+          index={lightbox.index}
           setIndex={setIndex}
-          select={select}
-          actions={actions}
-          onClose={() => setOpen(false)}
+          select={lightbox.select}
+          actions={lightbox.actions}
+          onClose={closeLightbox}
           onUpdateSlide={(i, updatedSlide) => {
-            // Aggiorna Redux
-            if (personalSlice) {
+            if (lightbox.personalSlice) {
               dispatch(personalActions.updatePersonalItem(updatedSlide as Parameters<typeof personalActions.updatePersonalItem>[0]));
             } else {
               dispatch(cartActions.updatePurchasedItem(updatedSlide as Parameters<typeof cartActions.updatePurchasedItem>[0]));
             }
-            // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
-            setSlides((prev) => {
-              const copy = [...prev];
-              copy[i] = updatedSlide;
-              return copy;
-            });
+            updateSlide(i, updatedSlide);
           }}
         />
       )}
