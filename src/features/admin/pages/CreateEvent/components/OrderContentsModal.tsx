@@ -419,7 +419,12 @@ export default function OrderContentsModal({
     if (!packages.length) return null;
     const result = calculatePrice(packages, photos, videos, clips);
     if (result.price === -1) return null;
-    return result.price;
+    return {
+      price: result.price,
+      allPhotos: result.usedPackages.some((p) => p.quantityPhoto === -1),
+      allVideos: result.usedPackages.some((p) => p.quantityVideo === -1),
+      allClips:  result.usedPackages.some((p) => p.quantityClip  === -1),
+    };
   }, [isPaid, hasAllFlags, selectedKeys, parentItemKeySet, allContents, pricePackages]);
 
   // Items not yet selected that would be covered by the current "-1" package.
@@ -448,6 +453,34 @@ export default function OrderContentsModal({
         allContents.filter((c) => c.fileTypeId === 2).forEach((c) => next.add(c.keyOriginal));
       if (priceResult?.allClips)
         allContents.filter((c) => c.fileTypeId === 3).forEach((c) => next.add(c.keyOriginal));
+      return next;
+    });
+  };
+
+  const pendingAutoSelectsPaid = useMemo(() => {
+    if (!isPaid || hasAllFlags || !allItemsPriceResult) return null;
+    const photos = allItemsPriceResult.allPhotos
+      ? allContents.filter((c) => c.fileTypeId === 1 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
+      : 0;
+    const videos = allItemsPriceResult.allVideos
+      ? allContents.filter((c) => c.fileTypeId === 2 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
+      : 0;
+    const clips = allItemsPriceResult.allClips
+      ? allContents.filter((c) => c.fileTypeId === 3 && !selectedKeys.has(c.keyOriginal) && !parentItemKeySet.has(c.keyOriginal)).length
+      : 0;
+    const total = photos + videos + clips;
+    return total > 0 ? { total, photos, videos, clips } : null;
+  }, [isPaid, hasAllFlags, allItemsPriceResult, allContents, selectedKeys, parentItemKeySet]);
+
+  const handleAddPendingAutoSelectsPaid = () => {
+    setSelectedKeys((prev) => {
+      const next = new Set(prev);
+      if (allItemsPriceResult?.allPhotos)
+        allContents.filter((c) => c.fileTypeId === 1 && !parentItemKeySet.has(c.keyOriginal)).forEach((c) => next.add(c.keyOriginal));
+      if (allItemsPriceResult?.allVideos)
+        allContents.filter((c) => c.fileTypeId === 2 && !parentItemKeySet.has(c.keyOriginal)).forEach((c) => next.add(c.keyOriginal));
+      if (allItemsPriceResult?.allClips)
+        allContents.filter((c) => c.fileTypeId === 3 && !parentItemKeySet.has(c.keyOriginal)).forEach((c) => next.add(c.keyOriginal));
       return next;
     });
   };
@@ -491,7 +524,7 @@ export default function OrderContentsModal({
     if (isPaid && !hasAllFlags) {
       if (allItemsPriceResult === null) return null;
       const parentTotal = parentChain.reduce((sum, e) => sum + e.amount, 0);
-      const delta = allItemsPriceResult - payment.amount - parentTotal;
+      const delta = allItemsPriceResult.price - payment.amount - parentTotal;
       return delta > 0 ? delta : null;
     }
 
@@ -841,6 +874,32 @@ export default function OrderContentsModal({
               </div>
             )}
 
+            {pendingAutoSelectsPaid && (
+              <div className="px-6 pt-3">
+                <Alert variant="info">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      Il pacchetto selezionato include{" "}
+                      {pendingAutoSelectsPaid.photos > 0 && "tutte le foto"}
+                      {pendingAutoSelectsPaid.videos > 0 &&
+                        `${pendingAutoSelectsPaid.photos > 0 ? " e " : ""}tutti i video`}
+                      {pendingAutoSelectsPaid.clips > 0 &&
+                        `${pendingAutoSelectsPaid.photos + pendingAutoSelectsPaid.videos > 0 ? " e " : ""}tutte le clip`}
+                      {" "}—{" "}
+                      <strong>+{pendingAutoSelectsPaid.total} non ancora selezionati</strong>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleAddPendingAutoSelectsPaid}
+                      className="shrink-0 px-3 py-1 text-xs font-medium bg-blue-100 border border-blue-400 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
+                    >
+                      Aggiungi tutti
+                    </button>
+                  </div>
+                </Alert>
+              </div>
+            )}
+
             {newContentCounts && (
               <div className="px-6 pt-3">
                 <Alert variant="warning">
@@ -948,7 +1007,7 @@ export default function OrderContentsModal({
                         <div className="mt-2 bg-gray-50 border border-gray-200 rounded-md p-2 text-xs min-w-[230px] space-y-0.5">
                           <div className="flex justify-between gap-6 text-gray-500">
                             <span>Totale contenuti</span>
-                            <span className="tabular-nums">{currencySymbol}{allItemsPriceResult.toFixed(2)}</span>
+                            <span className="tabular-nums">{currencySymbol}{allItemsPriceResult.price.toFixed(2)}</span>
                           </div>
                           {parentChain.map((entry) => (
                             <div key={entry.orderId} className="flex justify-between gap-6 text-gray-500">
