@@ -39,8 +39,10 @@ export interface OrderContentsModalProps {
   onSavedAndPay?: (deltaPayment: Payment) => void;
 }
 
+// Fasi di caricamento del modale: idle=non aperto, loading=in carico, ready=dati disponibili, error=fallito
 type LoadPhase = "idle" | "loading" | "ready" | "error";
 
+// Il campo currency può essere un oggetto {currency, symbol} o una stringa legacy
 function getCurrencySymbol(currency?: Payment["currency"]): string {
   if (!currency) return "€";
   if (typeof currency === "string") return currency;

@@ -11,6 +11,7 @@ import { ROUTES } from "@/routes";
 export default function MailConfirmation() {
   const navigate = useNavigate();
   const location = useLocation();
+  // isCash viene passato come state da useCreateOrder quando il pagamento è in cassa (id=2)
   const isCash = (location.state as { isCash?: boolean } | null)?.isCash === true;
   const userEmail = useAppSelector((state) => state.cart.userEmail);
   const { t } = useTranslations();
@@ -20,6 +21,7 @@ export default function MailConfirmation() {
       navigate(isCash ? ROUTES.THANK_YOU_CASH : ROUTES.THANK_YOU);
     });
 
+  // Se email o nome sono vuoti, mostriamo il form di inserimento invece della conferma
   const isEmailEmpty = !userEmail || userEmail.trim() === "";
   const isNameEmpty = !name || name.trim() === "";
 

@@ -12,6 +12,11 @@ interface SubmitData {
   privacy?: boolean;
 }
 
+/**
+ * Hook per la conferma/modifica di email e nome dopo il pagamento.
+ * Usato da MailConfirmation e PayAtCounter.
+ * Chiama il backend per aggiornare i dati utente sull'ordine e invoca onSuccess() al completamento.
+ */
 export function useEmailConfirmation(onSuccess: () => void) {
   const dispatch = useAppDispatch();
   const { currentLanguage } = useLanguage();
@@ -60,12 +65,14 @@ export function useEmailConfirmation(onSuccess: () => void) {
       if (response.ok) {
         const json = await response.json();
 
+        // L'email è già associata a un altro utente sull'evento
         if (json.data.emailDuplicated) {
           errors.emailDuplicated = true;
           setFormErrors(errors);
           return;
         }
 
+        // Aggiorna lo store solo se il backend ha effettivamente modificato i dati
         if (json.data.emailModified) {
           dispatch(cartActions.updateUserEmail(email));
         }

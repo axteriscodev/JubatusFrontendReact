@@ -49,6 +49,8 @@ const competitionsSlice = createSlice({
   name: "competition",
   initialState,
   reducers: {
+    // Appiattisce i dati dell'evento (con struttura multilingua) in uno stato flat
+    // usando la prima lingua disponibile nell'array languages
     setCompetitionPreset(state, action: PayloadAction<Competition>) {
       const p = action.payload;
       state.id = p.id;

@@ -114,6 +114,8 @@ export const deleteCompetition = (competition: Pick<Competition, "id">) => {
   };
 };
 
+// Carica i dati completi di un singolo evento: include sia la configurazione (eventData)
+// sia i pagamenti esterni (externalPayment) usati dalla tab "Pagamenti" in CreateEvent
 export const fetchCompetitionById = (eventId: number) => {
   return async (): Promise<ActionResult<{ eventData: unknown; externalPayment: unknown } | null>> => {
     const fetchData = async () => {
@@ -148,6 +150,7 @@ export const fetchCompetitionById = (eventId: number) => {
   };
 };
 
+// Aggiunge un listino prezzi a un evento. Non aggiorna lo store locale (TODO nel slice).
 export const addListToCompetition = (eventId: number, priceList: unknown) => {
   return async (): Promise<ActionResult<unknown>> => {
     try {

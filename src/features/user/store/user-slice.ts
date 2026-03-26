@@ -1,3 +1,5 @@
+// Slice Redux per i dati di autenticazione dell'utente (email, JWT).
+// Non viene persistito: il JWT viene riletto da localStorage tramite auth utils.
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserSliceState {

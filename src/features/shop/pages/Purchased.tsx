@@ -20,6 +20,7 @@ export default function Purchased() {
   const currentPurchasedItems = useAppSelector((state) => state.cart.purchased);
   const hasPhoto = useAppSelector((state) => state.cart.hasPhoto);
   const hasVideo = useAppSelector((state) => state.cart.hasVideo);
+  // numVideo > 0 significa che il video è già disponibile; numVideo === 0 = ancora in elaborazione
   const numVideo = currentPurchasedItems?.filter(
     (item) => item.fileTypeId === 2 && item.keyOriginal,
   ).length;
@@ -138,6 +139,8 @@ export default function Purchased() {
           select={lightbox.select}
           actions={lightbox.actions}
           onClose={closeLightbox}
+          // Aggiorna lo slice corretto in base alla fonte dell'item nel lightbox:
+          // personal slice per la galleria completa, cart slice per gli item appena acquistati
           onUpdateSlide={(i, updatedSlide) => {
             if (lightbox.personalSlice) {
               dispatch(personalActions.updatePersonalItem(updatedSlide as Parameters<typeof personalActions.updatePersonalItem>[0]));

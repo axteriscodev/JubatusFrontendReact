@@ -98,7 +98,7 @@ export default function UploadSelfie() {
 
     errors.emailError = !validator.isEmail(data.email);
 
-    // For motorsport events (tagId === 1), image is optional if license plate is provided
+    // Per eventi motorsport la foto è opzionale se è stato inserito il numero di targa/pettorale
     if (showBibNumber && selfie.bibNumber) {
       errors.imageError = false;
     } else {

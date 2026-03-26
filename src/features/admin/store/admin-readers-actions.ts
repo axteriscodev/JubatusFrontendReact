@@ -52,6 +52,8 @@ export const toggleReaderActive = (readerId: number, active: boolean) => {
   };
 };
 
+// Aggiorna la label del reader. Usa currentReader per comporre l'oggetto completo
+// da passare al reducer (che sostituisce l'intero record nello slice).
 export const updateReaderLabel = (readerId: number, label: string, currentReader: Reader) => {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
@@ -66,6 +68,7 @@ export const updateReaderLabel = (readerId: number, label: string, currentReader
         throw new Error("Errore nell'aggiornamento della label");
       }
 
+      // Aggiornamento ottimistico: spread dell'oggetto esistente con la nuova label
       dispatch(adminReadersActions.updateReader({ ...currentReader, label }));
       return { success: true };
     } catch (error) {

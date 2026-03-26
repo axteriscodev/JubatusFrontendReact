@@ -21,6 +21,7 @@ export default function Login() {
   // Testi in lingua
   const { t, currentLanguage } = useTranslations();
 
+  // Rimuove i colori personalizzati dell'evento precedente che potrebbero essere rimasti
   useEffect(() => {
     document.documentElement.style.setProperty("--bg-event-color", "");
     document.documentElement.style.setProperty("--font-button-event-color", "");
@@ -55,6 +56,7 @@ export default function Login() {
       dispatch(userActions.updateEmail(data.email));
       navigate(ROUTES.EMAIL_SENT);
     } else {
+      // 401 = email non trovata nel sistema (utente non registrato o senza acquisti)
       if (response.status === 401) {
         errors.emailNotPresent = true;
         setFormErrors(errors);

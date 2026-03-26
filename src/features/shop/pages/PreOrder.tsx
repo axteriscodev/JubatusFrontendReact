@@ -96,6 +96,7 @@ export default function PreOrder() {
     return ((price * (100 - (discount ?? 0))) / 100).toFixed(2);
   };
 
+  // Toggle selezione: cliccare su un pacchetto già selezionato lo deseleziona
   function handleSelection(_event: MouseEvent, list: PriceListItem) {
     if (list.id === selectedPreorder?.id)
       dispatch(cartActions.unSelectPreorder());

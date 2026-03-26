@@ -46,6 +46,8 @@ export const getDefaultFormData = (): EventFormData => ({
   verifiedAttendanceEvent: false,
 });
 
+// Appiattisce la struttura Competition (con array languages) nel formato piatto EventFormData
+// usato dai form di modifica. Usa la prima lingua come lingua di default.
 export const getInitialFormData = (receivedComp: Competition | null): EventFormData => {
   if (!receivedComp) return getDefaultFormData();
 
@@ -73,6 +75,7 @@ export const getInitialFormData = (receivedComp: Competition | null): EventFormD
   };
 };
 
+// price e discount sono stringa vuota (non 0) per distinguere "non ancora inserito" da "zero"
 export const createEmptyPriceItem = (): PriceItem => ({
   labelId: null,
   bestOffer: false,
@@ -98,6 +101,7 @@ export const buildLanguageObject = (formData: EventFormData) => ({
   emoji: formData.emoji,
 });
 
+// Rimuove il dominio dell'app dallo slug se presente (es. l'admin incolla l'URL intero dal browser)
 const stripDomainFromSlug = (slug: string): string => {
   const rawSlug = String(slug ?? '').trim();
   const appDomain = String(import.meta.env.VITE_APP_DOMAIN ?? '').trim().replace(/\/+$/, '');

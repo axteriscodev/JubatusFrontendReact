@@ -52,6 +52,7 @@ export default function AdminReaders() {
     }
   };
 
+  // Le location vengono caricate solo quando l'utente naviga nella tab, non all'avvio
   useEffect(() => {
     if (activeTab === "locations") {
       fetchLocations();

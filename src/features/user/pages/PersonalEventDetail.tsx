@@ -57,6 +57,7 @@ export default function PersonalEventDetail() {
     if (!fetchedEvents || fetchedEvents.length === 0) return;
     const event = fetchedEvents[0];
     setEventData(event);
+    // Carica nello slice personal solo gli item già acquistati per mostrarli nel carousel e nella gallery
     dispatch(
       personalActions.updatePurchased(
         event.items.filter((item: EventItem) => item.isPurchased) || [],
@@ -68,7 +69,8 @@ export default function PersonalEventDetail() {
     resetHeaderData();
   }, []);
 
-  // Calcola gli item non acquistati solo quando eventsData cambia
+  // Calcola gli item non acquistati solo quando eventData cambia.
+  // Se lo stato è "onlyPurchased" non ci sono item da mostrare come disponibili.
   const unpurchasedItems = useMemo(() => {
     if (!eventData || eventData.status === "onlyPurchased") {
       return [];
@@ -231,6 +233,7 @@ export default function PersonalEventDetail() {
           addToCart={false}
           isPersonalArea={true}
           onClose={closeLightbox}
+          // personalSlice=true → item dall'area personale, false → item appena acquistati (cart)
           onUpdateSlide={(i, updatedSlide) => {
             if (lightbox.personalSlice) {
               dispatch(

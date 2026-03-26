@@ -21,6 +21,7 @@ export function ParticipantsUpload({ eventId }: ParticipantsUploadProps) {
       return;
     }
 
+    // Accetta solo file Excel (.xlsx e .xls) sia per tipo MIME che per estensione
     const validTypes = [
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'application/vnd.ms-excel',
@@ -34,7 +35,7 @@ export function ParticipantsUpload({ eventId }: ParticipantsUploadProps) {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 5 * 1024 * 1024; // 5 MB
     if (file.size > maxSize) {
       setUploadStatus('error');
       setErrorMessage('Il file è troppo grande. Dimensione massima: 5MB');

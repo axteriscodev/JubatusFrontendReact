@@ -98,6 +98,7 @@ export function EventReaders({ eventId }: EventReadersProps) {
     fetchData();
   }, [fetchData]);
 
+  // Esclude dal selettore i reader già associati all'evento (mostrati nella lista sopra)
   const eventReaderIds = new Set(eventReaders.map((r) => r.id));
 
   const availableReaders = allReaders.filter(

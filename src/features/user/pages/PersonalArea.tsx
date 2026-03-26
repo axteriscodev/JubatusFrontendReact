@@ -62,15 +62,18 @@ export default function PersonalArea() {
     const event = galleries.find((item) => item.id === id);
 
     if (event) {
+      // Preorder con allPhotos: i contenuti sono stati acquistati (anche se non ancora pronti)
       if (event.preOrder && event.allPhotos) {
         navigate(ROUTES.PERSONAL_EVENT(event.slug));
         return;
       }
       switch (event.status) {
+        // Ha almeno un acquisto: vai alla pagina dettaglio evento personale
         case EventStatus.ONLY_PURCHASED:
         case EventStatus.MIXED:
           navigate(ROUTES.PERSONAL_EVENT(event.slug));
           break;
+        // Ha solo ricercato ma non acquistato: rimanda allo shop con l'hash della ricerca precedente
         case EventStatus.ONLY_SEARCHED:
           navigate(ROUTES.EVENT_WITH_HASH(event.slug, event.hashId));
           break;

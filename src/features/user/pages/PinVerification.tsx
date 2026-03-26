@@ -6,9 +6,11 @@ import { ROUTES } from "@/routes";
 import { apiRequest } from "@common/services/api-services";
 import { API } from "@common/services/api-endpoints";
 
+// Pagina di atterraggio per il link magico inviato via email.
+// Il token è passato come parametro URL e viene verificato al backend per ottenere il JWT.
 export default function PinVerification() {
   const navigate = useNavigate();
-  const userPin = useParams();
+  const userPin = useParams(); // contiene il token estratto dall'URL
   const { t } = useTranslations();
 
   useEffect(() => {
@@ -23,11 +25,13 @@ export default function PinVerification() {
 
       if (response.ok) {
         const json = await response.json();
+        // Salva JWT, livello e ruolo in localStorage tramite gli helper di auth
         setAuthToken(json.data.jwt);
         setLevel(json.data.levelId);
         setRole(json.data.role);
         navigate(ROUTES.HOME);
       } else {
+        // 401 = token non valido o scaduto: resta sulla pagina senza navigare
         if (response.status === 401) {
           return;
         }

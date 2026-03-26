@@ -101,6 +101,8 @@ export default function ProcessingSelfie() {
                 ),
               );
 
+              // Salva l'URL dello shop in localStorage per consentire all'utente
+              // di tornare ai propri risultati senza ripetere l'upload del selfie
               if (jsonData.shopUrl && receivedData.eventSlug) {
                 const relativePath = jsonData.shopUrl.replace(
                   import.meta.env.VITE_APP_DOMAIN,

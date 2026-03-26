@@ -7,6 +7,7 @@ export default function ThankYouCash() {
   const eventPreset = useAppSelector((state) => state.competition);
   const { t } = useTranslations();
 
+  // Reindirizza automaticamente alla pagina evento dopo il timeout (default 8s)
   useTimeoutRedirect(
     "/event/" + eventPreset.slug,
     Number(import.meta.env.VITE_THANKYOU_CASH_TIMEOUT) || 8000,

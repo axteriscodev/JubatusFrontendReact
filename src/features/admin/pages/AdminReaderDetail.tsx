@@ -26,6 +26,7 @@ export default function AdminReaderDetail() {
   const [editingLabel, setEditingLabel] = useState(false);
   const [labelValue, setLabelValue] = useState("");
 
+  // Carica i reader solo se lo store è vuoto (navigazione diretta all'URL senza passare da AdminReaders)
   useEffect(() => {
     if (readers.length === 0) {
       dispatch(fetchReaders());
@@ -45,6 +46,7 @@ export default function AdminReaderDetail() {
 
   const handleSaveLabel = async () => {
     if (!reader) return;
+    // Non chiama l'API se la label è invariata o vuota
     if (!labelValue.trim() || labelValue === reader.label) {
       setEditingLabel(false);
       return;
