@@ -6,6 +6,11 @@ interface TimeoutRedirectOptions {
   onTimeout?: () => void;
 }
 
+/**
+ * Hook che esegue un redirect automatico dopo un timeout.
+ * Opzionalmente esegue onTimeout prima del redirect.
+ * Il timeout viene cancellato al dismount del componente.
+ */
 export function useTimeoutRedirect(
   path: string,
   delayMs: number,

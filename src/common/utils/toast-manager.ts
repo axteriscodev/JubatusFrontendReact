@@ -1,5 +1,6 @@
 import { toast, Bounce } from "react-toastify";
 
+/** Mostra una notifica toast di successo in alto a destra. */
 export function successToast(message: string, autoClose = 3000): void {
   toast.success(message, {
     position: "top-right",
@@ -14,6 +15,7 @@ export function successToast(message: string, autoClose = 3000): void {
   });
 }
 
+/** Mostra una notifica toast di errore in alto a destra. */
 export function errorToast(message: string, autoClose = 3000): void {
   toast.error(message, {
     position: "top-right",

@@ -14,6 +14,11 @@ interface UseFetchDataReturn<T> {
   refetch: () => void;
 }
 
+/**
+ * Hook generico per il fetch di dati da API.
+ * Espone data, loading, error e refetch.
+ * Il fetch viene eseguito automaticamente al mount se enabled=true (default).
+ */
 export function useFetchData<T>(
   url: string,
   options: FetchOptions = {},

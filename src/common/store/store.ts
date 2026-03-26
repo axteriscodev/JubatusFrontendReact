@@ -18,6 +18,8 @@ import competitionsSlice from "@/features/shop/store/competitions-slice";
 import adminCompetitionsSlice from "@features/admin/store/admin-competitions-slice";
 import adminReadersSlice from "@features/admin/store/admin-readers-slice";
 
+// Solo i slice "cart" e "competition" vengono persistiti in localStorage.
+// Gli altri (user, personal, admin*) sono in-memory e resettati al refresh.
 const persistConfig = {
   key: "root",
   storage,

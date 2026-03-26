@@ -18,6 +18,11 @@ const INITIAL_STATE: LightboxState = {
   slides: [],
 };
 
+/**
+ * Hook per la gestione dello stato del lightbox gallery.
+ * openLightbox apre il lightbox su uno slide specifico;
+ * updateSlide permette di aggiornare un singolo slide (es. dopo toggle preferito).
+ */
 export function useLightboxState() {
   const [lightbox, setLightbox] = useState<LightboxState>(INITIAL_STATE);
 

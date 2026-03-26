@@ -1,6 +1,11 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
+/**
+ * Modale con portale React (renderizzato su document.body).
+ * Sotto-componenti: Modal.Header, Modal.Title, Modal.Body, Modal.Footer.
+ * Chiude con ESC (keyboard=true) e click sul backdrop (backdrop=true).
+ */
 type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ModalProps extends React.HTMLAttributes<HTMLDivElement> {

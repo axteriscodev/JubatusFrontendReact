@@ -1,5 +1,7 @@
 import type { PriceItem } from "@/types/cart";
 
+/** Trova il pacchetto full-pack più economico per il tipo indicato (quantità = -1). */
+
 function getCheapestFullPack(prices: PriceItem[], type: "photo" | "video"): PriceItem | null {
   if (!prices || !Array.isArray(prices) || prices.length === 0) {
     return null;
@@ -31,18 +33,31 @@ function getCheapestFullPack(prices: PriceItem[], type: "photo" | "video"): Pric
   return cheapestPack;
 }
 
+/**
+ * Restituisce true se il prezzo attuale è sufficiente per il pacchetto
+ * full-pack foto più economico disponibile.
+ */
 export function isPhotoFullPackEligible(actualPrice: number, prices: PriceItem[]): boolean {
   const fullPackPrice = getCheapestFullPack(prices, "photo");
   if (!fullPackPrice) return false;
   return actualPrice >= (fullPackPrice.price as number);
 }
 
+/**
+ * Restituisce true se il prezzo attuale è sufficiente per il pacchetto
+ * full-pack video più economico disponibile.
+ */
 export function isVideoFullPackEligible(actualPrice: number, prices: PriceItem[]): boolean {
   const fullPackPrice = getCheapestFullPack(prices, "video");
   if (!fullPackPrice) return false;
   return actualPrice >= (fullPackPrice.price as number);
 }
 
+/**
+ * Applica lo sconto percentuale al prezzo.
+ * Restituisce il prezzo originale (number) se discount è null o 0,
+ * altrimenti il prezzo scontato come stringa con 2 decimali.
+ */
 export function calculateDiscount(price: number, pricePack: Pick<PriceItem, "discount">): number | string {
   if (pricePack.discount === null || pricePack.discount === 0) {
     return price;

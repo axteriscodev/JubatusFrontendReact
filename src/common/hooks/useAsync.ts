@@ -6,6 +6,10 @@ interface UseAsyncReturn<T> {
   error: string | null;
 }
 
+/**
+ * Hook per gestire operazioni async imperative (es. submit form).
+ * Chiama run(fn) passando una funzione async; gestisce loading e error automaticamente.
+ */
 export function useAsync<T = unknown>(): UseAsyncReturn<T> {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
