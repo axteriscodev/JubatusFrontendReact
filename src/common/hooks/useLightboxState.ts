@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface LightboxState {
   open: boolean;
@@ -26,7 +26,7 @@ const INITIAL_STATE: LightboxState = {
 export function useLightboxState() {
   const [lightbox, setLightbox] = useState<LightboxState>(INITIAL_STATE);
 
-  const openLightbox = (
+  const openLightbox = useCallback((
     images: unknown[],
     startIndex = 0,
     select: boolean,
@@ -34,23 +34,23 @@ export function useLightboxState() {
     personalSlice = false,
   ) => {
     setLightbox({ open: true, slides: images, index: startIndex, select, actions, personalSlice });
-  };
+  }, []);
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setLightbox((prev) => ({ ...prev, open: false }));
-  };
+  }, []);
 
-  const setIndex = (index: number) => {
+  const setIndex = useCallback((index: number) => {
     setLightbox((prev) => ({ ...prev, index }));
-  };
+  }, []);
 
-  const updateSlide = (i: number, updatedSlide: unknown) => {
+  const updateSlide = useCallback((i: number, updatedSlide: unknown) => {
     setLightbox((prev) => {
       const copy = [...prev.slides];
       copy[i] = updatedSlide;
       return { ...prev, slides: copy };
     });
-  };
+  }, []);
 
   return { lightbox, openLightbox, closeLightbox, setIndex, updateSlide };
 }

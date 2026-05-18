@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Trash2, ShoppingCart, Heart, Download } from "lucide-react";
+import { Trash2, ShoppingCart, Heart, Download, ScanFace } from "lucide-react";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import Lightbox from "yet-another-react-lightbox";
@@ -68,6 +68,8 @@ export interface CustomLightboxProps {
   photoItems?: NormalizedContent[] | null;
   shopMode?: boolean;
   isPersonalArea?: boolean;
+  // Se fornita, mostra nel lightbox il bottone "Raffina ricerca" per le foto (fileTypeId === 1)
+  onRefineSearch?: ((key: string) => void) | null;
 }
 
 export default function CustomLightbox({
@@ -85,6 +87,7 @@ export default function CustomLightbox({
   photoItems = null,
   shopMode = false,
   isPersonalArea = false,
+  onRefineSearch = null,
 }: CustomLightboxProps) {
   const { t } = useTranslations();
 
@@ -262,19 +265,29 @@ export default function CustomLightbox({
             </div>
           );
         },
+        slideFooter: () =>
+          onRefineSearch && currentImage.fileTypeId === 1 ? (
+            <div className={styles.refineFooter}>
+              <p className={styles.refineHint}>
+                {t("REFINE_SEARCH_HINT") ||
+                  "Utilizza questa immagine per migliorare la tua ricerca"}
+              </p>
+              <button
+                type="button"
+                onClick={() => onRefineSearch(currentImage.key!)}
+                className="my-button"
+              >
+                <ScanFace size={16} className="inline" />{" "}
+                {t("REFINE_SEARCH") || "Migliora ricerca"}
+              </button>
+            </div>
+          ) : null,
         slideHeader: () => (
           <>
-            {addToCart && select && !currentImage.isPurchased && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "1rem",
-                  left: "25%",
-                  width: "50%",
-                  zIndex: 1000,
-                }}
-              >
+            <div className={styles.slideActions}>
+              {addToCart && select && !currentImage.isPurchased && (
                 <button
+                  type="button"
                   onClick={() => onImageClick?.(currentImage.key!)}
                   className={`my-button w-full ${isSelected ? "remove" : "add"}`}
                 >
@@ -290,8 +303,8 @@ export default function CustomLightbox({
                     </>
                   )}
                 </button>
-              </div>
-            )}
+              )}
+            </div>
             {shopMode && currentImage.isPurchased && (
               <div className="shopBadge">🎉 {t("LIGHTBOX_PURCHASE")}</div>
             )}

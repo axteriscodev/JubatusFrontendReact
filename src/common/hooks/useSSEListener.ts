@@ -10,8 +10,10 @@ export function useSSEListener(
   onData: (data: string) => void,
   onError: (err: unknown) => void,
 ) {
+  // Dipendenze omesse intenzionalmente: la connessione SSE va aperta una sola volta al mount
+  // e non va riaperta se url/callback cambiano dopo il montaggio.
   useEffect(() => {
     const abort = listenSSE(url, onData, onError);
     return () => abort();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 }

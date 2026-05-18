@@ -3,7 +3,7 @@ import { apiRequest } from '@common/services/api-services';
 
 interface FetchOptions {
   needAuth?: boolean;
-  method?: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   enabled?: boolean;
 }
 

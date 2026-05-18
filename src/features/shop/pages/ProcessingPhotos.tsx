@@ -38,6 +38,9 @@ export default function ProcessingPhotos() {
     },
   );
 
+  // Fallback di sicurezza: se il backend non invia l'evento SSE entro 8 secondi
+  // (timeout di elaborazione o connessione silenziosa fallita), reindirizza all'errore.
+  // Il redirect dell'SSE avviene prima e annulla questo timeout in caso di successo.
   useTimeoutRedirect(ROUTES.CONTENT_ERROR, 8000);
 
   return (

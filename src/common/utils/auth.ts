@@ -6,10 +6,9 @@ export interface UserRole {
   level: string;
   canViewOriginalContent: boolean;
   canViewExternalPayments: boolean;
-  canManageExternalPayments: boolean;
   canManagePayments: boolean;
+  canViewPayments: boolean;
   canManageEvents: boolean;
-  canManageAllEvents: boolean;
 }
 
 /** Restituisce il token JWT salvato in localStorage, o null se assente. */
@@ -83,6 +82,21 @@ export function isOrganizationAdmin(): boolean {
     return decoded.user.organizations[0]?.organizationAdmin === true;
   } catch {
     return false;
+  }
+}
+
+/** Restituisce l'id della prima organizzazione dell'utente dal JWT, o 0 se assente. */
+export function getOrganizationId(): number {
+  const token = getAuthToken();
+  if (!token) return 0;
+
+  try {
+    const decoded = jwtDecode<{
+      user: { organizations: { id: number }[] };
+    }>(token);
+    return decoded.user.organizations[0]?.id ?? 0;
+  } catch {
+    return 0;
   }
 }
 

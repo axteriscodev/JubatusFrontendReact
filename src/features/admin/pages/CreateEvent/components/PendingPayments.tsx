@@ -576,6 +576,7 @@ export default function PendingPayments({
             <select
               value={sortOrder ?? "DESC"}
               onChange={(e) => setSortOrder(e.target.value as "ASC" | "DESC")}
+              title="Ordina per data"
               className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
@@ -594,6 +595,7 @@ export default function PendingPayments({
                   e.target.value === "null" ? null : Number(e.target.value);
                 setFilterStatus(val);
               }}
+              title="Filtra per stato"
               className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
@@ -615,6 +617,7 @@ export default function PendingPayments({
                   e.target.value === "null" ? null : Number(e.target.value);
                 setFilterPaymentId(val);
               }}
+              title="Filtra per metodo di pagamento"
               className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
@@ -834,6 +837,7 @@ export default function PendingPayments({
               value={pageSize}
               onChange={(e) => handlePageSizeChange(Number(e.target.value))}
               disabled={loading}
+              title="Righe per pagina"
               className="px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
             >
               {[5, 10, 25, 50].map((n) => (

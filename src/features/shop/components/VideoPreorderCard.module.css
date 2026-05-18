@@ -1,0 +1,143 @@
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: #0d1117;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.selected {
+  outline: 3px solid var(--primary-event-color, var(--primary-color));
+  outline-offset: -3px;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/reel_in_arrivo.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playButton {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pendingBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #7c3aed;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 5px 10px;
+  border-radius: var(--border-radius);
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.priceChip {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  line-height: 1.4;
+}
+
+.priceChipSelected {
+  background-color: var(--primary-event-color, var(--primary-color));
+  border-color: var(--primary-event-color, var(--primary-color));
+}
+
+.circle {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: white;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.circleSelected {
+  background-color: #007ef9;
+}
+
+/* Multiple packages */
+.multiChips {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+}
+
+.chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: rgba(0, 0, 0, 0.45);
+  color: white;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  line-height: 1.3;
+}
+
+.chip:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.chipSelected {
+  background-color: var(--primary-event-color, var(--primary-color));
+  border-color: var(--primary-event-color, var(--primary-color));
+}
+
+.chipLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.chipPrice {
+  font-weight: 700;
+  white-space: nowrap;
+}

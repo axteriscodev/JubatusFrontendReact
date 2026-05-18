@@ -19,6 +19,7 @@ import { API } from "@common/services/api-endpoints";
 import { ROUTES } from "@/routes";
 
 interface EventItem {
+  id: number;
   isPurchased: boolean;
   fileTypeId?: number;
   urlThumbnail?: string;
@@ -44,7 +45,8 @@ export default function PersonalEventDetail() {
     useAppSelector((state) => state.personal.purchased) ?? [];
   const { slug } = useParams<{ slug: string }>();
 
-  const { lightbox, openLightbox, closeLightbox, setIndex, updateSlide } = useLightboxState();
+  const { lightbox, openLightbox, closeLightbox, setIndex, updateSlide } =
+    useLightboxState();
   const [eventData, setEventData] = useState<EventData | null>(null);
   const { t } = useTranslations();
 
@@ -60,7 +62,7 @@ export default function PersonalEventDetail() {
     // Carica nello slice personal solo gli item già acquistati per mostrarli nel carousel e nella gallery
     dispatch(
       personalActions.updatePurchased(
-        event.items.filter((item: EventItem) => item.isPurchased) || [],
+        event.items.filter((item: EventItem) => item.isPurchased),
       ),
     );
   }, [fetchedEvents, dispatch]);

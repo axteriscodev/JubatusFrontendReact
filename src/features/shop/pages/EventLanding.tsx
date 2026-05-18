@@ -2,21 +2,19 @@ import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import validator from "validator";
 import { createFormErrors } from "@common/models/form-errors";
-
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-
-import MailForm from "@common/components/MailForm";
 import Logo from "@common/components/Logo";
 import { cartActions } from "@features/shop/store/cart-slice";
+import { fetchPriceList } from "@features/shop/store/cart-actions";
 import { setUiPreset, setHeaderData } from "@common/utils/graphics";
 import LanguageSelect from "@common/components/LanguageSelect";
 import { ROUTES } from "@/routes";
-
 import type { Competition } from "@/types/competition";
 import { competitionsActions } from "@/features/shop/store/competitions-slice";
-import SelfieUpload from "@/features/shop/components/SelfieUpload";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import { isAdmin } from "@common/utils/auth";
+import PreOrderForm from "../components/PreOrderForm";
+import SelfieForm, { type SelfieFormSubmitData } from "../components/SelfieForm";
 
 interface EventData {
   data: Partial<Competition> & {
@@ -24,107 +22,92 @@ interface EventData {
     logo: string;
     bibNumber: boolean;
     slug: string;
+    preOrder: boolean;
   };
 }
 
-interface SelfieData {
-  image: File | null;
-  bibNumber: string;
-}
-
-export default function UploadSelfie() {
+export default function EventLanding() {
   const navigate = useNavigate();
   const eventData = useLoaderData() as EventData;
   const dispatch = useAppDispatch();
-  const { eventSlug, userHash } = useParams<{
-    eventSlug: string;
-    userHash?: string;
-  }>();
-  const showBibNumber = useAppSelector((state) => state.competition?.bibNumber);
+  const { eventSlug, userHash } = useParams<{ eventSlug: string; userHash?: string }>();
   const description = useAppSelector((state) => state.competition?.description);
+  const showBibNumber = useAppSelector((state) => state.competition?.bibNumber);
   const { t } = useTranslations();
 
-  const [selfie, setSelfie] = useState<SelfieData>({
-    image: null,
-    bibNumber: "",
-  });
   const [formErrors, setFormErrors] = useState(createFormErrors());
   const [lastShopUrl, setLastShopUrl] = useState<string | null>(null);
 
-  // inserisco l'eventId nello store redux
-  dispatch(cartActions.updateEventId(eventData.data.id));
-  // inserisco il preset per l'evento nello store redux
-  dispatch(
-    competitionsActions.setCompetitionPreset(
-      eventData.data as unknown as Competition,
-    ),
-  );
-
-  //carico tema evento
   useEffect(() => {
+    dispatch(cartActions.updateEventId(eventData.data.id));
+    dispatch(competitionsActions.setCompetitionPreset(eventData.data as unknown as Competition));
+    // Pulisce eventuale preordine selezionato in sessioni precedenti (persisted in Redux)
+    dispatch(cartActions.unSelectPreorder());
+
+    // Il listino prezzi serve solo per il flusso preordine
+    if (eventData.data.preOrder) {
+      dispatch(fetchPriceList(eventData.data.id));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Separato dal precedente perché setUiPreset/setHeaderData agiscono sul DOM
+    // e devono eseguire indipendentemente dalla logica di store
     setUiPreset(eventData.data as unknown as Competition);
     setHeaderData(eventData.data as unknown as Competition);
+    // Recupera l'ultima URL di ricerca salvata per mostrare il pulsante "Torna all'ultima ricerca"
     const savedUrl = localStorage.getItem(`lastShopUrl_${eventSlug}`);
     if (savedUrl) setLastShopUrl(savedUrl);
   }, []);
 
-  //se l'utente ha già fatto una ricerca precedente ed aspetta solo il video
-  //lo mando subito alla fase successiva
   useEffect(() => {
+    // userHash presente nell'URL significa che l'utente arriva da un link diretto (es. email)
+    // con riconoscimento facciale già avviato: si salta il form e si va direttamente al processing
     if (userHash) {
-      // reset del carrello
       dispatch(cartActions.resetStore());
       navigate(ROUTES.PROCESSING_SELFIE, {
-        state: {
-          eventId: eventData.data.id,
-          eventSlug: eventSlug,
-          userHash: userHash,
-        },
+        state: { eventId: eventData.data.id, eventSlug, userHash },
       });
     }
   }, []);
 
-  // callback selfie
-  const handleSelfieFromChild = (data: SelfieData) => {
-    setSelfie(data);
-  };
+  async function handleNormalSubmit(data: SelfieFormSubmitData) {
+    const errors = createFormErrors({
+      emailError: !validator.isEmail(data.email),
+      privacyError: !data.privacy,
+      // Se il bib number è abilitato e compilato, l'immagine non è obbligatoria
+      // (il sistema recupera la foto tramite il numero pettorale)
+      imageError: showBibNumber && data.bibNumber ? false : !data.image,
+    });
 
-  //invio del selfie
-  async function handleSubmit(data: { email: string; privacy?: boolean }) {
-    let errors = createFormErrors();
-
-    console.log(data.email);
-    console.log(data.privacy);
-
-    errors.emailError = !validator.isEmail(data.email);
-
-    // Per eventi motorsport la foto è opzionale se è stato inserito il numero di targa/pettorale
-    if (showBibNumber && selfie.bibNumber) {
-      errors.imageError = false;
-    } else {
-      errors.imageError = !selfie.image;
-    }
-
-    errors.privacyError = !data.privacy;
-
-    if (errors.imageError || errors.emailError || errors.privacyError) {
+    if (errors.emailError || errors.imageError || errors.privacyError) {
       setFormErrors(errors);
       return;
     }
 
-    // reset del carrello
     dispatch(cartActions.resetStore());
-
     navigate(ROUTES.PROCESSING_SELFIE, {
       state: {
         eventId: eventData.data.id,
         email: data.email,
-        image: selfie.image,
-        bibNumber: selfie.bibNumber || "",
-        eventSlug: eventSlug,
-        userHash: userHash,
+        image: data.image,
+        bibNumber: data.bibNumber || "",
+        eventSlug,
+        userHash,
       },
     });
+  }
+
+  if (eventData.data.preOrder) {
+    return (
+      <PreOrderForm
+        eventId={eventData.data.id}
+        onContinue={(pkg) => {
+          dispatch(cartActions.selectPreorder(pkg));
+          navigate(ROUTES.PREORDER_SELFIE);
+        }}
+      />
+    );
   }
 
   return (
@@ -138,25 +121,17 @@ export default function UploadSelfie() {
           css="mb-3 sm:mb-10"
         />
       </div>
-
-      <SelfieUpload
-        onDataChange={handleSelfieFromChild}
-        onError={formErrors.imageError}
+      <SelfieForm
+        onSubmit={handleNormalSubmit}
+        formErrors={formErrors}
         description={description}
-      />
-      <MailForm
-        submitHandle={handleSubmit}
-        defaultEmail={""}
-        onErrors={formErrors}
-        externalPayment={false}
       />
       {lastShopUrl && !isAdmin() && (
         <div className="mt-5">
           <button
+            type="button"
             className="my-button w-full mb-4"
-            onClick={() => {
-              window.location.href = lastShopUrl;
-            }}
+            onClick={() => { window.location.href = lastShopUrl; }}
           >
             {t("LAST_SEARCH") || "Torna all'ultima ricerca"}
           </button>

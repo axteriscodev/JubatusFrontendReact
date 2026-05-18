@@ -30,7 +30,8 @@ export default function ProgressBar({ duration = 10000 }: ProgressBarProps) {
       <div
         className="w-full bg-gray-200 rounded-full h-4 overflow-hidden"
         role="progressbar"
-        aria-valuenow={progress}
+        aria-label="Caricamento in corso"
+        aria-valuenow={Math.round(progress)}
         aria-valuemin={0}
         aria-valuemax={100}
       >

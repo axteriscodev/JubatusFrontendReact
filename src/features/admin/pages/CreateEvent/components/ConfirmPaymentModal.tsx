@@ -106,6 +106,7 @@ export default function ConfirmPaymentModal({
                     ))}
                   </div>
                   <input
+                    title="percentuale sconto"
                     type="number"
                     min="0"
                     max="100"

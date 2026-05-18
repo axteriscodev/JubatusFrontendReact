@@ -22,6 +22,7 @@ export interface PriceListCardProps {
   totalLists: number;
   labelList?: ListItemLabel[];
   currencySymbol?: string;
+  hideDates?: boolean;
 }
 
 export function PriceListCard({
@@ -31,6 +32,7 @@ export function PriceListCard({
   totalLists,
   labelList = [],
   currencySymbol = '€',
+  hideDates = false,
 }: PriceListCardProps) {
   return (
     <div className="border-0 shadow-sm rounded-lg bg-white">
@@ -62,51 +64,53 @@ export function PriceListCard({
       </div>
 
       <div className="p-4">
-        <div className="bg-gray-100 rounded-xl p-3 mb-4">
-          <h6 className="font-semibold mb-3 text-gray-600">
-            <CalendarRange size={16} className="inline mr-2" />
-            Periodo di validità
-          </h6>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label htmlFor={`dateStart-${index}`} className="block font-semibold text-gray-600 text-sm mb-2">
-                <CalendarPlus size={14} className="inline mr-2" />Data Inizio
-              </label>
-              <div className="flex shadow-sm">
-                <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
-                  <Calendar size={16} className="text-green-500" />
-                </span>
-                <input
-                  type="date"
-                  id={`dateStart-${index}`}
-                  value={list.dateStart}
-                  onChange={(e) => handlers.updateListDate(index, 'dateStart', e.target.value)}
-                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2
-                             text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+        {!hideDates && (
+          <div className="bg-gray-100 rounded-xl p-3 mb-4">
+            <h6 className="font-semibold mb-3 text-gray-600">
+              <CalendarRange size={16} className="inline mr-2" />
+              Periodo di validità
+            </h6>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label htmlFor={`dateStart-${index}`} className="block font-semibold text-gray-600 text-sm mb-2">
+                  <CalendarPlus size={14} className="inline mr-2" />Data Inizio
+                </label>
+                <div className="flex shadow-sm">
+                  <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+                    <Calendar size={16} className="text-green-500" />
+                  </span>
+                  <input
+                    type="date"
+                    id={`dateStart-${index}`}
+                    value={list.dateStart}
+                    onChange={(e) => handlers.updateListDate(index, 'dateStart', e.target.value)}
+                    className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2
+                               text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label htmlFor={`dateExpiry-${index}`} className="block font-semibold text-gray-600 text-sm mb-2">
-                <CalendarX size={14} className="inline mr-2" />Data Fine
-              </label>
-              <div className="flex shadow-sm">
-                <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
-                  <Calendar size={16} className="text-red-500" />
-                </span>
-                <input
-                  type="date"
-                  id={`dateExpiry-${index}`}
-                  value={list.dateExpiry}
-                  onChange={(e) => handlers.updateListDate(index, 'dateExpiry', e.target.value)}
-                  className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2
-                             text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+              <div>
+                <label htmlFor={`dateExpiry-${index}`} className="block font-semibold text-gray-600 text-sm mb-2">
+                  <CalendarX size={14} className="inline mr-2" />Data Fine
+                </label>
+                <div className="flex shadow-sm">
+                  <span className="inline-flex items-center px-3 bg-white border-2 border-r-0 border-gray-300 rounded-l-md">
+                    <Calendar size={16} className="text-red-500" />
+                  </span>
+                  <input
+                    type="date"
+                    id={`dateExpiry-${index}`}
+                    value={list.dateExpiry}
+                    onChange={(e) => handlers.updateListDate(index, 'dateExpiry', e.target.value)}
+                    className="flex-1 border-2 border-l-0 border-gray-300 rounded-r-md px-3 py-2
+                               text-[0.95rem] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-between mb-3">
           <h6 className="font-semibold text-gray-600">

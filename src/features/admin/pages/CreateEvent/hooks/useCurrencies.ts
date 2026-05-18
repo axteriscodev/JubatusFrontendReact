@@ -1,5 +1,5 @@
-import { useFetchData } from '@common/hooks/useFetchData';
-import { API } from '@common/services/api-endpoints';
+import { useFetchData } from "@common/hooks/useFetchData";
+import { API } from "@common/services/api-endpoints";
 
 interface Currency {
   id: number;
@@ -8,7 +8,10 @@ interface Currency {
 }
 
 export function useCurrencies() {
-  const { data, loading, error } = useFetchData<Currency[]>(API.EVENT_CURRENCIES);
+  const { data, loading, error } = useFetchData<Currency[]>(
+    API.EVENT_CURRENCIES,
+    { needAuth: true },
+  );
 
   return { currencyList: data ?? [], loading, error };
 }

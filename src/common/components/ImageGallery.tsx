@@ -1,3 +1,4 @@
+import { memo, type ReactNode } from "react";
 import { Search, Check, Heart } from "lucide-react";
 import styles from "./ImageGallery.module.css";
 import { Play } from "lucide-react";
@@ -30,9 +31,10 @@ export interface ImageGalleryProps {
   newItemKeys?: Set<string>;
   parentItemKeys?: Set<string>;
   dimSelected?: boolean;
+  leadingSlot?: ReactNode;
 }
 
-export default function ImageGallery({
+const ImageGallery = memo(function ImageGallery({
   images,
   select = true,
   actions = false,
@@ -46,8 +48,9 @@ export default function ImageGallery({
   aspectRatio = "1:1",
   isShop = false,
   newItemKeys,
-  parentItemKeys,
+  parentItemKeys: _parentItemKeys,
   dimSelected = true,
+  leadingSlot,
 }: ImageGalleryProps) {
   // Recupera i contenuti degli eventi personali dalle immagini
   const data: NormalizedContent[] = getEventContents(images, personalSlice);
@@ -70,9 +73,10 @@ export default function ImageGallery({
       <div
         className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center gap-2 pb-30 ${styles.gallery}`}
       >
+        {leadingSlot}
         {data.map((image, i) => (
           // Contenitore singola immagine con chiave unica
-          <div key={`gallery_${Date.now()}_${image.key || i}_${i}`}>
+          <div key={image.key || i}>
             {/* Ratio dinamico dalle impostazioni evento */}
             <div className={`ratio ${getRatioClass(aspectRatio)}`}>
               <div>
@@ -177,4 +181,6 @@ export default function ImageGallery({
       </div>
     </>
   );
-}
+});
+
+export default ImageGallery;

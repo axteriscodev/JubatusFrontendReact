@@ -97,6 +97,7 @@ export function PriceListItem({
             )}
           </div>
           <button
+            title="rimuovi"
             type="button"
             onClick={() => onRemove(formIndex, rowIndex)}
             disabled={!canRemove}
@@ -370,7 +371,9 @@ export function PriceListItem({
             >
               <Euro size={14} className="inline mr-2" />
               Prezzo
-              <span className="ml-2 text-xs font-normal text-gray-400">(0 = gratuito)</span>
+              <span className="ml-2 text-xs font-normal text-gray-400">
+                (0 = gratuito)
+              </span>
             </label>
             <div className="flex shadow-sm">
               <span

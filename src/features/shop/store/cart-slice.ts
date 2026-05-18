@@ -25,8 +25,14 @@ const initialState: CartState = {
   hasClip: false,
   allPhotos: false,
   allClips: false,
+  allVideos: false,
   video: false,
+  selectedVideoPreorders: [],
   previousAllPhotosPurchase: false,
+  hasBibNumber: false,
+  hasSelfie: false,
+  parentSearchId: 0,
+  isRefined: false,
 };
 
 const cartSlice = createSlice({
@@ -72,6 +78,18 @@ const cartSlice = createSlice({
     },
     updateHasClip(state, action: PayloadAction<boolean>) {
       state.hasClip = action.payload;
+    },
+    updateHasBibNumber(state, action: PayloadAction<boolean>) {
+      state.hasBibNumber = action.payload;
+    },
+    updateHasSelfie(state, action: PayloadAction<boolean>) {
+      state.hasSelfie = action.payload;
+    },
+    updateParentSearchId(state, action: PayloadAction<number>) {
+      state.parentSearchId = action.payload;
+    },
+    updateIsRefined(state, action: PayloadAction<boolean>) {
+      state.isRefined = action.payload;
     },
 
     addItemToCart(state, action: PayloadAction<string>) {
@@ -145,6 +163,17 @@ const cartSlice = createSlice({
       performRecalculate(state);
     },
 
+    selectVideoPreorder(state, action: PayloadAction<PriceItem>) {
+      const alreadySelected = state.selectedVideoPreorders.some((v) => v.id === action.payload.id);
+      if (!alreadySelected) state.selectedVideoPreorders.push(action.payload);
+      performRecalculate(state);
+    },
+
+    unSelectVideoPreorder(state, action: PayloadAction<PriceItem>) {
+      state.selectedVideoPreorders = state.selectedVideoPreorders.filter((v) => v.id !== action.payload.id);
+      performRecalculate(state);
+    },
+
     removeAllItems(state) {
       state.items = [];
       state.totalQuantity = 0;
@@ -152,11 +181,12 @@ const cartSlice = createSlice({
       state.usedPriceItems = [];
       state.allPhotos = false;
       state.allClips = false;
+      state.allVideos = false;
       state.video = false;
       state.hasPhoto = false;
-      state.hasVideo = false;
       state.hasClip = false;
       state.selectedPreorder = null;
+      state.selectedVideoPreorders = [];
     },
 
     resetStore(state) {
@@ -235,9 +265,10 @@ function packageCalculator(
     const photoPackPrice =
       prices.find((p) => p.quantityPhoto === -1 && p.quantityVideo === 0)
         ?.price as number ?? 0;
-    const completePackPrice =
-      prices.find((p) => p.quantityPhoto === -1 && (p.quantityVideo === 1 || p.quantityVideo === -1))
-        ?.price as number ?? 0;
+    const completePackEntry =
+      prices.find((p) => p.quantityPhoto === -1 && (p.quantityVideo === 1 || p.quantityVideo === -1));
+    const completePackPrice = (completePackEntry?.price as number) ?? 0;
+    const completePackVideoQty = (completePackEntry?.quantityVideo as number) ?? 0;
 
     if (photoPackPrice > 0 && completePackPrice > 0) {
       const upgradeDiff = completePackPrice - photoPackPrice;
@@ -246,10 +277,17 @@ function packageCalculator(
           (item) => item.quantityPhoto === 0 && item.quantityVideo === 1,
         )?.price as number ?? 0;
 
-      // Applica il prezzo di upgrade solo se è più conveniente del prezzo standard
       if (videosCount >= 1) {
-        const priceWithUpgrade = finalPrice - singleVideoPrice + upgradeDiff;
-        finalPrice = Math.min(finalPrice, priceWithUpgrade);
+        if (completePackVideoQty === -1) {
+          // Pacchetto copre TUTTI i video: paga solo la differenza di upgrade
+          // indipendentemente da quanti video si aggiungono.
+          finalPrice = Math.min(finalPrice, upgradeDiff);
+        } else {
+          // Pacchetto copre 1 solo video: paga la differenza per il primo video
+          // + prezzo singolo per ogni video aggiuntivo.
+          const extraVideos = videosCount - 1;
+          finalPrice = Math.min(finalPrice, upgradeDiff + extraVideos * singleVideoPrice);
+        }
       }
     }
   }
@@ -263,8 +301,15 @@ function packageCalculator(
  * Viene chiamata internamente dai reducer che modificano gli item.
  */
 const performRecalculate = (state: CartState): void => {
+  // Se il video preorder è selezionato, aggiunge un video virtuale agli item
+  // in modo che il packageCalculator lo consideri nel calcolo dei pacchetti ottimali.
+  const virtualVideoItems: CartItem[] = state.selectedVideoPreorders.map((_, i) => ({
+    keyPreview: "", keyOriginal: `__video_preorder_${i}__`, keyThumbnail: "", keyCover: "", fileTypeId: 2,
+  }));
+  const itemsForCalc: CartItem[] = [...state.items, ...virtualVideoItems];
+
   const { price: totalPrice, usedPriceItems } = packageCalculator(
-    state.items,
+    itemsForCalc,
     state.prices,
     state.previousAllPhotosPurchase,
   );
@@ -290,27 +335,26 @@ const performRecalculate = (state: CartState): void => {
         item.quantityVideo === 0,
     )?.price as number) ?? 0;
 
+  const cartHasVideo = state.items.some((item) => item.fileTypeId === 2);
   state.hasPhoto = state.items.some((item) => item.fileTypeId === 1);
-  state.hasVideo = state.items.some((item) => item.fileTypeId === 2);
+  // state.hasVideo non viene toccato: è il flag dal backend (updateHasVideo) che indica
+  // se l'evento ha un video. Sovrascriverlo qui lo farebbe sparire al primo click su una foto.
   state.hasClip = state.items.some((item) => item.fileTypeId === 3);
-  state.video = state.hasVideo;
+  state.video = cartHasVideo || state.selectedVideoPreorders.length > 0;
+  state.allVideos = usedPriceItems.some((p) => (p.quantityVideo as number) === -1);
 
-  // Mostra il banner "converti in pacchetto" quando aggiungendo una singola foto
-  // si supererebbe il prezzo del pacchetto foto completo, ma il totale attuale è ancora sotto
   state.alertPack =
     !state.previousAllPhotosPurchase &&
     totalPrice + photoPrice >= photoPackPrice &&
     totalPrice < photoPackPrice;
 
-  // allPhotos indica che il totale corrisponde al pacchetto "tutte le foto"
-  // (o al pacchetto completo foto+video se c'è un video nel carrello)
-  if (state.hasVideo) {
+  const hasVideoForPackCalc = cartHasVideo || state.selectedVideoPreorders.length > 0;
+  if (hasVideoForPackCalc) {
     state.allPhotos = totalPrice >= completePackPrice && completePackPrice > 0;
   } else {
     state.allPhotos = totalPrice >= photoPackPrice && photoPackPrice > 0;
   }
 
-  // allClips indica che il totale corrisponde al pacchetto "tutti i clip"
   state.allClips = totalPrice >= clipPackPrice && clipPackPrice > 0;
 
   state.totalPrice = totalPrice;

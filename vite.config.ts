@@ -17,4 +17,16 @@ export default defineConfig({
       '@features': path.resolve(__dirname, './src/features'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-redux': ['@reduxjs/toolkit', 'redux-persist', 'react-redux'],
+          'vendor-stripe': ['@stripe/react-stripe-js', '@stripe/stripe-js'],
+          'vendor-ui': ['yet-another-react-lightbox'],
+        },
+      },
+    },
+  },
 })

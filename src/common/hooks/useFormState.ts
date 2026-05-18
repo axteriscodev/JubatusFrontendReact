@@ -7,7 +7,7 @@ type FormChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTML
  * handleChange aggiorna il campo corrispondente al name dell'input;
  * resetForm ripristina i valori iniziali.
  */
-export function useFormState<T extends Record<string, unknown>>(initialForm: T) {
+export function useFormState<T extends object>(initialForm: T) {
   const [form, setForm] = useState<T>(initialForm);
 
   const handleChange = (e: FormChangeEvent) => {

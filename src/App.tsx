@@ -3,50 +3,61 @@ import {
   RouterProvider,
   Navigate,
 } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, lazy, Suspense } from "react";
 import { isAuthenticated, isAdmin } from "@common/utils/auth";
 
+// Loaders — statici (eseguono prima del render, devono essere sempre disponibili)
+import { loader as personalLoader } from "@features/user/pages/PersonalArea.loader";
+import { loader as updateSelfieLoader } from "@features/shop/pages/UploadSelfie.loader";
+import { loader as adminLoader } from "@features/admin/pages/AdminPanel.loader";
+import { loader as adminReadersLoader } from "@features/admin/pages/AdminReaders.loader";
+import { loader as adminReaderDetailLoader } from "@features/admin/pages/AdminReaderDetail.loader";
+import { loader as createEventLoader } from "@features/admin/pages/CreateEvent/CreateEvent.loader";
+import { loader as defaultPriceListLoader } from "@features/admin/pages/AdminDefaultPriceList.loader";
+
+// Pagine piccole/core — statiche
 import Login from "@features/user/pages/Login";
 import WorkInProgress from "@common/pages/WorkInProgress";
 import EmailSent from "@features/user/pages/EmailSent";
 import PinVerification from "@features/user/pages/PinVerification";
-import PersonalArea from "@features/user/pages/PersonalArea";
-import { loader as personalLoader } from "@features/user/pages/PersonalArea.loader";
-import PersonalEventDetail from "@features/user/pages/PersonalEventDetail";
-import UploadSelfie from "@features/shop/pages/UploadSelfie";
-import { loader as updateSelfieLoader } from "@features/shop/pages/UploadSelfie.loader";
-import ProcessingSelfie from "@features/shop/pages/ProcessingSelfie";
 import ContentUnavailable from "@common/pages/ContentUnavailable";
-
-import PreOrder from "@features/shop/pages/PreOrder";
-import PreOrderPurchased from "@features/shop/pages/PreOrderPurchased";
-import ImageShop from "@features/shop/pages/ImageShop";
-import Purchased from "@features/shop/pages/Purchased";
-import Checkout from "@features/shop/pages/Checkout";
-import CheckoutOutcome from "@features/shop/pages/CheckoutOutcome";
-import ProcessingPhotos from "@features/shop/pages/ProcessingPhotos";
-import ShopLayout from "@features/shop/components/ShopLayout";
-import AdminLayout from "@features/admin/components/AdminLayout";
-import AdminDashboard from "@features/admin/pages/AdminDashboard";
-import AdminEvents from "@features/admin/pages/AdminEvents";
-import { loader as adminLoader } from "@features/admin/pages/AdminPanel.loader";
-import AdminReaders from "@features/admin/pages/AdminReaders";
-import { loader as adminReadersLoader } from "@features/admin/pages/AdminReaders.loader";
-import AdminReaderDetail from "@features/admin/pages/AdminReaderDetail";
-import { loader as adminReaderDetailLoader } from "@features/admin/pages/AdminReaderDetail.loader";
-import CreateEvent from "@features/admin/pages/CreateEvent";
-import { loader as createEventLoader } from "@features/admin/pages/CreateEvent/CreateEvent.loader";
 import ContentError from "@common/pages/ContentError";
-import MailConfirmation from "@features/shop/pages/MailConfirmation";
-import ThankYou from "@features/shop/pages/ThankYou";
+import NewErrorPage from "./common/pages/NewErrorPage";
+import EventNotFoundPage from "@common/pages/EventNotFoundPage";
 import { LanguageProvider } from "@common/i18n/LanguageContext";
 import { TranslationProvider } from "@common/i18n/TranslationProvider";
 import RouterWrapper from "@common/components/RouterWrapper";
-import ChoosePayment from "@features/shop/pages/ChoosePayment";
-import PayAtCounter from "@features/shop/pages/PayAtCounter";
 import { ROUTES } from "./routes";
-import NewErrorPage from "./common/pages/NewErrorPage";
-import ThankYouCash from "./features/shop/pages/ThankYouCash";
+
+// Feature user — lazy
+const PersonalArea = lazy(() => import("@features/user/pages/PersonalArea"));
+const PersonalEventDetail = lazy(() => import("@features/user/pages/PersonalEventDetail"));
+
+// Feature shop — lazy
+const ShopLayout = lazy(() => import("@features/shop/components/ShopLayout"));
+const EventLanding = lazy(() => import("@features/shop/pages/EventLanding"));
+const PreOrderSelfie = lazy(() => import("@features/shop/pages/PreOrderSelfie"));
+const ProcessingSelfie = lazy(() => import("@features/shop/pages/ProcessingSelfie"));
+const PreOrderPurchased = lazy(() => import("@features/shop/pages/PreOrderPurchased"));
+const ImageShop = lazy(() => import("@features/shop/pages/ImageShop"));
+const Purchased = lazy(() => import("@features/shop/pages/Purchased"));
+const Checkout = lazy(() => import("@features/shop/pages/Checkout"));
+const CheckoutOutcome = lazy(() => import("@features/shop/pages/CheckoutOutcome"));
+const ProcessingPhotos = lazy(() => import("@features/shop/pages/ProcessingPhotos"));
+const MailConfirmation = lazy(() => import("@features/shop/pages/MailConfirmation"));
+const ThankYou = lazy(() => import("@features/shop/pages/ThankYou"));
+const ThankYouCash = lazy(() => import("./features/shop/pages/ThankYouCash"));
+const ChoosePayment = lazy(() => import("@features/shop/pages/ChoosePayment"));
+const PayAtCounter = lazy(() => import("@features/shop/pages/PayAtCounter"));
+
+// Feature admin — lazy
+const AdminLayout = lazy(() => import("@features/admin/components/AdminLayout"));
+const AdminDashboard = lazy(() => import("@features/admin/pages/AdminDashboard"));
+const AdminEvents = lazy(() => import("@features/admin/pages/AdminEvents"));
+const AdminReaders = lazy(() => import("@features/admin/pages/AdminReaders"));
+const AdminReaderDetail = lazy(() => import("@features/admin/pages/AdminReaderDetail"));
+const CreateEvent = lazy(() => import("@features/admin/pages/CreateEvent"));
+const AdminDefaultPriceList = lazy(() => import("@features/admin/pages/AdminDefaultPriceList"));
 
 function HomeRoute() {
   if (isAdmin()) return <Navigate to={ROUTES.ADMIN} replace />;
@@ -90,22 +101,21 @@ function App() {
             children: [
               {
                 path: ROUTES.EVENT(":eventSlug"),
-                element: <UploadSelfie />,
+                element: <EventLanding />,
                 loader: updateSelfieLoader,
+                errorElement: <EventNotFoundPage />,
               },
               {
                 path: ROUTES.EVENT_WITH_HASH(":eventSlug", ":userHash"),
-                element: <UploadSelfie />,
+                element: <EventLanding />,
                 loader: updateSelfieLoader,
+                errorElement: <EventNotFoundPage />,
               },
+              { path: ROUTES.PREORDER_SELFIE, element: <PreOrderSelfie /> },
               { path: ROUTES.PROCESSING_SELFIE, element: <ProcessingSelfie /> },
               {
                 path: ROUTES.CONTENT_UNAVAILABLE,
                 element: <ContentUnavailable />,
-              },
-              {
-                path: ROUTES.PRE_ORDER,
-                element: <PreOrder />,
               },
               {
                 path: ROUTES.PRE_ORDER_PURCHASED,
@@ -178,6 +188,11 @@ function App() {
                 element: <CreateEvent />,
                 loader: createEventLoader,
               },
+              {
+                path: ROUTES.ADMIN_DEFAULT_PRICE_LIST,
+                element: <AdminDefaultPriceList />,
+                loader: defaultPriceListLoader,
+              },
             ],
           },
         ],
@@ -188,7 +203,9 @@ function App() {
   return (
     <LanguageProvider>
       <TranslationProvider>
-        <RouterProvider router={router} />
+        <Suspense fallback={null}>
+          <RouterProvider router={router} />
+        </Suspense>
       </TranslationProvider>
     </LanguageProvider>
   );

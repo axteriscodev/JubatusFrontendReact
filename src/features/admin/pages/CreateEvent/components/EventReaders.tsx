@@ -78,7 +78,9 @@ export function EventReaders({ eventId }: EventReadersProps) {
       ]);
 
       if (eventReadersRes.ok) {
-        const data = (await eventReadersRes.json()) as { data: { readers: EventReader[] } };
+        const data = (await eventReadersRes.json()) as {
+          data: { readers: EventReader[] };
+        };
         setEventReaders(data.data?.readers ?? []);
       }
       if (allReadersRes.ok) {
@@ -101,9 +103,7 @@ export function EventReaders({ eventId }: EventReadersProps) {
   // Esclude dal selettore i reader già associati all'evento (mostrati nella lista sopra)
   const eventReaderIds = new Set(eventReaders.map((r) => r.id));
 
-  const availableReaders = allReaders.filter(
-    (r) => !eventReaderIds.has(r.id),
-  );
+  const availableReaders = allReaders.filter((r) => !eventReaderIds.has(r.id));
 
   const handleAddReader = async () => {
     if (!selectedReaderId) return;
@@ -208,6 +208,7 @@ export function EventReaders({ eventId }: EventReadersProps) {
 
           <div className="flex flex-wrap gap-2 items-center mt-3">
             <select
+              title="selezione Reader"
               value={selectedReaderId}
               onChange={(e) => setSelectedReaderId(e.target.value)}
               disabled={availableReaders.length === 0}

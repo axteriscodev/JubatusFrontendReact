@@ -10,7 +10,10 @@ import {
   ArrowRightLeft,
   Smile,
   Text,
+  RectangleHorizontal,
   ShieldCheck,
+  Film,
+  Building2,
 } from "lucide-react";
 import {
   useMemo,
@@ -19,6 +22,7 @@ import {
   type ChangeEventHandler,
 } from "react";
 import type { EventFormData } from "../utils/eventFormHelpers";
+import { ASPECT_RATIO_OPTIONS } from "../../../constants";
 
 interface TagOption {
   id: number;
@@ -30,11 +34,17 @@ interface CurrencyOption {
   currency: string;
 }
 
+interface OrganizationOption {
+  id: number;
+  name: string;
+}
+
 export interface EventBasicInfoErrors {
   title?: string;
   pathS3?: string;
   tagId?: string;
   currencyId?: string;
+  organizationId?: string;
 }
 
 export interface EventBasicInfoProps {
@@ -47,7 +57,9 @@ export interface EventBasicInfoProps {
   onTitleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   tagList: TagOption[];
   currencyList: CurrencyOption[];
+  organizationList: OrganizationOption[];
   errors?: EventBasicInfoErrors;
+  isOrganizationAdmin?: boolean;
 }
 
 const inputClass = (hasError: boolean) =>
@@ -65,7 +77,9 @@ export function EventBasicInfo({
   onTitleChange,
   tagList,
   currencyList,
+  organizationList,
   errors = {},
+  isOrganizationAdmin = false,
 }: EventBasicInfoProps) {
   const [copied, setCopied] = useState(false);
 
@@ -84,6 +98,14 @@ export function EventBasicInfo({
 
     return `${normalizedDomain}/event/${normalizedSlug}`;
   }, [formData.slug]);
+
+  const handlePathS3Change = (e: ChangeEvent<HTMLInputElement>) => {
+    const sanitized = e.target.value.replace(/[^a-zA-Z0-9\-_./]/g, "");
+    onInputChange({
+      ...e,
+      target: { ...e.target, name: "pathS3", value: sanitized },
+    } as ChangeEvent<HTMLInputElement>);
+  };
 
   const handleCopySlug = () => {
     if (!fullSlugUrl) return;
@@ -115,6 +137,31 @@ export function EventBasicInfo({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="lg:col-span-2">
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <Building2 size={14} className="inline mr-2" />
+              Organizzazione
+            </label>
+            <select
+              name="organizationId"
+              value={formData.organizationId}
+              onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
+              className={selectClass(!!errors.organizationId)}
+              title="Organizzazione"
+            >
+              <option value="">Seleziona un'organizzazione</option>
+              {Array.isArray(organizationList) &&
+                organizationList.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.name}
+                  </option>
+                ))}
+            </select>
+            {errors.organizationId && (
+              <p className="text-red-500 text-xs mt-1">{errors.organizationId}</p>
+            )}
+          </div>
+
           <div>
             <label className="block font-semibold text-gray-600 text-sm mb-2">
               <Pencil size={14} className="inline mr-2" />
@@ -185,9 +232,15 @@ export function EventBasicInfo({
               type="text"
               name="pathS3"
               value={formData.pathS3}
-              onChange={onInputChange as ChangeEventHandler<HTMLInputElement>}
+              onChange={handlePathS3Change}
               placeholder="percorso/cartella/s3"
-              className={inputClass(!!errors.pathS3)}
+              disabled={!isOrganizationAdmin}
+              readOnly={!isOrganizationAdmin}
+              className={
+                !isOrganizationAdmin
+                  ? "w-full bg-gray-100 border-2 border-gray-300 rounded-md px-3 py-2 text-[0.95rem] text-gray-500 cursor-not-allowed"
+                  : inputClass(!!errors.pathS3)
+              }
             />
             {errors.pathS3 && (
               <p className="text-red-500 text-xs mt-1">{errors.pathS3}</p>
@@ -204,6 +257,7 @@ export function EventBasicInfo({
               value={formData.tagId}
               onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
               className={selectClass(!!errors.tagId)}
+              title="Tipologia evento"
             >
               <option value="">Seleziona una tipologia</option>
               {Array.isArray(tagList) &&
@@ -228,6 +282,7 @@ export function EventBasicInfo({
               value={formData.currencyId}
               onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
               className={selectClass(!!errors.currencyId)}
+              title="Valuta"
             >
               <option value="">Seleziona una valuta</option>
               {Array.isArray(currencyList) &&
@@ -258,6 +313,26 @@ export function EventBasicInfo({
             />
           </div>
 
+          <div>
+            <label className="block font-semibold text-gray-600 text-sm mb-2">
+              <RectangleHorizontal size={14} className="inline mr-2" />
+              Aspect ratio foto
+            </label>
+            <select
+              name="aspectRatio"
+              value={formData.aspectRatio}
+              onChange={onInputChange as ChangeEventHandler<HTMLSelectElement>}
+              className={selectClass(false)}
+              title="Aspect ratio foto"
+            >
+              {ASPECT_RATIO_OPTIONS.map((ratio) => (
+                <option key={ratio} value={ratio}>
+                  {ratio}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="lg:col-span-2">
             <label className="block font-semibold text-gray-600 text-sm mb-2">
               <Text size={14} className="inline mr-2" />
@@ -276,6 +351,36 @@ export function EventBasicInfo({
             />
           </div>
 
+          <div className="lg:col-span-2">
+            <div className="bg-gray-100 rounded-lg p-3">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  id="hasReel"
+                  name="hasReel"
+                  checked={formData.hasReel}
+                  onChange={(e) =>
+                    onInputChange({
+                      target: {
+                        name: "hasReel",
+                        value: e.target.checked,
+                      },
+                    })
+                  }
+                  className="w-5 h-5 mt-0.5 text-blue-600 rounded focus:ring-blue-500 shrink-0"
+                />
+                <div>
+                  <span className="font-semibold">
+                    <Film size={16} className="inline mr-2 text-blue-600" />
+                    Evento con reel
+                  </span>
+                  <div className="text-gray-500 text-sm mt-1">
+                    Abilita la disponibilità di reel video per questo evento
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
           <div className="lg:col-span-2">
             <div className="bg-gray-100 rounded-lg p-3">
               <label className="flex items-start gap-3 cursor-pointer">

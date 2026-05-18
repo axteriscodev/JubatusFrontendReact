@@ -28,7 +28,8 @@ export default function Purchased() {
   const allPurchasedItems = useAppSelector((state) => state.personal.purchased);
   const eventPreset = useAppSelector((state) => state.competition);
 
-  const { lightbox, openLightbox, closeLightbox, setIndex, updateSlide } = useLightboxState();
+  const { lightbox, openLightbox, closeLightbox, setIndex, updateSlide } =
+    useLightboxState();
   const { t } = useTranslations();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function Purchased() {
   return (
     <>
       <div className="container">
-        <div className="text-left">
+        <div className="flex justify-center">
           <Logo
             src={import.meta.env.VITE_API_URL + "/" + eventLogo}
             size="logo-xs"
@@ -91,10 +92,18 @@ export default function Purchased() {
                       <img
                         src={
                           !image.fileTypeId || image.fileTypeId == 1
-                            ? (image as unknown as { urlPreview?: string; urlThumbnail?: string; url?: string }).urlPreview ||
-                              (image as unknown as { urlThumbnail?: string }).urlThumbnail ||
+                            ? (
+                                image as unknown as {
+                                  urlPreview?: string;
+                                  urlThumbnail?: string;
+                                  url?: string;
+                                }
+                              ).urlPreview ||
+                              (image as unknown as { urlThumbnail?: string })
+                                .urlThumbnail ||
                               (image as unknown as { url?: string }).url
-                            : (image as unknown as { urlCover?: string }).urlCover || "/images/play-icon.webp"
+                            : (image as unknown as { urlCover?: string })
+                                .urlCover || "/images/play-icon.webp"
                         }
                         className="img-fluid"
                         alt="..."
@@ -143,9 +152,21 @@ export default function Purchased() {
           // personal slice per la galleria completa, cart slice per gli item appena acquistati
           onUpdateSlide={(i, updatedSlide) => {
             if (lightbox.personalSlice) {
-              dispatch(personalActions.updatePersonalItem(updatedSlide as Parameters<typeof personalActions.updatePersonalItem>[0]));
+              dispatch(
+                personalActions.updatePersonalItem(
+                  updatedSlide as Parameters<
+                    typeof personalActions.updatePersonalItem
+                  >[0],
+                ),
+              );
             } else {
-              dispatch(cartActions.updatePurchasedItem(updatedSlide as Parameters<typeof cartActions.updatePurchasedItem>[0]));
+              dispatch(
+                cartActions.updatePurchasedItem(
+                  updatedSlide as Parameters<
+                    typeof cartActions.updatePurchasedItem
+                  >[0],
+                ),
+              );
             }
             updateSlide(i, updatedSlide);
           }}

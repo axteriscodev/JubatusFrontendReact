@@ -79,54 +79,53 @@ export default function ProcessingSelfie() {
       if (response.ok) {
         const json = await response.json();
         await dispatch(fetchPriceList(eventId));
-        dispatch(cartActions.updateSearchId(json.data));
+        dispatch(cartActions.updateSearchId(json.data.searchId));
+        dispatch(cartActions.updateHasBibNumber(json.data.hasBibNumber ?? false));
+        dispatch(cartActions.updateHasSelfie(json.data.hasSelfie ?? false));
 
-        if (eventPreset.preOrder) {
-          navigate(ROUTES.PRE_ORDER, { replace: true });
-        } else {
-          //sezione elaborazione selfie e attesa risposte dal server S3
-          abortSSE = listenSSE(
-            API.CONTENTS_SSE(json.data),
-            (data) => {
-              const jsonData = JSON.parse(data);
-              console.log("SSE contents order:", jsonData.contents?.map((c: { fileTypeId: number; keyOriginal: string }) => ({ fileTypeId: c.fileTypeId, key: c.keyOriginal })));
-              dispatch(cartActions.updateProducts(jsonData.contents));
-              dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
-              dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
-              dispatch(cartActions.updateUserId(jsonData.userId));
-              dispatch(cartActions.updateUserEmail(jsonData.userEmail));
-              dispatch(
-                cartActions.updatePreviousAllPhotosPurchase(
-                  jsonData.previousAllPhotosPurchase ?? false,
-                ),
+        //sezione elaborazione selfie e attesa risposte dal server S3
+        abortSSE = listenSSE(
+          API.CONTENTS_SSE(json.data.searchId),
+          (data) => {
+            const jsonData = JSON.parse(data);
+            console.log("SSE contents order:", jsonData.contents?.map((c: { fileTypeId: number; keyOriginal: string }) => ({ fileTypeId: c.fileTypeId, key: c.keyOriginal })));
+            dispatch(cartActions.updateProducts(jsonData.contents));
+            dispatch(cartActions.updateHasPhoto(jsonData.hasPhoto ?? false));
+            dispatch(cartActions.updateHasVideo(jsonData.hasVideo ?? false));
+            dispatch(cartActions.updateHasClip(jsonData.hasClip ?? false));
+            dispatch(cartActions.updateUserId(jsonData.userId));
+            dispatch(cartActions.updateUserEmail(jsonData.userEmail));
+            dispatch(
+              cartActions.updatePreviousAllPhotosPurchase(
+                jsonData.previousAllPhotosPurchase ?? false,
+              ),
+            );
+
+            // Salva l'URL dello shop in localStorage per consentire all'utente
+            // di tornare ai propri risultati senza ripetere l'upload del selfie
+            if (jsonData.shopUrl && receivedData.eventSlug) {
+              const relativePath = jsonData.shopUrl.replace(
+                import.meta.env.VITE_APP_DOMAIN,
+                "",
               );
+              localStorage.setItem(
+                `lastShopUrl_${receivedData.eventSlug}`,
+                relativePath,
+              );
+            }
 
-              // Salva l'URL dello shop in localStorage per consentire all'utente
-              // di tornare ai propri risultati senza ripetere l'upload del selfie
-              if (jsonData.shopUrl && receivedData.eventSlug) {
-                const relativePath = jsonData.shopUrl.replace(
-                  import.meta.env.VITE_APP_DOMAIN,
-                  "",
-                );
-                localStorage.setItem(
-                  `lastShopUrl_${receivedData.eventSlug}`,
-                  relativePath,
-                );
-              }
-
-              if (jsonData.contents.length > 0 || jsonData.hasVideo) {
-                navigate(ROUTES.IMAGE_SHOP, { replace: true });
-              } else {
-                navigate(ROUTES.CONTENT_UNAVAILABLE, { replace: true });
-              }
-            },
-            () => {
-              errorToast("Si è verificato un errore");
-              console.log(`Errore per la ricerca ${json.data}`);
-              navigate(ROUTES.EVENT(eventPreset.slug), { replace: true });
-            },
-          );
-        }
+            if (jsonData.contents.length > 0 || jsonData.hasVideo) {
+              navigate(ROUTES.IMAGE_SHOP, { replace: true });
+            } else {
+              navigate(ROUTES.CONTENT_UNAVAILABLE, { replace: true });
+            }
+          },
+          () => {
+            errorToast("Si è verificato un errore");
+            console.log(`Errore per la ricerca ${json.data}`);
+            navigate(ROUTES.EVENT(eventPreset.slug), { replace: true });
+          },
+        );
       } else if (response.status === 401) {
         errorToast(t("INVALID_MAIL_FOR_EVENT"), 10000);
         navigate("/event/" + eventPreset.slug, { replace: true });

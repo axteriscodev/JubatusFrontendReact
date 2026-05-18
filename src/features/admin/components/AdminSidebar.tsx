@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, CalendarDays, CreditCard, LogOut, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, CalendarDays, CreditCard, LogOut, ChevronLeft, ChevronRight, LayoutList } from "lucide-react";
 import { useState } from "react";
 import { ROUTES } from "@/routes";
 import { logOut, isOrganizationAdmin } from "@common/utils/auth";
@@ -17,6 +17,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", to: ROUTES.ADMIN, icon: LayoutDashboard, end: true },
   { label: "Elenco eventi", to: ROUTES.ADMIN_EVENTS, icon: CalendarDays },
   { label: "Elenco reader", to: ROUTES.ADMIN_READERS, icon: CreditCard },
+  { label: "Listino template", to: ROUTES.ADMIN_DEFAULT_PRICE_LIST, icon: LayoutList },
 ];
 
 const RESTRICTED_NAV_ITEMS: NavItem[] = [

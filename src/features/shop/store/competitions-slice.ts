@@ -21,6 +21,7 @@ interface CompetitionState {
   currency: string;
   currencySymbol: string;
   aspectRatio: string;
+  hasReel: boolean;
 }
 
 const initialState: CompetitionState = {
@@ -43,6 +44,7 @@ const initialState: CompetitionState = {
   currency: "",
   currencySymbol: "",
   aspectRatio: "",
+  hasReel: false,
 };
 
 const competitionsSlice = createSlice({
@@ -72,6 +74,7 @@ const competitionsSlice = createSlice({
       state.currency = p.currency.currency;
       state.currencySymbol = p.currency.symbol;
       state.aspectRatio = p.aspectRatio;
+      state.hasReel = p.hasReel ?? false;
     },
   },
 });

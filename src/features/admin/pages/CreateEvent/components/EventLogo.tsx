@@ -35,6 +35,7 @@ export function EventLogo({
         <div className="mb-4">
           <FormLabel htmlFor="formFile">Logo</FormLabel>
           <input
+            title="caricamento logo evento"
             id="formFile"
             onChange={onFileChange}
             type="file"

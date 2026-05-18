@@ -8,12 +8,15 @@ export const fetchPurchased = () => {
     const fetchData = async () => {
       const token = getAuthToken();
 
-      const response = await fetch(import.meta.env.VITE_API_URL + "/library/fetch", {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + "/library/fetch",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Errore nel caricamento degli eventi");
@@ -27,7 +30,7 @@ export const fetchPurchased = () => {
       const purchasedData = await fetchData();
       dispatch(personalActions.updatePurchased(purchasedData.data));
     } catch (error) {
-      console.log("Qualcosa non ha funzionato");
+      console.error("Qualcosa non ha funzionato", error);
     }
   };
 };

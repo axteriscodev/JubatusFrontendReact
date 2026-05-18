@@ -10,6 +10,7 @@ export const ROUTES = {
   PROCESSING_SELFIE: "/processing-selfie",
   CONTENT_UNAVAILABLE: "/content-unavailable",
   PRE_ORDER: "/pre-order",
+  PREORDER_SELFIE: "/preorder-selfie",
   PRE_ORDER_PURCHASED: "/pre-order-purchased",
   IMAGE_SHOP: "/image-shop",
   CHOOSE_PAYMENT: "/choose-payment",
@@ -28,4 +29,5 @@ export const ROUTES = {
   ADMIN_EVENT: (eventId: string | number) => `/admin/event/${eventId}`,
   ADMIN_READERS: "/admin/readers",
   ADMIN_READER: (readerId: string | number) => `/admin/readers/${readerId}`,
+  ADMIN_DEFAULT_PRICE_LIST: "/admin/default-price-list",
 };

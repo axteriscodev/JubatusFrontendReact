@@ -35,6 +35,8 @@ export interface Competition {
   currencyId: number;
   aspectRatio: string;
   verifiedAttendanceEvent: boolean;
+  hasReel: boolean;
+  organizationId?: number;
   languages: CompetitionLanguage[];
   tag: CompetitionTag;
   currency: Currency;

@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type MouseEvent, type SubmitEvent } from "react";
+import { LoaderCircle } from "lucide-react";
 import { FormLabel } from "./ui/Form";
 import Input from "./ui/Input";
 import Modal from "./ui/Modal";
@@ -20,6 +21,7 @@ export interface MailFormProps {
   showPrivacy?: boolean;
   onErrors: MailFormErrors;
   externalPayment?: boolean;
+  isLoading?: boolean;
 }
 
 export default function MailForm({
@@ -28,6 +30,7 @@ export default function MailForm({
   showPrivacy = true,
   onErrors,
   externalPayment = false,
+  isLoading = false,
 }: MailFormProps) {
   const [isChecked, setIsChecked] = useState(false);
   const [emailValue, setEmailValue] = useState(defaultEmail || "");
@@ -156,10 +159,15 @@ export default function MailForm({
       <button
         type="submit"
         className="my-button w-full mt-3 sm:mt-4 !text-base sm:!text-xl"
+        disabled={isLoading}
       >
-        {externalPayment
-          ? parse(t("EXTERNAL_PAYMENT_BUTTON"))
-          : parse(t("SELFIE_NEXT"))}
+        {isLoading ? (
+          <LoaderCircle className="inline h-5 w-5 animate-spin" />
+        ) : externalPayment ? (
+          parse(t("EXTERNAL_PAYMENT_BUTTON"))
+        ) : (
+          parse(t("SELFIE_NEXT"))
+        )}
       </button>
     </form>
   );

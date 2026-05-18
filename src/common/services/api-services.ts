@@ -80,6 +80,7 @@ export function listenSSE(
 
   fetchEventSource(api, {
     signal: controller.signal,
+    openWhenHidden: true,
     headers: {
       Accept: "text/event-stream",
       Authorization: token ? `Bearer ${token}` : "",

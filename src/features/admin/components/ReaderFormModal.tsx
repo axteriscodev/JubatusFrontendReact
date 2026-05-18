@@ -1,4 +1,4 @@
-import { useEffect, useState, type SubmitEvent } from "react";
+import { useEffect, useState } from "react";
 import Modal from "@common/components/ui/Modal";
 import Form from "@common/components/ui/Form";
 import LoadingState from "@common/components/ui/LoadingState";
@@ -61,7 +61,7 @@ export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormMod
       .finally(() => setLoadingLocations(false));
   }, [show]);
 
-  const handleRegisterSave = async (e: SubmitEvent<HTMLFormElement>) => {
+  const handleRegisterSave = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     await run(async () => {
       const response = await apiRequest({
@@ -81,7 +81,7 @@ export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormMod
     });
   };
 
-  const handleImportSave = async (e: SubmitEvent<HTMLFormElement>) => {
+  const handleImportSave = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     await run(async () => {
       const body: Record<string, string> = {

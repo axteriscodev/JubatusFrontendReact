@@ -28,15 +28,16 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [loadingTranslations, setLoadingTranslations] = useState(true);
 
+  // Restituisce la traduzione per key, con override per tag specifico (es. "TITLE_42").
+  // Ritorna "" (stringa vuota) se la chiave non esiste — mai il fallback alla chiave stessa,
+  // perché i componenti usano parse() e mostrano stringa vuota se la traduzione manca.
   const t = (key: string): string => {
     if (!key) return "";
 
-    //se ho il tag, provo a cercare la traduzione col tag
     if (tagId && tagId !== 0 && translations[`${key}_${tagId}`]) {
       return translations[`${key}_${tagId}`];
     }
 
-    //se non ho il tag o non ho trovato la traduzione col tag, cerco la traduzione neutra
     if (translations[key]) {
       return translations[key];
     }

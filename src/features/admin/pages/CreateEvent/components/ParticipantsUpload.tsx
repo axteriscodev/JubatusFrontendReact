@@ -150,7 +150,7 @@ export function ParticipantsUpload({ eventId }: ParticipantsUploadProps) {
         <div className="mt-3">
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative flex justify-between items-center">
             <span>File caricato con successo!</span>
-            <button type="button" onClick={() => setUploadStatus(null)} className="text-green-700 hover:text-green-900">
+            <button type="button" onClick={() => setUploadStatus(null)} title="Chiudi" className="text-green-700 hover:text-green-900">
               <X size={16} />
             </button>
           </div>
@@ -161,7 +161,7 @@ export function ParticipantsUpload({ eventId }: ParticipantsUploadProps) {
         <div className="mt-3">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative flex justify-between items-center">
             <span>Errore durante il caricamento: {errorMessage}</span>
-            <button type="button" onClick={() => setUploadStatus(null)} className="text-red-700 hover:text-red-900">
+            <button type="button" onClick={() => setUploadStatus(null)} title="Chiudi" className="text-red-700 hover:text-red-900">
               <X size={16} />
             </button>
           </div>

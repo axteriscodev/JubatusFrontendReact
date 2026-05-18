@@ -66,6 +66,12 @@ export interface CartState {
   hasClip: boolean;
   allPhotos: boolean;
   allClips: boolean;
+  allVideos: boolean;
   video: boolean;
+  selectedVideoPreorders: PriceItem[];
   previousAllPhotosPurchase: boolean;
+  hasBibNumber: boolean;
+  hasSelfie: boolean;
+  parentSearchId: number;
+  isRefined: boolean;
 }

@@ -11,15 +11,14 @@ export async function loader({ params }: LoaderFunctionArgs) {
     import.meta.env.VITE_API_URL + `/contents/event-data/${eventName}/${currentLanguage.acronym}`
   );
 
-  if (!response.ok) {
-    let message = "Si è verificato un errore o l'evento non è presente";
-
-    if (response.status === 204) {
-      message = "Nessun contenuto presente";
-    }
-
-    throw new Response(message, { status: response.status });
-  } else {
-    return response;
+  if (response.status === 404) {
+    const body = await response.json().catch(() => null);
+    throw { status: 404, active: body?.data?.active ?? null };
   }
+
+  if (!response.ok) {
+    throw new Response("Errore server", { status: response.status });
+  }
+
+  return response;
 }

@@ -16,6 +16,7 @@ import { useEventForm } from "./hooks/useEventForm";
 import { usePriceLists } from "./hooks/usePriceLists";
 import { useTags } from "./hooks/useTags";
 import { useCurrencies } from "./hooks/useCurrencies";
+import { useOrganizations } from "./hooks/useOrganizations";
 import { useEventData } from "./hooks/useEventData";
 import { useFormValidation } from "./hooks/useFormValidation";
 
@@ -39,7 +40,7 @@ import {
   getDefaultPriceLists,
   validatePriceLists,
 } from "./utils/eventFormHelpers";
-import { isOrganizationAdmin } from "@common/utils/auth";
+import { isOrganizationAdmin, getRole } from "@common/utils/auth";
 import { ROUTES } from "@/routes";
 import type { PriceList } from "@/types/cart";
 import type { Competition } from "@/types/competition";
@@ -69,7 +70,10 @@ export default function CreateEvent() {
   // all'URL di un evento senza permessi di modifica): mostra solo la tab "Pagamenti"
   const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
 
-  const [activeTab, setActiveTab] = useState<TabKey>("info");
+  const role = getRole();
+  const initialTab: TabKey =
+    !role?.canManageEvents && role?.canManagePayments ? "orders" : "info";
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   // Ref usato per evitare che l'effect readOnly sposti il tab su "orders"
   // immediatamente dopo la creazione di un nuovo evento (quando il navigate non è ancora completato)
   const justCreatedRef = useRef(false);
@@ -93,6 +97,7 @@ export default function CreateEvent() {
 
   const { tagList, loading: tagsLoading } = useTags();
   const { currencyList } = useCurrencies();
+  const { organizationList } = useOrganizations();
 
   useEffect(() => {
     if (readOnly && !justCreatedRef.current) {
@@ -235,8 +240,10 @@ export default function CreateEvent() {
   // - "participants" visibile solo per eventi con verifiedAttendanceEvent=true
   // - "orders" visibile se l'evento ha pagamenti esterni configurati
   const tabs: Tab[] = [
-    ...(!readOnly ? [{ key: "info" as TabKey, label: "Info evento" }] : []),
-    ...(!readOnly && formData.id
+    ...(!readOnly && role?.canManageEvents
+      ? [{ key: "info" as TabKey, label: "Info evento" }]
+      : []),
+    ...(!readOnly && formData.id && role?.canManageEvents
       ? [{ key: "priceLists" as TabKey, label: "Listini prezzi" }]
       : []),
     ...(!readOnly && formData.id && isOrganizationAdmin()
@@ -245,7 +252,7 @@ export default function CreateEvent() {
     ...(formData.id && formData.verifiedAttendanceEvent
       ? [{ key: "participants" as TabKey, label: "Partecipanti" }]
       : []),
-    ...(externalPayment !== null && (formData.id || readOnly)
+    ...(externalPayment !== null && (formData.id || readOnly) && role?.canManagePayments
       ? [{ key: "orders" as TabKey, label: "Pagamenti" }]
       : []),
   ];
@@ -264,7 +271,7 @@ export default function CreateEvent() {
         />
       </div>
 
-      {formData.id && priceListHandlers.priceLists.length === 0 && (
+      {formData.id && priceListHandlers.priceLists.length === 0 && role?.canManageEvents && (
         <div className="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg border border-yellow-300 bg-yellow-50 text-yellow-800 text-sm">
           <span>⚠️</span>
           <span>
@@ -289,7 +296,7 @@ export default function CreateEvent() {
                 key={tab.key}
                 type="button"
                 role="tab"
-                aria-selected={activeTab === tab.key}
+                aria-selected={activeTab === tab.key ? "true" : "false"}
                 onClick={() => setActiveTab(tab.key)}
                 className={`px-4 py-2 font-medium text-sm rounded-t-lg transition-colors
                   ${
@@ -318,7 +325,9 @@ export default function CreateEvent() {
                 }}
                 tagList={tagList}
                 currencyList={currencyList}
+                organizationList={organizationList}
                 errors={errors}
+                isOrganizationAdmin={isOrganizationAdmin()}
               />
               <EventDates
                 formData={formData}

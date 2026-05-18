@@ -1,31 +1,65 @@
 import { type MouseEvent } from "react";
-import { useAppSelector } from "@common/store/hooks";
+import { CheckSquare, Square } from "lucide-react";
+import { useAppSelector, useAppDispatch } from "@common/store/hooks";
 import { useTranslations } from "@common/i18n/TranslationProvider";
-import type { CartItem, CartProduct } from "@/types/cart";
+import type { CartItem, CartProduct, PriceItem } from "@/types/cart";
 import { useCreateOrder } from "../hooks/useCreateOrder";
 import { formatCurrencyPrice } from "@common/utils/data-formatter";
+import { cartActions } from "../store/cart-slice";
 
 interface TotalShopButtonProps {
-  onButtonClick?: (() => void) | null;
+  videoPreorderPkg?: PriceItem | null;
 }
 
 export default function TotalShopButton({
-  onButtonClick = null,
+  videoPreorderPkg = null,
 }: TotalShopButtonProps) {
   const cart = useAppSelector((state) => state.cart);
   const totalPrice = useAppSelector((state) => state.cart.totalPrice);
+  const selectedVideoPreorders = useAppSelector(
+    (state) => state.cart.selectedVideoPreorders,
+  );
   const purchasedKeys = new Set(
     cart.products.filter((p) => p.purchased).map((p) => p.keyOriginal),
   );
   const purchasableItemsCount = cart.items.filter(
     (i) => !purchasedKeys.has(i.keyOriginal),
   ).length;
+  const hasVideoPreorder = selectedVideoPreorders.length > 0;
+  const effectivePurchasableCount =
+    purchasableItemsCount + selectedVideoPreorders.length;
   const allPurchased =
-    cart.products.length > 0 && cart.products.every((p) => p.purchased);
+    cart.products.length > 0 &&
+    cart.products.every((p) => p.purchased) &&
+    !hasVideoPreorder;
   const usedPriceItems = useAppSelector((state) => state.cart.usedPriceItems);
   const eventPreset = useAppSelector((state) => state.competition);
+  const dispatch = useAppDispatch();
   const { t } = useTranslations();
   const { createOrder, isLoading } = useCreateOrder();
+
+  // Controlla se tutti i prodotti acquistabili sono già nel carrello
+  const totalPurchasable = cart.products.filter((p) => !p.purchased).length;
+  const videoPreorderSelected =
+    !videoPreorderPkg ||
+    selectedVideoPreorders.some((v) => v.id === videoPreorderPkg.id);
+  const allSelected =
+    purchasableItemsCount === totalPurchasable &&
+    videoPreorderSelected &&
+    (purchasableItemsCount > 0 || hasVideoPreorder);
+
+  // Aggiunge tutti i prodotti non acquistati al carrello (e il video preorder se disponibile)
+  function handleSelectAll() {
+    dispatch(cartActions.addAllItems());
+    if (videoPreorderPkg && !videoPreorderSelected) {
+      dispatch(cartActions.selectVideoPreorder(videoPreorderPkg));
+    }
+  }
+
+  // Svuota il carrello
+  function handleDeselectAll() {
+    dispatch(cartActions.removeAllItems());
+  }
 
   /**
    * Costruisce la lista di item da inviare al backend per la creazione dell'ordine,
@@ -94,7 +128,11 @@ export default function TotalShopButton({
     if (!clipsHandled)
       items.push(...cart.items.filter((i) => i.fileTypeId === 3));
 
-    return items;
+    const virtualVideoItems: CartItem[] = selectedVideoPreorders.map((_, i) => ({
+      keyPreview: "", keyOriginal: `__video_preorder_${i}__`, keyThumbnail: "", keyCover: "", fileTypeId: 2,
+    }));
+
+    return [...items, ...virtualVideoItems];
   }
 
   async function handleCheckout(event: MouseEvent) {
@@ -102,18 +140,50 @@ export default function TotalShopButton({
     await createOrder({ items: buildOrderItems() });
   }
 
+  // Con almeno un item selezionato: layout split con bottone sx (select/deselect all) e dx (checkout)
+  if (purchasableItemsCount > 0 || hasVideoPreorder) {
+    return (
+      <div className="flex flex-col sm:flex-row gap-2 w-full">
+        <button
+          type="button"
+          className="my-button sm:w-1/3"
+          disabled={isLoading || allPurchased}
+          onClick={allSelected ? handleDeselectAll : handleSelectAll}
+        >
+          <span className="flex items-center justify-center gap-2">
+            {allSelected ? <Square size={20} className="translate-y-0.5" /> : <CheckSquare size={20} className="translate-y-0.5" />}
+            {allSelected ? t("CHECKOUT_DESELECT") : t("CHECKOUT_SELECT")}
+          </span>
+        </button>
+        <button
+          type="button"
+          className="my-button flex-1"
+          disabled={isLoading || allPurchased}
+          onClick={handleCheckout}
+        >
+          {`${t("CHECKOUT_TOTAL")}: ${formatCurrencyPrice(totalPrice.toFixed(2), eventPreset.currency, eventPreset.currencySymbol)}`}
+        </button>
+      </div>
+    );
+  }
+
+  // Nessun item selezionato: unico bottone per selezionare tutto
   return (
     <button
-      className="my-button w-3/4 fixed bottom-10 left-1/2 -translate-x-1/2 container z-50"
+      type="button"
+      className="my-button w-full"
       disabled={isLoading || allPurchased}
       onClick={
-        purchasableItemsCount === 0
-          ? (onButtonClick ?? undefined)
+        effectivePurchasableCount === 0
+          ? handleSelectAll
           : handleCheckout
       }
     >
-      {purchasableItemsCount === 0 ? (
-        <>{t("CHECKOUT_SELECT")}</>
+      {effectivePurchasableCount === 0 ? (
+        <span className="flex items-center justify-center gap-2">
+          <CheckSquare size={20} className="translate-y-0.5" />
+          {t("CHECKOUT_SELECT")}
+        </span>
       ) : (
         `${t("CHECKOUT_TOTAL")}: ${formatCurrencyPrice(totalPrice.toFixed(2), eventPreset.currency, eventPreset.currencySymbol)}`
       )}

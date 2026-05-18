@@ -17,11 +17,10 @@
     "allowJs": true,
     "checkJs": false,
     "types": ["node"],
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@common/*": ["src/common/*"],
-      "@features/*": ["src/features/*"]
+      "@/*": ["./src/*"],
+      "@common/*": ["./src/common/*"],
+      "@features/*": ["./src/features/*"]
     }
   },
   "include": ["src", "vite.config.ts"],
