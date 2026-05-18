@@ -1,8 +1,11 @@
-import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import Modal from "@common/components/ui/Modal";
 import Form from "@common/components/ui/Form";
 import LoadingState from "@common/components/ui/LoadingState";
 import { apiRequest } from "@common/services/api-services";
+import { useFormState } from "@common/hooks/useFormState";
+import { useAsync } from "@common/hooks/useAsync";
+import { API } from "@common/services/api-endpoints";
 
 type ActiveTab = "register" | "import";
 
@@ -35,20 +38,20 @@ export interface ReaderFormModalProps {
 
 export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormModalProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("register");
-  const [registerForm, setRegisterForm] = useState<RegisterFormState>(EMPTY_REGISTER_FORM);
-  const [importForm, setImportForm] = useState<ImportFormState>(EMPTY_IMPORT_FORM);
+  const { form: registerForm, handleChange: handleRegisterChange, resetForm: resetRegisterForm } = useFormState(EMPTY_REGISTER_FORM);
+  const { form: importForm, handleChange: handleImportChange, resetForm: resetImportForm } = useFormState(EMPTY_IMPORT_FORM);
   const [locations, setLocations] = useState<StripeLocation[]>([]);
   const [loadingLocations, setLoadingLocations] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const { run, loading: saving } = useAsync<void>();
 
   useEffect(() => {
     if (!show) return;
     setActiveTab("register");
-    setRegisterForm(EMPTY_REGISTER_FORM);
-    setImportForm(EMPTY_IMPORT_FORM);
+    resetRegisterForm();
+    resetImportForm();
     setLoadingLocations(true);
     apiRequest({
-      api: import.meta.env.VITE_API_URL + "/terminal/locations",
+      api: API.TERMINAL_LOCATIONS,
       method: "GET",
       needAuth: true,
     })
@@ -58,22 +61,11 @@ export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormMod
       .finally(() => setLoadingLocations(false));
   }, [show]);
 
-  const handleRegisterChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setRegisterForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImportChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setImportForm((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleRegisterSave = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSaving(true);
-    try {
+    await run(async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/terminal/readers",
+        api: API.TERMINAL_READERS,
         method: "POST",
         needAuth: true,
         body: JSON.stringify({
@@ -86,24 +78,19 @@ export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormMod
         onSaved?.();
         onHide();
       }
-    } catch {
-      console.error("Errore nel salvataggio del reader");
-    } finally {
-      setSaving(false);
-    }
+    });
   };
 
   const handleImportSave = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSaving(true);
-    try {
+    await run(async () => {
       const body: Record<string, string> = {
         stripeReaderId: importForm.stripeReaderId,
         registrationCode: importForm.registrationCode,
       };
       if (importForm.label.trim()) body.label = importForm.label.trim();
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/terminal/readers/import",
+        api: API.TERMINAL_READERS_IMPORT,
         method: "POST",
         needAuth: true,
         body: JSON.stringify(body),
@@ -112,11 +99,7 @@ export default function ReaderFormModal({ show, onHide, onSaved }: ReaderFormMod
         onSaved?.();
         onHide();
       }
-    } catch {
-      console.error("Errore nell'importazione del reader");
-    } finally {
-      setSaving(false);
-    }
+    });
   };
 
   const tabClass = (tab: ActiveTab) =>

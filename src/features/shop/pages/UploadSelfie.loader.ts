@@ -1,3 +1,5 @@
+// Loader React Router per la pagina UploadSelfie.
+// Recupera i dati dell'evento (configurazione, logo, lingua) prima del render della pagina.
 import { getPreferredLanguage } from '@common/utils/language-utils';
 import type { LoaderFunctionArgs } from 'react-router-dom';
 

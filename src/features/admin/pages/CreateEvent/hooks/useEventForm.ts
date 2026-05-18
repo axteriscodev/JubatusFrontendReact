@@ -29,6 +29,7 @@ export function useEventForm(receivedComp: Competition | null): UseEventFormRetu
     }));
   };
 
+  // Aggiorna titolo e slug in modo sincronizzato: lo slug viene derivato automaticamente dal titolo
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     const newSlug = slugify(newTitle);

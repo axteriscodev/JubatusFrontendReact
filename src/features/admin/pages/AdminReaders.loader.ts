@@ -1,3 +1,4 @@
+// Loader React Router per le pagine admin reader/location. Stessa guardia di AdminPanel.loader.
 import { redirect } from 'react-router-dom';
 import { isAdmin } from '@common/utils/auth';
 import type { LoaderFunction } from 'react-router-dom';

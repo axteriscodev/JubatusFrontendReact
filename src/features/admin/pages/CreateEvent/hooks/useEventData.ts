@@ -19,6 +19,7 @@ export function useEventData(): UseEventDataReturn {
   const dispatch = useDispatch<AppDispatch>();
   const [eventData, setEventData] = useState<Competition | null>(null);
   const [externalPayment, setExternalPayment] = useState<unknown>(null);
+  // Se eventId è presente nell'URL partiamo subito in loading, altrimenti siamo in modalità creazione
   const [loading, setLoading] = useState(!!eventId);
   const [error, setError] = useState<string | null>(null);
 

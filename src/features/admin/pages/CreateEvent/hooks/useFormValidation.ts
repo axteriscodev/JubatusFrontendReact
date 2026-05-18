@@ -3,6 +3,7 @@ import type { EventFormData } from '../utils/eventFormHelpers';
 
 type RequiredField = keyof Pick<EventFormData, 'title' | 'pathS3' | 'tagId' | 'currencyId' | 'dateEvent' | 'dateStart' | 'dateExpiry'>;
 
+// Mappa campo → label leggibile usata nei messaggi di errore mostrati all'utente
 const REQUIRED_FIELDS: Record<RequiredField, string> = {
   title: 'Titolo evento',
   pathS3: 'Path S3',

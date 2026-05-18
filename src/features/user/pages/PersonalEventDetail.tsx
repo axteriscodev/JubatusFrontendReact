@@ -13,7 +13,9 @@ import { cartActions } from "@features/shop/store/cart-slice";
 import { personalActions } from "../store/personal-slice";
 import { resetHeaderData } from "@common/utils/graphics";
 import { useTranslations } from "@common/i18n/TranslationProvider";
-import { apiRequest } from "@common/services/api-services";
+import { useFetchData } from "@common/hooks/useFetchData";
+import { useLightboxState } from "@common/hooks/useLightboxState";
+import { API } from "@common/services/api-endpoints";
 import { ROUTES } from "@/routes";
 
 interface EventItem {
@@ -42,55 +44,33 @@ export default function PersonalEventDetail() {
     useAppSelector((state) => state.personal.purchased) ?? [];
   const { slug } = useParams<{ slug: string }>();
 
-  const [open, setOpen] = useState(false);
-  const [select, setSelect] = useState(false);
-  const [actions, setActions] = useState(false);
-  const [personalSlice, setPersonalSlice] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [slides, setSlides] = useState<unknown[]>([]);
+  const { lightbox, openLightbox, closeLightbox, setIndex, updateSlide } = useLightboxState();
   const [eventData, setEventData] = useState<EventData | null>(null);
-  const [loading, setLoading] = useState(true);
   const { t } = useTranslations();
 
+  const { data: fetchedEvents, loading } = useFetchData<EventData[]>(
+    API.LIBRARY_EVENT(slug ?? ""),
+    { needAuth: true },
+  );
+
   useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        const response = await apiRequest({
-          api: import.meta.env.VITE_API_URL + `/library/fetch/${slug}`,
-          method: "GET",
-          needAuth: true,
-        });
-
-        if (!response.ok) {
-          throw new Error("Errore nel caricamento degli eventi");
-        }
-
-        const eventsData = await response.json();
-        console.log("Dati ricevuti:", eventsData); // Debug
-        if (eventsData.data.length > 0) {
-          const event = eventsData.data[0];
-          setEventData(event);
-          dispatch(
-            personalActions.updatePurchased(
-              event.items.filter((item: EventItem) => item.isPurchased) || [],
-            ),
-          );
-        }
-      } catch (err) {
-        console.error("Errore nel caricamento:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadEvents();
-  }, []);
+    if (!fetchedEvents || fetchedEvents.length === 0) return;
+    const event = fetchedEvents[0];
+    setEventData(event);
+    // Carica nello slice personal solo gli item già acquistati per mostrarli nel carousel e nella gallery
+    dispatch(
+      personalActions.updatePurchased(
+        event.items.filter((item: EventItem) => item.isPurchased) || [],
+      ),
+    );
+  }, [fetchedEvents, dispatch]);
 
   useEffect(() => {
     resetHeaderData();
   }, []);
 
-  // Calcola gli item non acquistati solo quando eventsData cambia
+  // Calcola gli item non acquistati solo quando eventData cambia.
+  // Se lo stato è "onlyPurchased" non ci sono item da mostrare come disponibili.
   const unpurchasedItems = useMemo(() => {
     if (!eventData || eventData.status === "onlyPurchased") {
       return [];
@@ -112,21 +92,6 @@ export default function PersonalEventDetail() {
     if (!eventData) return;
     const { slug, hashId } = eventData;
     navigate(ROUTES.EVENT_WITH_HASH(slug, hashId));
-  };
-
-  const openLightbox = (
-    images: unknown[],
-    startIndex = 0,
-    select: boolean,
-    actions: boolean,
-    personalSlice: boolean,
-  ) => {
-    setIndex(startIndex);
-    setOpen(true);
-    setSlides(images);
-    setSelect(select);
-    setActions(actions);
-    setPersonalSlice(personalSlice);
   };
 
   return (
@@ -257,20 +222,20 @@ export default function PersonalEventDetail() {
         )}
       </div>
 
-      {open && (
+      {lightbox.open && (
         <CustomLightbox
-          open={open}
-          slides={slides as never}
-          index={index}
+          open={lightbox.open}
+          slides={lightbox.slides as never}
+          index={lightbox.index}
           setIndex={setIndex}
-          select={select}
-          actions={actions}
+          select={lightbox.select}
+          actions={lightbox.actions}
           addToCart={false}
           isPersonalArea={true}
-          onClose={() => setOpen(false)}
+          onClose={closeLightbox}
+          // personalSlice=true → item dall'area personale, false → item appena acquistati (cart)
           onUpdateSlide={(i, updatedSlide) => {
-            // Aggiorna Redux
-            if (personalSlice) {
+            if (lightbox.personalSlice) {
               dispatch(
                 personalActions.updatePersonalItem(
                   updatedSlide as Parameters<
@@ -287,12 +252,7 @@ export default function PersonalEventDetail() {
                 ),
               );
             }
-            // Aggiorna anche lo state interno del Lightbox (per riflettere subito il cambiamento)
-            setSlides((prev) => {
-              const copy = [...prev];
-              copy[i] = updatedSlide;
-              return copy;
-            });
+            updateSlide(i, updatedSlide);
           }}
         />
       )}

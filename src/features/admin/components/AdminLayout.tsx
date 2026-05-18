@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import AdminSidebar from "./AdminSidebar";
 
 export default function AdminLayout() {
+  // Aggiunge la classe "admin" al body per applicare i CSS specifici dell'area admin (Admin.css)
   useEffect(() => {
     document.body.classList.add("admin");
     return () => {

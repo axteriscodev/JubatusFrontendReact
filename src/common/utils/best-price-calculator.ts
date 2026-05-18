@@ -1,3 +1,4 @@
+/** Pacchetto prezzo grezzo proveniente dall'API (quantità -1 = "tutti"). */
 interface PricePackage {
   quantityPhoto: number;
   quantityVideo: number;
@@ -5,6 +6,7 @@ interface PricePackage {
   price: number;
 }
 
+/** Pacchetto normalizzato: le quantità -1 sono sostituite con il requisito totale richiesto. */
 interface NormalizedPackage {
   p: number;
   v: number;
@@ -18,6 +20,10 @@ export interface CalculatePriceResult {
   usedPackages: PricePackage[];
 }
 
+/**
+ * Ricostruisce la lista di pacchetti usati risalendo la tabella parent
+ * dalla cella (reqP, reqV, reqC) fino a (0, 0, 0).
+ */
 function backtrack(
   normalized: NormalizedPackage[],
   parent: (PricePackage | null)[][][],
@@ -41,6 +47,11 @@ function backtrack(
   return used;
 }
 
+/**
+ * Calcola la combinazione di pacchetti a costo minimo per coprire
+ * esattamente (reqP) foto, (reqV) video e (reqC) clip richiesti.
+ * Usa programmazione dinamica 3D; restituisce price=-1 se non è possibile coprire il requisito.
+ */
 export function calculatePrice(
   packages: PricePackage[],
   reqP: number,

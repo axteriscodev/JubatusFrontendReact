@@ -12,6 +12,13 @@ interface CreateOrderPayload {
   preorder?: PreorderPack;
 }
 
+/**
+ * Hook condiviso tra TotalShopButton e PreOrder per la creazione dell'ordine.
+ * Gestisce il routing post-creazione in base al tipo di pagamento:
+ * - ordine gratuito → MailConfirmation
+ * - pagamento in cassa (id=2) → MailConfirmation con state isCash
+ * - pagamento online → Checkout con clientSecret Stripe
+ */
 export function useCreateOrder() {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();

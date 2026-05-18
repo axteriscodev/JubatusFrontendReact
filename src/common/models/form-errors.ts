@@ -1,3 +1,4 @@
+/** Mappa degli errori di validazione del form principale (selfie, email, pin, privacy). */
 export interface FormErrors {
   imageError: boolean;
   emailError: boolean;
@@ -7,6 +8,7 @@ export interface FormErrors {
   emailDuplicated?: boolean;
 }
 
+/** Crea un oggetto FormErrors con tutti i campi a false, con override opzionali. */
 export function createFormErrors(overrides: Partial<FormErrors> = {}): FormErrors {
   return {
     imageError: false,

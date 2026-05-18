@@ -25,7 +25,9 @@ const RESTRICTED_NAV_ITEMS: NavItem[] = [
 
 export default function AdminSidebar() {
   const navigate = useNavigate();
+  // Organization admin ha accesso a tutte le voci; gli altri vedono solo "Elenco eventi"
   const navItems = isOrganizationAdmin() ? ALL_NAV_ITEMS : RESTRICTED_NAV_ITEMS;
+  // Lo stato collapsed è persistito in localStorage per mantenere la preferenza tra sessioni
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem("adminSidebarCollapsed") === "true"
   );

@@ -1,5 +1,6 @@
 import { adminReadersActions } from "./admin-readers-slice";
 import { apiRequest } from "@common/services/api-services";
+import { API } from "@common/services/api-endpoints";
 import type { AppDispatch } from "@common/store/store";
 import type { Reader } from "@/types/admin";
 
@@ -7,8 +8,7 @@ export const associateReaderToEvent = (readerId: number, eventId: number) => {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
-        // TODO: sostituire con endpoint corretto
-        api: import.meta.env.VITE_API_URL + "/terminal/readers/" + readerId + "/event",
+        api: API.TERMINAL_READER_EVENT(readerId),
         method: "POST",
         needAuth: true,
         body: JSON.stringify({ eventId }),
@@ -32,8 +32,7 @@ export const toggleReaderActive = (readerId: number, active: boolean) => {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
-        // TODO: sostituire con endpoint corretto
-        api: import.meta.env.VITE_API_URL + "/terminal/readers/" + readerId,
+        api: API.TERMINAL_READER(readerId),
         method: "PUT",
         needAuth: true,
         body: JSON.stringify({ active }),
@@ -53,15 +52,13 @@ export const toggleReaderActive = (readerId: number, active: boolean) => {
   };
 };
 
+// Aggiorna la label del reader. Usa currentReader per comporre l'oggetto completo
+// da passare al reducer (che sostituisce l'intero record nello slice).
 export const updateReaderLabel = (readerId: number, label: string, currentReader: Reader) => {
   return async (dispatch: AppDispatch): Promise<{ success: boolean }> => {
     try {
       const response = await apiRequest({
-        api:
-          import.meta.env.VITE_API_URL +
-          "/terminal/readers/" +
-          readerId +
-          "/label",
+        api: API.TERMINAL_READER_LABEL(readerId),
         method: "PUT",
         needAuth: true,
         body: JSON.stringify({ label }),
@@ -71,6 +68,7 @@ export const updateReaderLabel = (readerId: number, label: string, currentReader
         throw new Error("Errore nell'aggiornamento della label");
       }
 
+      // Aggiornamento ottimistico: spread dell'oggetto esistente con la nuova label
       dispatch(adminReadersActions.updateReader({ ...currentReader, label }));
       return { success: true };
     } catch (error) {
@@ -84,7 +82,7 @@ export const fetchReaders = () => {
   return async (dispatch: AppDispatch): Promise<void> => {
     const fetchData = async () => {
       const response = await apiRequest({
-        api: import.meta.env.VITE_API_URL + "/terminal/readers/with-events",
+        api: API.TERMINAL_READERS_WITH_EVENTS,
         method: "GET",
         needAuth: true,
       });

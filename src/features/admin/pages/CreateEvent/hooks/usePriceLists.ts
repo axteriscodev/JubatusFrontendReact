@@ -65,6 +65,8 @@ export function usePriceLists(initialLists: PriceList[]): UsePriceListsReturn {
     });
   };
 
+  // Come updateItem, ma specchia anche il valore in itemsLanguages[0] per mantenere
+  // la coerenza con la struttura multilingua attesa dal backend
   const updateItemWithLanguage = (formIndex: number, rowIndex: number, field: keyof PriceItem, value: PriceItemValue) => {
     setPriceLists((prev) => {
       const updated = structuredClone(prev) as (PriceList & { itemsLanguages?: Array<Record<string, unknown>> })[];

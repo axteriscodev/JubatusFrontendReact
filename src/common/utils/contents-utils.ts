@@ -1,3 +1,4 @@
+/** Identificatori numerici del tipo di file media. */
 export const FileType = {
   IMAGE: 1,
   VIDEO: 2,
@@ -6,6 +7,7 @@ export const FileType = {
 
 export type FileTypeId = (typeof FileType)[keyof typeof FileType];
 
+/** Stato dell'evento rispetto ai contenuti acquistati/cercati. */
 export const EventStatus = {
   ONLY_PURCHASED: "onlyPurchased",
   MIXED: "mixed",
@@ -66,6 +68,10 @@ export interface PersonalEventGallery {
   allPhotos: boolean;
 }
 
+/**
+ * Normalizza la risposta API della libreria personale in un array di PersonalEventGallery.
+ * Ogni evento include i propri contenuti già normalizzati tramite getEventContents.
+ */
 export const getPersonalEventGalleries = (
   data: unknown,
 ): PersonalEventGallery[] => {
@@ -88,6 +94,10 @@ export const getPersonalEventGalleries = (
   }));
 };
 
+/**
+ * Normalizza un array grezzo di contenuti API in NormalizedContent[].
+ * isPersonalArea influenza la selezione dell'URL thumbnail per video/clip.
+ */
 export const getEventContents = (
   data: unknown,
   isPersonalArea = false,
@@ -104,6 +114,11 @@ export const getEventContents = (
   return result;
 };
 
+/**
+ * Normalizza un singolo item grezzo in NormalizedContent.
+ * Seleziona le URL src/thumbnail/tiny in base al tipo (foto/video/clip)
+ * e allo stato di acquisto.
+ */
 export const NormalizeContent = (
   item: RawContentItem,
   isPersonalArea = false,

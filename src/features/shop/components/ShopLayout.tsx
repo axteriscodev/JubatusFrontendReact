@@ -2,6 +2,8 @@ import { Outlet } from "react-router-dom";
 import { isAdmin, getRole } from "@common/utils/auth";
 
 export default function ShopLayout() {
+  // Il banner "NAVIGAZIONE TOTEM" viene mostrato solo agli admin con permesso canViewOriginalContent,
+  // per segnalare che si sta visualizzando il contenuto originale (modalità totem/kiosk)
   const showOriginalContentBanner =
     isAdmin() && getRole()?.canViewOriginalContent === true;
 

@@ -86,6 +86,7 @@ export default function PendingPayments({
 
   const [filterEmail, setFilterEmail] = useState("");
   const [filterAmount, setFilterAmount] = useState("");
+  // Filtro stato default = 1 ("Da Pagare"): mostra i pagamenti in attesa all'apertura
   const [filterStatus, setFilterStatus] = useState<number | null>(1);
   const [filterPaymentId, setFilterPaymentId] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | null>("DESC");
@@ -355,6 +356,7 @@ export default function PendingPayments({
     }
   };
 
+  // Interrompe la connessione SSE in corso (usato su chiusura modale POS, retry, annullamento)
   const stopSSE = () => {
     if (sseAbortRef.current) {
       sseAbortRef.current.abort();
@@ -362,6 +364,7 @@ export default function PendingPayments({
     }
   };
 
+  // Apre una connessione SSE per ricevere in tempo reale l'esito del pagamento dal reader POS Stripe
   const startSSEResult = (payment: Payment) => {
     const controller = new AbortController();
     sseAbortRef.current = controller;
@@ -493,6 +496,8 @@ export default function PendingPayments({
     setPosStep(1);
   };
 
+  // Traduce l'id dello stato ordine in un badge colorato.
+  // I valori degli stati sono configurati come variabili d'ambiente (VITE_ORDER_STATE_*).
   const getStateBadge = (state?: OrderState) => {
     if (!state) return <Badge bg="secondary">—</Badge>;
 

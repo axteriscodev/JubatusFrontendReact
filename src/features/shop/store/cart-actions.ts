@@ -64,6 +64,7 @@ export const fetchContents = (receivedData: FetchContentsData) => {
   };
 };
 
+// Carica il listino prezzi per un evento e lo salva nello store
 export const fetchPriceList = (eventId: string | number) => {
   return async (dispatch: AppDispatch) => {
     const currentLanguage = getPreferredLanguage();
@@ -83,12 +84,15 @@ export const fetchPriceList = (eventId: string | number) => {
   };
 };
 
+// Lettura diretta dallo store (senza dispatch) per uso sincrono fuori da React
+// quantityPhoto === -1 indica il pacchetto "tutte le foto"
 export function getAllItemsPrice(): PriceItem | undefined {
   const state: RootState = store.getState();
   const prices = state.cart.prices;
   return prices.find((price) => price.quantityPhoto === -1);
 }
 
+// quantityPhoto === 1 indica il prezzo per una singola foto
 export function getSingleItemPrice(): PriceItem | undefined {
   const state: RootState = store.getState();
   const prices = state.cart.prices;

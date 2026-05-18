@@ -28,6 +28,11 @@ export async function sendRequest(
   return response;
 }
 
+/**
+ * Wrapper standard per le chiamate fetch all'API backend.
+ * Gestisce automaticamente l'header Content-Type (omesso per FormData)
+ * e aggiunge il token JWT se needAuth è true.
+ */
 export async function apiRequest({
   api,
   method = "GET",
@@ -60,6 +65,11 @@ export async function apiRequest({
   return response;
 }
 
+/**
+ * Apre una connessione Server-Sent Events verso l'URL indicato.
+ * Restituisce una funzione di cleanup che chiude la connessione (abort).
+ * Il token JWT viene incluso nell'header Authorization se presente.
+ */
 export function listenSSE(
   api: string,
   callbackMessage: (data: string) => void,

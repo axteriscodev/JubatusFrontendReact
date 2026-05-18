@@ -65,9 +65,13 @@ export default function CreateEvent() {
     eventId,
   } = useEventData();
 
+  // readOnly = l'eventId esiste nell'URL ma i dati non sono stati caricati (es. accesso diretto
+  // all'URL di un evento senza permessi di modifica): mostra solo la tab "Pagamenti"
   const readOnly = !!eventId && !eventData && !eventLoading && !eventError;
 
   const [activeTab, setActiveTab] = useState<TabKey>("info");
+  // Ref usato per evitare che l'effect readOnly sposti il tab su "orders"
+  // immediatamente dopo la creazione di un nuovo evento (quando il navigate non è ancora completato)
   const justCreatedRef = useRef(false);
 
   const { formData, handleInputChange, handleTitleChange, handleFileChange } =
@@ -177,6 +181,7 @@ export default function CreateEvent() {
     const evtId = formData.id;
     const currentLists = priceListHandlers.priceLists;
 
+    // Differenza tra listini originali e correnti per individuare quelli eliminati dall'utente
     const originalIds = new Set(
       (eventData?.lists ?? [])
         .map((l) => l.id)
@@ -224,6 +229,11 @@ export default function CreateEvent() {
     navigate(ROUTES.ADMIN_EVENTS);
   };
 
+  // Costruzione dinamica dei tab in base al contesto:
+  // - "info" e "priceLists" nascosti in modalità readOnly
+  // - "readers" visibile solo agli organization admin e solo dopo il salvataggio dell'evento
+  // - "participants" visibile solo per eventi con verifiedAttendanceEvent=true
+  // - "orders" visibile se l'evento ha pagamenti esterni configurati
   const tabs: Tab[] = [
     ...(!readOnly ? [{ key: "info" as TabKey, label: "Info evento" }] : []),
     ...(!readOnly && formData.id

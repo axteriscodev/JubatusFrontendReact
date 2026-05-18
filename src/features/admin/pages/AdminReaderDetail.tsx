@@ -10,6 +10,7 @@ import {
   toggleReaderActive,
   updateReaderLabel,
 } from "../store/admin-readers-actions";
+import { useAsync } from "@common/hooks/useAsync";
 
 export default function AdminReaderDetail() {
   const { readerId } = useParams<{ readerId: string }>();
@@ -19,12 +20,13 @@ export default function AdminReaderDetail() {
   const readers = useAppSelector((state) => state.adminReaders.readers);
   const reader = readers.find((r) => r.id === Number(readerId));
 
-  const [savingStatus, setSavingStatus] = useState(false);
+  const { run: runStatus, loading: savingStatus } = useAsync<void>();
+  const { run: runLabel, loading: savingLabel } = useAsync<void>();
 
   const [editingLabel, setEditingLabel] = useState(false);
   const [labelValue, setLabelValue] = useState("");
-  const [savingLabel, setSavingLabel] = useState(false);
 
+  // Carica i reader solo se lo store è vuoto (navigazione diretta all'URL senza passare da AdminReaders)
   useEffect(() => {
     if (readers.length === 0) {
       dispatch(fetchReaders());
@@ -33,9 +35,7 @@ export default function AdminReaderDetail() {
 
   const handleToggleActive = async () => {
     if (!reader) return;
-    setSavingStatus(true);
-    await dispatch(toggleReaderActive(reader.id, !reader.active));
-    setSavingStatus(false);
+    await runStatus(() => dispatch(toggleReaderActive(reader.id, !reader.active)) as unknown as Promise<void>);
   };
 
   const handleStartEditLabel = () => {
@@ -46,20 +46,16 @@ export default function AdminReaderDetail() {
 
   const handleSaveLabel = async () => {
     if (!reader) return;
+    // Non chiama l'API se la label è invariata o vuota
     if (!labelValue.trim() || labelValue === reader.label) {
       setEditingLabel(false);
       return;
     }
 
-    setSavingLabel(true);
-    updateReaderLabel(
-      reader.id,
-      labelValue.trim(),
-      reader,
-    )(dispatch).finally(() => {
-      setSavingLabel(false);
-      setEditingLabel(false);
-    });
+    await runLabel(() =>
+      updateReaderLabel(reader.id, labelValue.trim(), reader)(dispatch) as unknown as Promise<void>
+    );
+    setEditingLabel(false);
   };
 
   const handleCancelLabel = () => {

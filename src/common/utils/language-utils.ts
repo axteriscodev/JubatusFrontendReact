@@ -1,10 +1,12 @@
 import type { Language } from "@/types/i18n";
 
+/** Estrae il codice lingua base da una stringa locale (es. "it-IT" → "it", "en_US" → "en"). */
 export function extractLanguageCode(locale: string): string | null {
   if (!locale || typeof locale !== "string") return null;
   return locale.split("-")[0].split("_")[0].toLowerCase();
 }
 
+/** Restituisce la lista ordinata dei codici lingua preferiti dal browser (deduplicati). */
 export function getBrowserLanguages(): string[] {
   const languages: string[] = [];
 
@@ -25,6 +27,10 @@ export function getBrowserLanguages(): string[] {
   return languages;
 }
 
+/**
+ * Trova la prima lingua disponibile che corrisponde a una delle preferenze del browser.
+ * Restituisce null se non c'è nessuna corrispondenza.
+ */
 export function findBestLanguageMatch(
   availableLanguages: Language[],
   browserLanguages: string[],
@@ -42,6 +48,7 @@ export function findBestLanguageMatch(
   return null;
 }
 
+/** Restituisce l'inglese come fallback, o la prima lingua disponibile se l'inglese non c'è. */
 export function getFallbackLanguage(availableLanguages: Language[]): Language | null {
   if (!availableLanguages || availableLanguages.length === 0) return null;
 
@@ -51,6 +58,10 @@ export function getFallbackLanguage(availableLanguages: Language[]): Language | 
   return availableLanguages[0];
 }
 
+/**
+ * Legge la lingua preferita da localStorage (chiave "preferred_lang").
+ * Restituisce { acronym: "en" } come default se assente o malformata.
+ */
 export function getPreferredLanguage(): Pick<Language, "acronym"> {
   try {
     const saved = localStorage.getItem("preferred_lang");

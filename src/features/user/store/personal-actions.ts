@@ -2,6 +2,7 @@ import { personalActions } from "./personal-slice";
 import { getAuthToken } from "@common/utils/auth";
 import type { AppDispatch } from "@common/store/store";
 
+// Carica dalla libreria personale dell'utente autenticato tutti i contenuti acquistati
 export const fetchPurchased = () => {
   return async (dispatch: AppDispatch) => {
     const fetchData = async () => {

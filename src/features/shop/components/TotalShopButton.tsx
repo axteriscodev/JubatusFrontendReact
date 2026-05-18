@@ -3,6 +3,7 @@ import { useAppSelector } from "@common/store/hooks";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import type { CartItem, CartProduct } from "@/types/cart";
 import { useCreateOrder } from "../hooks/useCreateOrder";
+import { formatCurrencyPrice } from "@common/utils/data-formatter";
 
 interface TotalShopButtonProps {
   onButtonClick?: (() => void) | null;
@@ -26,6 +27,18 @@ export default function TotalShopButton({
   const { t } = useTranslations();
   const { createOrder, isLoading } = useCreateOrder();
 
+  /**
+   * Costruisce la lista di item da inviare al backend per la creazione dell'ordine,
+   * tenendo conto dei pacchetti calcolati (usedPriceItems).
+   *
+   * Se un pacchetto copre tutti i media di un tipo (quantity === -1), si inviano tutti
+   * i prodotti non ancora acquistati di quel tipo (CartProduct), così il backend può
+   * autorizzare l'accesso a contenuti non ancora disponibili (es. video in elaborazione).
+   * Se il pacchetto copre un numero esatto di item (quantity > 0), si inviano gli item
+   * selezionati nel carrello (CartItem).
+   * Se nessun pacchetto è applicabile, si inviano direttamente gli item del carrello
+   * escludendo quelli già acquistati.
+   */
   function buildOrderItems(): (CartItem | CartProduct)[] {
     if (usedPriceItems.length === 0)
       return cart.items.filter((i) => !purchasedKeys.has(i.keyOriginal));
@@ -41,11 +54,13 @@ export default function TotalShopButton({
       const qC = priceItem.quantityClip as number;
 
       if (!photosHandled && qP === -1) {
+        // Pacchetto "tutte le foto": includi tutti i prodotti foto non acquistati
         items.push(
           ...cart.products.filter((p) => p.fileTypeId === 1 && !p.purchased),
         );
         photosHandled = true;
       } else if (!photosHandled && qP > 0) {
+        // Numero fisso di foto: includi solo quelle selezionate nel carrello
         items.push(...cart.items.filter((i) => i.fileTypeId === 1));
         photosHandled = true;
       }
@@ -71,6 +86,7 @@ export default function TotalShopButton({
       }
     }
 
+    // Fallback per i tipi non coperti da nessun pacchetto
     if (!photosHandled)
       items.push(...cart.items.filter((i) => i.fileTypeId === 1));
     if (!videosHandled)
@@ -99,7 +115,7 @@ export default function TotalShopButton({
       {purchasableItemsCount === 0 ? (
         <>{t("CHECKOUT_SELECT")}</>
       ) : (
-        `${t("CHECKOUT_TOTAL")}: ${eventPreset.currency === "EUR" ? `${totalPrice.toFixed(2)} ${eventPreset.currencySymbol}` : `${eventPreset.currencySymbol} ${totalPrice.toFixed(2)}`}`
+        `${t("CHECKOUT_TOTAL")}: ${formatCurrencyPrice(totalPrice.toFixed(2), eventPreset.currency, eventPreset.currencySymbol)}`
       )}
     </button>
   );

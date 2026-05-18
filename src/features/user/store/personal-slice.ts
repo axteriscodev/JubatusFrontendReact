@@ -1,3 +1,5 @@
+// Slice Redux per l'area personale utente: dati profilo e lista dei contenuti acquistati
+// (usato da PersonalArea, PersonalEventDetail e dalla galleria acquistati post-checkout).
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface PersonalItem {

@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Pulsante generico con varianti di stile e dimensioni.
+ * Varianti: primary, secondary, success, danger, link, outline.
+ * Dimensioni: sm, md (default), lg.
+ */
 type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'link' | 'outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
 

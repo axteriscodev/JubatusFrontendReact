@@ -3,13 +3,15 @@ import Logo from "@common/components/Logo";
 import TotalShopButton from "../components/TotalShopButton";
 import { useAppDispatch, useAppSelector } from "@common/store/hooks";
 import { cartActions } from "../store/cart-slice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { setUiPreset } from "@common/utils/graphics";
 import CustomLightbox from "@common/components/CustomLightbox";
 import { Link } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useTranslations } from "@common/i18n/TranslationProvider";
 import parse from "html-react-parser";
+import { useLightboxState } from "@common/hooks/useLightboxState";
+import { formatCurrencyPrice } from "@common/utils/data-formatter";
 import { ROUTES } from "@/routes";
 
 interface PricePackLanguage {
@@ -40,9 +42,7 @@ function getPriceListEntry(
   return (
     <>
       <span dangerouslySetInnerHTML={{ __html: safeHTML }} />
-      {eventPreset.currency === "EUR"
-        ? ` - ${pricePack.price}${eventPreset.currencySymbol}`
-        : ` - ${eventPreset.currencySymbol}${pricePack.price}`}
+      {` - ${formatCurrencyPrice(pricePack.price, eventPreset.currency, eventPreset.currencySymbol)}`}
     </>
   );
 }
@@ -60,11 +60,7 @@ export default function ImageShop() {
   const numVideo = imagesList?.filter((item) => item.fileTypeId === 2).length;
   const numClips = imagesList?.filter((item) => item.fileTypeId === 3).length;
 
-  const [open, setOpen] = useState(false);
-  const [select, setSelect] = useState(false);
-  const [actions, setActions] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [slides, setSlides] = useState<unknown[]>([]);
+  const { lightbox, openLightbox, closeLightbox, setIndex } = useLightboxState();
 
   const photoItems = useAppSelector((state) => state.cart.items);
   const alertPack = useAppSelector((state) => state.cart.alertPack);
@@ -79,26 +75,12 @@ export default function ImageShop() {
       dispatch(cartActions.removeItemFromCart(imageKey));
     } else {
       dispatch(cartActions.addItemToCart(imageKey));
-      setOpen(false);
+      closeLightbox();
     }
   };
 
   const handleButtonClick = () => {
     dispatch(cartActions.addAllItems());
-  };
-
-  const openLightbox = (
-    images: unknown[],
-    startIndex = 0,
-    select: boolean,
-    actions: boolean,
-    _personalSlice?: boolean,
-  ) => {
-    setIndex(startIndex);
-    setOpen(true);
-    setSlides(images);
-    setSelect(select);
-    setActions(actions);
   };
 
   useEffect(() => {
@@ -185,15 +167,15 @@ export default function ImageShop() {
         )}
       </div>
 
-      {open && (
+      {lightbox.open && (
         <CustomLightbox
-          open={open}
-          slides={slides as never}
-          index={index}
+          open={lightbox.open}
+          slides={lightbox.slides as never}
+          index={lightbox.index}
           setIndex={setIndex}
-          select={select}
-          actions={actions}
-          onClose={() => setOpen(false)}
+          select={lightbox.select}
+          actions={lightbox.actions}
+          onClose={closeLightbox}
           onImageClick={handleImageClick}
           photoItems={photoItems as never}
           shopMode={true}

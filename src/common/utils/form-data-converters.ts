@@ -1,6 +1,11 @@
 type FormDataPrimitive = string | number | boolean | File | Blob | null | undefined;
 type FormDataObject = { [key: string]: FormDataPrimitive | FormDataObject | FormDataObject[] };
 
+/**
+ * Converte ricorsivamente un oggetto JSON in FormData.
+ * Array → chiavi con indice `[0]`, oggetti annidati → notazione dot `parent.child`.
+ * File e Blob vengono appesi direttamente senza conversione.
+ */
 export function jsonToFormData(
   obj: FormDataPrimitive | FormDataObject | FormDataObject[],
   form: FormData = new FormData(),
@@ -34,6 +39,10 @@ export function jsonToFormData(
   return form;
 }
 
+/**
+ * Alternativa a jsonToFormData: converte un oggetto piatto/annidato in FormData
+ * usando notazione bracket `parent[child]` per tutti i livelli (array inclusi).
+ */
 export function objectToFormData(
   obj: FormDataObject,
   form: FormData = new FormData(),

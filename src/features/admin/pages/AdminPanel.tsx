@@ -72,6 +72,7 @@ export default function AdminPanel() {
               <td>{formatDate(competition.dateExpiry, 'it-IT')}</td>
               <td className="text-right">
                 <ButtonGroup>
+                  {/* canManage può essere false per gli admin con accesso limitato all'evento */}
                   {(competition as Competition & { canManage?: boolean }).canManage !== false && (
                     <Button
                       variant="link"
