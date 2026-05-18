@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAppSelector } from "@common/store/hooks";
 import { apiRequest } from "@common/services/api-services";
 import { useTranslations } from "@common/i18n/TranslationProvider";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 import { useLanguage } from "@common/i18n/LanguageContext";
 
 export default function ThankYou() {
@@ -20,7 +20,11 @@ export default function ThankYou() {
     setMessage("");
 
     try {
-      const body = JSON.stringify({ userEmail: userEmail, orderId: orderId, lang: currentLanguage.acronym });
+      const body = JSON.stringify({
+        userEmail: userEmail,
+        orderId: orderId,
+        lang: currentLanguage.acronym,
+      });
       const response = await apiRequest({
         api: import.meta.env.VITE_API_URL + "/customer/resend-link",
         method: "POST",
@@ -34,6 +38,7 @@ export default function ThankYou() {
         setMessage("Errore nell'invio dell'email. Riprova più tardi.");
       }
     } catch (error) {
+      console.error(error);
       setMessage("Errore di rete. Controlla la connessione.");
     } finally {
       setLoading(false);
@@ -60,24 +65,35 @@ export default function ThankYou() {
 
   return (
     <div className="form-sm">
-      <h2 className="text-center">{parse(t('PURCHASE_TITLE'))}</h2>
+      <h2 className="text-center">{parse(t("PURCHASE_TITLE"))}</h2>
       <p className="max-4">
-        {parse(t('PURCHASE_TITLE'))} <br />
-        {parse(t('PURCHASE_ACCESS').replace('$email', userEmail))}
+        {parse(t("PURCHASE_TITLE"))} <br />
+        {parse(t("PURCHASE_ACCESS").replace("$email", userEmail))}
       </p>
-
+      {import.meta.env.VITE_SURVEY_URL && (
+        <div className="mt-10 max-4">
+          <a
+            href={import.meta.env.VITE_SURVEY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="my-button w-full"
+          >
+            {t("BTU_SURVEY")}
+          </a>
+        </div>
+      )}
       <div className="mt-20 max-4">
-        <p>{parse(t('PURCHASE_EMAIL'))}</p>
+        <p>{parse(t("PURCHASE_EMAIL"))}</p>
         <button
           className="my-button w-full"
           onClick={handleResend}
           disabled={loading || cooldown > 0}
         >
           {loading
-            ? t('WAITING_SEND')
+            ? t("WAITING_SEND")
             : cooldown > 0
-            ? `${t('WAITING_WAIT')} ${cooldown}s`
-            : t('PURCHASE_LINK')}
+              ? `${t("WAITING_WAIT")} ${cooldown}s`
+              : t("PURCHASE_LINK")}
         </button>
         {message && <p className="mt-10">{message}</p>}
       </div>

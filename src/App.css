@@ -105,6 +105,9 @@ a.no-hover:hover {
   background-color: var(--secondary-event-color, --secondary-color);
   cursor: pointer;
 }
+a.my-button:hover {
+  color: var(--bg-event-color, --bg-color);
+}
 .my-button.add {
   background-color: var(--add);
   border-color: var(--add);
